@@ -18,6 +18,7 @@ from backend.djangoapi.utils import visitor_ip_address
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all().order_by("-id")
     serializer_class = UserSerializer
+    # TODO - PERMISSIONS - Fix permissions class for Auth Model / Models
     
     def list(self, request, *args, **kwargs):
         queryset = User.objects.all().order_by("-id")

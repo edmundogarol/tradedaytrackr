@@ -11,20 +11,29 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 import os
+import json
 from pathlib import Path
+
+if "DEVENV" in os.environ or "DEPLOYENV" in os.environ:
+    # SECURITY WARNING: don't run with debug turned on in production!
+    DEBUG = True
+    dbconfig = "./tdtr-config.json"
+else:
+    DEBUG = False
+    dbconfig = "/opt/app/tdtr-config.json"
+
+SETTINGS = None
+with open(dbconfig) as f:
+    SETTINGS = json.load(f)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
+# TODO - DEVOPS - Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-o99aaa9077-bcjq$@(tusm+iq0au@2b$j$38tr573ibg1&&!l+'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+SECRET_KEY = SETTINGS["SECRET_KEY"]
 
 ALLOWED_HOSTS = []
 
