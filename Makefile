@@ -1,16 +1,13 @@
 # Shortcuts for running TradeDayTrackR Web App
 
 gui:
-	cd gdaypunchwebapp/gdaypunchreact && yarn && yarn run dev
+	cd frontend && yarn && yarn run dev
 
 prodgui:
-	cd gdaypunchwebapp/gdaypunchreact && yarn && yarn run build
-
-watchgui:
-	cd gdaypunchwebapp/gdaypunchreact && yarn && yarn run devwatch
+	cd frontend && yarn && yarn run build
 
 deletemigrations:
-	cd gdaypunchbackend/gdaypunchapi/migrations && find . ! -name __init__.py -maxdepth 1 -type f -delete
+	cd backend/djangoapi/migrations && find . ! -name __init__.py -maxdepth 1 -type f -delete
 
 deletedb:
 	rm db.sqlite3
@@ -19,7 +16,7 @@ stoppg:
 	brew services stop postgresql@14 || true
 
 dev:
-	python -m venv venv && source venv/bin/activate && brew services start postgresql
+	source venv/bin/activate && brew services start postgresql
 
 predev: stoppg dev
 
@@ -51,6 +48,8 @@ stopmail:
 buildrun: env server
 
 resetdb: deletemigrations deletedb makemigrations migrate
+
+localapp: gui server
 
 app: gui predev build migrate	server
 

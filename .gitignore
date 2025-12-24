@@ -143,9 +143,30 @@ node_modules
 # Local assets
 frontend/react/public/static/assets
 
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
 # Build static files
 backend/public
-backend/build
+backend/static
 backend/static/*.worker.js
 backend/static/vendors~pdfjsWorker.main.js
 backend/static/main.js

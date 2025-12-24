@@ -22,23 +22,28 @@ from rest_framework_swagger.views import get_swagger_view
 
 from backend.djangoapi import views
 
-schema_view = get_swagger_view(title='TradeDayTrackR API')
+schema_view = get_swagger_view(title="TradeDayTrackR API")
+
 
 class TradeDayTrackRApi(routers.APIRootView):
     """
     Test and run TDTR django rest api endpoints
     """
+
     pass
+
 
 class DocumentedRouter(routers.DefaultRouter):
     APIRootView = TradeDayTrackRApi
+
 
 router = DocumentedRouter()
 router.register(r"users", views.UserViewSet)
 
 urlpatterns = [
     path("docs", schema_view),
-    path("", include(router.urls)),
+    path("", views.index, name="index"),
+    path("api/", include(router.urls)),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
-    path('admin/', admin.site.urls),
+    path("admin/", admin.site.urls),
 ]
