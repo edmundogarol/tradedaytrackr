@@ -6,6 +6,7 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 
+
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.TextField(max_length=50, blank=False, unique=True)
     first_name = models.TextField(max_length=50, blank=True)

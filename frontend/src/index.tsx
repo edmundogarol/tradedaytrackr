@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import reportWebVitals from "./reportWebVitals";
-import App from "./App";
+import NavigationContainer from "@navigation/NavigationContainer";
 
 const container = document.getElementById("app");
 const root = ReactDOM.createRoot(container as HTMLElement);
@@ -12,7 +12,7 @@ if (!container) {
 
 root.render(
   <React.StrictMode>
-    <App />
+    <NavigationContainer />
   </React.StrictMode>
 );
 

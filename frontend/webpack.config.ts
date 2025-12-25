@@ -20,7 +20,17 @@ const config: Configuration = {
     ],
   },
   resolve: {
-    extensions: [".ts", ".tsx", ".js"],
+    modules: [path.resolve(__dirname, "./"), "node_modules"],
+    extensions: [".ts", ".tsx", ".js", ".jsx", ".json", ".scss", ".css"],
+    alias: {
+      "@pages": path.resolve(__dirname, "src/pages/"),
+      "@components": path.resolve(__dirname, "src/components/"),
+      "@styles": path.resolve(__dirname, "src/styles/"),
+      "@interfaces": path.resolve(__dirname, "src/interfaces/"),
+      "@utils": path.resolve(__dirname, "src/utils/"),
+      "@hooks": path.resolve(__dirname, "src/hooks/"),
+      "@navigation": path.resolve(__dirname, "src/navigation/"),
+    },
   },
   output: {
     filename: "bundle.js",
