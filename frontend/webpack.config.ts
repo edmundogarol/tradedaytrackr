@@ -1,5 +1,5 @@
 import path from "path";
-import { Configuration } from "webpack";
+import type { Configuration } from "webpack";
 
 const config: Configuration = {
   mode: "development",
@@ -17,6 +17,11 @@ const config: Configuration = {
         test: /\.js$/,
         loader: "source-map-loader",
       },
+      {
+        test: /\.svg$/i,
+        issuer: /\.[jt]sx?$/,
+        use: ["@svgr/webpack"],
+      },
     ],
   },
   resolve: {
@@ -30,6 +35,8 @@ const config: Configuration = {
       "@utils": path.resolve(__dirname, "src/utils/"),
       "@hooks": path.resolve(__dirname, "src/hooks/"),
       "@navigation": path.resolve(__dirname, "src/navigation/"),
+      "@redux": path.resolve(__dirname, "src/redux/"),
+      "@assets": path.resolve(__dirname, "src/assets/"),
     },
   },
   output: {

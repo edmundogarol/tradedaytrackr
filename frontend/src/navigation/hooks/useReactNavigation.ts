@@ -1,4 +1,4 @@
-import { PageEnum, WebNavigation } from "@interfaces/NavigationTypes";
+import type { PageEnum, WebNavigation } from "@interfaces/NavigationTypes";
 import {
   createSearchParams,
   useLocation,

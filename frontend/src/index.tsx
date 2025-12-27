@@ -1,7 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import reportWebVitals from "./reportWebVitals";
+import { Provider } from "react-redux";
+import store from "@redux/store";
 import NavigationContainer from "@navigation/NavigationContainer";
+import reportWebVitals from "./reportWebVitals";
 
 const container = document.getElementById("app");
 const root = ReactDOM.createRoot(container as HTMLElement);
@@ -12,7 +14,9 @@ if (!container) {
 
 root.render(
   <React.StrictMode>
-    <NavigationContainer />
+    <Provider store={store}>
+      <NavigationContainer />
+    </Provider>
   </React.StrictMode>
 );
 
