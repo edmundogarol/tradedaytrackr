@@ -16,9 +16,7 @@ export const InputWrapper = styled.div`
 `;
 
 export const InputContainer = styled.div<{
-  error?: boolean;
-
-  googleAutoComplete?: boolean;
+  $error?: boolean;
 }>`
   align-items: center;
   height: ${INPUT_SIZE}px;
@@ -28,8 +26,8 @@ export const InputContainer = styled.div<{
   flex-direction: row;
   border-radius: ${CONTAINER_BORDER_RADIUS}px;
   margin-bottom: ${CONTAINER_MARGIN_DEFAULT}px;
-  ${({ error }): any => {
-    if (error) {
+  ${({ $error }): any => {
+    if ($error) {
       return css`
         border-color: ${color("SystemError2")};
         border-width: 1px;
@@ -39,34 +37,34 @@ export const InputContainer = styled.div<{
 `;
 
 export const InputStyled = styled.input<{
-  disabled?: boolean;
-  placeholderTextColor?: string;
+  $disabled?: boolean;
+  $placeholderTextColor?: string;
 }>`
   flex: 1;
   font-size: ${TEXT_SIZE}px;
   padding-left: ${CONTAINER_PADDING_SMALL}px;
   padding-right: ${CONTAINER_PADDING_SMALL}px;
-  ${({ placeholderTextColor }): any => {
-    if (placeholderTextColor)
+  ${({ $placeholderTextColor }): any => {
+    if ($placeholderTextColor)
       return css`
         &::placeholder {
-          color: ${placeholderTextColor};
+          color: ${$placeholderTextColor};
         }
       `;
   }}
-  ${({ disabled }): any => {
-    if (disabled)
+  ${({ $disabled }): any => {
+    if ($disabled)
       return css`
         color: ${color("SystemLabel1")};
       `;
   }}
 `;
 
-export const Label = styled.label<{ error?: boolean; disabled?: boolean }>`
-  color: ${({ error, disabled }) =>
-    error
+export const Label = styled.label<{ $error?: boolean; $disabled?: boolean }>`
+  color: ${({ $error, $disabled }) =>
+    $error
       ? color("SystemError2")
-      : disabled
+      : $disabled
       ? color("SystemLabel1")
       : color("SystemLabel2")};
   font-size: ${LABEL_SIZE_LARGE}px;

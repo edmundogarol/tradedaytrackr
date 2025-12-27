@@ -78,7 +78,7 @@ export default [
     },
   },
   {
-    files: ["**/*StyledComponents.ts"],
+    files: ["**/*StyledComponents.{ts,tsx}"],
     rules: {
       "@typescript-eslint/naming-convention": [
         "error",

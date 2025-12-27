@@ -8,21 +8,21 @@ import styled from "styled-components";
 import { ButtonType } from "./ButtonInterfaces";
 
 export const PressableWrapper = styled.button<{
-  loading?: boolean;
-  transparent?: boolean;
-  disabledBlock?: boolean;
+  $loading?: boolean;
+  $transparent?: boolean;
+  $disabledBlock?: boolean;
 }>`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  background-color: ${({ loading, transparent, disabledBlock }) => {
-    if (loading) {
+  background-color: ${({ $loading, $transparent, $disabledBlock }) => {
+    if ($loading) {
       return "#c1d5e7";
     }
-    if (disabledBlock) {
+    if ($disabledBlock) {
       return color("SystemLabel1");
     }
-    if (transparent) {
+    if ($transparent) {
       return "transparent";
     }
     return color("SystemBlue3");
@@ -34,10 +34,10 @@ export const PressableWrapper = styled.button<{
   align-items: center;
 `;
 
-export const ButtonText = styled.span<{ buttonType?: ButtonType }>`
+export const ButtonText = styled.span<{ $buttonType?: ButtonType }>`
   font-size: 17px;
-  color: ${({ buttonType }) => {
-    switch (buttonType) {
+  color: ${({ $buttonType }) => {
+    switch ($buttonType) {
       case ButtonType.Block:
         return "white";
       case ButtonType.Outline:
@@ -48,18 +48,18 @@ export const ButtonText = styled.span<{ buttonType?: ButtonType }>`
 `;
 
 export const OutlinedPressableWrapper = styled.button<{
-  loading?: boolean;
-  transparent?: boolean;
-  disabledBlock?: boolean;
+  $loading?: boolean;
+  $transparent?: boolean;
+  $disabledBlock?: boolean;
 }>`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  background-color: ${({ loading, disabledBlock }) => {
-    if (loading) {
+  background-color: ${({ $loading, $disabledBlock }) => {
+    if ($loading) {
       return "#c1d5e7";
     }
-    if (disabledBlock) {
+    if ($disabledBlock) {
       return color("SystemLabel1");
     }
     return "transparent";
@@ -74,18 +74,18 @@ export const OutlinedPressableWrapper = styled.button<{
 `;
 
 export const HuggingOutlinedPressableWrapper = styled.button<{
-  loading?: boolean;
-  transparent?: boolean;
-  disabledBlock?: boolean;
+  $loading?: boolean;
+  $transparent?: boolean;
+  $disabledBlock?: boolean;
 }>`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  background-color: ${({ loading, disabledBlock }) => {
-    if (loading) {
+  background-color: ${({ $loading, $disabledBlock }) => {
+    if ($loading) {
       return "#c1d5e7";
     }
-    if (disabledBlock) {
+    if ($disabledBlock) {
       return color("SystemLabel1");
     }
     return "transparent";
