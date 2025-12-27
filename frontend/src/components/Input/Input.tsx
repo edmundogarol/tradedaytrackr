@@ -45,17 +45,17 @@ const Input: React.FunctionComponent<InputWrapperProps> = ({
   return (
     <InputWrapper>
       <If condition={!!label}>
-        <Label disabled={disabled} error={!!error}>
+        <Label $disabled={disabled} $error={!!error}>
           {label}
         </Label>
       </If>
-      <InputContainer error={!!error}>
+      <InputContainer $error={!!error}>
         <If condition={!!icon}>{icon}</If>
         <InputStyled
           {...props}
           disabled={disabled}
           placeholder={placeholder}
-          placeholderTextColor={
+          $placeholderTextColor={
             error ? color("SystemError2") : color("SystemLabel1")
           }
           aria-disabled={!disabled}

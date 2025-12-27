@@ -49,13 +49,13 @@ const Button: React.FunctionComponent<ButtonWrapperProps> = ({
 
   return (
     <ButtonStyled
-      loading={loading}
+      $loading={loading}
       {...props}
       onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
         if (onClick) onClick(e);
       }}
-      disabledBlock={disabledBlock as boolean}
-      transparent={transparent as boolean}
+      $disabledBlock={disabledBlock as boolean}
+      $transparent={transparent as boolean}
       style={style}
     >
       {iconLeft ? (
@@ -66,7 +66,7 @@ const Button: React.FunctionComponent<ButtonWrapperProps> = ({
         />
       ) : null}
       <ButtonText
-        buttonType={tdtrButtonType}
+        $buttonType={tdtrButtonType}
         style={
           Array.isArray(textStyle) ? Object.assign({}, ...textStyle) : textStyle
         }
