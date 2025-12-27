@@ -57,7 +57,7 @@ const Login: React.FunctionComponent = () => {
               updateLoginForm({ email: e.currentTarget.value });
             }}
             icon={renderInputIcon(
-              "user-o",
+              "person",
               IconTypeEnum.MaterialIcons,
               loginFormErrors.email
             )}

@@ -1,11 +1,11 @@
 import React from "react";
 import { BrowserRouter } from "react-router";
-import AuthenticatedNavigator from "./AuthenticatedNavigator";
+import AppNavigation from "./AppNavigation";
 
 const NavigationContainer: React.FC = () => {
   return (
     <BrowserRouter>
-      <AuthenticatedNavigator />
+      <AppNavigation />
     </BrowserRouter>
   );
 };

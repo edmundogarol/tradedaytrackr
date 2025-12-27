@@ -9,11 +9,13 @@ const useCheckLoginFormErrors = (): void => {
 
   useEffect(() => {
     if (isNotEmptyString(loginForm.email) && loginFormErrors.email) {
-      const { ...errors } = loginFormErrors;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { email, ...errors } = loginFormErrors;
       updateLoginFormErrors(errors);
     }
     if (isNotEmptyString(loginForm.password) && loginFormErrors.password) {
-      const { ...errors } = loginFormErrors;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...errors } = loginFormErrors;
       updateLoginFormErrors(errors);
     }
   }, [loginForm, loginFormErrors, updateLoginFormErrors]);

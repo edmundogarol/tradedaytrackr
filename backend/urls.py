@@ -38,12 +38,14 @@ class DocumentedRouter(routers.DefaultRouter):
 
 
 router = DocumentedRouter()
-router.register(r"users", views.UserViewSet)
+router.register(r"users", views.account.UserViewSet)
 
 urlpatterns = [
     path("docs", schema_view),
     path("", views.index, name="index"),
     path("api/", include(router.urls)),
+    path("api/login/", views.account.LoginViewSet.as_view()),
+    path("api/logout/", views.account.LogoutViewSet.as_view()),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     path("admin/", admin.site.urls),
 ]
