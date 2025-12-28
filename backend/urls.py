@@ -27,7 +27,7 @@ schema_view = get_swagger_view(title="TradeDayTrackR API")
 
 class TradeDayTrackRApi(routers.APIRootView):
     """
-    Test and run TDTR django rest api endpoints
+    Test and run TDTR django rest api endpoints viewer
     """
 
     pass
