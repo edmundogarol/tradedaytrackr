@@ -6,6 +6,7 @@ import { linkToUrl } from "@navigation/hooks/link";
 import FormError from "@components/Error/FormError/FormError";
 import { If } from "@components/If/If";
 import { IconTypeEnum } from "@components/Icon/IconInterfaces";
+import { Page } from "@components/Page/PageStyledComponents";
 import useLoginDispatch from "./hooks/useLoginDispatch";
 import useLoginState from "./hooks/useLoginState";
 import {
@@ -37,71 +38,73 @@ const Login: React.FunctionComponent = () => {
   useCheckLoginFormErrors();
 
   return (
-    <LoginContainer>
-      <LoginHeader>
-        {!user?.logged_in
-          ? "Login"
-          : `Welcome ${
-              user.first_name || user.last_name || user.username || user.email
-            }!`}
-      </LoginHeader>
-      <Gap level={1} />
-      <If condition={!user?.logged_in}>
-        <LoginInputsContainer>
-          <Input
-            value={loginForm.email}
-            error={loginFormErrors.email}
-            label="Email / Username"
-            placeholder="Enter email or username"
-            onChange={(e) => {
-              updateLoginForm({ email: e.currentTarget.value });
-            }}
-            icon={renderInputIcon(
-              "person",
-              IconTypeEnum.MaterialIcons,
-              loginFormErrors.email
-            )}
-          />
-          <Input
-            value={loginForm.password}
-            error={loginFormErrors.password}
-            label="Password"
-            placeholder="Enter password"
-            onChange={(e) => {
-              updateLoginForm({
-                ...loginForm,
-                password: e.currentTarget.value,
-              });
-            }}
-            icon={renderInputIcon(
-              "lock-outline",
-              IconTypeEnum.MaterialIcons,
-              loginFormErrors.password
-            )}
-            type="password"
-          />
-          <FormError
-            error={loginFormErrors["error"] || loginFormErrors["detail"]}
-          />
-          <ForgotPasswordLink
-            to={linkToUrl(PageEnum.ResetPassword)}
-            onClick={() => {
-              updateResetPasswordFormSent(false);
-              updateResetPasswordForm({ email: "" });
-              updateResetPasswordErrors({});
-            }}
-          >
-            {"Forgot Password?"}
-          </ForgotPasswordLink>
-          <Gap level={1} />
-        </LoginInputsContainer>
-        <LoginButton loading={loading} text={"Login"} onClick={login} />
-        <SignUpTextContainer>
-          <SignUpText>{"Don't have an Account?"}</SignUpText>
-          <SignUpLink to={linkToUrl(PageEnum.SignUp)}>{"Sign Up"}</SignUpLink>
-        </SignUpTextContainer>
-      </If>
-    </LoginContainer>
+    <Page>
+      <LoginContainer>
+        <LoginHeader>
+          {!user?.logged_in
+            ? "Login"
+            : `Welcome ${
+                user.first_name || user.last_name || user.username || user.email
+              }!`}
+        </LoginHeader>
+        <Gap level={1} />
+        <If condition={!user?.logged_in}>
+          <LoginInputsContainer>
+            <Input
+              value={loginForm.email}
+              error={loginFormErrors.email}
+              label="Email / Username"
+              placeholder="Enter email or username"
+              onChange={(e) => {
+                updateLoginForm({ email: e.currentTarget.value });
+              }}
+              icon={renderInputIcon(
+                "person",
+                IconTypeEnum.MaterialIcons,
+                loginFormErrors.email
+              )}
+            />
+            <Input
+              value={loginForm.password}
+              error={loginFormErrors.password}
+              label="Password"
+              placeholder="Enter password"
+              onChange={(e) => {
+                updateLoginForm({
+                  ...loginForm,
+                  password: e.currentTarget.value,
+                });
+              }}
+              icon={renderInputIcon(
+                "lock-outline",
+                IconTypeEnum.MaterialIcons,
+                loginFormErrors.password
+              )}
+              type="password"
+            />
+            <FormError
+              error={loginFormErrors["error"] || loginFormErrors["detail"]}
+            />
+            <ForgotPasswordLink
+              to={linkToUrl(PageEnum.ResetPassword)}
+              onClick={() => {
+                updateResetPasswordFormSent(false);
+                updateResetPasswordForm({ email: "" });
+                updateResetPasswordErrors({});
+              }}
+            >
+              {"Forgot Password?"}
+            </ForgotPasswordLink>
+            <Gap level={1} />
+          </LoginInputsContainer>
+          <LoginButton loading={loading} text={"Login"} onClick={login} />
+          <SignUpTextContainer>
+            <SignUpText>{"Don't have an Account?"}</SignUpText>
+            <SignUpLink to={linkToUrl(PageEnum.SignUp)}>{"Sign Up"}</SignUpLink>
+          </SignUpTextContainer>
+        </If>
+      </LoginContainer>
+    </Page>
   );
 };
 
