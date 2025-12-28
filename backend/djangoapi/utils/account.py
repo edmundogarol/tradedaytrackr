@@ -1,5 +1,8 @@
 import socket
 
+from rest_framework.permissions import BasePermission
+
+
 def visitor_ip_address(request):
 
     x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
@@ -16,3 +19,20 @@ def visitor_ip_address(request):
         ip_valid = False
 
     return {"ip": ip, "valid": ip_valid}
+
+
+def staff(request):
+    return request.user.is_authenticated and request.user.is_staff
+
+
+class AdminOnly(BasePermission):
+    def has_permission(self, request):
+        return request.user.is_authenticated and request.user.is_staff
+
+
+class PostOnly(BasePermission):
+    def has_permission(self, request, view):
+        WRITE_METHODS = [
+            "POST",
+        ]
+        return request.method in WRITE_METHODS or staff(request)

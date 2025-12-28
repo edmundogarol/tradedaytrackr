@@ -5,6 +5,7 @@ import environmentConfig from "@utils/environmentConfig";
 import { isJson } from "@utils/utils";
 
 export const APPLICATION_JSON = "application/json";
+axios.defaults.withCredentials = true;
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
 
@@ -13,6 +14,21 @@ export interface AxiosFetchWrapperResponse<T> {
   data: T | undefined;
   loading: boolean;
   error: object | undefined;
+}
+
+function getCookie(name: string) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+    for (let cookie of cookies) {
+      cookie = cookie.trim();
+      if (cookie.startsWith(name + "=")) {
+        cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
 }
 
 const useAxiosFetch = <T>(
@@ -47,6 +63,7 @@ const useAxiosFetch = <T>(
         url: useUrl ? useUrl : baseUrl(url),
         headers: {
           Accept: APPLICATION_JSON,
+          "X-CSRFToken": getCookie("csrftoken"),
         },
         ...params,
       });

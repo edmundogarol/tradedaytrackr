@@ -44,11 +44,12 @@ migrations: makemigrations migrate
 server:
 	DEVENV=development python manage.py runserver 0.0.0.0:8000
 
+# Mailpit Server http://0.0.0.0:8025/
 mailserver:
-	brew services start mailhog
+	brew services start mailpit
 
 stopmail:
-	brew services stop mailhog
+	brew services stop mailpit
 
 buildrun: env server
 

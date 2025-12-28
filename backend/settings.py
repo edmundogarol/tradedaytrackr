@@ -38,6 +38,9 @@ SECRET_KEY = SETTINGS["SECRET_KEY"]
 
 ALLOWED_HOSTS = []
 
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+]
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
@@ -110,6 +113,19 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
+EMAIL_PORT = SETTINGS["EMAIL_PORT"]
+EMAIL_HOST_USER = SETTINGS["EMAIL_HOST_USER"]
+EMAIL_HOST_PASSWORD = SETTINGS["EMAIL_HOST_PASSWORD"]
+EMAIL_USE_TLS = False
+
+if "DEVENV" in os.environ:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_HOST = "0.0.0.0"
+    EMAIL_PORT = 1025
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_USE_TLS = True
 
 
 # Password validation

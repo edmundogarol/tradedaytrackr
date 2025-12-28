@@ -39,6 +39,9 @@ class DocumentedRouter(routers.DefaultRouter):
 
 router = DocumentedRouter()
 router.register(r"users", views.account.UserViewSet)
+router.register(
+    r"reset-password", views.account.ResetPasswordViewSet, basename="reset-password"
+)
 
 urlpatterns = [
     path("docs", schema_view),
