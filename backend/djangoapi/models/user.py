@@ -6,6 +6,8 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 
+from backend.djangoapi.managers.user import UserManager
+
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.TextField(max_length=50, blank=False, unique=True)
@@ -20,3 +22,4 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_ip = models.TextField(max_length=30, blank=False, null=True)
 
     USERNAME_FIELD = "email"
+    objects = UserManager()

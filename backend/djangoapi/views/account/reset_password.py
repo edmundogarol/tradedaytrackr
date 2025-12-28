@@ -26,9 +26,8 @@ def send_password_reset_email(user, token):
     email_template_name = "emails/reset_password.html"
 
     print(user)
-    # TODO - Remove dummy check after testing
     email_config = {
-        "email": user,  # user.email,
+        "email": user.email,
         "website": "https://tradedaytrackr.com",
         "user": user,
         "token": token,
@@ -39,10 +38,9 @@ def send_password_reset_email(user, token):
 
         send_mail(
             subject="Reset Password Request",
-            from_email="TradeDayTrackr<info@tradedaytrackr.com>",
             message="Please use an HTML compatible email viewer!",
-            # TODO - Remove dummy check after testing
-            recipient_list=[user],
+            from_email="TradeDayTrackr<info@tradedaytrackr.com>",
+            recipient_list=[user.email],
             fail_silently=False,
             html_message=email,
         )
@@ -58,14 +56,6 @@ def reset_password(email):
         user = User.objects.get(email=email)
 
     except User.DoesNotExist:
-        # TODO - Temporary to check non-existing emails still get a response
-        Thread(
-            target=send_password_reset_email,
-            args=(
-                email,
-                "token",
-            ),
-        ).start()
         pass
 
     if user is not None:

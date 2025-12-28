@@ -1,7 +1,7 @@
+from threading import Thread
 from rest_framework import status
-from rest_framework.viewsets import  ModelViewSet
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 
 from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError
@@ -14,12 +14,16 @@ from secrets import token_urlsafe
 from backend.djangoapi.models import User
 from backend.djangoapi.serializers import UserSerializer
 from backend.djangoapi.utils import visitor_ip_address
+from backend.djangoapi.views.account.verify_account import (
+    send_account_verification_email,
+)
+
 
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all().order_by("-id")
     serializer_class = UserSerializer
     # TODO - PERMISSIONS - Fix permissions class for Auth Model / Models
-    
+
     def list(self, request, *args, **kwargs):
         queryset = User.objects.all().order_by("-id")
         search = request.GET.get("search", None)
@@ -61,13 +65,13 @@ class UserViewSet(ModelViewSet):
         user.save()
 
         # TODO - EMAIL - Account verification
-        # Thread(
-        #     target=send_account_verification_email,
-        #     args=(
-        #         user,
-        #         user.verified,
-        #     ),
-        # ).start()
+        Thread(
+            target=send_account_verification_email,
+            args=(
+                user,
+                user.verified,
+            ),
+        ).start()
 
         content = {
             "user": str(user),
@@ -133,4 +137,3 @@ class UserViewSet(ModelViewSet):
             return Response(serializer.data)
 
         return Response(serializer.data)
-

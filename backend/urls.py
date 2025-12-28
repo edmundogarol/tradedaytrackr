@@ -38,7 +38,7 @@ class DocumentedRouter(routers.DefaultRouter):
 
 
 router = DocumentedRouter()
-router.register(r"users", views.account.UserViewSet)
+router.register(r"user", views.account.UserViewSet)
 router.register(
     r"reset-password", views.account.ResetPasswordViewSet, basename="reset-password"
 )
@@ -48,6 +48,14 @@ urlpatterns = [
     path("api/", include(router.urls)),
     path("api/login/", views.account.LoginViewSet.as_view()),
     path("api/logout/", views.account.LogoutViewSet.as_view()),
+    path(
+        "api/verify-account/",
+        views.account.VerifyAccountViewSet.as_view({"post": "email"}),
+    ),
+    path(
+        "api/request-verification/",
+        views.account.RequestVerificationViewSet.as_view({"post": "email"}),
+    ),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     path("admin/", admin.site.urls),
     re_path(r"^.*$", views.ReactAppView.as_view(), name="react-app"),
