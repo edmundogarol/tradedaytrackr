@@ -6,6 +6,9 @@ gui:
 prodgui:
 	cd frontend && yarn && yarn run build
 
+watchgui:
+	cd frontend && yarn && yarn run watchdev
+
 deletemigrations:
 	cd backend/djangoapi/migrations && find . ! -name __init__.py -maxdepth 1 -type f -delete
 
@@ -24,6 +27,8 @@ build:
 	python -m pip install --upgrade pip && python -m pip install -r requirements.txt && pip list
 
 env: dev build
+
+svenv: source venv/bin/activate
 
 migrate:
 	DEVENV=development python manage.py migrate

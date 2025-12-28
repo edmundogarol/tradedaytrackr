@@ -9,12 +9,18 @@ import { color } from "@styles/colors";
 import Button from "@components/Button/Button";
 import { Link } from "react-router";
 
+export const LoginPage = styled.div`
+  background-color: red;
+`;
+
 export const LoginContainer = styled.div`
+  background-color: red;
   align-items: center;
   justify-content: center;
   padding-left: ${CONTAINER_PADDING_LARGE}px;
   padding-right: ${CONTAINER_PADDING_LARGE}px;
-  height: 100%;
+  height: 200px;
+  width: 200px;
 `;
 
 export const LoginInputsContainer = styled.div`

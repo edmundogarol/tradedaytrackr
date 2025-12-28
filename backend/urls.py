@@ -16,7 +16,7 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from rest_framework import routers
 from rest_framework_swagger.views import get_swagger_view
 
@@ -42,10 +42,10 @@ router.register(r"users", views.account.UserViewSet)
 
 urlpatterns = [
     path("docs", schema_view),
-    path("", views.index, name="index"),
     path("api/", include(router.urls)),
     path("api/login/", views.account.LoginViewSet.as_view()),
     path("api/logout/", views.account.LogoutViewSet.as_view()),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     path("admin/", admin.site.urls),
+    re_path(r"^.*$", views.ReactAppView.as_view(), name="react-app"),
 ]

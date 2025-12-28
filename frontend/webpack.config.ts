@@ -1,10 +1,16 @@
 import path from "path";
-import type { Configuration } from "webpack";
+import type { Configuration as WebpackConfiguration } from "webpack";
+import type { Configuration as DevServerConfiguration } from "webpack-dev-server";
+import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
+import HtmlWebpackPlugin from "html-webpack-plugin";
 
-const config: Configuration = {
+const config: WebpackConfiguration & {
+  devServer?: DevServerConfiguration;
+} = {
   mode: "development",
   entry: path.resolve(process.cwd(), "./src/index.tsx"),
-  devtool: "source-map",
+  devtool: "cheap-module-source-map",
+
   module: {
     rules: [
       {
@@ -41,11 +47,29 @@ const config: Configuration = {
   },
   output: {
     filename: "bundle.js",
-    path: path.resolve(__dirname, "../backend/static/frontend"),
-    publicPath: "/static/frontend/",
-    clean: true,
+    publicPath: "http://localhost:3000/",
   },
-  plugins: [],
+  devServer: {
+    port: 3000,
+    hot: true,
+    historyApiFallback: true,
+    static: {
+      directory: path.resolve(__dirname, "public"),
+    },
+    proxy: [
+      {
+        context: ["/api"],
+        target: "http://localhost:8000",
+        changeOrigin: true,
+      },
+    ],
+  },
+  plugins: [
+    new ReactRefreshWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, "public/index.html"),
+    }),
+  ],
 };
 
 export default config;

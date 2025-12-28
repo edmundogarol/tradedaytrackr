@@ -1,4 +1,4 @@
-from .index import index
+from .views import ReactAppView
 from .account import user
 from .account import UserViewSet
 from .account import LoginViewSet
