@@ -48,7 +48,7 @@ const useLoginSubmitHandler = (): LoginSubmitHandler => {
           }
         }
       }
-    }, [loginForm, fetch, updateUser, updateLoginFormErrors]),
+    }, [loading, loginForm]),
     loading,
   };
 };

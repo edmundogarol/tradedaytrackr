@@ -16,7 +16,7 @@ const useCheckResetPasswordFormErrors = (): void => {
       const { email, ...errors } = resetPasswordFormErrors;
       updateResetPasswordErrors(errors);
     }
-  }, [resetPasswordForm, resetPasswordFormErrors, updateResetPasswordErrors]);
+  }, [resetPasswordForm]);
 };
 
 export default useCheckResetPasswordFormErrors;

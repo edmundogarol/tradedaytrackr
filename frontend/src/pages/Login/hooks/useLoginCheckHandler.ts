@@ -24,7 +24,7 @@ const useLoginCheckHandler = ({
     } else if (error) {
       console.log("Login check fetch error", error);
     }
-  }, [data, error, loading, updateUser]);
+  }, [data, error, loading]);
 };
 
 export default useLoginCheckHandler;

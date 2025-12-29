@@ -9,6 +9,7 @@ import useRenderInputIcon from "@components/Input/hooks/useRenderInputIcon";
 import { If } from "@components/If/If";
 import FormSuccess from "@components/Error/FormSuccess/FormSuccess";
 import FormError from "@components/Error/FormError/FormError";
+import { Page } from "@components/Page/PageStyledComponents";
 import useResetPasswordHandler from "./hooks/useResetPasswordHandler";
 import useCheckResetPasswordFormErrors from "./hooks/useCheckResetPasswordFormErrors";
 import {
@@ -27,49 +28,50 @@ const ResetPassword: React.FunctionComponent = () => {
   useCheckResetPasswordFormErrors();
 
   return (
-    <ResetPasswordContainer>
-      <Gap level={1} />
-      <ResetPasswordHeader>{"Reset Password"}</ResetPasswordHeader>
-      <Gap level={1} />
-      <ResetPasswordInputsContainer>
-        <If condition={!resetPasswordFormSent}>
-          <Input
-            label="Email"
-            placeholder="Enter email"
-            value={resetPasswordForm.email}
-            error={resetPasswordFormErrors.email}
-            onChange={(e) => {
-              updateResetPasswordForm({ email: e.currentTarget.value });
-            }}
-            icon={renderInputIcon(
-              "mail",
-              IconTypeEnum.MaterialIcons,
-              resetPasswordFormErrors.email
-            )}
-          />
-        </If>
-        <FormError
-          error={
-            resetPasswordFormErrors["error"] ||
-            resetPasswordFormErrors["detail"]
-          }
-        />
-        <If condition={resetPasswordFormSent}>
-          <FormSuccess
-            detail={
-              "We've sent you an email with password reset instructions if there's an account with your email. Check your inbox and spam folder if you don't receive it soon."
+    <Page>
+      <ResetPasswordContainer>
+        <Gap level={1} />
+        <ResetPasswordHeader>{"Reset Password"}</ResetPasswordHeader>
+        <Gap level={1} />
+        <ResetPasswordInputsContainer>
+          <If condition={!resetPasswordFormSent}>
+            <Input
+              placeholder="Enter email"
+              value={resetPasswordForm.email}
+              error={resetPasswordFormErrors.email}
+              onChange={(e) => {
+                updateResetPasswordForm({ email: e.currentTarget.value });
+              }}
+              icon={renderInputIcon(
+                "mail",
+                IconTypeEnum.MaterialIcons,
+                resetPasswordFormErrors.email
+              )}
+            />
+          </If>
+          <FormError
+            error={
+              resetPasswordFormErrors["error"] ||
+              resetPasswordFormErrors["detail"]
             }
           />
+          <If condition={resetPasswordFormSent}>
+            <FormSuccess
+              detail={
+                "We've sent you an email with password reset instructions if there's an account with your email. Check your inbox and spam folder if you don't receive it soon."
+              }
+            />
+          </If>
+        </ResetPasswordInputsContainer>
+        <If condition={!resetPasswordFormSent}>
+          <Button
+            loading={loading}
+            text={"Send Reset Link"}
+            onClick={() => resetPassword()}
+          />
         </If>
-      </ResetPasswordInputsContainer>
-      <If condition={!resetPasswordFormSent}>
-        <Button
-          loading={loading}
-          text={"Send Reset Link"}
-          onClick={() => resetPassword()}
-        />
-      </If>
-    </ResetPasswordContainer>
+      </ResetPasswordContainer>
+    </Page>
   );
 };
 

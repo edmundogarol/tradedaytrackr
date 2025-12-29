@@ -8,6 +8,7 @@ const useCheckSignUpFormErrors = (): void => {
   const { updateSignUpFormErrors } = useLoginDispatch();
 
   useEffect(() => {
+    console.log({ signUpFormErrors });
     if (
       isNotEmptyString(signUpForm.first_name) &&
       signUpFormErrors.first_name
@@ -40,7 +41,7 @@ const useCheckSignUpFormErrors = (): void => {
       const { confirm_password, ...errors } = signUpFormErrors;
       updateSignUpFormErrors(errors);
     }
-  }, [signUpForm, signUpFormErrors, updateSignUpFormErrors]);
+  }, [signUpForm]);
 };
 
 export default useCheckSignUpFormErrors;

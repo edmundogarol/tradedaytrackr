@@ -48,13 +48,8 @@ const useResetPasswordHandler = (): ResetPasswordHandler => {
           updateResetPasswordFormSent(false);
         }
       }
-    }, [
-      fetch,
-      resetPasswordForm.email,
-      updateResetPasswordErrors,
-      updateResetPasswordForm,
-      updateResetPasswordFormSent,
-    ]),
+    }, [loading, resetPasswordForm]),
+
     loading,
   };
 };

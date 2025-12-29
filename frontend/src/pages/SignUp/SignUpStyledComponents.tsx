@@ -4,8 +4,12 @@ import {
   CONTAINER_PADDING_LARGE,
 } from "@styles/constants";
 import Button from "@components/Button/Button";
+import { color } from "@styles/colors";
 
 export const SignUpContainer = styled.div`
+  width: 100%;
+  max-width: 400px;
+  min-width: 300px;
   align-items: center;
   justify-content: center;
   height: 100%;
@@ -14,7 +18,6 @@ export const SignUpContainer = styled.div`
 export const SignUpScrollView = styled.div`
   padding-left: ${CONTAINER_PADDING_LARGE}px;
   padding-right: ${CONTAINER_PADDING_LARGE}px;
-  width: 100%;
 `;
 
 export const SignUpInputsContainer = styled.div`
@@ -28,6 +31,7 @@ export const SignUpHeaderContainer = styled.div`
 `;
 
 export const SignUpHeader = styled.h1`
+  color: ${color("SystemLabel1")};
   font-size: 30px;
   font-weight: 100;
 `;

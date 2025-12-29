@@ -3,6 +3,7 @@ import {
   CONTAINER_PADDING_DEFAULT,
   CONTAINER_PADDING_LARGE,
 } from "@styles/constants";
+import { color } from "@styles/colors";
 
 export const ResetPasswordContainer = styled.div`
   align-items: center;
@@ -19,6 +20,7 @@ export const ResetPasswordInputsContainer = styled.div`
 `;
 
 export const ResetPasswordHeader = styled.div`
-  font-size: 30px;
+  color: ${color("SystemLabel1")};
+  font-size: 20px;
   font-weight: 100;
 `;

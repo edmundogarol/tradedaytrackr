@@ -18,7 +18,7 @@ const useCheckLoginFormErrors = (): void => {
       const { password, ...errors } = loginFormErrors;
       updateLoginFormErrors(errors);
     }
-  }, [loginForm, loginFormErrors, updateLoginFormErrors]);
+  }, [loginForm]);
 };
 
 export default useCheckLoginFormErrors;
