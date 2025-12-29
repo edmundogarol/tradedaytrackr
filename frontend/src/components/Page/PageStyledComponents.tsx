@@ -1,3 +1,4 @@
+import { color } from "@styles/colors";
 import styled from "styled-components";
 
 export const Page = styled.div`
@@ -8,6 +9,9 @@ export const Page = styled.div`
   justify-content: center;
   background-color: red;
   overflow: hidden;
-  background: #2c2a69;
-  background: linear-gradient(0deg, #242347 1%, #404375 35%, #9c8ac7 100%);
+  background: linear-gradient(
+    0deg,
+    ${color("SystemBackground")} 35%,
+    rgba(48, 66, 97, 1) 100%
+  );
 `;

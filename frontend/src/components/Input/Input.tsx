@@ -4,13 +4,14 @@ import { color } from "@styles/colors";
 import Icon from "@components/Icon/Icon";
 import { IconTypeEnum } from "@components/Icon/IconInterfaces";
 import {
-  Label,
+  InputLabel,
   InputContainer,
   InputStyled,
   InputError,
   ErrorContainer,
   InputWrapper,
   Subtext,
+  InputIconContainer,
 } from "./InputStyledComponents";
 
 export interface InputWrapperProps
@@ -45,12 +46,14 @@ const Input: React.FunctionComponent<InputWrapperProps> = ({
   return (
     <InputWrapper>
       <If condition={!!label}>
-        <Label $disabled={disabled} $error={!!error}>
+        <InputLabel $disabled={disabled} $error={!!error}>
           {label}
-        </Label>
+        </InputLabel>
       </If>
       <InputContainer $error={!!error}>
-        <If condition={!!icon}>{icon}</If>
+        <InputIconContainer>
+          <If condition={!!icon}>{icon}</If>
+        </InputIconContainer>
         <InputStyled
           {...props}
           disabled={disabled}

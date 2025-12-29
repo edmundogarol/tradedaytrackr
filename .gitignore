@@ -166,7 +166,7 @@ yarn-error.log*
 
 # Build static files
 backend/public
-backend/static
+backend/static/frontend
 backend/static/*.worker.js
 backend/static/vendors~pdfjsWorker.main.js
 backend/static/main.js

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Input from "@components/Input/Input";
 import Gap from "@components/Gap/Gap";
 import { PageEnum } from "@interfaces/NavigationTypes";
@@ -14,7 +14,9 @@ import {
   LoginButton,
   LoginContainer,
   LoginHeader,
+  LoginImageContainer,
   LoginInputsContainer,
+  LoginMainImage,
   SignUpLink,
   SignUpText,
   SignUpTextContainer,
@@ -34,15 +36,24 @@ const Login: React.FunctionComponent = () => {
   } = useLoginDispatch();
   const renderInputIcon = useRenderInputIcon();
   const { login, loading } = useLoginSubmitHandler();
+  const [shineDone, setShineDone] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShineDone(true), 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   useCheckLoginFormErrors();
 
   return (
     <Page>
       <LoginContainer>
+        <LoginImageContainer>
+          <LoginMainImage $shineDone={shineDone} />
+        </LoginImageContainer>
         <LoginHeader>
           {!user?.logged_in
-            ? "Login"
+            ? ""
             : `Welcome ${
                 user.first_name || user.last_name || user.username || user.email
               }!`}
@@ -53,7 +64,6 @@ const Login: React.FunctionComponent = () => {
             <Input
               value={loginForm.email}
               error={loginFormErrors.email}
-              label="Email / Username"
               placeholder="Enter email or username"
               onChange={(e) => {
                 updateLoginForm({ email: e.currentTarget.value });
@@ -67,7 +77,6 @@ const Login: React.FunctionComponent = () => {
             <Input
               value={loginForm.password}
               error={loginFormErrors.password}
-              label="Password"
               placeholder="Enter password"
               onChange={(e) => {
                 updateLoginForm({
@@ -76,7 +85,7 @@ const Login: React.FunctionComponent = () => {
                 });
               }}
               icon={renderInputIcon(
-                "lock-outline",
+                "lock",
                 IconTypeEnum.MaterialIcons,
                 loginFormErrors.password
               )}
@@ -96,10 +105,10 @@ const Login: React.FunctionComponent = () => {
               {"Forgot Password?"}
             </ForgotPasswordLink>
             <Gap level={1} />
+            <LoginButton loading={loading} text={"Login"} onClick={login} />
           </LoginInputsContainer>
-          <LoginButton loading={loading} text={"Login"} onClick={login} />
           <SignUpTextContainer>
-            <SignUpText>{"Don't have an Account?"}</SignUpText>
+            <SignUpText>{"Don't have an account?"}</SignUpText>
             <SignUpLink to={linkToUrl(PageEnum.SignUp)}>{"Sign Up"}</SignUpLink>
           </SignUpTextContainer>
         </If>

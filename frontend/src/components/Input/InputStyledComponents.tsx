@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 import {
-  CONTAINER_BORDER_RADIUS,
+  CONTAINER_BORDER_RADIUS_SMALL,
   CONTAINER_MARGIN_DEFAULT,
   CONTAINER_MARGIN_SMALL,
   CONTAINER_PADDING_SMALL,
@@ -10,6 +10,7 @@ import {
   TEXT_SIZE,
 } from "@styles/constants";
 import { color } from "@styles/colors";
+import { Label } from "@styles/globalStyledComponents";
 
 export const InputWrapper = styled.div`
   width: 100%;
@@ -18,13 +19,14 @@ export const InputWrapper = styled.div`
 export const InputContainer = styled.div<{
   $error?: boolean;
 }>`
+  background-color: ${color("SystemBackground1")};
+  display: flex;
   align-items: center;
   height: ${INPUT_SIZE}px;
-  background-color: white;
   border-bottom-width: 0.5px;
   border-color: ${color("SystemBorder")};
   flex-direction: row;
-  border-radius: ${CONTAINER_BORDER_RADIUS}px;
+  border-radius: ${CONTAINER_BORDER_RADIUS_SMALL}px;
   margin-bottom: ${CONTAINER_MARGIN_DEFAULT}px;
   ${({ $error }): any => {
     if ($error) {
@@ -36,6 +38,14 @@ export const InputContainer = styled.div<{
   }}
 `;
 
+export const InputIconContainer = styled.div`
+  margin-left: ${CONTAINER_MARGIN_DEFAULT}px;
+  margin-right: ${CONTAINER_MARGIN_SMALL}px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 export const InputStyled = styled.input<{
   $disabled?: boolean;
   $placeholderTextColor?: string;
@@ -44,6 +54,8 @@ export const InputStyled = styled.input<{
   font-size: ${TEXT_SIZE}px;
   padding-left: ${CONTAINER_PADDING_SMALL}px;
   padding-right: ${CONTAINER_PADDING_SMALL}px;
+  border: none;
+  background-color: ${color("SystemBackground1")};
   ${({ $placeholderTextColor }): any => {
     if ($placeholderTextColor)
       return css`
@@ -60,13 +72,16 @@ export const InputStyled = styled.input<{
   }}
 `;
 
-export const Label = styled.label<{ $error?: boolean; $disabled?: boolean }>`
+export const InputLabel = styled(Label)<{
+  $error?: boolean;
+  $disabled?: boolean;
+}>`
   color: ${({ $error, $disabled }) =>
     $error
       ? color("SystemError2")
       : $disabled
-      ? color("SystemLabel1")
-      : color("SystemLabel2")};
+      ? color("SystemLabel3")
+      : color("SystemLabel1")};
   font-size: ${LABEL_SIZE_LARGE}px;
   margin-bottom: ${CONTAINER_MARGIN_DEFAULT}px;
 `;

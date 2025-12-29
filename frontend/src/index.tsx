@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import store from "@redux/store";
 import NavigationContainer from "@navigation/NavigationContainer";
 import reportWebVitals from "./reportWebVitals";
+import "./index.css";
 
 const container = document.getElementById("app");
 const root = ReactDOM.createRoot(container as HTMLElement);

@@ -28,6 +28,10 @@ const config: WebpackConfiguration & {
         issuer: /\.[jt]sx?$/,
         use: ["@svgr/webpack"],
       },
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
     ],
   },
   resolve: {

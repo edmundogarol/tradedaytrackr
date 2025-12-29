@@ -8,6 +8,7 @@ import ResetPassword from "@pages/ResetPassword/ResetPassword";
 const UnauthenticatedNavigator: React.FC = () => {
   return (
     <Routes>
+      <Route path="/root" element={<Navigate to={PageEnum.Login} replace />} />
       <Route path="/" element={<Navigate to={PageEnum.Login} replace />} />
       <Route path={PageEnum.Login} element={<Login />} />
       <Route path={PageEnum.SignUp} element={<SignUp />} />

@@ -28,8 +28,6 @@ build:
 
 env: dev build
 
-svenv: source venv/bin/activate
-
 migrate:
 	DEVENV=development python manage.py migrate
 

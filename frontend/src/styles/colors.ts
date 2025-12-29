@@ -6,6 +6,7 @@ export type ColorKey =
   | "SystemBorder"
   | "SystemLabel1"
   | "SystemLabel2"
+  | "SystemBackground"
   | "SystemBackground1"
   | "SystemGrey1"
   | "SystemError1"
@@ -26,6 +27,7 @@ const colorsMap = {
   SystemLabel1: "#adadad",
   SystemLabel2: "#323232",
   SystemLabel3: "#737373",
+  SystemBackground: "#121822",
   SystemBackground1: "#f2f2f2",
   SystemGrey1: "#cecece",
   SystemError1: "#ff3c3c",
