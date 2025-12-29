@@ -1,8 +1,6 @@
 import { useCallback, useState } from "react";
-import type { AxiosError } from "axios";
 import axios from "axios";
 import environmentConfig from "@utils/environmentConfig";
-import { isJson } from "@utils/utils";
 
 export const APPLICATION_JSON = "application/json";
 axios.defaults.withCredentials = true;
