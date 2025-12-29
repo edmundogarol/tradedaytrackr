@@ -51,6 +51,7 @@ export const InputStyled = styled.input<{
   $placeholderTextColor?: string;
 }>`
   flex: 1;
+  height: 90%;
   font-size: ${TEXT_SIZE}px;
   padding-left: ${CONTAINER_PADDING_SMALL}px;
   padding-right: ${CONTAINER_PADDING_SMALL}px;

@@ -65,6 +65,7 @@ const useAxiosFetch = <T>(
           Accept: APPLICATION_JSON,
           "X-CSRFToken": getCookie("csrftoken"),
         },
+        withCredentials: true,
         ...params,
       });
 
@@ -79,20 +80,13 @@ const useAxiosFetch = <T>(
         console.error("Bad request", response.status, url);
       }
       setData(fetchData);
-    } catch (responseError) {
-      const errors = responseError as Error | AxiosError;
-
-      if (axios.isAxiosError(errors)) {
-        if (isJson(errors.request?._response)) {
-          setError(JSON.parse(errors.request?._response));
-          fetchError = JSON.parse(errors.request?._response);
-        } else {
-          setError({ error: errors.request?._response });
-          fetchError = { error: errors.request?._response };
-        }
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data || { error: err.message });
+        fetchError = err.response?.data || { error: err.message };
       } else {
-        setError({ error: responseError as unknown as string });
-        fetchError = { error: responseError as unknown as string };
+        setError({ error: err as unknown as string });
+        fetchError = { error: err as unknown as string };
       }
       console.log("Fetch error: ", fetchError, url);
     } finally {
