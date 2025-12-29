@@ -9,6 +9,9 @@ prodgui:
 watchgui:
 	cd frontend && yarn && yarn run watchdev
 
+lint:
+	cd frontend && yarn && yarn run lint
+
 deletemigrations:
 	cd backend/djangoapi/migrations && find . ! -name __init__.py -maxdepth 1 -type f -delete
 
