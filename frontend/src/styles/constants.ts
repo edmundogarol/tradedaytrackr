@@ -14,6 +14,7 @@ export const INPUT_PADDING_W_ICON = 10;
 export const TEXT_SIZE = 16;
 export const LABEL_SIZE = 14;
 export const LABEL_SIZE_LARGE = 18;
+export const LABEL_SIZE_MEDIUM = 16;
 export const LABEL_SIZE_SMALL = 12;
 export const LINK_SIZE = 14;
 export const LINK_SIZE_SMALL = 12;

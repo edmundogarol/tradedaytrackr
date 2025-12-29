@@ -13,6 +13,7 @@ export const SignUpContainer = styled.div`
   align-items: center;
   justify-content: center;
   height: 100%;
+  margin-bottom: 20px;
 `;
 
 export const SignUpScrollView = styled.div`

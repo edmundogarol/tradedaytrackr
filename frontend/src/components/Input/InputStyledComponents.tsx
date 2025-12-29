@@ -2,11 +2,12 @@ import styled, { css } from "styled-components";
 import {
   CONTAINER_BORDER_RADIUS_SMALL,
   CONTAINER_MARGIN_DEFAULT,
+  CONTAINER_MARGIN_LARGE,
   CONTAINER_MARGIN_SMALL,
   CONTAINER_PADDING_SMALL,
   INPUT_SIZE,
   LABEL_SIZE,
-  LABEL_SIZE_LARGE,
+  LABEL_SIZE_MEDIUM,
   TEXT_SIZE,
 } from "@styles/constants";
 import { color } from "@styles/colors";
@@ -77,14 +78,15 @@ export const InputLabel = styled(Label)<{
   $error?: boolean;
   $disabled?: boolean;
 }>`
+  display: flex;
   color: ${({ $error, $disabled }) =>
     $error
       ? color("SystemError2")
       : $disabled
       ? color("SystemLabel3")
       : color("SystemLabel1")};
-  font-size: ${LABEL_SIZE_LARGE}px;
-  margin-bottom: ${CONTAINER_MARGIN_DEFAULT}px;
+  font-size: ${LABEL_SIZE_MEDIUM}px;
+  margin-bottom: ${6}px;
 `;
 
 export const Subtext = styled.span`
