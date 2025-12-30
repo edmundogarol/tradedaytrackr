@@ -32,6 +32,10 @@ export const PressableWrapper = styled.button<{
   height: ${BUTTON_SIZE}px;
   border-radius: 5px;
   align-items: center;
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 export const ButtonText = styled.span<{ $buttonType?: ButtonType }>`
