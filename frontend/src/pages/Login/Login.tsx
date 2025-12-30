@@ -6,7 +6,7 @@ import { linkToUrl } from "@navigation/hooks/link";
 import FormError from "@components/Error/FormError/FormError";
 import { If } from "@components/If/If";
 import { IconTypeEnum } from "@components/Icon/IconInterfaces";
-import { Page } from "@components/Page/PageStyledComponents";
+import Page from "@components/Page/Page";
 import useLoginDispatch from "./hooks/useLoginDispatch";
 import useLoginState from "./hooks/useLoginState";
 import {
@@ -46,7 +46,7 @@ const Login: React.FunctionComponent = () => {
   useCheckLoginFormErrors();
 
   return (
-    <Page>
+    <Page topBar={false}>
       <LoginContainer>
         <LoginImageContainer>
           <LoginMainImage $shineDone={shineDone} />

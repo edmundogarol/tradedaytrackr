@@ -11,6 +11,9 @@ export const ResetPasswordContainer = styled.div`
   height: 100%;
   padding-left: ${CONTAINER_PADDING_LARGE}px;
   padding-right: ${CONTAINER_PADDING_LARGE}px;
+  width: 100%;
+  max-width: 400px;
+  min-width: 300px;
 `;
 
 export const ResetPasswordInputsContainer = styled.div`

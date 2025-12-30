@@ -35,6 +35,7 @@ export const SignUpHeader = styled.h1`
   color: ${color("SystemLabel1")};
   font-size: 30px;
   font-weight: 100;
+  margin: 0;
 `;
 
 export const SignUpButton = styled(Button)``;

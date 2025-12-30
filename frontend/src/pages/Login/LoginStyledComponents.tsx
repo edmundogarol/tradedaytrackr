@@ -48,8 +48,9 @@ export const LoginContainer = styled.div`
   justify-content: center;
   padding-left: ${CONTAINER_PADDING_LARGE}px;
   padding-right: ${CONTAINER_PADDING_LARGE}px;
-  max-width: 420px;
+  max-width: 400px;
   width: 100%;
+  min-width: 300px;
 `;
 
 export const LoginInputsContainer = styled.div`

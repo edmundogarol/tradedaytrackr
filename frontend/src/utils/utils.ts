@@ -1,5 +1,9 @@
 import { css } from "styled-components";
 
+export const imageSrc = (imageName: string) => {
+  return `/images/${imageName}`;
+};
+
 export const isNotEmptyString = (value: string): boolean => {
   return typeof value === "string" && !!value && value !== "";
 };

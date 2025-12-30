@@ -8,7 +8,6 @@ const useCheckSignUpFormErrors = (): void => {
   const { updateSignUpFormErrors } = useLoginDispatch();
 
   useEffect(() => {
-    console.log({ signUpFormErrors });
     if (
       isNotEmptyString(signUpForm.first_name) &&
       signUpFormErrors.first_name

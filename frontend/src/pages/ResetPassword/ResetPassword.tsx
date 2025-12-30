@@ -9,7 +9,7 @@ import useRenderInputIcon from "@components/Input/hooks/useRenderInputIcon";
 import { If } from "@components/If/If";
 import FormSuccess from "@components/Error/FormSuccess/FormSuccess";
 import FormError from "@components/Error/FormError/FormError";
-import { Page } from "@components/Page/PageStyledComponents";
+import Page from "@components/Page/Page";
 import useResetPasswordHandler from "./hooks/useResetPasswordHandler";
 import useCheckResetPasswordFormErrors from "./hooks/useCheckResetPasswordFormErrors";
 import {

@@ -8,7 +8,7 @@ import useRenderInputIcon from "@components/Input/hooks/useRenderInputIcon";
 import useCheckSignUpFormErrors from "@pages/SignUp/hooks/useCheckSignUpFormErrors";
 import useSignUpHandler from "@pages/SignUp/hooks/useSignUpHandler";
 import FormError from "@components/Error/FormError/FormError";
-import { Page } from "@components/Page/PageStyledComponents";
+import Page from "@components/Page/Page";
 import {
   SignUpButton,
   SignUpContainer,
