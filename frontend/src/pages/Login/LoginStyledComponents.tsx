@@ -59,13 +59,6 @@ export const LoginInputsContainer = styled.div`
   justify-content: space-between;
 `;
 
-export const LoginHeader = styled.h1`
-  width: 250px;
-  font-size: 30px;
-  font-weight: 100;
-  text-align: center;
-`;
-
 export const SignUpTextContainer = styled.div`
   display: flex;
   flex-direction: row;

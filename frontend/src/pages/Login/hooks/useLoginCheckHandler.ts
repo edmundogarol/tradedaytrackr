@@ -12,6 +12,7 @@ const useLoginCheckHandler = ({
   const { updateUser } = useLoginDispatch();
 
   useEffect(() => {
+    console.log({ data });
     if (data) {
       if (data?.user) {
         updateUser({

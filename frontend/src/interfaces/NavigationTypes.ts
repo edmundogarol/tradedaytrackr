@@ -1,10 +1,10 @@
 export enum PageEnum {
-  RootNavigator = "root",
-  Login = "login",
-  SignUp = "signUp",
-  ResetPassword = "resetPassword",
-  Dashboard = "dashboard",
-  PageNotFound = "pageNotFound",
+  RootNavigator = "/root",
+  Login = "/login",
+  SignUp = "/signUp",
+  ResetPassword = "/resetPassword",
+  Dashboard = "/dashboard",
+  PageNotFound = "/pageNotFound",
 }
 
 export type AuthenticatedStackNavigatorParams = {

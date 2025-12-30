@@ -13,7 +13,6 @@ import {
   ForgotPasswordLink,
   LoginButton,
   LoginContainer,
-  LoginHeader,
   LoginImageContainer,
   LoginInputsContainer,
   LoginMainImage,
@@ -51,13 +50,6 @@ const Login: React.FunctionComponent = () => {
         <LoginImageContainer>
           <LoginMainImage $shineDone={shineDone} />
         </LoginImageContainer>
-        <LoginHeader>
-          {!user?.logged_in
-            ? ""
-            : `Welcome ${
-                user.first_name || user.last_name || user.username || user.email
-              }!`}
-        </LoginHeader>
         <Gap level={1} />
         <If condition={!user?.logged_in}>
           <LoginInputsContainer>
