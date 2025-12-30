@@ -166,3 +166,5 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     BASE_DIR / "backend" / "static",
 ]
+
+EMAIL_ASSETS_BASE_URL = "https://tradedaytrackr-extra-assets.s3.us-west-2.amazonaws.com"

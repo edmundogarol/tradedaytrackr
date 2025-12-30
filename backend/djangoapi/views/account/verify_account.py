@@ -2,6 +2,7 @@ from smtplib import SMTPAuthenticationError
 from secrets import token_urlsafe
 from threading import Thread
 
+from django.conf import settings
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 
@@ -23,6 +24,7 @@ def send_account_verification_email(user, token):
         "website": "https://tradedaytrackr.com",
         "user": user,
         "token": token,
+        "EMAIL_ASSETS_BASE_URL": settings.EMAIL_ASSETS_BASE_URL,
     }
 
     try:

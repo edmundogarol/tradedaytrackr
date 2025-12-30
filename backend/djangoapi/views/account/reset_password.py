@@ -4,6 +4,7 @@ from threading import Thread
 from secrets import token_urlsafe
 from smtplib import SMTPAuthenticationError
 
+from django.conf import settings
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import viewsets, exceptions
@@ -31,6 +32,7 @@ def send_password_reset_email(user, token):
         "website": "https://tradedaytrackr.com",
         "user": user,
         "token": token,
+        "EMAIL_ASSETS_BASE_URL": settings.EMAIL_ASSETS_BASE_URL,
     }
 
     try:

@@ -50,9 +50,10 @@
     >
       <table style="width: 100%; border-bottom: 1px solid #bfbfbf">
         <tr>
-          <!-- <td>
-          <img style="height: 4em;" src="https://gdaypunch-resources.s3.ap-southeast-2.amazonaws.com/gday.png">
-        </td> -->
+          <img
+            style="height: 4em"
+            src="{{ EMAIL_ASSETS_BASE_URL }}/logos/tradedaytrackr_icon.svg"
+          />
           <td style="text-align: end">
             <table style="width: 100%">
               <tr>
@@ -110,8 +111,8 @@
               Verify your account today to start tracking your trade days on
               TradeDayTrackR! To complete account registration verify your email
               address to keep your account secure and provide a way to recover
-              your password. {{ website }}/verify-account/{{ token }} If you did
-              not make this request, you can simply ignore this email.
+              your password. If you did not make this request, you can simply
+              ignore this email.
             </p>
             <p>Sincerely,</p>
             <p>TradeDayTrackR Team</p>
@@ -119,9 +120,12 @@
         </tr>
       </table>
       <table style="width: 100%; margin-top: 1em">
-        <tr>
+        <tr style="background: #e9e9e9">
           <td class="footer-img" style="float: right">
-            <!-- <img style="height: 4em;" src="https://gdaypunch-resources.s3.ap-southeast-2.amazonaws.com/gday_header.png"> -->
+            <img
+              style="height: 4em"
+              src="{{ EMAIL_ASSETS_BASE_URL }}/logos/tradedaytrackr_full_no_bg.svg"
+            />
           </td>
           <td style="font-family: sans-serif; font-size: 0.7em; color: dimgrey">
             <table>
@@ -130,20 +134,11 @@
                   TradeDayTrackR Website
                 </td>
               </tr>
-              {% comment %}
-              <tr>
-                <td>Melbourne, VIC 3000 Australia</td>
-              </tr>
-              {% endcomment %}
               <tr>
                 <td>
-                  <p
-                    style="margin: unset"
-                    class="link"
-                    onclick="window.open('{{ website }}', '_blank')"
-                  >
+                  <a href="{{ website }}" target="_blank" style="margin: unset">
                     www.tradedaytrackr.com
-                  </p>
+                  </a>
                 </td>
               </tr>
             </table>
