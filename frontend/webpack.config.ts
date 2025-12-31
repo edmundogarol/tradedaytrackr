@@ -15,8 +15,12 @@ const config: WebpackConfiguration & {
     rules: [
       {
         test: /\.(ts|js)x?$/,
-        use: "ts-loader",
         exclude: /node_modules/,
+        use: [
+          {
+            loader: "babel-loader",
+          },
+        ],
       },
       {
         enforce: "pre",

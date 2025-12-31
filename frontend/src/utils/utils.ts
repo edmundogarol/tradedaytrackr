@@ -4,6 +4,10 @@ export const imageSrc = (imageName: string): string => {
   return `/images/${imageName}`;
 };
 
+export const devSrc = (imageName: string): string => {
+  return `/dev/${imageName}`;
+};
+
 export const isNotEmptyString = (value: string): boolean => {
   return typeof value === "string" && !!value && value !== "";
 };

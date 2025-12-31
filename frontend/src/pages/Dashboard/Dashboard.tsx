@@ -1,13 +1,31 @@
 import React from "react";
 import Gap from "@components/Gap/Gap";
 import Page from "@components/Page/Page";
-import { DashboardContainer } from "./DashboardStyledComponents";
+import CalendarSummary, {
+  CalendarSummaryCount,
+} from "@components/Calendar/CalendarSummary/CalendarSummary";
+import {
+  DashboardContainer,
+  DashboardContentCalendarContainer,
+  DashboardContentHeader,
+  DashboardContentJournalEntryContainer,
+  DashboardContentOtherContainer,
+} from "./DashboardStyledComponents";
 
 const Dashboard: React.FunctionComponent = () => {
   return (
     <Page topBarShowMenu={true}>
       <DashboardContainer>
-        <Gap level={1} />
+        <DashboardContentCalendarContainer>
+          <DashboardContentHeader>Recent Activity</DashboardContentHeader>
+          <CalendarSummary count={CalendarSummaryCount.TEN_DAYS} />
+        </DashboardContentCalendarContainer>
+        <DashboardContentJournalEntryContainer>
+          {/* <CalendarSummary count={CalendarSummaryCount.FIVE_DAYS} /> */}
+        </DashboardContentJournalEntryContainer>
+        <DashboardContentOtherContainer>
+          {/* <CalendarSummary count={CalendarSummaryCount.FIVE_DAYS} /> */}
+        </DashboardContentOtherContainer>
       </DashboardContainer>
     </Page>
   );

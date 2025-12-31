@@ -4,7 +4,6 @@ import styled from "styled-components";
 
 export const PageContainer = styled.div<{ $withSideDrawer?: boolean }>`
   min-height: 100vh;
-  width: 100vw;
   display: flex;
   flex-direction: column;
 

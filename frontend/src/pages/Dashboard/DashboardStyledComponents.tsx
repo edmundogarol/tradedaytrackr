@@ -1,13 +1,27 @@
 import styled from "styled-components";
-import { CONTAINER_PADDING_LARGE } from "@styles/constants";
 
 export const DashboardContainer = styled.div`
   align-items: center;
   justify-content: center;
   height: 100%;
-  padding-left: ${CONTAINER_PADDING_LARGE}px;
-  padding-right: ${CONTAINER_PADDING_LARGE}px;
-  width: 100%;
-  max-width: 400px;
   min-width: 300px;
+  width: 100%;
 `;
+
+export const DashboardContentCalendarContainer = styled.div`
+  min-height: 200px;
+`;
+export const DashboardContentHeader = styled.h1`
+  padding-left: 10px;
+  font-size: 15px;
+  font-weight: 100;
+  margin: 0;
+  color: #a8a8a8;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 5px;
+`;
+
+export const DashboardContentJournalEntryContainer = styled.div``;
+
+export const DashboardContentOtherContainer = styled.div``;

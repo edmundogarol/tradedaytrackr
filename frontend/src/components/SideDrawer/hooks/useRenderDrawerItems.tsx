@@ -1,5 +1,3 @@
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import {
   List,
   ListItem,
@@ -16,18 +14,29 @@ interface UseRenderDrawerItemsProps {
     icon: React.ReactNode;
     onClick: () => void;
   }[];
+  openDrawer: () => void;
+  closeDrawer: () => void;
 }
 
 const useRenderDrawerItems = ({
   open,
   drawerItems,
+  openDrawer,
+  closeDrawer,
 }: UseRenderDrawerItemsProps) => {
   return (): React.ReactElement => (
     <List>
       {drawerItems.map(({ text, icon, onClick }, index) => (
         <ListItem key={index} disablePadding sx={{ display: "block" }}>
           <ListItemButton
-            onClick={() => console.log({ onClick })}
+            onClick={() => {
+              if (!open) {
+                openDrawer();
+              } else {
+                onClick();
+                closeDrawer();
+              }
+            }}
             sx={[
               {
                 minHeight: 48,

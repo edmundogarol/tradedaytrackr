@@ -1,3 +1,4 @@
+import React from "react";
 import { color } from "@styles/colors";
 import { ClipLoader } from "react-spinners";
 

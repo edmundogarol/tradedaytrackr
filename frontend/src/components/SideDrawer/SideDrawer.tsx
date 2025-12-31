@@ -14,10 +14,6 @@ import { useGetDrawerItems } from "./hooks/useGetDrawerItems";
 const SideDrawer: React.FunctionComponent = () => {
   const [open, setOpen] = React.useState(false);
   const drawerItems = useGetDrawerItems();
-  const renderDrawerItems = useRenderDrawerItems({
-    open,
-    drawerItems,
-  });
 
   const handleDrawerOpen = (): void => {
     setOpen(true);
@@ -25,6 +21,13 @@ const SideDrawer: React.FunctionComponent = () => {
   const handleDrawerClose = (): void => {
     setOpen(false);
   };
+
+  const renderDrawerItems = useRenderDrawerItems({
+    open,
+    drawerItems,
+    openDrawer: handleDrawerOpen,
+    closeDrawer: handleDrawerClose,
+  });
 
   return (
     <Box sx={{ display: "flex" }}>
