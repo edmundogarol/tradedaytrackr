@@ -4,6 +4,7 @@ import Page from "@components/Page/Page";
 import CalendarSummary, {
   CalendarSummaryCount,
 } from "@components/Calendar/CalendarSummary/CalendarSummary";
+import StatsSummary from "@components/Stats/StatsSummay/StatsSummary";
 import {
   DashboardContainer,
   DashboardContentCalendarContainer,
@@ -19,6 +20,7 @@ const Dashboard: React.FunctionComponent = () => {
         <Gap level={4} />
         <DashboardContentJournalEntryContainer>
           <DashboardContentHeader>Current Stats</DashboardContentHeader>
+          <StatsSummary />
         </DashboardContentJournalEntryContainer>
         <Gap level={2} />
         <DashboardContentCalendarContainer>

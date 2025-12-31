@@ -1,5 +1,4 @@
 import React from "react";
-import Gap from "@components/Gap/Gap";
 import {
   CalendarSummaryContainer,
   CalendarSummaryTile,
