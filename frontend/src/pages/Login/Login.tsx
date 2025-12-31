@@ -45,7 +45,7 @@ const Login: React.FunctionComponent = () => {
   useCheckLoginFormErrors();
 
   return (
-    <Page topBar={false}>
+    <Page topBar={false} sideDrawer={false}>
       <LoginContainer>
         <LoginImageContainer>
           <LoginMainImage $shineDone={shineDone} />

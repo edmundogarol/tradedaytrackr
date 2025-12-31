@@ -2,7 +2,9 @@ import React from "react";
 import { If } from "@components/If/If";
 import { imageSrc } from "@utils/utils";
 import { Link } from "react-router";
+import useLoginState from "@pages/Login/hooks/useLoginState";
 import { TopBarContainer, TopBarHomeLogo } from "./TopBarStyledComponents";
+import TopBarMenu from "./TopBarMenu/TopBarMenu";
 
 export interface TopBarProps {
   transparent?: boolean;
@@ -15,6 +17,8 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
   homeLogo,
   topBarShowMenu,
 }) => {
+  const { user } = useLoginState();
+
   return (
     <TopBarContainer $transparent={transparent}>
       <If condition={homeLogo}>
@@ -25,7 +29,9 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
           />
         </Link>
       </If>
-      <If condition={topBarShowMenu}>{/* Menu component can go here */}</If>
+      <If condition={topBarShowMenu}>
+        <TopBarMenu user={user} />
+      </If>
     </TopBarContainer>
   );
 };

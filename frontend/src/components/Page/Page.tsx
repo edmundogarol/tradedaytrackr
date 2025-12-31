@@ -2,6 +2,7 @@ import React from "react";
 import { If } from "@components/If/If";
 import TopBar from "@components/TopBar/TopBar";
 import BottomBar from "@components/BottomBar/BottomBar";
+import SideDrawer from "@components/SideDrawer/SideDrawer";
 import { ChildrenContainer, PageContainer } from "./PageStyledComponents";
 
 export interface PageProps {
@@ -9,6 +10,7 @@ export interface PageProps {
   topBar?: boolean;
   topBarShowMenu?: boolean;
   bottomBar?: boolean;
+  sideDrawer?: boolean;
 }
 
 const Page: React.FunctionComponent<PageProps> = ({
@@ -16,9 +18,13 @@ const Page: React.FunctionComponent<PageProps> = ({
   topBar = true,
   topBarShowMenu = false,
   bottomBar = true,
+  sideDrawer = true,
 }) => {
   return (
-    <PageContainer>
+    <PageContainer $withSideDrawer={sideDrawer}>
+      <If condition={sideDrawer}>
+        <SideDrawer />
+      </If>
       <If condition={topBar}>
         <TopBar transparent homeLogo topBarShowMenu={topBarShowMenu} />
       </If>

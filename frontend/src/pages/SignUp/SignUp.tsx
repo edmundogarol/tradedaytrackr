@@ -27,7 +27,7 @@ const SignUp: React.FunctionComponent = () => {
   useCheckSignUpFormErrors();
 
   return (
-    <Page>
+    <Page sideDrawer={false}>
       <SignUpContainer>
         <SignUpScrollView>
           <Gap level={3} />

@@ -11,7 +11,7 @@ import {
 
 const PageNotFound: React.FunctionComponent = () => {
   return (
-    <Page bottomBar={false}>
+    <Page sideDrawer={false}>
       <PageNotFoundContainer>
         <Link to="/">
           <PageNotFoundLogo

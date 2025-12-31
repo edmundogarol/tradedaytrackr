@@ -30,7 +30,7 @@ export default [
         "warn",
         { argsIgnorePattern: "^_" },
       ],
-      "@typescript-eslint/explicit-function-return-type": "off",
+      "@typescript-eslint/explicit-function-return-type": "error",
       "@typescript-eslint/consistent-type-imports": [
         "error",
         { prefer: "type-imports" },

@@ -2,7 +2,7 @@ import { color } from "@styles/colors";
 import { CONTAINER_PADDING_LARGE } from "@styles/constants";
 import styled from "styled-components";
 
-export const PageContainer = styled.div`
+export const PageContainer = styled.div<{ $withSideDrawer?: boolean }>`
   min-height: 100vh;
   width: 100vw;
   display: flex;
@@ -15,6 +15,11 @@ export const PageContainer = styled.div`
     ${color("SystemBackground")} 35%,
     rgba(48, 66, 97, 1) 100%
   );
+
+  ${({ $withSideDrawer }) =>
+    $withSideDrawer &&
+    ` padding-left: calc(64px + 1px);
+    `}
 `;
 
 export const ChildrenContainer = styled.div`

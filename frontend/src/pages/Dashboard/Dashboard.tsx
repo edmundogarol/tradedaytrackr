@@ -5,7 +5,7 @@ import { DashboardContainer } from "./DashboardStyledComponents";
 
 const Dashboard: React.FunctionComponent = () => {
   return (
-    <Page>
+    <Page topBarShowMenu={true}>
       <DashboardContainer>
         <Gap level={1} />
       </DashboardContainer>

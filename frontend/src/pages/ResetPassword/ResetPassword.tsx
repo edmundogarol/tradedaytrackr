@@ -28,7 +28,7 @@ const ResetPassword: React.FunctionComponent = () => {
   useCheckResetPasswordFormErrors();
 
   return (
-    <Page>
+    <Page sideDrawer={false}>
       <ResetPasswordContainer>
         <Gap level={1} />
         <ResetPasswordHeader>{"Reset Password"}</ResetPasswordHeader>
