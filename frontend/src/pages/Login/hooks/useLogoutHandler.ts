@@ -6,7 +6,7 @@ const useLogoutHandler = () => {
   const { updateUser, updateLoginForm } = useLoginDispatch();
   const logout = useLogoutApiCall();
 
-  return async () => {
+  return async (): Promise<void> => {
     const { fetch } = logout();
     const { data, error } = await fetch();
 

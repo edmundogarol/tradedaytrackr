@@ -2,7 +2,6 @@ import styled, { css } from "styled-components";
 import {
   CONTAINER_BORDER_RADIUS_SMALL,
   CONTAINER_MARGIN_DEFAULT,
-  CONTAINER_MARGIN_LARGE,
   CONTAINER_MARGIN_SMALL,
   CONTAINER_PADDING_SMALL,
   INPUT_SIZE,
@@ -79,7 +78,7 @@ export const InputLabel = styled(Label)<{
   $disabled?: boolean;
 }>`
   display: flex;
-  color: ${({ $error, $disabled }) =>
+  color: ${({ $error, $disabled }): string =>
     $error
       ? color("SystemError2")
       : $disabled

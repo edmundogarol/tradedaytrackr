@@ -23,10 +23,10 @@ const TopBarMenu: React.FunctionComponent<TopBarMenuProps> = ({ user }) => {
   const open = Boolean(anchorEl);
   const { openDialog, dialogProps } = useConfirmLogout();
 
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+  const handleClick = (event: React.MouseEvent<HTMLElement>): void => {
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = () => {
+  const handleClose = (): void => {
     setAnchorEl(null);
   };
 

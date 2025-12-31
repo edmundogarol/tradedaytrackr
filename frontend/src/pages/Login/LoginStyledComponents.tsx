@@ -1,3 +1,4 @@
+import type { RuleSet } from "styled-components";
 import styled, { css, keyframes } from "styled-components";
 import {
   CONTAINER_MARGIN_DEFAULT,
@@ -98,7 +99,7 @@ export const LoginImageContainer = styled.div`
 
 export const LoginMainImage = styled.div<{ $shineDone?: boolean }>`
   width: 100%;
-  ${(props) =>
+  ${(props): RuleSet<object> =>
     props.$shineDone
       ? css`
           height: 100px;

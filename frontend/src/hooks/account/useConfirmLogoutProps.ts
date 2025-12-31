@@ -1,7 +1,18 @@
 import { useState } from "react";
 import useLogoutHandler from "@pages/Login/hooks/useLogoutHandler";
 
-export const useConfirmLogout = () => {
+export const useConfirmLogout = (): {
+  openDialog: () => void;
+  dialogProps: {
+    title: string;
+    description: string;
+    open: boolean;
+    buttons: {
+      label: string;
+      onClick: () => void;
+    }[];
+  };
+} => {
   const logout = useLogoutHandler();
   const [open, setOpen] = useState(false);
 
@@ -12,11 +23,11 @@ export const useConfirmLogout = () => {
     buttons: [
       {
         label: "Cancel",
-        onClick: () => setOpen(false),
+        onClick: (): void => setOpen(false),
       },
       {
         label: "Logout",
-        onClick: () => {
+        onClick: (): void => {
           setOpen(false);
           logout();
         },
@@ -25,7 +36,7 @@ export const useConfirmLogout = () => {
   };
 
   return {
-    openDialog: () => setOpen(true),
+    openDialog: (): void => setOpen(true),
     dialogProps,
   };
 };

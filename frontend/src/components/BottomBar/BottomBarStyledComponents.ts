@@ -6,7 +6,7 @@ import styled from "styled-components";
 export const BottomBarContainer = styled.div<{ $transparent?: boolean }>`
   padding: ${CONTAINER_PADDING_LARGE}px;
   text-align: end;
-  ${({ $transparent }) =>
+  ${({ $transparent }): string =>
     $transparent
       ? `background-color: transparent;`
       : `background-color: ${color("SystemBackground1")};`}

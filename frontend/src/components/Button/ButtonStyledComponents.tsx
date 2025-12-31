@@ -15,7 +15,7 @@ export const PressableWrapper = styled.button<{
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  background-color: ${({ $loading, $transparent, $disabledBlock }) => {
+  background-color: ${({ $loading, $transparent, $disabledBlock }): string => {
     if ($loading) {
       return "#c1d5e7";
     }
@@ -40,13 +40,15 @@ export const PressableWrapper = styled.button<{
 
 export const ButtonText = styled.span<{ $buttonType?: ButtonType }>`
   font-size: 17px;
-  color: ${({ $buttonType }) => {
+  color: ${({ $buttonType }): string => {
     switch ($buttonType) {
       case ButtonType.Block:
         return "white";
       case ButtonType.Outline:
       case ButtonType.HuggingOutline:
         return color("SystemBlue3");
+      default:
+        return "white";
     }
   }};
 `;
@@ -59,7 +61,7 @@ export const OutlinedPressableWrapper = styled.button<{
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  background-color: ${({ $loading, $disabledBlock }) => {
+  background-color: ${({ $loading, $disabledBlock }): string => {
     if ($loading) {
       return "#c1d5e7";
     }
@@ -85,7 +87,7 @@ export const HuggingOutlinedPressableWrapper = styled.button<{
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  background-color: ${({ $loading, $disabledBlock }) => {
+  background-color: ${({ $loading, $disabledBlock }): string => {
     if ($loading) {
       return "#c1d5e7";
     }

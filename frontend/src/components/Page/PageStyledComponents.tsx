@@ -16,10 +16,11 @@ export const PageContainer = styled.div<{ $withSideDrawer?: boolean }>`
     rgba(48, 66, 97, 1) 100%
   );
 
-  ${({ $withSideDrawer }) =>
-    $withSideDrawer &&
-    ` padding-left: calc(64px + 1px);
-    `}
+  ${({ $withSideDrawer }): string =>
+    $withSideDrawer
+      ? ` padding-left: calc(64px + 1px);
+    `
+      : ""}
 `;
 
 export const ChildrenContainer = styled.div`

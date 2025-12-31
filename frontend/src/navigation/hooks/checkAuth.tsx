@@ -4,7 +4,7 @@ import { Navigate } from "react-router";
 import { PageEnum } from "@interfaces/NavigationTypes";
 import Login from "@pages/Login/Login";
 
-const checkAuth = ({ user }: { user: User }) => {
+const checkAuth = ({ user }: { user: User }): React.ReactElement => {
   if (user?.logged_in) {
     return <Navigate to={PageEnum.Dashboard} replace />;
   }

@@ -39,7 +39,7 @@ const Login: React.FunctionComponent = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => setShineDone(true), 1500);
-    return () => clearTimeout(timer);
+    return (): void => clearTimeout(timer);
   }, []);
 
   useCheckLoginFormErrors();

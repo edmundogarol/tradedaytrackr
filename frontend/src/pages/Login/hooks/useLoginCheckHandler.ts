@@ -8,7 +8,7 @@ const useLoginCheckHandler = ({
   data,
   loading,
   error,
-}: AxiosFetchWrapperResponse<LoginCheckApiCallData>) => {
+}: AxiosFetchWrapperResponse<LoginCheckApiCallData>): void => {
   const { updateUser } = useLoginDispatch();
 
   useEffect(() => {

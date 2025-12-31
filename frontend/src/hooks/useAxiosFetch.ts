@@ -14,7 +14,7 @@ export interface AxiosFetchWrapperResponse<T> {
   error: object | undefined;
 }
 
-function getCookie(name: string) {
+function getCookie(name: string): string | null {
   let cookieValue = null;
   if (document.cookie && document.cookie !== "") {
     const cookies = document.cookie.split(";");
@@ -44,7 +44,8 @@ const useAxiosFetch = <T>(
   const [data, setData] = useState<T | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<object | undefined>(undefined);
-  const baseUrl = (url: string) => `${environmentConfig.HOST}/api/${url}`;
+  const baseUrl = (url: string): string =>
+    `${environmentConfig.HOST}/api/${url}`;
 
   const fetch = useCallback(async () => {
     let fetchData;
