@@ -25,7 +25,7 @@ const useRenderDrawerItems = ({
   return (): React.ReactElement => (
     <List>
       {drawerItems.map(({ text, icon, onClick }, index) => (
-        <ListItem key={text} disablePadding sx={{ display: "block" }}>
+        <ListItem key={index} disablePadding sx={{ display: "block" }}>
           <ListItemButton
             onClick={() => console.log({ onClick })}
             sx={[
@@ -57,7 +57,7 @@ const useRenderDrawerItems = ({
                     },
               ]}
             >
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+              {icon}
             </ListItemIcon>
             <ListItemText
               primary={text}

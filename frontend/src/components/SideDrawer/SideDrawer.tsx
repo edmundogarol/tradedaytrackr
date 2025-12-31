@@ -44,7 +44,6 @@ const SideDrawer: React.FunctionComponent = () => {
         <Divider />
         <List>{renderDrawerItems()}</List>
         <Divider />
-        <List>{renderDrawerItems()}</List>
       </SideDrawerWrapper>
     </Box>
   );

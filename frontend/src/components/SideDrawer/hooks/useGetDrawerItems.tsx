@@ -1,6 +1,8 @@
 import React from "react";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
+import HomeIcon from "@mui/icons-material/Home";
+import MenuBook from "@mui/icons-material/MenuBook";
+import Speed from "@mui/icons-material/Speed";
+import AccountBalanceWallet from "@mui/icons-material/AccountBalanceWallet";
 
 export const useGetDrawerItems = (): Array<{
   text: string;
@@ -10,24 +12,24 @@ export const useGetDrawerItems = (): Array<{
   const drawerItems = React.useMemo(
     () => [
       {
-        text: "Inbox",
-        icon: <InboxIcon />,
-        onClick: (): void => console.log("Inbox"),
+        text: "Dashboard",
+        icon: <HomeIcon />,
+        onClick: (): void => console.log("Dashboard"),
       },
       {
-        text: "Starred",
-        icon: <MailIcon />,
-        onClick: (): void => console.log("Starred"),
+        text: "Journal",
+        icon: <MenuBook />,
+        onClick: (): void => console.log("Journal"),
       },
       {
-        text: "Send email",
-        icon: <InboxIcon />,
-        onClick: (): void => console.log("Send"),
+        text: "Stats",
+        icon: <Speed />,
+        onClick: (): void => console.log("Stats"),
       },
       {
-        text: "Drafts",
-        icon: <MailIcon />,
-        onClick: (): void => console.log("Drafts"),
+        text: "Expense Tracking",
+        icon: <AccountBalanceWallet />,
+        onClick: (): void => console.log("Expense Tracking"),
       },
     ],
     []
