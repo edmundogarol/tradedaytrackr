@@ -16,13 +16,15 @@ const Dashboard: React.FunctionComponent = () => {
   return (
     <Page topBarShowMenu={true}>
       <DashboardContainer>
+        <Gap level={4} />
+        <DashboardContentJournalEntryContainer>
+          <DashboardContentHeader>Current Stats</DashboardContentHeader>
+        </DashboardContentJournalEntryContainer>
+        <Gap level={2} />
         <DashboardContentCalendarContainer>
           <DashboardContentHeader>Recent Activity</DashboardContentHeader>
           <CalendarSummary count={CalendarSummaryCount.TEN_DAYS} />
         </DashboardContentCalendarContainer>
-        <DashboardContentJournalEntryContainer>
-          {/* <CalendarSummary count={CalendarSummaryCount.FIVE_DAYS} /> */}
-        </DashboardContentJournalEntryContainer>
         <DashboardContentOtherContainer>
           {/* <CalendarSummary count={CalendarSummaryCount.FIVE_DAYS} /> */}
         </DashboardContentOtherContainer>
