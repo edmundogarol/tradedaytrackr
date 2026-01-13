@@ -28,6 +28,9 @@ export const CalendarSummaryContainer = styled.div`
   }
 `;
 
+export const CalendarSummaryTile = styled.div`
+  margin: 10px;
+`;
 export const CalendarSummaryTradePreview = styled.div<{ $idx: number }>`
   background-image: ${(props): string =>
     `url('${devSrc(`trade${props.$idx + 1}.png`)}')`};

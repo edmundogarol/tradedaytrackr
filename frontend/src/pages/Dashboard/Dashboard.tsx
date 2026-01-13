@@ -5,12 +5,22 @@ import CalendarSummary, {
   CalendarSummaryCount,
 } from "@components/Calendar/CalendarSummary/CalendarSummary";
 import StatsSummary from "@components/Stats/StatsSummary/StatsSummary";
+import GlassTile from "@components/GlassTile/GlassTile";
+import LocalAtmIcon from "@mui/icons-material/LocalAtm";
+import { GlowingIconWrapper } from "@components/GlassTile/GlassTileStyledComponents";
 import {
   DashboardContainer,
   DashboardContentCalendarContainer,
   DashboardContentHeader,
   DashboardContentJournalEntryContainer,
   DashboardContentOtherContainer,
+  UpcomingPayoutDetailsContainer,
+  UpcomingPayoutDetailsFeature,
+  UpcomingPayoutDetailsFeatureContentContainer,
+  UpcomingPayoutDetailsFeatureContentSubtext,
+  UpcomingPayoutDetailsFeatureContentSubtitle,
+  UpcomingPayoutDetailsFeatureContentValue,
+  UpcomingPayoutDetailsFeatureTitle,
 } from "./DashboardStyledComponents";
 
 const Dashboard: React.FunctionComponent = () => {
@@ -18,6 +28,34 @@ const Dashboard: React.FunctionComponent = () => {
     <Page topBarShowMenu={true}>
       <DashboardContainer>
         <Gap level={4} />
+        <DashboardContentJournalEntryContainer>
+          <UpcomingPayoutDetailsContainer>
+            <UpcomingPayoutDetailsFeature>
+              <UpcomingPayoutDetailsFeatureTitle>
+                <GlowingIconWrapper $positive $size={42}>
+                  <LocalAtmIcon />
+                </GlowingIconWrapper>
+                Upcoming Payout Details
+              </UpcomingPayoutDetailsFeatureTitle>
+              <GlassTile positive featureTile>
+                <UpcomingPayoutDetailsFeatureContentContainer>
+                  <div>
+                    <UpcomingPayoutDetailsFeatureContentValue>
+                      $1,250.00
+                      <UpcomingPayoutDetailsFeatureContentSubtext>
+                        Expected
+                      </UpcomingPayoutDetailsFeatureContentSubtext>
+                    </UpcomingPayoutDetailsFeatureContentValue>
+                    <UpcomingPayoutDetailsFeatureContentSubtitle>
+                      Payout Date: Dec 7
+                    </UpcomingPayoutDetailsFeatureContentSubtitle>
+                  </div>
+                </UpcomingPayoutDetailsFeatureContentContainer>
+              </GlassTile>
+            </UpcomingPayoutDetailsFeature>
+          </UpcomingPayoutDetailsContainer>
+        </DashboardContentJournalEntryContainer>
+        <Gap level={2} />
         <DashboardContentJournalEntryContainer>
           <DashboardContentHeader>Current Stats</DashboardContentHeader>
           <StatsSummary />

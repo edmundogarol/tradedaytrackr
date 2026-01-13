@@ -17,6 +17,7 @@ export const StatsSummaryTile = styled.div`
   align-items: center;
   justify-content: center;
   min-height: 150px;
+  margin: 10px;
 `;
 
 export const StatsSummaryTileTitle = styled.h3`

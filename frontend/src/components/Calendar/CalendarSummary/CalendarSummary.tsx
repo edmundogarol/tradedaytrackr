@@ -2,6 +2,7 @@ import React from "react";
 import GlassTile from "@components/GlassTile/GlassTile";
 import {
   CalendarSummaryContainer,
+  CalendarSummaryTile,
   CalendarSummaryTileDate,
   CalendarSummaryTileDateText,
   CalendarSummaryTileInfo,
@@ -31,31 +32,33 @@ const CalendarSummary: React.FunctionComponent<CalendarSummaryProps> = ({
         const randomTradeCount = Math.floor(Math.random() * 1) + 1;
         const positivePnL = parseFloat(randomPnL) >= 0;
         return (
-          <GlassTile
-            key={index}
-            positive={positivePnL}
-            overlay={
-              <CalendarSummaryTileDate>
-                <CalendarSummaryTileDateText>
-                  Dec {index + 1}
-                </CalendarSummaryTileDateText>
-                <CalendarSummaryTileInfo>
-                  <CalendarSummaryTilePnL $positive={positivePnL}>
-                    ${randomPnL}
-                  </CalendarSummaryTilePnL>
-                  <CalendarSummaryTileTradeCount className="trade-count">
-                    {`${randomTradeCount} trade${
-                      randomTradeCount !== 1 ? "s" : ""
-                    }`}
-                  </CalendarSummaryTileTradeCount>
-                </CalendarSummaryTileInfo>
-              </CalendarSummaryTileDate>
-            }
-          >
-            <CalendarSummaryTradePreviewOverlay>
-              <CalendarSummaryTradePreview $idx={index} />
-            </CalendarSummaryTradePreviewOverlay>
-          </GlassTile>
+          <CalendarSummaryTile>
+            <GlassTile
+              key={index}
+              positive={positivePnL}
+              overlay={
+                <CalendarSummaryTileDate>
+                  <CalendarSummaryTileDateText>
+                    Dec {index + 1}
+                  </CalendarSummaryTileDateText>
+                  <CalendarSummaryTileInfo>
+                    <CalendarSummaryTilePnL $positive={positivePnL}>
+                      ${randomPnL}
+                    </CalendarSummaryTilePnL>
+                    <CalendarSummaryTileTradeCount className="trade-count">
+                      {`${randomTradeCount} trade${
+                        randomTradeCount !== 1 ? "s" : ""
+                      }`}
+                    </CalendarSummaryTileTradeCount>
+                  </CalendarSummaryTileInfo>
+                </CalendarSummaryTileDate>
+              }
+            >
+              <CalendarSummaryTradePreviewOverlay>
+                <CalendarSummaryTradePreview $idx={index} />
+              </CalendarSummaryTradePreviewOverlay>
+            </GlassTile>
+          </CalendarSummaryTile>
         );
       })}
     </CalendarSummaryContainer>

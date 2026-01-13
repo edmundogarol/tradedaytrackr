@@ -6,7 +6,6 @@ export const GlassTileContainer = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  margin: 10px;
   min-width: 150px;
   position: relative;
   padding: 12px;
@@ -49,7 +48,10 @@ export const GlassTileContainer = styled.div`
   }
 `;
 
-export const GlassTileBoxGlow = styled.div<{ $positive?: boolean }>`
+export const GlassTileBoxGlow = styled.div<{
+  $positive?: boolean;
+  $featureTile?: boolean;
+}>`
   position: absolute;
   height: 100%;
   width: 100%;
@@ -97,10 +99,10 @@ export const GlassTileBoxGlow = styled.div<{ $positive?: boolean }>`
         `}
 
     background-repeat: no-repeat;
-    background-size: 100% 4%;
+    background-size: 100% ${(props): number => (props.$featureTile ? 9 : 4)}%;
     background-position: top center, bottom center;
 
-    filter: blur(0.5px);
+    filter: blur(${(props): number => (props.$featureTile ? 1.5 : 0.5)}px);
     opacity: 0.95;
 
     transform: translateX(-10px);
@@ -127,4 +129,60 @@ export const GlassTileEffect = styled.div`
   backdrop-filter: blur(2px);
   overflow: hidden;
   isolation: isolate;
+`;
+
+export const GlowingIconWrapper = styled.div<{
+  $positive?: boolean;
+  $size?: number;
+}>`
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: ${({ $size }): number => $size ?? 40}px;
+  height: ${({ $size }): number => $size ?? 40}px;
+
+  svg {
+    position: relative;
+    z-index: 1;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -40%;
+    border-radius: 50%;
+
+    background: ${({ $positive }): string =>
+      $positive
+        ? `
+          radial-gradient(
+            circle at center,
+            rgba(80, 255, 120, 0.8) 0%,
+            rgba(80, 255, 120, 0.35) 35%,
+            rgba(80, 255, 120, 0.15) 55%,
+            transparent 70%
+          )
+        `
+        : `
+          radial-gradient(
+            circle at center,
+            rgba(255, 100, 100, 0.8) 0%,
+            rgba(255, 100, 100, 0.35) 35%,
+            rgba(255, 100, 100, 0.15) 55%,
+            transparent 70%
+          )
+        `};
+
+    filter: blur(17px);
+    opacity: 0.8;
+    pointer-events: none;
+    transition: opacity 200ms ease;
+    transform: scale(0.4);
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
 `;
