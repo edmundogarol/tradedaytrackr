@@ -6,8 +6,6 @@ export const PageContainer = styled.div<{ $withSideDrawer?: boolean }>`
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-
-  background-color: red;
   overflow: hidden;
   background: linear-gradient(
     0deg,
@@ -23,11 +21,18 @@ export const PageContainer = styled.div<{ $withSideDrawer?: boolean }>`
 `;
 
 export const ChildrenContainer = styled.div`
-  flex-grow: 1;
+  flex: 1;
+  width: 100%;
+  max-width: 1300px;
+
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+
+  margin-left: auto;
+  margin-right: auto;
+
   padding-left: ${CONTAINER_PADDING_LARGE}px;
   padding-right: ${CONTAINER_PADDING_LARGE}px;
+
+  align-items: center;
 `;

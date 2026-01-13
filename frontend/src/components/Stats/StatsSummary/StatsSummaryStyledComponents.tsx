@@ -16,9 +16,7 @@ export const StatsSummaryTile = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 150px;
-  height: 100px;
-  margin: 10px;
+  min-height: 150px;
 `;
 
 export const StatsSummaryTileTitle = styled.h3`
@@ -27,18 +25,40 @@ export const StatsSummaryTileTitle = styled.h3`
   color: #dcdcdc;
   z-index: 1;
 `;
-
-export const StatsSummaryTileValue = styled.h2`
+export const StatsSummaryTileSubtitle = styled.span`
   margin: 0;
-  font-size: 29px;
-  color: #ffffff;
+  font-size: 14px;
+  color: #a2a2a2;
+  font-weight: 400;
   z-index: 1;
+  display: flex;
+  flex-direction: row;
+  pointer-events: auto;
+  position: relative;
+  align-items: center;
 `;
 
-export const StatsSummaryTileValuePnL = styled.h2`
+export const StatsSummaryTileActivityDot = styled.span<{ $color?: string }>`
+  margin-right: 5px;
+  transform: translateY(-4px);
+  color: #ffffff;
+  ${(props): string =>
+    props.$color ? ` color: ${props.$color};` : ` color: #ffffff;`}
+`;
+
+export const StatsSummaryTileSubtitlePrice = styled.h4`
+  margin-right: 5px;
+  font-size: 16px;
+  color: #7bb75d;
+  z-index: 1;
+  margin-top: 0;
+  margin-bottom: 0;
+`;
+
+export const StatsSummaryTileValue = styled.h2<{ $color?: string }>`
   margin: 0;
   font-size: 29px;
-  color: #7abb5a;
+  color: ${(props): string => (props.$color ? props.$color : "#ffffff")};
   z-index: 1;
 `;
 

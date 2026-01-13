@@ -11,6 +11,7 @@ export const CalendarSummaryContainer = styled.div`
   overflow: scroll;
   background: #ffffff0f;
   border-radius: 5px;
+  height: 400px;
 
   &::-webkit-scrollbar {
     -webkit-appearance: none;
@@ -27,30 +28,129 @@ export const CalendarSummaryContainer = styled.div`
   }
 `;
 
-export const CalendarSummaryTile = styled.div<{ $idx: number }>`
-  height: 100px;
-  background: #00000082;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 10px;
-  min-width: 150px;
+export const CalendarSummaryTradePreview = styled.div<{ $idx: number }>`
   background-image: ${(props): string =>
     `url('${devSrc(`trade${props.$idx + 1}.png`)}')`};
+  height: 100%;
+  width: 100%;
   background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-blend-mode: darken;
+  z-index: 1;
+  opacity: 0.65;
+  border-radius: 2px;
 
-  &:hover {
-    background-blend-mode: normal;
+  mask-image: linear-gradient(
+    to right,
+    transparent -11%,
+    black 20%,
+    black 74%,
+    transparent 115%
+  );
 
-    .trade-count {
-      color: black;
-    }
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent -11%,
+    black 20%,
+    black 74%,
+    transparent 115%
+  );
+`;
+
+export const CalendarSummaryTradePreviewOverlay = styled.div`
+  height: 100%;
+  width: 100%;
+  mask-image: linear-gradient(
+    to top,
+    transparent -14%,
+    black 36%,
+    black 67%,
+    transparent 108%
+  );
+
+  -webkit-mask-image: linear-gradient(
+    to top,
+    transparent -14%,
+    black 36%,
+    black 67%,
+    transparent 108%
+  );
+`;
+
+export const CalendarSummaryTileBoxGlow = styled.div<{ $positive?: boolean }>`
+  position: absolute;
+  height: 100%;
+  width: 100%;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    ${(props): string =>
+      props.$positive
+        ? `       background-image:
+    /* TOP EDGE */ radial-gradient(
+        60% 100% at 50% 0%,
+        rgba(80, 255, 121, 0) 0%,
+        rgba(80, 255, 121, 0) 35%,
+        rgba(80, 255, 121, 0) 55%,
+        transparent 75%
+      ),
+      /* BOTTOM EDGE */
+        radial-gradient(
+          60% 100% at 50% 100%,
+          rgba(80, 255, 120, 0.85) 0%,
+          rgba(80, 255, 120, 0.5) 35%,
+          rgba(80, 255, 120, 0.2) 55%,
+          transparent 75%
+        );
+          `
+        : `       background-image:
+        /* TOP EDGE */ radial-gradient(
+        60% 100% at 50% 0%,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 100, 100, 0) 35%,
+        rgba(255, 100, 100, 0) 55%,
+        transparent 75%
+      ),
+      /* BOTTOM EDGE */
+        radial-gradient(
+          60% 100% at 50% 100%,
+          rgba(255, 100, 100, 0.85) 0%,
+          rgba(255, 100, 100, 0.5) 35%,
+          rgba(255, 100, 100, 0.2) 55%,
+          transparent 75%
+        );
+          `}
+
+    background-repeat: no-repeat;
+    background-size: 100% 4%;
+    background-position: top center, bottom center;
+
+    filter: blur(0.5px);
+    opacity: 0.95;
+    pointer-events: none;
+    transform: translateX(-10px);
   }
-  position: relative;
+`;
+
+export const CalendarSummaryGlassShine = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  box-shadow: inset 4px 5px 7px -1px rgba(255, 255, 255, 0.1),
+    inset -1px -1px 1px 1px rgba(255, 255, 255, 0.1);
+  border-radius: 7px;
+  background: #6060601c;
+`;
+
+export const CalendarSummaryGlassEffect = styled.div`
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  backdrop-filter: blur(2px);
+  overflow: hidden;
+  isolation: isolate;
 `;
 
 export const CalendarSummaryTileDate = styled.span`
@@ -59,6 +159,8 @@ export const CalendarSummaryTileDate = styled.span`
   padding: 10px;
   align-items: start;
   justify-content: start;
+  position: absolute;
+  z-index: 1;
 `;
 
 export const CalendarSummaryTileDateText = styled.p`
@@ -67,16 +169,20 @@ export const CalendarSummaryTileDateText = styled.p`
   text-shadow: 1px 1px 5px black;
   margin: 0;
   position: absolute;
+  background: #0000003d;
+  border-top-left-radius: 2px;
+  padding: 3px;
+  margin: 2px;
 `;
 
 export const CalendarSummaryTileInfo = styled.div`
   position: absolute;
-  bottom: 0;
   width: 90%;
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
   justify-content: space-between;
+  bottom: 7px;
 `;
 
 export const CalendarSummaryTileResult = styled.span`
@@ -88,7 +194,7 @@ export const CalendarSummaryTileDay = styled.span`
 `;
 
 export const CalendarSummaryTilePnL = styled.span<{ $positive?: boolean }>`
-  font-size: 14px;
+  font-size: 16px;
 
   ${(props): string =>
     props.$positive ? ` color: #a8ffa8;` : `color: #ffa7a7;`}
