@@ -58,7 +58,7 @@ const Dashboard: React.FunctionComponent = () => {
                 </GlowingIconWrapper>
                 <FundingOverviewSectionContentValueContainer>
                   <FundingOverviewSectionContentValueHighlighted>
-                    ${"250,000"}
+                    ${"350,000"}
                   </FundingOverviewSectionContentValueHighlighted>
                   <FundingOverviewSectionContentValue>
                     {"2 x Apex, 2 x MFFU, 2 x Bulenox"}
@@ -106,10 +106,10 @@ const Dashboard: React.FunctionComponent = () => {
                 </GlowingIconWrapper>
                 <FundingOverviewSectionContentValueContainer>
                   <FundingOverviewSectionContentValueHighlighted>
-                    ${"320 / $2100"}
+                    ${"320 / $2600"}
                   </FundingOverviewSectionContentValueHighlighted>
                   <FundingOverviewSectionContentValue>
-                    {"On 3 Apex Funded Accounts"}
+                    {"Left on 3 Apex Funded Accounts"}
                   </FundingOverviewSectionContentValue>
                 </FundingOverviewSectionContentValueContainer>
                 <ChevronRightIcon
@@ -135,7 +135,7 @@ const Dashboard: React.FunctionComponent = () => {
             ]}
             height={300}
           /> */}
-          <CalendarSummary count={CalendarSummaryCount.FIVE_DAYS} />
+          <CalendarSummary count={CalendarSummaryCount.TEN_DAYS} />
         </DashboardContentCalendarContainer>
         <DashboardContentOtherContainer>
           {/* <PNLDailyChart /> */}
