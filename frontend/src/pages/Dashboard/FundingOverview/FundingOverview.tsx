@@ -48,17 +48,24 @@ const FundingOverview: React.FunctionComponent = () => {
               {"2 x Apex, 2 x MFFU, 2 x Bulenox"}
             </FundingOverviewSectionContentValue>
           </FundingOverviewSectionContentValueContainer>
-          <ChevronRightIcon
+          <Button
             style={{
-              color: "#d1d1d1",
-              fontSize: 30,
               marginLeft: "auto",
-              cursor: "pointer",
+              display: "flex",
+              justifyContent: "flex-end",
+              minWidth: "unset",
             }}
             onClick={() =>
-              alert("expand or navigate to funded accounts details")
+              console.log("expand or navigate to funded accounts details")
             }
-          />
+          >
+            <ChevronRightIcon
+              style={{
+                color: "#d1d1d1",
+                fontSize: 30,
+              }}
+            />
+          </Button>
         </FundingOverviewSectionContent>
       </FundingOverviewSection>
       <FundingOverviewSection>
@@ -77,15 +84,24 @@ const FundingOverview: React.FunctionComponent = () => {
               {"View eval accounts"}
             </FundingOverviewSectionContentValue>
           </FundingOverviewSectionContentValueContainer>
-          <ChevronRightIcon
+          <Button
             style={{
-              color: "#d1d1d1",
-              fontSize: 30,
               marginLeft: "auto",
-              cursor: "pointer",
+              display: "flex",
+              justifyContent: "flex-end",
+              minWidth: "unset",
             }}
-            onClick={() => alert("expand or navigate to eval accounts details")}
-          />
+            onClick={() =>
+              console.log("expand or navigate to eval accounts details")
+            }
+          >
+            <ChevronRightIcon
+              style={{
+                color: "#d1d1d1",
+                fontSize: 30,
+              }}
+            />
+          </Button>
         </FundingOverviewSectionContent>
       </FundingOverviewSection>
       <FundingOverviewSection>
@@ -104,15 +120,24 @@ const FundingOverview: React.FunctionComponent = () => {
               {"Left on 3 Apex Funded Accounts"}
             </FundingOverviewSectionContentValue>
           </FundingOverviewSectionContentValueContainer>
-          <ChevronRightIcon
+          <Button
             style={{
-              color: "#d1d1d1",
-              fontSize: 30,
               marginLeft: "auto",
-              cursor: "pointer",
+              display: "flex",
+              justifyContent: "flex-end",
+              minWidth: "unset",
             }}
-            onClick={() => alert("expand or navigate to eval accounts details")}
-          />
+            onClick={() =>
+              console.log("expand or navigate to funded accounts details")
+            }
+          >
+            <ChevronRightIcon
+              style={{
+                color: "#d1d1d1",
+                fontSize: 30,
+              }}
+            />
+          </Button>
         </FundingOverviewSectionContent>
         <MobileStepper
           variant="dots"
