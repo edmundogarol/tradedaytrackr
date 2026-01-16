@@ -3,12 +3,10 @@ import styled from "styled-components";
 export const StatsSummaryContainer = styled.div`
   display: flex;
   align-items: center;
-  height: 100%;
   width: 100%;
   flex-wrap: wrap;
   background: #ffffff0f;
   border-radius: 5px;
-  justify-content: space-around;
 `;
 
 export const StatsSummaryTile = styled.div`
@@ -18,6 +16,7 @@ export const StatsSummaryTile = styled.div`
   justify-content: center;
   min-height: 150px;
   margin: 10px;
+  flex: 1;
 `;
 
 export const StatsSummaryTileTitle = styled.h3`
@@ -25,6 +24,7 @@ export const StatsSummaryTileTitle = styled.h3`
   font-size: 16px;
   color: #dcdcdc;
   z-index: 1;
+  white-space: nowrap;
 `;
 export const StatsSummaryTileSubtitle = styled.span`
   margin: 0;

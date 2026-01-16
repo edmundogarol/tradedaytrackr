@@ -13,6 +13,7 @@ export const GlassTileContainer = styled.div`
 
   pointer-events: none;
 
+  width: 100%;
   /* ✅ HOVER THE REAL ELEMENT */
   &:hover::before {
     content: "";

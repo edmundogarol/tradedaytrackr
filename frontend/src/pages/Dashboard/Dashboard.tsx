@@ -5,12 +5,7 @@ import CalendarSummary, {
   CalendarSummaryCount,
 } from "@components/Calendar/CalendarSummary/CalendarSummary";
 import StatsSummary from "@components/Stats/StatsSummary/StatsSummary";
-import AssuredWorkloadIcon from "@mui/icons-material/AssuredWorkload";
-import StickyNote2Icon from "@mui/icons-material/StickyNote2";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import HardwareIcon from "@mui/icons-material/Hardware";
-
-import { GlowingIconWrapper } from "@components/GlassTile/GlassTileStyledComponents";
+import UpcomingPayoutDetails from "./UpcomingPayoutDetails/UpcomingPayoutDetails";
 import {
   DashboardContainer,
   DashboardContentCalendarContainer,
@@ -20,15 +15,8 @@ import {
   DashboardTopSectionContainer,
   DashboardTopSectionLeftContainer,
   DashboardTopSectionRightContainer,
-  FundingOverviewSection,
-  FundingOverviewSectionContent,
-  FundingOverviewSectionContentValue,
-  FundingOverviewSectionContentValueContainer,
-  FundingOverviewSectionContentValueHighlighted,
-  FundingOverviewSectionTitle,
-  FundingOverviewTitle,
 } from "./DashboardStyledComponents";
-import UpcomingPayoutDetails from "./UpcomingPayoutDetails/UpcomingPayoutDetails";
+import FundingOverview from "./FundingOverview/FundingOverview";
 
 const Dashboard: React.FunctionComponent = () => {
   return (
@@ -47,79 +35,7 @@ const Dashboard: React.FunctionComponent = () => {
             </DashboardContentJournalEntryContainer>
           </DashboardTopSectionLeftContainer>
           <DashboardTopSectionRightContainer>
-            <FundingOverviewTitle>Funding Overview</FundingOverviewTitle>
-            <FundingOverviewSection>
-              <FundingOverviewSectionTitle>
-                Total Active Funding
-              </FundingOverviewSectionTitle>
-              <FundingOverviewSectionContent>
-                <GlowingIconWrapper $positive $size={30}>
-                  <AssuredWorkloadIcon style={{ color: "#95d395" }} />
-                </GlowingIconWrapper>
-                <FundingOverviewSectionContentValueContainer>
-                  <FundingOverviewSectionContentValueHighlighted>
-                    ${"350,000"}
-                  </FundingOverviewSectionContentValueHighlighted>
-                  <FundingOverviewSectionContentValue>
-                    {"2 x Apex, 2 x MFFU, 2 x Bulenox"}
-                  </FundingOverviewSectionContentValue>
-                </FundingOverviewSectionContentValueContainer>
-                <ChevronRightIcon
-                  style={{ color: "#d1d1d1", fontSize: 30, marginLeft: "auto" }}
-                  onClick={() =>
-                    alert("expand or navigate to funded accounts details")
-                  }
-                />
-              </FundingOverviewSectionContent>
-            </FundingOverviewSection>
-            <FundingOverviewSection>
-              <FundingOverviewSectionTitle>
-                Evaluations Passed
-              </FundingOverviewSectionTitle>
-              <FundingOverviewSectionContent>
-                <GlowingIconWrapper $positive $size={30}>
-                  <StickyNote2Icon style={{ color: "#95d395" }} />
-                </GlowingIconWrapper>
-                <FundingOverviewSectionContentValueContainer>
-                  <FundingOverviewSectionContentValueHighlighted>
-                    {"3 / 5"}
-                  </FundingOverviewSectionContentValueHighlighted>
-                  <FundingOverviewSectionContentValue>
-                    {"View eval accounts"}
-                  </FundingOverviewSectionContentValue>
-                </FundingOverviewSectionContentValueContainer>
-                <ChevronRightIcon
-                  style={{ color: "#d1d1d1", fontSize: 30, marginLeft: "auto" }}
-                  onClick={() =>
-                    alert("expand or navigate to eval accounts details")
-                  }
-                />
-              </FundingOverviewSectionContent>
-            </FundingOverviewSection>
-            <FundingOverviewSection>
-              <FundingOverviewSectionTitle>
-                Buffer Progress
-              </FundingOverviewSectionTitle>
-              <FundingOverviewSectionContent>
-                <GlowingIconWrapper $positive $size={30}>
-                  <HardwareIcon style={{ color: "#95d395" }} />
-                </GlowingIconWrapper>
-                <FundingOverviewSectionContentValueContainer>
-                  <FundingOverviewSectionContentValueHighlighted>
-                    ${"320 / $2600"}
-                  </FundingOverviewSectionContentValueHighlighted>
-                  <FundingOverviewSectionContentValue>
-                    {"Left on 3 Apex Funded Accounts"}
-                  </FundingOverviewSectionContentValue>
-                </FundingOverviewSectionContentValueContainer>
-                <ChevronRightIcon
-                  style={{ color: "#d1d1d1", fontSize: 30, marginLeft: "auto" }}
-                  onClick={() =>
-                    alert("expand or navigate to eval accounts details")
-                  }
-                />
-              </FundingOverviewSectionContent>
-            </FundingOverviewSection>
+            <FundingOverview />
           </DashboardTopSectionRightContainer>
         </DashboardTopSectionContainer>
         <Gap level={2} />

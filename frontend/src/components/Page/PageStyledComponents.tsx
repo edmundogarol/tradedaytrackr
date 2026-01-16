@@ -23,7 +23,6 @@ export const PageContainer = styled.div<{ $withSideDrawer?: boolean }>`
 export const ChildrenContainer = styled.div`
   flex: 1;
   width: 100%;
-  max-width: 1300px;
 
   display: flex;
   flex-direction: column;

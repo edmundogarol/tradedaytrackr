@@ -52,6 +52,8 @@ export const LoginContainer = styled.div`
   max-width: 400px;
   width: 100%;
   min-width: 300px;
+  margin-top: auto;
+  margin-bottom: auto;
 `;
 
 export const LoginInputsContainer = styled.div`

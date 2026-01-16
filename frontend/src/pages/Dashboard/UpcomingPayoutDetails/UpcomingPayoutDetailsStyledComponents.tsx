@@ -40,6 +40,8 @@ export const UpcomingPayoutDetailsFeatureContentContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
+  padding-top: 15px;
+  padding-bottom: 15px;
 `;
 
 export const UpcomingPayoutDetailsFeatureContentValue = styled.h1`

@@ -9,6 +9,8 @@ export const PageNotFoundContainer = styled.div<{ $transparent?: boolean }>`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  margin-top: auto;
+  margin-bottom: auto;
 `;
 
 export const PageNotFoundLogo = styled.img`

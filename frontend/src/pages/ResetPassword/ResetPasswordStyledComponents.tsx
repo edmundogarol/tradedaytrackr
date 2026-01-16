@@ -14,6 +14,8 @@ export const ResetPasswordContainer = styled.div`
   width: 100%;
   max-width: 400px;
   min-width: 300px;
+  margin-top: auto;
+  margin-bottom: auto;
 `;
 
 export const ResetPasswordInputsContainer = styled.div`
