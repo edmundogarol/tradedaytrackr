@@ -1,8 +1,8 @@
 import React from "react";
 import AssuredWorkloadIcon from "@mui/icons-material/AssuredWorkload";
 import StickyNote2Icon from "@mui/icons-material/StickyNote2";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import HardwareIcon from "@mui/icons-material/Hardware";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 import { GlowingIconWrapper } from "@components/GlassTile/GlassTileStyledComponents";
 import MobileStepper from "@mui/material/MobileStepper";
@@ -59,10 +59,10 @@ const FundingOverview: React.FunctionComponent = () => {
               console.log("expand or navigate to funded accounts details")
             }
           >
-            <ChevronRightIcon
+            <VisibilityIcon
               style={{
                 color: "#d1d1d1",
-                fontSize: 30,
+                fontSize: 23,
               }}
             />
           </Button>
@@ -95,10 +95,10 @@ const FundingOverview: React.FunctionComponent = () => {
               console.log("expand or navigate to eval accounts details")
             }
           >
-            <ChevronRightIcon
+            <VisibilityIcon
               style={{
                 color: "#d1d1d1",
-                fontSize: 30,
+                fontSize: 23,
               }}
             />
           </Button>
@@ -131,10 +131,10 @@ const FundingOverview: React.FunctionComponent = () => {
               console.log("expand or navigate to funded accounts details")
             }
           >
-            <ChevronRightIcon
+            <VisibilityIcon
               style={{
                 color: "#d1d1d1",
-                fontSize: 30,
+                fontSize: 23,
               }}
             />
           </Button>
