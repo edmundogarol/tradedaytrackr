@@ -1,3 +1,4 @@
+import Button from "@mui/material/Button";
 import styled from "styled-components";
 
 export const FundingOverviewTitle = styled.h2`
@@ -11,7 +12,7 @@ export const FundingOverviewTitle = styled.h2`
   flex-wrap: wrap;
 `;
 
-export const FundingOverviewSection = styled.div`
+export const FundingOverviewSectionContainer = styled.div`
   display: flex;
   flex-direction: column;
   white-space: nowrap;
