@@ -5,6 +5,7 @@ import CalendarSummary, {
   CalendarSummaryCount,
 } from "@components/Calendar/CalendarSummary/CalendarSummary";
 import StatsSummary from "@components/Stats/StatsSummary/StatsSummary";
+import useGetDashboardStatsSummaryDetails from "@pages/Dashboard/FundingOverview/hooks/useGetDashboardStatsSummaryDetails";
 import UpcomingPayoutDetails from "./UpcomingPayoutDetails/UpcomingPayoutDetails";
 import {
   DashboardContainer,
@@ -19,6 +20,7 @@ import {
 import FundingOverview from "./FundingOverview/FundingOverview";
 
 const Dashboard: React.FunctionComponent = () => {
+  const dashboardStatsSummaryDetails = useGetDashboardStatsSummaryDetails();
   return (
     <Page topBarShowMenu={true}>
       <DashboardContainer>
@@ -31,7 +33,9 @@ const Dashboard: React.FunctionComponent = () => {
             <Gap level={2} />
             <DashboardContentJournalEntryContainer>
               <DashboardContentHeader>Current Stats</DashboardContentHeader>
-              <StatsSummary />
+              <StatsSummary
+                statsSummaryTilesDetails={dashboardStatsSummaryDetails}
+              />
             </DashboardContentJournalEntryContainer>
           </DashboardTopSectionLeftContainer>
           <DashboardTopSectionRightContainer>

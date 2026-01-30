@@ -5,11 +5,14 @@ import MobileStepper from "@mui/material/MobileStepper";
 import Button from "@mui/material/Button";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
 import { useState } from "react";
+import useReactNavigation from "@navigation/hooks/useReactNavigation";
+import { PageEnum } from "@interfaces/NavigationTypes";
 import type { FundingOverviewSectionProps } from "../FundingOverviewSection";
 
 export const useGetFundingOverviewDetails =
   (): FundingOverviewSectionProps[] => {
     const [activeStep, setActiveStep] = useState(0);
+    const navigation = useReactNavigation();
 
     const handleNext = (): void => {
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -25,24 +28,27 @@ export const useGetFundingOverviewDetails =
         icon: <AssuredWorkloadIcon style={{ color: "#95d395" }} />,
         highlightedValue: "$350,000",
         subtext: "2 x Apex, 2 x MFFU, 2 x Bulenox",
-        buttonAction: () =>
-          console.log("expand or navigate to funded accounts details"),
+        buttonAction: (): void => {
+          navigation.navigate(PageEnum.FundedAccounts);
+        },
       },
       {
         title: "Evaluations Passed",
         icon: <StickyNote2Icon style={{ color: "#95d395" }} />,
         highlightedValue: "3 / 5",
         subtext: "View eval accounts",
-        buttonAction: () =>
-          console.log("expand or navigate to eval accounts details"),
+        buttonAction: (): void => {
+          navigation.navigate(PageEnum.EvaluationAccounts);
+        },
       },
       {
         title: "Buffer Progress",
         icon: <HardwareIcon style={{ color: "#95d395" }} />,
         highlightedValue: "$320 / $2600",
         subtext: "Left on 3 Apex Funded Accounts",
-        buttonAction: () =>
-          console.log("expand or navigate to funded accounts details"),
+        buttonAction: (): void => {
+          navigation.navigate(PageEnum.FundedAccounts);
+        },
         footer: (
           <MobileStepper
             variant="dots"

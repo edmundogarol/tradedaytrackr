@@ -26,6 +26,16 @@ export const StatsSummaryTileTitle = styled.h3`
   z-index: 1;
   white-space: nowrap;
 `;
+
+export const StatsSummaryFeatureTileTitle = styled.h3`
+  margin: 0;
+  font-size: 16px;
+  color: #dcdcdc;
+  z-index: 1;
+  font-weight: 400;
+  white-space: nowrap;
+`;
+
 export const StatsSummaryTileSubtitle = styled.span`
   margin: 0;
   font-size: 14px;
@@ -37,6 +47,8 @@ export const StatsSummaryTileSubtitle = styled.span`
   pointer-events: auto;
   position: relative;
   align-items: center;
+  white-space: nowrap;
+  min-height: 18px;
 `;
 
 export const StatsSummaryTileActivityDot = styled.span<{ $color?: string }>`
@@ -47,10 +59,10 @@ export const StatsSummaryTileActivityDot = styled.span<{ $color?: string }>`
     props.$color ? ` color: ${props.$color};` : ` color: #ffffff;`}
 `;
 
-export const StatsSummaryTileSubtitlePrice = styled.h4`
+export const StatsSummaryTileSubtitlePrice = styled.h4<{ $color?: string }>`
   margin-right: 5px;
   font-size: 16px;
-  color: #7bb75d;
+  color: ${(props): string => (props.$color ? props.$color : "#ffffff")};
   z-index: 1;
   margin-top: 0;
   margin-bottom: 0;
@@ -61,6 +73,9 @@ export const StatsSummaryTileValue = styled.h2<{ $color?: string }>`
   font-size: 29px;
   color: ${(props): string => (props.$color ? props.$color : "#ffffff")};
   z-index: 1;
+  display: flex;
+  align-items: center;
+  font-weight: 400;
 `;
 
 export const StatsSummaryTileValueDaysToPayout = styled.h2`

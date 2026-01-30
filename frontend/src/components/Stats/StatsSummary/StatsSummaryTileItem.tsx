@@ -4,7 +4,6 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import InfoOutlineIcon from "@mui/icons-material/InfoOutlined";
 import Popper from "@mui/material/Popper";
-import type { StatsSummaryTileDetails } from "./hooks/useGetStatsSummaryTilesDetails";
 import {
   StatsSummaryTile,
   StatsSummaryTileActivityDot,
@@ -14,6 +13,7 @@ import {
   StatsSummaryTileValue,
 } from "./StatsSummaryStyledComponents";
 import styles from "./StatsSummaryStyles";
+import type { StatsSummaryTileDetails } from "./StatsSummary";
 
 const StatsSummaryTileItem: React.FC<StatsSummaryTileDetails> = ({
   tileValue,
@@ -42,7 +42,7 @@ const StatsSummaryTileItem: React.FC<StatsSummaryTileDetails> = ({
           </StatsSummaryTileActivityDot>
 
           {tileSubtitle.highlighted && (
-            <StatsSummaryTileSubtitlePrice>
+            <StatsSummaryTileSubtitlePrice $color={tileValueColor}>
               {tileSubtitle.highlighted}
             </StatsSummaryTileSubtitlePrice>
           )}

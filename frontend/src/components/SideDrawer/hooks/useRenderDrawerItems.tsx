@@ -1,54 +1,51 @@
+import styles from "@components/Stats/StatsSummary/StatsSummaryStyles";
 import {
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Paper,
+  Popper,
+  Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 
 interface UseRenderDrawerItemsProps {
-  open: boolean;
   drawerItems: {
     text: string;
     icon: React.ReactNode;
     onClick: () => void;
   }[];
-  openDrawer: () => void;
-  closeDrawer: () => void;
 }
 
-const useRenderDrawerItems = ({
-  open,
-  drawerItems,
-  openDrawer,
-  closeDrawer,
-}: UseRenderDrawerItemsProps) => {
+const useRenderDrawerItems = ({ drawerItems }: UseRenderDrawerItemsProps) => {
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
   return (): React.ReactElement => (
     <List>
       {drawerItems.map(({ text, icon, onClick }, index) => (
-        <ListItem key={index} disablePadding sx={{ display: "block" }}>
+        <ListItem
+          key={index}
+          disablePadding
+          sx={{ display: "block" }}
+          onMouseEnter={(e) => {
+            setAnchorEl(e.currentTarget);
+            setActiveIndex(index);
+          }}
+          onMouseLeave={() => {
+            setAnchorEl(null);
+            setActiveIndex(null);
+          }}
+        >
           <ListItemButton
-            onClick={() => {
-              if (!open) {
-                openDrawer();
-              } else {
-                onClick();
-                closeDrawer();
-              }
-            }}
+            onClick={onClick}
             sx={[
               {
                 minHeight: 48,
                 px: 2.5,
               },
-              open
-                ? {
-                    justifyContent: "initial",
-                  }
-                : {
-                    justifyContent: "center",
-                  },
             ]}
           >
             <ListItemIcon
@@ -57,27 +54,30 @@ const useRenderDrawerItems = ({
                   minWidth: 0,
                   justifyContent: "center",
                 },
-                open
-                  ? {
-                      mr: 3,
-                    }
-                  : {
-                      mr: "auto",
-                    },
+                {
+                  mr: "auto",
+                },
               ]}
             >
+              <Popper
+                anchorEl={anchorEl}
+                open={activeIndex === index}
+                placement="right-start"
+                sx={{ zIndex: 1500 }}
+              >
+                <Paper style={styles.paperStyle}>
+                  <Typography sx={styles.contentStyle}>{text}</Typography>
+                </Paper>
+              </Popper>
+
               {icon}
             </ListItemIcon>
             <ListItemText
               primary={text}
               sx={[
-                open
-                  ? {
-                      opacity: 1,
-                    }
-                  : {
-                      opacity: 0,
-                    },
+                {
+                  opacity: 0,
+                },
               ]}
             />
           </ListItemButton>

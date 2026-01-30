@@ -8,13 +8,13 @@ export const iconStyle = (size: number): React.CSSProperties => ({
 
 const styles = {
   paperStyle: {
-    pointerEvents: "auto",
-    zIndex: 100,
+    pointerEvents: "none",
+    zIndex: 1500,
   } as React.CSSProperties,
   contentStyle: {
     p: 1.5,
     fontSize: 13,
-    zIndex: 100,
+    zIndex: 0,
   } as React.CSSProperties,
   infoIconStyle: {
     height: 16,
@@ -35,6 +35,13 @@ const styles = {
     color: "#48577349",
     position: "absolute",
     zIndex: 0,
+  }),
+  featureIconStyle: (size: number, color?: string): React.CSSProperties => ({
+    height: size,
+    width: size,
+    color: color || "#ffffff17",
+    zIndex: 0,
+    marginRight: 5,
   }),
 };
 

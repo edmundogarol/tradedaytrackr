@@ -11,6 +11,7 @@ interface GlassTileProps {
   positive?: boolean;
   children?: React.ReactNode;
   featureTile?: boolean;
+  leftAlign?: boolean;
 }
 
 const GlassTile: React.FunctionComponent<GlassTileProps> = ({
@@ -18,9 +19,10 @@ const GlassTile: React.FunctionComponent<GlassTileProps> = ({
   positive = false,
   children,
   featureTile = false,
+  leftAlign = false,
 }) => {
   return (
-    <GlassTileContainer>
+    <GlassTileContainer $leftAlign={leftAlign}>
       {overlay}
       <GlassTileEffect />
       <GlassTileShine />

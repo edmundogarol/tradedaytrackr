@@ -2,22 +2,10 @@ import CreditCardIcon from "@mui/icons-material/CreditCard";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import AutoAwesomeMotionIcon from "@mui/icons-material/AutoAwesomeMotion";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import styles from "../StatsSummaryStyles";
+import type { StatsSummaryTileDetails } from "@components/Stats/StatsSummary/StatsSummary";
+import styles from "@components/Stats/StatsSummary/StatsSummaryStyles";
 
-export interface StatsSummaryTileDetails {
-  tileValue: string;
-  tileValueColor: string;
-  tileTitle: string;
-  tileSubtitle: {
-    highlighted?: string;
-    content: string;
-  };
-  tileShinePositive?: boolean;
-  infoDescription?: string;
-  tileIcon: React.ReactNode;
-}
-
-export const useRenderStatsSummaryTilesDetails =
+export const useGetDashboardStatsSummaryDetails =
   (): StatsSummaryTileDetails[] => {
     return [
       {
@@ -71,4 +59,4 @@ export const useRenderStatsSummaryTilesDetails =
     ];
   };
 
-export default useRenderStatsSummaryTilesDetails;
+export default useGetDashboardStatsSummaryDetails;

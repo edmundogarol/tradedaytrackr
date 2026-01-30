@@ -3,13 +3,19 @@ export enum PageEnum {
   Login = "/login",
   SignUp = "/signUp",
   ResetPassword = "/resetPassword",
-  Dashboard = "/dashboard",
   PageNotFound = "/pageNotFound",
+  Dashboard = "/dashboard",
+  Journal = "/journal",
+  FundedAccounts = "/fundedAccounts",
+  EvaluationAccounts = "/evaluationAccounts",
 }
 
 export type AuthenticatedStackNavigatorParams = {
   [PageEnum.RootNavigator]: undefined;
   [PageEnum.Dashboard]: undefined;
+  [PageEnum.Journal]: undefined;
+  [PageEnum.FundedAccounts]: undefined;
+  [PageEnum.EvaluationAccounts]: undefined;
 };
 
 export type UnauthenticatedStackNavigatorParams = {

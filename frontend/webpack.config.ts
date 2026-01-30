@@ -55,7 +55,7 @@ const config: WebpackConfiguration & {
   },
   output: {
     filename: "bundle.js",
-    publicPath: "http://localhost:3000/",
+    publicPath: "/",
   },
   devServer: {
     port: 3000,
@@ -67,7 +67,7 @@ const config: WebpackConfiguration & {
     proxy: [
       {
         context: ["/api"],
-        target: "http://localhost:8000",
+        target: "http://0.0.0.0:8000",
         changeOrigin: true,
       },
     ],

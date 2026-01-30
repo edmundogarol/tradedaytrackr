@@ -7,7 +7,7 @@ export const CalendarSummaryContainer = styled.div`
   height: 100%;
   width: 100%;
   flex-wrap: wrap;
-  max-height: 260px;
+  max-height: 265px;
   overflow: scroll;
   background: #ffffff0f;
   border-radius: 5px;

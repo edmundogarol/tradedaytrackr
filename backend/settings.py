@@ -36,13 +36,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = SETTINGS["SECRET_KEY"]
 
-ALLOWED_HOSTS = []
+if "DEVENV" in os.environ:
+    ALLOWED_HOSTS = ["*"]
+else:
+    ALLOWED_HOSTS = [
+        "tradedaytrackr.com",
+    ]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
+    "http://192.168.254.161:3000",
 ]
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "http://192.168.254.161:3000",
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = list(default_headers) + [

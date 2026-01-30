@@ -68,6 +68,7 @@ const useAxiosFetch = <T>(
         ...params,
       });
 
+      console.log({ response: response.toString() });
       fetchData = response.data || response.config.data;
       if (fetchData) {
         console.debug("Ok!", response.config.url);
@@ -80,6 +81,7 @@ const useAxiosFetch = <T>(
       }
       setData(fetchData);
     } catch (err) {
+      console.log({ err });
       if (axios.isAxiosError(err)) {
         setError(err.response?.data || { error: err.message });
         fetchError = err.response?.data || { error: err.message };

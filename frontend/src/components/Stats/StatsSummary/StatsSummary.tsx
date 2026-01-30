@@ -1,19 +1,47 @@
 import React from "react";
 
+import { Else, If } from "@components/If/If";
 import { StatsSummaryContainer } from "./StatsSummaryStyledComponents";
-import useGetStatsSummaryTilesDetails from "./hooks/useGetStatsSummaryTilesDetails";
 import StatsSummaryTileItem from "./StatsSummaryTileItem";
+import StatsSummaryFeatureTileItem from "./StatsSummaryFeatureTileItem";
 
-interface StatsSummaryProps {}
+export interface StatsSummaryTileDetails {
+  tileValue: string;
+  tileValueColor: string;
+  tileTitle: string;
+  tileSubtitle: {
+    highlighted?: string;
+    content: string;
+  };
+  tileShinePositive?: boolean;
+  infoDescription?: string;
+  tileIcon?: React.ReactNode;
+}
 
-const StatsSummary: React.FunctionComponent<StatsSummaryProps> = ({}) => {
-  const statsSummaryTilesDetails = useGetStatsSummaryTilesDetails();
+interface StatsSummaryProps {
+  statsSummaryTilesDetails: StatsSummaryTileDetails[];
+  featureTiles?: boolean;
+}
 
+const StatsSummary: React.FunctionComponent<StatsSummaryProps> = ({
+  statsSummaryTilesDetails,
+  featureTiles,
+}) => {
   return (
     <StatsSummaryContainer>
-      {statsSummaryTilesDetails.map((tileDetails) => (
-        <StatsSummaryTileItem key={tileDetails.tileTitle} {...tileDetails} />
-      ))}
+      <If condition={!featureTiles}>
+        {statsSummaryTilesDetails.map((tileDetails) => (
+          <StatsSummaryTileItem key={tileDetails.tileTitle} {...tileDetails} />
+        ))}
+        <Else>
+          {statsSummaryTilesDetails.map((tileDetails) => (
+            <StatsSummaryFeatureTileItem
+              key={tileDetails.tileTitle}
+              {...tileDetails}
+            />
+          ))}
+        </Else>
+      </If>
     </StatsSummaryContainer>
   );
 };
