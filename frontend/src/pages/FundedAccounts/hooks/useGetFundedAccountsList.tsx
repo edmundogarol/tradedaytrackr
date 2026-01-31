@@ -7,6 +7,8 @@ export const useGetFundedAccountsList = (): FundedAccountsListItemDetails[] => {
       accountSize: 50000,
       accountBalance: 51010,
       firm: "mffu",
+      firmMinDays: 5,
+      currentDayCount: 5,
       dayValues: [
         {
           value: 200,
@@ -29,8 +31,8 @@ export const useGetFundedAccountsList = (): FundedAccountsListItemDetails[] => {
           day: "D5",
         },
       ],
-      noGlow: false,
-      noShine: false,
+      noGlow: true,
+      noShine: true,
       minBuffer: 250,
       bufferPercent: 100,
     },
@@ -40,6 +42,8 @@ export const useGetFundedAccountsList = (): FundedAccountsListItemDetails[] => {
 
       accountBalance: 52020,
       firm: "mffu",
+      firmMinDays: 5,
+      currentDayCount: 5,
       dayValues: [
         {
           value: 220,
@@ -70,9 +74,10 @@ export const useGetFundedAccountsList = (): FundedAccountsListItemDetails[] => {
     {
       accountName: "PAAPEX022",
       accountSize: 50000,
-
       accountBalance: 51120,
       firm: "apex",
+      firmMinDays: 8,
+      currentDayCount: 5,
       dayValues: [
         {
           value: 180,
@@ -103,9 +108,10 @@ export const useGetFundedAccountsList = (): FundedAccountsListItemDetails[] => {
     {
       accountName: "BULENOX023",
       accountSize: 50000,
-
       accountBalance: 51530,
       firm: "bulenox",
+      firmMinDays: 10,
+      currentDayCount: 5,
       dayValues: [
         {
           value: 210,
@@ -139,6 +145,8 @@ export const useGetFundedAccountsList = (): FundedAccountsListItemDetails[] => {
 
       accountBalance: 50040,
       firm: "alpha",
+      firmMinDays: 5,
+      currentDayCount: 5,
       dayValues: [
         {
           value: 230,

@@ -9,7 +9,7 @@ export const StatsSummaryContainer = styled.div`
   border-radius: 5px;
 `;
 
-export const StatsSummaryTile = styled.div`
+export const TileContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -27,7 +27,7 @@ export const StatsSummaryTileTitle = styled.h3`
   white-space: nowrap;
 `;
 
-export const StatsSummaryFeatureTileTitle = styled.h3`
+export const Title = styled.h3`
   margin: 0;
   font-size: 16px;
   color: #dcdcdc;
@@ -36,7 +36,7 @@ export const StatsSummaryFeatureTileTitle = styled.h3`
   white-space: nowrap;
 `;
 
-export const StatsSummaryTileSubtitle = styled.span`
+export const Subtitle = styled.span`
   margin: 0;
   font-size: 14px;
   color: #a2a2a2;
@@ -51,7 +51,7 @@ export const StatsSummaryTileSubtitle = styled.span`
   min-height: 18px;
 `;
 
-export const StatsSummaryTileActivityDot = styled.span<{ $color?: string }>`
+export const ActivityDot = styled.span<{ $color?: string }>`
   margin-right: 5px;
   transform: translateY(-4px);
   color: #ffffff;
@@ -59,7 +59,7 @@ export const StatsSummaryTileActivityDot = styled.span<{ $color?: string }>`
     props.$color ? ` color: ${props.$color};` : ` color: #ffffff;`}
 `;
 
-export const StatsSummaryTileSubtitlePrice = styled.h4<{ $color?: string }>`
+export const SubtitlePrice = styled.h4<{ $color?: string }>`
   margin-right: 5px;
   font-size: 16px;
   color: ${(props): string => (props.$color ? props.$color : "#ffffff")};
@@ -68,7 +68,7 @@ export const StatsSummaryTileSubtitlePrice = styled.h4<{ $color?: string }>`
   margin-bottom: 0;
 `;
 
-export const StatsSummaryTileValue = styled.h2<{ $color?: string }>`
+export const MainValue = styled.h2<{ $color?: string }>`
   margin: 0;
   font-size: 29px;
   color: ${(props): string => (props.$color ? props.$color : "#ffffff")};

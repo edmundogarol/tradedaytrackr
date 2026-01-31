@@ -4,19 +4,19 @@ import Page from "@components/Page/Page";
 import StatsSummary from "@components/Stats/StatsSummary/StatsSummary";
 import Dropdown from "@components/Dropdown/Dropdown";
 import {
-  FundedAccountsContainer,
-  FundedAccountsDropdownsSection,
-  FundedAccountsListContainer,
-  FundedAccountsListHeaders,
-  FundedAccountsListHeadersAccount,
-  FundedAccountsListHeadersBuffer,
-  FundedAccountsListHeadersDays,
-  FundedAccountsListHeadersPnL,
-  FundedAccountsTitle,
+  Container,
+  DropdownsSection,
+  ListContainer,
+  ListHeaders,
+  AccountHeader,
+  BufferHeader,
+  DaysHeader,
+  PnLHeader,
+  Title,
 } from "./FundedAccountsStyledComponents";
 import useGetFundedAccountsStatsSummaryDetails from "./hooks/useGetFundedAccountsStatsSummaryDetails";
 import useGetFundedAccountsList from "./hooks/useGetFundedAccountsList";
-import FundedAccountsListItem from "./FundedAccountsListItem";
+import ListItem from "./FundedAccountsListItem";
 
 const FundedAccounts: React.FunctionComponent = () => {
   const fundedStatsSummaryDetails = useGetFundedAccountsStatsSummaryDetails();
@@ -35,35 +35,29 @@ const FundedAccounts: React.FunctionComponent = () => {
 
   return (
     <Page topBarShowMenu={true}>
-      <FundedAccountsContainer>
-        <FundedAccountsTitle>Funded Accounts</FundedAccountsTitle>
+      <Container>
+        <Title>Funded Accounts</Title>
         <StatsSummary
           statsSummaryTilesDetails={fundedStatsSummaryDetails}
           featureTiles
         />
         <Gap level={2} />
-        <FundedAccountsDropdownsSection>
+        <DropdownsSection>
           <Dropdown items={firmsList} title="All Firms" />
           <Dropdown items={bufferState} title="Buffer Built" />
-        </FundedAccountsDropdownsSection>
-        <FundedAccountsListHeaders>
-          <FundedAccountsListHeadersAccount>
-            Account
-          </FundedAccountsListHeadersAccount>
-          <FundedAccountsListHeadersDays>
-            Trading Days
-          </FundedAccountsListHeadersDays>
-          <FundedAccountsListHeadersBuffer>
-            Min Buffer
-          </FundedAccountsListHeadersBuffer>
-          <FundedAccountsListHeadersPnL>PnL</FundedAccountsListHeadersPnL>
-        </FundedAccountsListHeaders>
-        <FundedAccountsListContainer>
+        </DropdownsSection>
+        <ListHeaders>
+          <AccountHeader>Account</AccountHeader>
+          <DaysHeader>Trading Days</DaysHeader>
+          <BufferHeader>Min Buffer</BufferHeader>
+          <PnLHeader>PnL</PnLHeader>
+        </ListHeaders>
+        <ListContainer>
           {accountsList.map((account, index) => (
-            <FundedAccountsListItem key={index} {...account} />
+            <ListItem key={index} {...account} />
           ))}
-        </FundedAccountsListContainer>
-      </FundedAccountsContainer>
+        </ListContainer>
+      </Container>
     </Page>
   );
 };

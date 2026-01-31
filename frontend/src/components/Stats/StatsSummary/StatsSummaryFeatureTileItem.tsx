@@ -1,10 +1,10 @@
 import GlassTile from "@components/GlassTile/GlassTile";
 import {
-  StatsSummaryFeatureTileTitle,
-  StatsSummaryTile,
-  StatsSummaryTileSubtitle,
-  StatsSummaryTileSubtitlePrice,
-  StatsSummaryTileValue,
+  Title,
+  TileContainer,
+  Subtitle,
+  SubtitlePrice,
+  MainValue,
 } from "./StatsSummaryStyledComponents";
 import type { StatsSummaryTileDetails } from "./StatsSummary";
 
@@ -17,25 +17,23 @@ const StatsSummaryFeatureTileItem: React.FC<StatsSummaryTileDetails> = ({
   tileIcon,
 }) => {
   return (
-    <StatsSummaryTile>
+    <TileContainer>
       <GlassTile positive={tileShinePositive} leftAlign>
-        <StatsSummaryFeatureTileTitle>{tileTitle}</StatsSummaryFeatureTileTitle>
-
-        <StatsSummaryTileValue $color={tileValueColor}>
+        <Title>{tileTitle}</Title>
+        <MainValue $color={tileValueColor}>
           {tileIcon}
           {tileValue}
-        </StatsSummaryTileValue>
-        <StatsSummaryTileSubtitle>
+        </MainValue>
+        <Subtitle>
           {tileSubtitle.highlighted && (
-            <StatsSummaryTileSubtitlePrice $color={tileValueColor}>
+            <SubtitlePrice $color={tileValueColor}>
               {tileSubtitle.highlighted}
-            </StatsSummaryTileSubtitlePrice>
+            </SubtitlePrice>
           )}
-
           {tileSubtitle.content}
-        </StatsSummaryTileSubtitle>
+        </Subtitle>
       </GlassTile>
-    </StatsSummaryTile>
+    </TileContainer>
   );
 };
 

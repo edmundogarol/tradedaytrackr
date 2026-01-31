@@ -1,18 +1,13 @@
-import { useState } from "react";
 import GlassTile from "@components/GlassTile/GlassTile";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
-import InfoOutlineIcon from "@mui/icons-material/InfoOutlined";
-import Popper from "@mui/material/Popper";
+import InfoPopout from "@components/InfoPopout/InfoPopout";
 import {
-  StatsSummaryTile,
-  StatsSummaryTileActivityDot,
-  StatsSummaryTileSubtitle,
-  StatsSummaryTileSubtitlePrice,
-  StatsSummaryTileTitle,
-  StatsSummaryTileValue,
+  TileContainer,
+  ActivityDot,
+  Subtitle,
+  SubtitlePrice,
+  Title,
+  MainValue,
 } from "./StatsSummaryStyledComponents";
-import styles from "./StatsSummaryStyles";
 import type { StatsSummaryTileDetails } from "./StatsSummary";
 
 const StatsSummaryTileItem: React.FC<StatsSummaryTileDetails> = ({
@@ -24,57 +19,24 @@ const StatsSummaryTileItem: React.FC<StatsSummaryTileDetails> = ({
   tileShinePositive,
   tileIcon,
 }) => {
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const open = Boolean(anchorEl);
-
   return (
-    <StatsSummaryTile>
+    <TileContainer>
       <GlassTile positive={tileShinePositive}>
-        <StatsSummaryTileValue $color={tileValueColor}>
-          {tileValue}
-        </StatsSummaryTileValue>
-
-        <StatsSummaryTileTitle>{tileTitle}</StatsSummaryTileTitle>
-
-        <StatsSummaryTileSubtitle>
-          <StatsSummaryTileActivityDot $color={tileValueColor}>
-            .
-          </StatsSummaryTileActivityDot>
-
+        <MainValue $color={tileValueColor}>{tileValue}</MainValue>
+        <Title>{tileTitle}</Title>
+        <Subtitle>
+          <ActivityDot $color={tileValueColor}>.</ActivityDot>
           {tileSubtitle.highlighted && (
-            <StatsSummaryTileSubtitlePrice $color={tileValueColor}>
+            <SubtitlePrice $color={tileValueColor}>
               {tileSubtitle.highlighted}
-            </StatsSummaryTileSubtitlePrice>
+            </SubtitlePrice>
           )}
-
           {tileSubtitle.content}
-
-          <Popper
-            anchorEl={anchorEl}
-            open={open}
-            placement="bottom-start"
-            disablePortal
-            sx={{ zIndex: 1300 }}
-          >
-            <Paper style={styles.paperStyle}>
-              <Typography sx={styles.contentStyle}>
-                {infoDescription}
-              </Typography>
-            </Paper>
-          </Popper>
-
-          <span
-            onMouseEnter={(e) => setAnchorEl(e.currentTarget)}
-            onMouseLeave={() => setAnchorEl(null)}
-            style={styles.infoIconContainer}
-          >
-            <InfoOutlineIcon style={styles.infoIconStyle} />
-          </span>
-        </StatsSummaryTileSubtitle>
-
+          <InfoPopout infoDescription={infoDescription!} />
+        </Subtitle>
         {tileIcon}
       </GlassTile>
-    </StatsSummaryTile>
+    </TileContainer>
   );
 };
 

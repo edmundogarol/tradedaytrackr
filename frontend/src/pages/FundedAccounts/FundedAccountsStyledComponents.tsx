@@ -1,7 +1,7 @@
 import { Box, Collapse } from "@mui/material";
 import styled from "styled-components";
 
-export const FundedAccountsContainer = styled.div`
+export const Container = styled.div`
   align-items: center;
   justify-content: center;
   height: 100%;
@@ -9,7 +9,7 @@ export const FundedAccountsContainer = styled.div`
   width: 100%;
 `;
 
-export const FundedAccountsTitle = styled.h1`
+export const Title = styled.h1`
   padding-left: 10px;
   font-size: 15px;
   font-weight: 100;
@@ -20,13 +20,13 @@ export const FundedAccountsTitle = styled.h1`
   margin-bottom: 5px;
 `;
 
-export const FundedAccountsDropdownsSection = styled.div`
+export const DropdownsSection = styled.div`
   display: flex;
   gap: 10px;
   margin-bottom: 10px;
 `;
 
-export const FundedAccountsListHeaders = styled.div`
+export const ListHeaders = styled.div`
   display: flex;
   flex-direction: row;
   margin-bottom: 5px;
@@ -36,26 +36,24 @@ export const FundedAccountsListHeaders = styled.div`
   overflow: scroll;
 `;
 
-export const FundedAccountsListHeadersAccount = styled.div`
+export const AccountHeader = styled.div`
   margin-left: 20px;
   flex: 1.8;
 `;
 
-export const FundedAccountsListHeadersDays = styled.div`
+export const DaysHeader = styled.div`
   flex: 2.2;
 `;
 
-export const FundedAccountsListHeadersBuffer = styled.div`
+export const BufferHeader = styled.div`
   flex: 1.6;
 `;
 
-export const FundedAccountsListHeadersPnL = styled.div`
+export const PnLHeader = styled.div`
   flex: 1;
 `;
 
-export const FundedAccountsListHeadersItem = styled.span``;
-
-export const FundedAccountsListContainer = styled.div`
+export const ListContainer = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
@@ -107,91 +105,95 @@ export const DropdownContainer = styled.div`
   }
 `;
 
-export const FundedAccountListItemContainer = styled.div`
+export const ListItemContainer = styled.div`
   z-index: 10;
   width: 100%;
-`;
-
-export const FundedAccountListItemAccount = styled.div`
   display: flex;
   flex: 2;
   align-items: center;
   gap: 10px;
 `;
 
-export const FundedAccountListItemAccountImage = styled.img`
+export const AccountImage = styled.img`
   height: 40px;
   width: 40px;
 `;
 
-export const FundedAccountListItemAccountTitleContainer = styled.div`
+export const AccountTitleContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
 `;
 
-export const FundedAccountListItemAccountTitle = styled.span`
+export const AccountTitle = styled.span`
   font-size: 16px;
   color: #b5b5b5;
 `;
 
-export const FundedAccountListItemAccountSubtitle = styled.span`
+export const AccountSubtitle = styled.span`
   font-size: 14px;
   color: #989898;
 `;
 
-export const FundedAccountListItemAccountSubtitleHighlighted = styled.span`
+export const AccountTradingDaysComplete = styled.span`
+  font-size: 14px;
+  color: #989898;
+  display: flex;
+`;
+
+export const AccountSubtitleHighlighted = styled.span`
   margin-left: 5px;
   font-size: 15px;
   color: #a9d1a9;
 `;
 
-export const FundedAccountListItemAccountDaysContainer = styled.div`
+export const DaysContainer = styled.div`
   display: flex;
   flex-direction: row;
   flex: 1.5;
 `;
 
-export const FundedAccountListItemAccountDaysItem = styled.div`
+export const DaysItem = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 5px;
 `;
 
-export const FundedAccountListItemAccountDaysItemValue = styled.span<{
+export const DaysItemValue = styled.span<{
   $positive?: boolean;
 }>`
   z-index: 10;
   color: ${({ $positive }): string => ($positive ? "#85d297" : "#d56060")};
 `;
 
-export const FundedAccountListItemAccountDaysItemSubtitle = styled.span`
+export const DaysItemSubtitle = styled.span`
   color: #989898;
 `;
 
-export const FundedAccountListItemAccountBuffer = styled.div`
+export const BufferContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1.2;
 `;
 
-export const FundedAccountListItemAccountBufferText = styled.span`
+export const BufferText = styled.span`
   font-size: 13px;
   color: #adadad;
   font-weight: 100;
   margin-bottom: 5px;
+  display: flex;
+  align-items: center;
 `;
 
-export const FundedAccountListItemAccountBufferAmount = styled.span`
+export const BufferAmount = styled.span`
   margin-left: 5px;
   font-size: 13px;
   color: #adadad;
   font-weight: 100;
-  margin-bottom: 5px;
 `;
 
-export const FundedAccountListItemAccountBufferAmountHighlighted = styled.span<{
+export const BufferAmountHighlighted = styled.span<{
   $bufferPercent: number;
 }>`
   font-size: 13px;
@@ -202,12 +204,11 @@ export const FundedAccountListItemAccountBufferAmountHighlighted = styled.span<{
       ? "#cf943b"
       : "#d56060"};
   font-weight: 100;
-  margin-bottom: 5px;
   margin-left: 5px;
   margin-right: 5px;
 `;
 
-export const FundedAccountListItemAccountPnL = styled.div`
+export const PnLContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -215,7 +216,7 @@ export const FundedAccountListItemAccountPnL = styled.div`
   align-items: center;
 `;
 
-export const FundedAccountListItemAccountPnLValue = styled.span<{
+export const PnLValue = styled.span<{
   $bufferPercent: number;
 }>`
   color: ${(props): string =>
@@ -228,14 +229,16 @@ export const FundedAccountListItemAccountPnLValue = styled.span<{
   font-weight: 100;
 `;
 
-export const FundedAccountListItemAccountPnLWithdrawable = styled.span<{
+export const PnLWithdrawable = styled.span<{
   $positive: boolean;
 }>`
   color: ${(props): string => (props.$positive ? "#80ae70" : "#aeaeae")};
   font-size: 11px;
   letter-spacing: 1px;
+  display: flex;
+  align-items: center;
 `;
-export const FundedAccountListItemAccountPnLWithdrawableText = styled.span`
+export const PnLWithdrawableText = styled.span`
   color: #aeaeae;
   font-size: 9px;
   letter-spacing: 1px;

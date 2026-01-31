@@ -6,26 +6,27 @@ import LinearProgress, {
   linearProgressClasses,
 } from "@mui/material/LinearProgress";
 
+import InfoPopout from "@components/InfoPopout/InfoPopout";
 import {
-  FundedAccountListItemAccount,
-  FundedAccountListItemAccountBuffer,
-  FundedAccountListItemAccountBufferAmount,
-  FundedAccountListItemAccountBufferAmountHighlighted,
-  FundedAccountListItemAccountBufferText,
-  FundedAccountListItemAccountDaysContainer,
-  FundedAccountListItemAccountDaysItem,
-  FundedAccountListItemAccountDaysItemSubtitle,
-  FundedAccountListItemAccountDaysItemValue,
-  FundedAccountListItemAccountImage,
-  FundedAccountListItemAccountPnL,
-  FundedAccountListItemAccountPnLValue,
-  FundedAccountListItemAccountPnLWithdrawable,
-  FundedAccountListItemAccountPnLWithdrawableText,
-  FundedAccountListItemAccountSubtitle,
-  FundedAccountListItemAccountSubtitleHighlighted,
-  FundedAccountListItemAccountTitle,
-  FundedAccountListItemAccountTitleContainer,
-  FundedAccountListItemContainer,
+  BufferContainer,
+  BufferAmount,
+  BufferAmountHighlighted,
+  BufferText,
+  DaysContainer,
+  DaysItem,
+  DaysItemSubtitle,
+  DaysItemValue,
+  AccountImage,
+  PnLContainer,
+  PnLValue,
+  PnLWithdrawable,
+  PnLWithdrawableText,
+  AccountSubtitle,
+  AccountSubtitleHighlighted,
+  AccountTitle,
+  AccountTitleContainer,
+  ListItemContainer,
+  AccountTradingDaysComplete,
 } from "./FundedAccountsStyledComponents";
 import styles from "./FundedAccountsStyles";
 
@@ -34,6 +35,9 @@ export interface FundedAccountsListItemDetails {
   accountSize: number;
   accountBalance: number;
   firm: string;
+  firmMinDays?: number;
+  firmMinDayPnL?: number;
+  currentDayCount: number;
   dayValues: {
     value: number;
     day: string;
@@ -70,6 +74,8 @@ const FundedAccountsListItem: React.FunctionComponent<
   accountSize,
   accountBalance,
   firm,
+  firmMinDays,
+  currentDayCount,
   dayValues,
   noGlow,
   noShine,
@@ -94,83 +100,75 @@ const FundedAccountsListItem: React.FunctionComponent<
       noGlow={noGlow}
       noShine={noShine}
     >
-      <FundedAccountListItemContainer>
-        <FundedAccountListItemAccount>
-          <FundedAccountListItemAccountImage
-            src={imageSrc(firmLogoSrc(firm))}
-          />
-          <FundedAccountListItemAccountTitleContainer>
-            <FundedAccountListItemAccountTitle>
-              {accountName}
-            </FundedAccountListItemAccountTitle>
-            <FundedAccountListItemAccountSubtitle>
-              Balance:
-              <FundedAccountListItemAccountSubtitleHighlighted>
-                {formatter.format(accountBalance)}
-              </FundedAccountListItemAccountSubtitleHighlighted>
-            </FundedAccountListItemAccountSubtitle>
-          </FundedAccountListItemAccountTitleContainer>
-          <FundedAccountListItemAccountDaysContainer>
-            {dayValues.map((dayValue) => (
-              <FundedAccountListItemAccountDaysItem>
-                <GlassTile
-                  positive={dayValue.value > 0}
-                  featureTile
-                  minHeight={10}
-                  minWidth={10}
-                  padding={7}
-                >
-                  <FundedAccountListItemAccountDaysItemValue
-                    $positive={dayValue.value > 0}
-                  >
-                    {`${dayValue.value > 0 ? "+" : ""}${dayValue.value}`}
-                  </FundedAccountListItemAccountDaysItemValue>
-                </GlassTile>
-                <FundedAccountListItemAccountDaysItemSubtitle>
-                  {dayValue.day}
-                </FundedAccountListItemAccountDaysItemSubtitle>
-              </FundedAccountListItemAccountDaysItem>
-            ))}
-          </FundedAccountListItemAccountDaysContainer>
-          <FundedAccountListItemAccountBuffer>
-            <FundedAccountListItemAccountBufferText>
-              Min Payout Buffer:
-              <FundedAccountListItemAccountBufferAmountHighlighted
-                $bufferPercent={bufferPercent}
-              >
-                {formatter.format(accountBalance - accountSize)}
-              </FundedAccountListItemAccountBufferAmountHighlighted>
-              /
-              <FundedAccountListItemAccountBufferAmount>
-                {formatter.format(minBuffer)}
-              </FundedAccountListItemAccountBufferAmount>
-            </FundedAccountListItemAccountBufferText>
-            <BorderLinearProgress
-              $bufferPercent={bufferPercent}
-              variant="determinate"
-              value={bufferPercent}
-              style={styles.progressBar}
+      <ListItemContainer>
+        <AccountImage src={imageSrc(firmLogoSrc(firm))} />
+        <AccountTitleContainer>
+          <AccountTitle>{accountName}</AccountTitle>
+          <AccountSubtitle>
+            Balance:
+            <AccountSubtitleHighlighted>
+              {formatter.format(accountBalance)}
+            </AccountSubtitleHighlighted>
+          </AccountSubtitle>
+          <AccountTradingDaysComplete>
+            {`Eligible Days: ${currentDayCount ?? "N/A"}/${
+              firmMinDays ?? "N/A"
+            }`}
+            <InfoPopout
+              infoDescription={`This account requires a minimum of ${firmMinDays} eligible trading days.`}
             />
-          </FundedAccountListItemAccountBuffer>
-          <FundedAccountListItemAccountPnL>
-            <FundedAccountListItemAccountPnLValue
-              $bufferPercent={bufferPercent}
-            >
+          </AccountTradingDaysComplete>
+        </AccountTitleContainer>
+        <DaysContainer>
+          {dayValues.map((dayValue) => (
+            <DaysItem>
+              <GlassTile
+                positive={dayValue.value > 0}
+                featureTile
+                minHeight={10}
+                minWidth={10}
+                padding={7}
+              >
+                <DaysItemValue $positive={dayValue.value > 0}>
+                  {`${dayValue.value > 0 ? "+" : ""}${dayValue.value}`}
+                </DaysItemValue>
+              </GlassTile>
+              <DaysItemSubtitle>{dayValue.day}</DaysItemSubtitle>
+            </DaysItem>
+          ))}
+        </DaysContainer>
+        <BufferContainer>
+          <BufferText>
+            Min Payout Buffer:
+            <BufferAmountHighlighted $bufferPercent={bufferPercent}>
               {formatter.format(accountBalance - accountSize)}
-            </FundedAccountListItemAccountPnLValue>
-            <FundedAccountListItemAccountPnLWithdrawable
-              $positive={accountBalance - accountSize - minBuffer > 0}
-            >
-              <FundedAccountListItemAccountPnLWithdrawableText>
-                Withdrawable:
-              </FundedAccountListItemAccountPnLWithdrawableText>
-              {accountBalance - accountSize - minBuffer < 0
-                ? formatter.format(0)
-                : formatter.format(accountBalance - accountSize - minBuffer)}
-            </FundedAccountListItemAccountPnLWithdrawable>
-          </FundedAccountListItemAccountPnL>
-        </FundedAccountListItemAccount>
-      </FundedAccountListItemContainer>
+            </BufferAmountHighlighted>
+            /<BufferAmount>{formatter.format(minBuffer)}</BufferAmount>
+            <InfoPopout
+              infoDescription={`This account requires a minimum buffer of $${minBuffer} before a payout can be requested.`}
+            />
+          </BufferText>
+          <BorderLinearProgress
+            $bufferPercent={bufferPercent}
+            variant="determinate"
+            value={bufferPercent}
+            style={styles.progressBar}
+          />
+        </BufferContainer>
+        <PnLContainer>
+          <PnLValue $bufferPercent={bufferPercent}>
+            {formatter.format(accountBalance - accountSize)}
+          </PnLValue>
+          <PnLWithdrawable
+            $positive={accountBalance - accountSize - minBuffer > 0}
+          >
+            <PnLWithdrawableText>Withdrawable:</PnLWithdrawableText>
+            {accountBalance - accountSize - minBuffer < 0
+              ? formatter.format(0)
+              : formatter.format(accountBalance - accountSize - minBuffer)}
+          </PnLWithdrawable>
+        </PnLContainer>
+      </ListItemContainer>
     </GlassTile>
   );
 };
