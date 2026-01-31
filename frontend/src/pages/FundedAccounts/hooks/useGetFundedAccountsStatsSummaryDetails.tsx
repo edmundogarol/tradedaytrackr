@@ -47,7 +47,7 @@ export const useGetFundedAccountsStatsSummaryDetails =
         tileValueColor: "#b2deb2",
         tileTitle: "Withdrawable PnL",
         tileSubtitle: {
-          content: "",
+          content: "Ready for withdrawal",
         },
         tileShinePositive: true,
         tileIcon: <CreditCardIcon style={styles.featureIconStyle(40)} />,

@@ -4,6 +4,10 @@ export const imageSrc = (imageName: string): string => {
   return `/images/${imageName}`;
 };
 
+export const firmLogoSrc = (firmName: string): string => {
+  return `/firms/${firmName}.png`;
+};
+
 export const devSrc = (imageName: string): string => {
   return `/dev/${imageName}`;
 };

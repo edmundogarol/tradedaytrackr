@@ -1,4 +1,5 @@
 import React from "react";
+import { If } from "@components/If/If";
 import {
   GlassTileBoxGlow,
   GlassTileContainer,
@@ -12,6 +13,11 @@ interface GlassTileProps {
   children?: React.ReactNode;
   featureTile?: boolean;
   leftAlign?: boolean;
+  minHeight?: number;
+  minWidth?: number;
+  padding?: number;
+  noGlow?: boolean;
+  noShine?: boolean;
 }
 
 const GlassTile: React.FunctionComponent<GlassTileProps> = ({
@@ -20,13 +26,27 @@ const GlassTile: React.FunctionComponent<GlassTileProps> = ({
   children,
   featureTile = false,
   leftAlign = false,
+  minHeight,
+  minWidth,
+  padding,
+  noGlow = false,
+  noShine = false,
 }) => {
   return (
-    <GlassTileContainer $leftAlign={leftAlign}>
+    <GlassTileContainer
+      $leftAlign={leftAlign}
+      $minHeight={minHeight}
+      $minWidth={minWidth}
+      $padding={padding}
+    >
       {overlay}
       <GlassTileEffect />
-      <GlassTileShine />
-      <GlassTileBoxGlow $positive={positive} $featureTile={featureTile} />
+      <If condition={!noShine}>
+        <GlassTileShine />
+      </If>
+      <If condition={!noGlow}>
+        <GlassTileBoxGlow $positive={positive} $featureTile={featureTile} />
+      </If>
       {children}
     </GlassTileContainer>
   );

@@ -1,17 +1,22 @@
 import styled from "styled-components";
 
-export const GlassTileContainer = styled.div<{ $leftAlign?: boolean }>`
+export const GlassTileContainer = styled.div<{
+  $leftAlign?: boolean;
+  $minHeight?: number;
+  $minWidth?: number;
+  $padding?: number;
+}>`
   height: 100%;
   display: flex;
   align-items: ${(props): string =>
     props.$leftAlign ? "flex-start" : "center"};
   justify-content: center;
   flex-direction: column;
-  min-width: 150px;
+  min-width: ${(props): number => props.$minWidth ?? 150}px;
   position: relative;
-  padding: 12px;
+  padding: ${(props): number => props.$padding ?? 12}px;
   box-shadow: 1px 13px 30px #00000047;
-  min-height: 112px;
+  min-height: ${(props): number => props.$minHeight ?? 112}px;
   pointer-events: none;
 
   width: 100%;
