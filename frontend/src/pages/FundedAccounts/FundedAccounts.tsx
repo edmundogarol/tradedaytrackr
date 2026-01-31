@@ -2,7 +2,7 @@ import React from "react";
 import Gap from "@components/Gap/Gap";
 import Page from "@components/Page/Page";
 import StatsSummary from "@components/Stats/StatsSummary/StatsSummary";
-import Dropdown from "@components/Dropdown/Dropdown";
+import DropdownMultiselect from "@components/DropdownMultiselect/DropdownMultiselect";
 import {
   Container,
   DropdownsSection,
@@ -43,8 +43,8 @@ const FundedAccounts: React.FunctionComponent = () => {
         />
         <Gap level={2} />
         <DropdownsSection>
-          <Dropdown items={firmsList} title="All Firms" />
-          <Dropdown items={bufferState} title="Buffer Built" />
+          <DropdownMultiselect items={firmsList} title="All Firms" />
+          <DropdownMultiselect items={bufferState} title="Buffer Built" />
         </DropdownsSection>
         <ListHeaders>
           <AccountHeader>Account</AccountHeader>
