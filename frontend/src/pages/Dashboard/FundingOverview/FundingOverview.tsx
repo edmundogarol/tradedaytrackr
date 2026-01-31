@@ -1,5 +1,5 @@
 import React from "react";
-import { FundingOverviewTitle } from "./FundingOverviewStyledComponents";
+import { Title } from "./FundingOverviewStyledComponents";
 import FundingOverviewSection from "./FundingOverviewSection";
 import useGetFundingOverviewDetails from "./hooks/useGetFundingOverviewDetails";
 
@@ -7,7 +7,7 @@ const FundingOverview: React.FunctionComponent = () => {
   const overviewDetails = useGetFundingOverviewDetails();
   return (
     <>
-      <FundingOverviewTitle>Funding Overview</FundingOverviewTitle>
+      <Title>Funding Overview</Title>
       {overviewDetails.map((tileDetails) => (
         <FundingOverviewSection key={tileDetails.title} {...tileDetails} />
       ))}

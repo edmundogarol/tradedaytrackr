@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const PNLChartContainer = styled.div`
+export const Container = styled.div`
   display: flex;
   align-items: center;
   height: 100%;

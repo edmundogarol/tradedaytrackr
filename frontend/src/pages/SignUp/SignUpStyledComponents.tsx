@@ -3,10 +3,9 @@ import {
   CONTAINER_PADDING_DEFAULT,
   CONTAINER_PADDING_LARGE,
 } from "@styles/constants";
-import Button from "@components/Button/Button";
 import { color } from "@styles/colors";
 
-export const SignUpContainer = styled.div`
+export const Container = styled.div`
   width: 100%;
   max-width: 400px;
   min-width: 300px;
@@ -18,26 +17,24 @@ export const SignUpContainer = styled.div`
   margin-bottom: auto;
 `;
 
-export const SignUpScrollView = styled.div`
+export const ScrollView = styled.div`
   padding-left: ${CONTAINER_PADDING_LARGE}px;
   padding-right: ${CONTAINER_PADDING_LARGE}px;
 `;
 
-export const SignUpInputsContainer = styled.div`
+export const InputsContainer = styled.div`
   padding: ${CONTAINER_PADDING_DEFAULT}px 0 ${CONTAINER_PADDING_DEFAULT}px 0;
   justify-content: space-between;
 `;
 
-export const SignUpHeaderContainer = styled.div`
+export const HeaderContainer = styled.div`
   display: flex;
   align-items: center;
 `;
 
-export const SignUpHeader = styled.h1`
+export const Header = styled.h1`
   color: ${color("SystemLabel1")};
   font-size: 30px;
   font-weight: 100;
   margin: 0;
 `;
-
-export const SignUpButton = styled(Button)``;

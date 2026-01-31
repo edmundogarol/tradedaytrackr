@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Else, If } from "@components/If/If";
-import { StatsSummaryContainer } from "./StatsSummaryStyledComponents";
+import { Container } from "./StatsSummaryStyledComponents";
 import StatsSummaryTileItem from "./StatsSummaryTileItem";
 import StatsSummaryFeatureTileItem from "./StatsSummaryFeatureTileItem";
 
@@ -28,7 +28,7 @@ const StatsSummary: React.FunctionComponent<StatsSummaryProps> = ({
   featureTiles,
 }) => {
   return (
-    <StatsSummaryContainer>
+    <Container>
       <If condition={!featureTiles}>
         {statsSummaryTilesDetails.map((tileDetails) => (
           <StatsSummaryTileItem key={tileDetails.tileTitle} {...tileDetails} />
@@ -42,7 +42,7 @@ const StatsSummary: React.FunctionComponent<StatsSummaryProps> = ({
           ))}
         </Else>
       </If>
-    </StatsSummaryContainer>
+    </Container>
   );
 };
 

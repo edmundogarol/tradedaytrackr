@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const GlassTileContainer = styled.div<{
+export const Container = styled.div<{
   $leftAlign?: boolean;
   $minHeight?: number;
   $minWidth?: number;
@@ -55,7 +55,7 @@ export const GlassTileContainer = styled.div<{
   }
 `;
 
-export const GlassTileBoxGlow = styled.div<{
+export const BoxGlow = styled.div<{
   $positive?: boolean;
   $featureTile?: boolean;
 }>`
@@ -118,7 +118,7 @@ export const GlassTileBoxGlow = styled.div<{
   }
 `;
 
-export const GlassTileShine = styled.div`
+export const Shine = styled.div`
   position: absolute;
   inset: 0;
   z-index: 2;
@@ -129,7 +129,7 @@ export const GlassTileShine = styled.div`
   background: #6060601c;
 `;
 
-export const GlassTileEffect = styled.div`
+export const GlassEffect = styled.div`
   position: absolute;
   z-index: 0;
   inset: 0;

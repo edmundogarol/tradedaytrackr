@@ -12,10 +12,10 @@ import useLoginState from "./hooks/useLoginState";
 import {
   ForgotPasswordLink,
   LoginButton,
-  LoginContainer,
-  LoginImageContainer,
-  LoginInputsContainer,
-  LoginMainImage,
+  Container,
+  ImageContainer,
+  InputsContainer,
+  MainImage,
   SignUpLink,
   SignUpText,
   SignUpTextContainer,
@@ -46,13 +46,13 @@ const Login: React.FunctionComponent = () => {
 
   return (
     <Page topBar={false} sideDrawer={false}>
-      <LoginContainer>
-        <LoginImageContainer>
-          <LoginMainImage $shineDone={shineDone} />
-        </LoginImageContainer>
+      <Container>
+        <ImageContainer>
+          <MainImage $shineDone={shineDone} />
+        </ImageContainer>
         <Gap level={1} />
         <If condition={!user?.logged_in}>
-          <LoginInputsContainer>
+          <InputsContainer>
             <Input
               value={loginForm.email}
               error={loginFormErrors.email}
@@ -98,13 +98,13 @@ const Login: React.FunctionComponent = () => {
             </ForgotPasswordLink>
             <Gap level={1} />
             <LoginButton loading={loading} text={"Login"} onClick={login} />
-          </LoginInputsContainer>
+          </InputsContainer>
           <SignUpTextContainer>
             <SignUpText>{"Don't have an account?"}</SignUpText>
             <SignUpLink to={linkToUrl(PageEnum.SignUp)}>{"Sign Up"}</SignUpLink>
           </SignUpTextContainer>
         </If>
-      </LoginContainer>
+      </Container>
     </Page>
   );
 };

@@ -3,10 +3,7 @@ import { If } from "@components/If/If";
 import { color } from "@styles/colors";
 import Icon from "@components/Icon/Icon";
 import { IconTypeEnum } from "@components/Icon/IconInterfaces";
-import {
-  InputError,
-  ErrorContainer,
-} from "@components/Input/InputStyledComponents";
+import { Error, ErrorContainer } from "@components/Input/InputStyledComponents";
 
 export interface FormErrorProps {
   error?: string;
@@ -21,7 +18,7 @@ const FormError: React.FunctionComponent<FormErrorProps> = ({ error }) => {
           name={"error"}
           type={IconTypeEnum.MaterialIcons}
         />
-        <InputError>{error}</InputError>
+        <Error>{error}</Error>
       </ErrorContainer>
     </If>
   );

@@ -1,7 +1,6 @@
-import Button from "@mui/material/Button";
 import styled from "styled-components";
 
-export const FundingOverviewTitle = styled.h2`
+export const Title = styled.h2`
   margin: 10px;
   color: #d2d2d2;
   font-size: 16px;
@@ -12,7 +11,7 @@ export const FundingOverviewTitle = styled.h2`
   flex-wrap: wrap;
 `;
 
-export const FundingOverviewSectionContainer = styled.div`
+export const SectionContainer = styled.div`
   display: flex;
   flex-direction: column;
   white-space: nowrap;
@@ -25,7 +24,7 @@ export const FundingOverviewSectionContainer = styled.div`
   margin-bottom: 10px;
 `;
 
-export const FundingOverviewSectionTitle = styled.h3`
+export const SectionTitle = styled.h3`
   margin: 10px;
   margin-left: 0;
   margin-bottom: 5px;
@@ -38,16 +37,16 @@ export const FundingOverviewSectionTitle = styled.h3`
   flex-wrap: wrap;
 `;
 
-export const FundingOverviewSectionContent = styled.div`
+export const SectionContent = styled.div`
   align-items: flex-start;
   display: flex;
 `;
 
-export const FundingOverviewSectionContentValueContainer = styled.div`
+export const ContentValueContainer = styled.div`
   margin-left: 7px;
 `;
 
-export const FundingOverviewSectionContentValue = styled.span`
+export const ContentValue = styled.span`
   color: #c6c6c6;
   font-weight: 100;
   margin-left: 10px;
@@ -55,7 +54,7 @@ export const FundingOverviewSectionContentValue = styled.span`
   font-size: 14px;
 `;
 
-export const FundingOverviewSectionContentValueHighlighted = styled.span`
+export const ContentValueHighlighted = styled.span`
   color: #95d395;
   font-size: 20px;
 `;

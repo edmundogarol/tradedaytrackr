@@ -9,13 +9,13 @@ import useCheckSignUpFormErrors from "@pages/SignUp/hooks/useCheckSignUpFormErro
 import useSignUpHandler from "@pages/SignUp/hooks/useSignUpHandler";
 import FormError from "@components/Error/FormError/FormError";
 import Page from "@components/Page/Page";
+import Button from "@components/Button/Button";
 import {
-  SignUpButton,
-  SignUpContainer,
-  SignUpHeader,
-  SignUpHeaderContainer,
-  SignUpInputsContainer,
-  SignUpScrollView,
+  Container,
+  Header,
+  HeaderContainer,
+  InputsContainer,
+  ScrollView,
 } from "./SignUpStyledComponents";
 
 const SignUp: React.FunctionComponent = () => {
@@ -28,15 +28,15 @@ const SignUp: React.FunctionComponent = () => {
 
   return (
     <Page sideDrawer={false}>
-      <SignUpContainer>
-        <SignUpScrollView>
+      <Container>
+        <ScrollView>
           <Gap level={3} />
-          <SignUpHeaderContainer>
+          <HeaderContainer>
             <Gap level={1} />
-            <SignUpHeader>{"Sign Up"}</SignUpHeader>
-          </SignUpHeaderContainer>
+            <Header>{"Sign Up"}</Header>
+          </HeaderContainer>
           <Gap level={1} />
-          <SignUpInputsContainer>
+          <InputsContainer>
             <Input
               label="First Name"
               placeholder="Enter first name"
@@ -112,14 +112,10 @@ const SignUp: React.FunctionComponent = () => {
             <FormError
               error={signUpFormErrors["error"] || signUpFormErrors["detail"]}
             />
-          </SignUpInputsContainer>
-          <SignUpButton
-            loading={loading}
-            text={"Submit"}
-            onClick={() => signUp()}
-          />
-        </SignUpScrollView>
-      </SignUpContainer>
+          </InputsContainer>
+          <Button loading={loading} text={"Submit"} onClick={() => signUp()} />
+        </ScrollView>
+      </Container>
     </Page>
   );
 };

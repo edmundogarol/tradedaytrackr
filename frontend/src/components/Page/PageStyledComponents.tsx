@@ -2,7 +2,7 @@ import { color } from "@styles/colors";
 import { CONTAINER_PADDING_LARGE } from "@styles/constants";
 import styled from "styled-components";
 
-export const PageContainer = styled.div<{ $withSideDrawer?: boolean }>`
+export const Container = styled.div<{ $withSideDrawer?: boolean }>`
   min-height: 100vh;
   display: flex;
   flex-direction: column;

@@ -3,12 +3,12 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { GlowingIconWrapper } from "@components/GlassTile/GlassTileStyledComponents";
 import Button from "@mui/material/Button";
 import {
-  FundingOverviewSectionContainer,
-  FundingOverviewSectionContent,
-  FundingOverviewSectionContentValue,
-  FundingOverviewSectionContentValueContainer,
-  FundingOverviewSectionContentValueHighlighted,
-  FundingOverviewSectionTitle,
+  SectionContainer,
+  SectionContent,
+  ContentValue,
+  ContentValueContainer,
+  ContentValueHighlighted,
+  SectionTitle,
 } from "./FundingOverviewStyledComponents";
 import styles from "./FundingOverviewStyles";
 
@@ -25,26 +25,22 @@ const FundingOverviewSection: React.FunctionComponent<
   FundingOverviewSectionProps
 > = ({ title, icon, highlightedValue, subtext, buttonAction, footer }) => {
   return (
-    <FundingOverviewSectionContainer>
-      <FundingOverviewSectionTitle>{title}</FundingOverviewSectionTitle>
-      <FundingOverviewSectionContent>
+    <SectionContainer>
+      <SectionTitle>{title}</SectionTitle>
+      <SectionContent>
         <GlowingIconWrapper $positive $size={30}>
           {icon}
         </GlowingIconWrapper>
-        <FundingOverviewSectionContentValueContainer>
-          <FundingOverviewSectionContentValueHighlighted>
-            {highlightedValue}
-          </FundingOverviewSectionContentValueHighlighted>
-          <FundingOverviewSectionContentValue>
-            {subtext}
-          </FundingOverviewSectionContentValue>
-        </FundingOverviewSectionContentValueContainer>
+        <ContentValueContainer>
+          <ContentValueHighlighted>{highlightedValue}</ContentValueHighlighted>
+          <ContentValue>{subtext}</ContentValue>
+        </ContentValueContainer>
         <Button style={styles.button} onClick={buttonAction}>
           <VisibilityIcon style={styles.viewIcon} />
         </Button>
-      </FundingOverviewSectionContent>
+      </SectionContent>
       {footer}
-    </FundingOverviewSectionContainer>
+    </SectionContainer>
   );
 };
 

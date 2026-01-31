@@ -8,14 +8,14 @@ import StatsSummary from "@components/Stats/StatsSummary/StatsSummary";
 import useGetDashboardStatsSummaryDetails from "@pages/Dashboard/FundingOverview/hooks/useGetDashboardStatsSummaryDetails";
 import UpcomingPayoutDetails from "./UpcomingPayoutDetails/UpcomingPayoutDetails";
 import {
-  DashboardContainer,
-  DashboardContentCalendarContainer,
-  DashboardContentHeader,
-  DashboardContentJournalEntryContainer,
+  Container,
+  CalendarContainer,
+  SectionHeader,
+  JournalEntriesContainer,
   DashboardContentOtherContainer,
-  DashboardTopSectionContainer,
-  DashboardTopSectionLeftContainer,
-  DashboardTopSectionRightContainer,
+  TopSection,
+  LeftContainer,
+  RightContainer,
 } from "./DashboardStyledComponents";
 import FundingOverview from "./FundingOverview/FundingOverview";
 
@@ -23,28 +23,28 @@ const Dashboard: React.FunctionComponent = () => {
   const dashboardStatsSummaryDetails = useGetDashboardStatsSummaryDetails();
   return (
     <Page topBarShowMenu={true}>
-      <DashboardContainer>
+      <Container>
         <Gap level={4} />
-        <DashboardTopSectionContainer>
-          <DashboardTopSectionLeftContainer>
-            <DashboardContentJournalEntryContainer>
+        <TopSection>
+          <LeftContainer>
+            <JournalEntriesContainer>
               <UpcomingPayoutDetails />
-            </DashboardContentJournalEntryContainer>
+            </JournalEntriesContainer>
             <Gap level={2} />
-            <DashboardContentJournalEntryContainer>
-              <DashboardContentHeader>Current Stats</DashboardContentHeader>
+            <JournalEntriesContainer>
+              <SectionHeader>Current Stats</SectionHeader>
               <StatsSummary
                 statsSummaryTilesDetails={dashboardStatsSummaryDetails}
               />
-            </DashboardContentJournalEntryContainer>
-          </DashboardTopSectionLeftContainer>
-          <DashboardTopSectionRightContainer>
+            </JournalEntriesContainer>
+          </LeftContainer>
+          <RightContainer>
             <FundingOverview />
-          </DashboardTopSectionRightContainer>
-        </DashboardTopSectionContainer>
+          </RightContainer>
+        </TopSection>
         <Gap level={2} />
-        <DashboardContentCalendarContainer>
-          <DashboardContentHeader>Recent Activity</DashboardContentHeader>
+        <CalendarContainer>
+          <SectionHeader>Recent Activity</SectionHeader>
           {/* <LineChart
             xAxis={[{ data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] }]}
             series={[
@@ -56,11 +56,11 @@ const Dashboard: React.FunctionComponent = () => {
             height={300}
           /> */}
           <CalendarSummary count={CalendarSummaryCount.TEN_DAYS} />
-        </DashboardContentCalendarContainer>
+        </CalendarContainer>
         <DashboardContentOtherContainer>
           {/* <PNLDailyChart /> */}
         </DashboardContentOtherContainer>
-      </DashboardContainer>
+      </Container>
     </Page>
   );
 };

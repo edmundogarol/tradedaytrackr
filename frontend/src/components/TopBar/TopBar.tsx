@@ -3,7 +3,7 @@ import { If } from "@components/If/If";
 import { imageSrc } from "@utils/utils";
 import { Link } from "react-router";
 import useLoginState from "@pages/Login/hooks/useLoginState";
-import { TopBarContainer, TopBarHomeLogo } from "./TopBarStyledComponents";
+import { Container, HomeLogo } from "./TopBarStyledComponents";
 import TopBarMenu from "./TopBarMenu/TopBarMenu";
 
 export interface TopBarProps {
@@ -20,10 +20,10 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
   const { user } = useLoginState();
 
   return (
-    <TopBarContainer $transparent={transparent}>
+    <Container $transparent={transparent}>
       <If condition={homeLogo}>
         <Link to="/">
-          <TopBarHomeLogo
+          <HomeLogo
             src={imageSrc("tradedaytrackr_full_no_background.svg")}
             alt="Home Logo"
           />
@@ -32,7 +32,7 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
       <If condition={topBarShowMenu}>
         <TopBarMenu user={user} />
       </If>
-    </TopBarContainer>
+    </Container>
   );
 };
 

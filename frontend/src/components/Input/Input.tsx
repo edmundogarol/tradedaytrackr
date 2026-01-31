@@ -4,14 +4,14 @@ import { color } from "@styles/colors";
 import Icon from "@components/Icon/Icon";
 import { IconTypeEnum } from "@components/Icon/IconInterfaces";
 import {
-  InputLabel,
+  InputLabel as Label,
   InputContainer,
   InputStyled,
-  InputError,
+  Error,
   ErrorContainer,
-  InputWrapper,
+  Container,
   Subtext,
-  InputIconContainer,
+  IconContainer,
 } from "./InputStyledComponents";
 
 export interface InputWrapperProps
@@ -44,16 +44,16 @@ const Input: React.FunctionComponent<InputWrapperProps> = ({
   ...props
 }) => {
   return (
-    <InputWrapper>
+    <Container>
       <If condition={!!label}>
-        <InputLabel $disabled={disabled} $error={!!error}>
+        <Label $disabled={disabled} $error={!!error}>
           {label}
-        </InputLabel>
+        </Label>
       </If>
       <InputContainer $error={!!error}>
-        <InputIconContainer>
+        <IconContainer>
           <If condition={!!icon}>{icon}</If>
-        </InputIconContainer>
+        </IconContainer>
         <InputStyled
           {...props}
           disabled={disabled}
@@ -71,13 +71,13 @@ const Input: React.FunctionComponent<InputWrapperProps> = ({
             name={"error"}
             type={IconTypeEnum.MaterialIcons}
           />
-          <InputError>{error}</InputError>
+          <Error>{error}</Error>
         </ErrorContainer>
       </If>
       <If condition={!!subtext}>
         <Subtext>{subtext}</Subtext>
       </If>
-    </InputWrapper>
+    </Container>
   );
 };
 export default Input;

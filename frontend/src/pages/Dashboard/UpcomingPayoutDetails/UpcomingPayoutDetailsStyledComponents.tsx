@@ -2,7 +2,7 @@ import { color } from "@styles/colors";
 import { CONTAINER_PADDING_DEFAULT } from "@styles/constants";
 import styled from "styled-components";
 
-export const UpcomingPayoutDetailsContainer = styled.div`
+export const Container = styled.div`
   display: flex;
   align-items: center;
   height: 100%;
@@ -14,11 +14,11 @@ export const UpcomingPayoutDetailsContainer = styled.div`
   padding: ${CONTAINER_PADDING_DEFAULT}px;
 `;
 
-export const UpcomingPayoutDetailsFeature = styled.div`
+export const Feature = styled.div`
   width: 100%;
 `;
 
-export const UpcomingPayoutDetailsFeatureTitle = styled.h2`
+export const FeatureTitle = styled.h2`
   margin: unset;
   padding: 10px;
   padding-top: 0;
@@ -33,7 +33,7 @@ export const UpcomingPayoutDetailsFeatureTitle = styled.h2`
   flex-wrap: wrap;
 `;
 
-export const UpcomingPayoutDetailsFeatureContentContainer = styled.div`
+export const FeatureContentContainer = styled.div`
   z-index: 1;
   display: flex;
   width: 100%;
@@ -44,7 +44,7 @@ export const UpcomingPayoutDetailsFeatureContentContainer = styled.div`
   padding-bottom: 15px;
 `;
 
-export const UpcomingPayoutDetailsFeatureContentValue = styled.h1`
+export const FeatureContentValue = styled.h1`
   color: #75f271;
   margin: 0;
   margin-bottom: -10px;
@@ -53,36 +53,36 @@ export const UpcomingPayoutDetailsFeatureContentValue = styled.h1`
   text-shadow: 1px 1px 2px black;
 `;
 
-export const UpcomingPayoutDetailsFeatureContentSubtext = styled.span`
+export const FeatureContentSubtext = styled.span`
   color: #ffff;
   font-size: 13px;
   font-weight: 100;
   margin-left: 5px;
 `;
 
-export const UpcomingPayoutDetailsFeatureContentSubtitle = styled.span`
+export const FeatureContentSubtitle = styled.span`
   color: #ffff;
   font-size: 13px;
 `;
 
-export const UpcomingPayoutDetailsFeatureContentSubtitleContainer = styled.div`
+export const FeatureContentSubtitleContainer = styled.div`
   margin-top: 10px;
   margin-bottom: 10px;
   margin-right: 10px;
 `;
 
-export const UpcomingPayoutDetailsFeatureContentProgressBarDrilldownContainer = styled.div``;
+export const FeatureContentProgressBarDrilldownContainer = styled.div``;
 
-export const UpcomingPayoutDetailsFeatureContentProgressBarDrilldown = styled.div``;
+export const FeatureContentProgressBarDrilldown = styled.div``;
 
-export const UpcomingPayoutDetailsFeatureContentProgressBarDrilldownSubtext = styled.div`
+export const FeatureContentProgressBarDrilldownSubtext = styled.div`
   color: ${color("SystemLabel1")};
   display: flex;
   justify-content: end;
   font-size: 13px;
 `;
 
-export const UpcomingPayoutDetailsFeatureContentProgressBarDrilldownSubtextHighlighted = styled.div`
+export const FeatureContentProgressBarDrilldownSubtextHighlighted = styled.div`
   color: ${color("SystemWhite")};
   margin-left: 5px;
   text-transform: uppercase;
@@ -94,7 +94,7 @@ export const UpcomingPayoutDetailsFeatureContentProgressBarDrilldownSubtextHighl
   }
 `;
 
-export const UpcomingPayoutDetailsFeatureContentProgressBarContainer = styled.div`
+export const FeatureContentProgressBarContainer = styled.div`
   display: flex;
   align-items: center;
   border: 1px solid #414d63;
@@ -108,7 +108,7 @@ export const UpcomingPayoutDetailsFeatureContentProgressBarContainer = styled.di
   margin-bottom: 10px;
 `;
 
-export const UpcomingPayoutDetailsFeatureContentProgressBarLabel = styled.h3`
+export const FeatureContentProgressBarLabel = styled.h3`
   color: #d2d2d2;
   position: absolute;
   margin: 0;
@@ -117,12 +117,12 @@ export const UpcomingPayoutDetailsFeatureContentProgressBarLabel = styled.h3`
   transform: translateX(-13px);
 `;
 
-export const UpcomingPayoutDetailsHeaderNoteContainer = styled.div`
+export const HeaderNoteContainer = styled.div`
   margin-left: auto;
   display: flex;
 `;
 
-export const UpcomingPayoutDetailsHeaderNoteSlash = styled.span`
+export const HeaderNoteSlash = styled.span`
   margin-right: 6px;
   font-weight: 100;
   text-shadow: 0 0 BLACK;
@@ -130,7 +130,7 @@ export const UpcomingPayoutDetailsHeaderNoteSlash = styled.span`
   color: #505d72;
 `;
 
-export const UpcomingPayoutDetailsHeaderNote = styled.span`
+export const HeaderNote = styled.span`
   width: min-content;
   display: flex;
   white-space: nowrap;
@@ -142,14 +142,14 @@ export const UpcomingPayoutDetailsHeaderNote = styled.span`
   background: #a1a1a112;
 `;
 
-export const UpcomingPayoutDetailsHeaderNoteText = styled.p`
+export const HeaderNoteText = styled.p`
   font-weight: 200;
   font-size: 13px;
   margin: 0;
   z-index: 1;
 `;
 
-export const UpcomingPayoutDetailsHeaderNoteTextHighlighted = styled.span`
+export const HeaderNoteTextHighlighted = styled.span`
   margin: 5px;
   font-size: large;
   color: #df7e7e;

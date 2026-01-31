@@ -44,7 +44,7 @@ const fadeOut = keyframes`
   }
 `;
 
-export const LoginContainer = styled.div`
+export const Container = styled.div`
   align-items: center;
   justify-content: center;
   padding-left: ${CONTAINER_PADDING_LARGE}px;
@@ -56,7 +56,7 @@ export const LoginContainer = styled.div`
   margin-bottom: auto;
 `;
 
-export const LoginInputsContainer = styled.div`
+export const InputsContainer = styled.div`
   width: 100%;
   padding: ${CONTAINER_PADDING_DEFAULT}px 0 ${CONTAINER_PADDING_DEFAULT}px 0;
   justify-content: space-between;
@@ -92,14 +92,14 @@ export const ForgotPasswordLink = styled(Link)`
 
 export const LoginButton = styled(Button)``;
 
-export const LoginImageContainer = styled.div`
+export const ImageContainer = styled.div`
   display: flex;
   width: 100%;
   align-items: center;
   justify-content: center;
 `;
 
-export const LoginMainImage = styled.div<{ $shineDone?: boolean }>`
+export const MainImage = styled.div<{ $shineDone?: boolean }>`
   width: 100%;
   ${(props): RuleSet<object> =>
     props.$shineDone

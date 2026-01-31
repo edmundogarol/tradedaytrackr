@@ -3,7 +3,7 @@ import { If } from "@components/If/If";
 import TopBar from "@components/TopBar/TopBar";
 import BottomBar from "@components/BottomBar/BottomBar";
 import SideDrawer from "@components/SideDrawer/SideDrawer";
-import { ChildrenContainer, PageContainer } from "./PageStyledComponents";
+import { ChildrenContainer, Container } from "./PageStyledComponents";
 
 export interface PageProps {
   children?: React.ReactNode;
@@ -21,7 +21,7 @@ const Page: React.FunctionComponent<PageProps> = ({
   sideDrawer = true,
 }) => {
   return (
-    <PageContainer $withSideDrawer={sideDrawer}>
+    <Container $withSideDrawer={sideDrawer}>
       <If condition={sideDrawer}>
         <SideDrawer />
       </If>
@@ -32,7 +32,7 @@ const Page: React.FunctionComponent<PageProps> = ({
       <If condition={bottomBar}>
         <BottomBar transparent />
       </If>
-    </PageContainer>
+    </Container>
   );
 };
 

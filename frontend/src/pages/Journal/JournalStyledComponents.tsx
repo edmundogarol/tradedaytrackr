@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { CONTAINER_PADDING_LARGE } from "@styles/constants";
 
-export const JournalContainer = styled.div`
+export const Container = styled.div`
   align-items: center;
   justify-content: center;
   height: 100%;

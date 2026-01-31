@@ -2,28 +2,18 @@ import React from "react";
 import { imageSrc } from "@utils/utils";
 import { Link } from "react-router";
 import Page from "@components/Page/Page";
-import {
-  PageNotFoundContainer,
-  PageNotFoundLogo,
-  PageNotFoundSubText,
-  PageNotFoundText,
-} from "./PageNotFoundStyledComponents";
+import { Container, Logo, SubText, Text } from "./PageNotFoundStyledComponents";
 
 const PageNotFound: React.FunctionComponent = () => {
   return (
     <Page sideDrawer={false}>
-      <PageNotFoundContainer>
+      <Container>
         <Link to="/">
-          <PageNotFoundLogo
-            src={imageSrc("page_not_found.png")}
-            alt="Home Logo"
-          />
+          <Logo src={imageSrc("page_not_found.png")} alt="Home Logo" />
         </Link>
-        <PageNotFoundText>404 - Page Not Found</PageNotFoundText>
-        <PageNotFoundSubText>
-          The page you are looking for does not exist.
-        </PageNotFoundSubText>
-      </PageNotFoundContainer>
+        <Text>404 - Page Not Found</Text>
+        <SubText>The page you are looking for does not exist.</SubText>
+      </Container>
     </Page>
   );
 };

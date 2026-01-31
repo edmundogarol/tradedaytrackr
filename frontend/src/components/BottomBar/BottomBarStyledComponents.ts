@@ -3,7 +3,7 @@ import { CONTAINER_PADDING_LARGE } from "@styles/constants";
 import { Link } from "react-router";
 import styled from "styled-components";
 
-export const BottomBarContainer = styled.div<{ $transparent?: boolean }>`
+export const Container = styled.div<{ $transparent?: boolean }>`
   padding: ${CONTAINER_PADDING_LARGE}px;
   text-align: end;
   ${({ $transparent }): string =>

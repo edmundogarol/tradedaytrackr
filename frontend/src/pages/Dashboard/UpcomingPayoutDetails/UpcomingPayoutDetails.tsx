@@ -11,24 +11,24 @@ import styled from "styled-components";
 import Collapse from "@mui/material/Collapse";
 import { Else, If } from "@components/If/If";
 import {
-  UpcomingPayoutDetailsContainer,
-  UpcomingPayoutDetailsFeature,
-  UpcomingPayoutDetailsFeatureContentContainer,
-  UpcomingPayoutDetailsFeatureContentProgressBarContainer,
-  UpcomingPayoutDetailsFeatureContentProgressBarDrilldown,
-  UpcomingPayoutDetailsFeatureContentProgressBarDrilldownContainer,
-  UpcomingPayoutDetailsFeatureContentProgressBarDrilldownSubtext,
-  UpcomingPayoutDetailsFeatureContentProgressBarDrilldownSubtextHighlighted,
-  UpcomingPayoutDetailsFeatureContentProgressBarLabel,
-  UpcomingPayoutDetailsFeatureContentSubtext,
-  UpcomingPayoutDetailsFeatureContentSubtitle,
-  UpcomingPayoutDetailsFeatureContentValue,
-  UpcomingPayoutDetailsFeatureTitle,
-  UpcomingPayoutDetailsHeaderNote,
-  UpcomingPayoutDetailsHeaderNoteContainer,
-  UpcomingPayoutDetailsHeaderNoteSlash,
-  UpcomingPayoutDetailsHeaderNoteText,
-  UpcomingPayoutDetailsHeaderNoteTextHighlighted,
+  Container,
+  Feature,
+  FeatureContentContainer,
+  FeatureContentProgressBarContainer,
+  FeatureContentProgressBarDrilldown,
+  FeatureContentProgressBarDrilldownContainer,
+  FeatureContentProgressBarDrilldownSubtext,
+  FeatureContentProgressBarDrilldownSubtextHighlighted,
+  FeatureContentProgressBarLabel,
+  FeatureContentSubtext,
+  FeatureContentSubtitle,
+  FeatureContentValue,
+  FeatureTitle,
+  HeaderNote,
+  HeaderNoteContainer,
+  HeaderNoteSlash,
+  HeaderNoteText,
+  HeaderNoteTextHighlighted,
 } from "./UpcomingPayoutDetailsStyledComponents";
 import styles from "./UpcomingPayoutDetailsStyles";
 
@@ -48,54 +48,48 @@ const UpcomingPayoutDetails: React.FunctionComponent = () => {
   const [checked, setChecked] = React.useState(false);
 
   return (
-    <UpcomingPayoutDetailsContainer>
-      <UpcomingPayoutDetailsFeature>
-        <UpcomingPayoutDetailsFeatureTitle>
+    <Container>
+      <Feature>
+        <FeatureTitle>
           <GlowingIconWrapper $positive $size={42}>
             <PaidIcon />
           </GlowingIconWrapper>
           Upcoming Payout Details
-          <UpcomingPayoutDetailsHeaderNoteContainer>
-            <UpcomingPayoutDetailsHeaderNoteSlash>
-              /
-            </UpcomingPayoutDetailsHeaderNoteSlash>
-            <UpcomingPayoutDetailsHeaderNote>
-              <UpcomingPayoutDetailsHeaderNoteText>
+          <HeaderNoteContainer>
+            <HeaderNoteSlash>/</HeaderNoteSlash>
+            <HeaderNote>
+              <HeaderNoteText>
                 {"Due in"}
-                <UpcomingPayoutDetailsHeaderNoteTextHighlighted>
-                  5
-                </UpcomingPayoutDetailsHeaderNoteTextHighlighted>
+                <HeaderNoteTextHighlighted>5</HeaderNoteTextHighlighted>
                 {"days"}
-              </UpcomingPayoutDetailsHeaderNoteText>
-            </UpcomingPayoutDetailsHeaderNote>
-          </UpcomingPayoutDetailsHeaderNoteContainer>
-        </UpcomingPayoutDetailsFeatureTitle>
+              </HeaderNoteText>
+            </HeaderNote>
+          </HeaderNoteContainer>
+        </FeatureTitle>
         <GlassTile positive featureTile>
-          <UpcomingPayoutDetailsFeatureContentContainer>
+          <FeatureContentContainer>
             <div>
-              <UpcomingPayoutDetailsFeatureContentValue>
+              <FeatureContentValue>
                 $1,250.00
-                <UpcomingPayoutDetailsFeatureContentSubtext>
-                  Expected
-                </UpcomingPayoutDetailsFeatureContentSubtext>
-              </UpcomingPayoutDetailsFeatureContentValue>
-              <UpcomingPayoutDetailsFeatureContentSubtitle>
+                <FeatureContentSubtext>Expected</FeatureContentSubtext>
+              </FeatureContentValue>
+              <FeatureContentSubtitle>
                 Projected Payout Date: Dec 7
-              </UpcomingPayoutDetailsFeatureContentSubtitle>
+              </FeatureContentSubtitle>
             </div>
-            <UpcomingPayoutDetailsFeatureContentProgressBarDrilldownContainer>
-              <UpcomingPayoutDetailsFeatureContentProgressBarContainer>
-                <UpcomingPayoutDetailsFeatureContentProgressBarLabel>
+            <FeatureContentProgressBarDrilldownContainer>
+              <FeatureContentProgressBarContainer>
+                <FeatureContentProgressBarLabel>
                   3
-                </UpcomingPayoutDetailsFeatureContentProgressBarLabel>
+                </FeatureContentProgressBarLabel>
                 <BorderLinearProgress
                   variant="determinate"
                   value={30}
                   style={styles.progressBar}
                 />
-              </UpcomingPayoutDetailsFeatureContentProgressBarContainer>
-              <UpcomingPayoutDetailsFeatureContentProgressBarDrilldown>
-                <UpcomingPayoutDetailsFeatureContentProgressBarDrilldownSubtext>
+              </FeatureContentProgressBarContainer>
+              <FeatureContentProgressBarDrilldown>
+                <FeatureContentProgressBarDrilldownSubtext>
                   <Collapse
                     orientation="horizontal"
                     in={!checked}
@@ -106,7 +100,7 @@ const UpcomingPayoutDetails: React.FunctionComponent = () => {
                   >
                     {8}
                   </Collapse>
-                  <UpcomingPayoutDetailsFeatureContentProgressBarDrilldownSubtextHighlighted>
+                  <FeatureContentProgressBarDrilldownSubtextHighlighted>
                     <Collapse
                       orientation="horizontal"
                       in={!checked}
@@ -143,14 +137,14 @@ const UpcomingPayoutDetails: React.FunctionComponent = () => {
                         />
                       </Else>
                     </If>
-                  </UpcomingPayoutDetailsFeatureContentProgressBarDrilldownSubtextHighlighted>
-                </UpcomingPayoutDetailsFeatureContentProgressBarDrilldownSubtext>
-              </UpcomingPayoutDetailsFeatureContentProgressBarDrilldown>
-            </UpcomingPayoutDetailsFeatureContentProgressBarDrilldownContainer>
-          </UpcomingPayoutDetailsFeatureContentContainer>
+                  </FeatureContentProgressBarDrilldownSubtextHighlighted>
+                </FeatureContentProgressBarDrilldownSubtext>
+              </FeatureContentProgressBarDrilldown>
+            </FeatureContentProgressBarDrilldownContainer>
+          </FeatureContentContainer>
         </GlassTile>
-      </UpcomingPayoutDetailsFeature>
-    </UpcomingPayoutDetailsContainer>
+      </Feature>
+    </Container>
   );
 };
 

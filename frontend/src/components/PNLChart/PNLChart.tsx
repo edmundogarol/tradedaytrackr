@@ -1,11 +1,11 @@
 import React from "react";
 
-import { PNLChartContainer } from "./PNLChartStyledComponents";
+import { Container } from "./PNLChartStyledComponents";
 
 interface PNLChartProps {}
 
 const PNLChart: React.FunctionComponent<PNLChartProps> = ({}) => {
-  return <PNLChartContainer></PNLChartContainer>;
+  return <Container></Container>;
 };
 
 export default PNLChart;

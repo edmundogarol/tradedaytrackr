@@ -13,9 +13,9 @@ import Page from "@components/Page/Page";
 import useResetPasswordHandler from "./hooks/useResetPasswordHandler";
 import useCheckResetPasswordFormErrors from "./hooks/useCheckResetPasswordFormErrors";
 import {
-  ResetPasswordContainer,
-  ResetPasswordHeader,
-  ResetPasswordInputsContainer,
+  Container,
+  Header,
+  InputsContainer,
 } from "./ResetPasswordStyledComponents";
 
 const ResetPassword: React.FunctionComponent = () => {
@@ -29,11 +29,11 @@ const ResetPassword: React.FunctionComponent = () => {
 
   return (
     <Page sideDrawer={false}>
-      <ResetPasswordContainer>
+      <Container>
         <Gap level={1} />
-        <ResetPasswordHeader>{"Reset Password"}</ResetPasswordHeader>
+        <Header>{"Reset Password"}</Header>
         <Gap level={1} />
-        <ResetPasswordInputsContainer>
+        <InputsContainer>
           <If condition={!resetPasswordFormSent}>
             <Input
               placeholder="Enter email"
@@ -62,7 +62,7 @@ const ResetPassword: React.FunctionComponent = () => {
               }
             />
           </If>
-        </ResetPasswordInputsContainer>
+        </InputsContainer>
         <If condition={!resetPasswordFormSent}>
           <Button
             loading={loading}
@@ -70,7 +70,7 @@ const ResetPassword: React.FunctionComponent = () => {
             onClick={() => resetPassword()}
           />
         </If>
-      </ResetPasswordContainer>
+      </Container>
     </Page>
   );
 };

@@ -1,15 +1,15 @@
 import React from "react";
 import GlassTile from "@components/GlassTile/GlassTile";
 import {
-  CalendarSummaryContainer,
-  CalendarSummaryTile,
-  CalendarSummaryTileDate,
-  CalendarSummaryTileDateText,
-  CalendarSummaryTileInfo,
-  CalendarSummaryTilePnL,
-  CalendarSummaryTileTradeCount,
-  CalendarSummaryTradePreview,
-  CalendarSummaryTradePreviewOverlay,
+  Container,
+  TileContainer,
+  TileDate,
+  TileDateText,
+  TileInfo,
+  TilePnL,
+  TileTradeCount,
+  TradePreview,
+  TradePreviewOverlay,
 } from "./CalendarSummaryStyledComponents";
 
 export enum CalendarSummaryCount {
@@ -26,42 +26,38 @@ const CalendarSummary: React.FunctionComponent<CalendarSummaryProps> = ({
   count,
 }) => {
   return (
-    <CalendarSummaryContainer>
+    <Container>
       {Array.from({ length: count }).map((_, index) => {
         const randomPnL = (Math.random() * 1000 - 500).toFixed(2);
         const randomTradeCount = Math.floor(Math.random() * 1) + 1;
         const positivePnL = parseFloat(randomPnL) >= 0;
         return (
-          <CalendarSummaryTile>
+          <TileContainer>
             <GlassTile
               key={index}
               positive={positivePnL}
               overlay={
-                <CalendarSummaryTileDate>
-                  <CalendarSummaryTileDateText>
-                    Dec {index + 1}
-                  </CalendarSummaryTileDateText>
-                  <CalendarSummaryTileInfo>
-                    <CalendarSummaryTilePnL $positive={positivePnL}>
-                      ${randomPnL}
-                    </CalendarSummaryTilePnL>
-                    <CalendarSummaryTileTradeCount className="trade-count">
+                <TileDate>
+                  <TileDateText>Dec {index + 1}</TileDateText>
+                  <TileInfo>
+                    <TilePnL $positive={positivePnL}>${randomPnL}</TilePnL>
+                    <TileTradeCount className="trade-count">
                       {`${randomTradeCount} trade${
                         randomTradeCount !== 1 ? "s" : ""
                       }`}
-                    </CalendarSummaryTileTradeCount>
-                  </CalendarSummaryTileInfo>
-                </CalendarSummaryTileDate>
+                    </TileTradeCount>
+                  </TileInfo>
+                </TileDate>
               }
             >
-              <CalendarSummaryTradePreviewOverlay>
-                <CalendarSummaryTradePreview $idx={index} />
-              </CalendarSummaryTradePreviewOverlay>
+              <TradePreviewOverlay>
+                <TradePreview $idx={index} />
+              </TradePreviewOverlay>
             </GlassTile>
-          </CalendarSummaryTile>
+          </TileContainer>
         );
       })}
-    </CalendarSummaryContainer>
+    </Container>
   );
 };
 

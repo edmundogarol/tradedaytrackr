@@ -1,10 +1,10 @@
 import React from "react";
 import { If } from "@components/If/If";
 import {
-  GlassTileBoxGlow,
-  GlassTileContainer,
-  GlassTileEffect,
-  GlassTileShine,
+  BoxGlow,
+  Container,
+  GlassEffect,
+  Shine,
 } from "./GlassTileStyledComponents";
 
 interface GlassTileProps {
@@ -33,22 +33,22 @@ const GlassTile: React.FunctionComponent<GlassTileProps> = ({
   noShine = false,
 }) => {
   return (
-    <GlassTileContainer
+    <Container
       $leftAlign={leftAlign}
       $minHeight={minHeight}
       $minWidth={minWidth}
       $padding={padding}
     >
       {overlay}
-      <GlassTileEffect />
+      <GlassEffect />
       <If condition={!noShine}>
-        <GlassTileShine />
+        <Shine />
       </If>
       <If condition={!noGlow}>
-        <GlassTileBoxGlow $positive={positive} $featureTile={featureTile} />
+        <BoxGlow $positive={positive} $featureTile={featureTile} />
       </If>
       {children}
-    </GlassTileContainer>
+    </Container>
   );
 };
 

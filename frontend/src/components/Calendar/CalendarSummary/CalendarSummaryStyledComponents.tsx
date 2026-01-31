@@ -1,7 +1,7 @@
 import { devSrc } from "@utils/utils";
 import styled from "styled-components";
 
-export const CalendarSummaryContainer = styled.div`
+export const Container = styled.div`
   display: flex;
   align-items: center;
   height: 100%;
@@ -28,12 +28,12 @@ export const CalendarSummaryContainer = styled.div`
   }
 `;
 
-export const CalendarSummaryTile = styled.div`
+export const TileContainer = styled.div`
   height: 100px;
   margin: 10px;
 `;
 
-export const CalendarSummaryTradePreview = styled.div<{ $idx: number }>`
+export const TradePreview = styled.div<{ $idx: number }>`
   background-image: ${(props): string =>
     `url('${devSrc(`trade${props.$idx + 1}.png`)}')`};
   height: 100%;
@@ -60,7 +60,7 @@ export const CalendarSummaryTradePreview = styled.div<{ $idx: number }>`
   );
 `;
 
-export const CalendarSummaryTradePreviewOverlay = styled.div`
+export const TradePreviewOverlay = styled.div`
   height: 100%;
   width: 100%;
   mask-image: linear-gradient(
@@ -158,7 +158,7 @@ export const CalendarSummaryGlassEffect = styled.div`
   isolation: isolate;
 `;
 
-export const CalendarSummaryTileDate = styled.span`
+export const TileDate = styled.span`
   width: 100%;
   height: 100%;
   padding: 10px;
@@ -168,7 +168,7 @@ export const CalendarSummaryTileDate = styled.span`
   z-index: 1;
 `;
 
-export const CalendarSummaryTileDateText = styled.p`
+export const TileDateText = styled.p`
   font-size: 14px;
   color: white;
   text-shadow: 1px 1px 5px black;
@@ -180,7 +180,7 @@ export const CalendarSummaryTileDateText = styled.p`
   margin: 2px;
 `;
 
-export const CalendarSummaryTileInfo = styled.div`
+export const TileInfo = styled.div`
   position: absolute;
   width: 90%;
   display: flex;
@@ -190,15 +190,15 @@ export const CalendarSummaryTileInfo = styled.div`
   bottom: 7px;
 `;
 
-export const CalendarSummaryTileResult = styled.span`
+export const TileResult = styled.span`
   font-size: 16px;
 `;
 
-export const CalendarSummaryTileDay = styled.span`
+export const TileDay = styled.span`
   font-size: 16px;
 `;
 
-export const CalendarSummaryTilePnL = styled.span<{ $positive?: boolean }>`
+export const TilePnL = styled.span<{ $positive?: boolean }>`
   font-size: 16px;
 
   ${(props): string =>
@@ -209,7 +209,7 @@ export const CalendarSummaryTilePnL = styled.span<{ $positive?: boolean }>`
       : `  text-shadow: 1px 1px 1px black;`}
 `;
 
-export const CalendarSummaryTileTradeCount = styled.span`
+export const TileTradeCount = styled.span`
   font-size: 12px;
   color: #c9c9c9;
 `;

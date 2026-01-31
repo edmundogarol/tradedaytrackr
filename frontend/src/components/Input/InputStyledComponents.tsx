@@ -12,7 +12,7 @@ import {
 import { color } from "@styles/colors";
 import { Label } from "@styles/globalStyledComponents";
 
-export const InputWrapper = styled.div`
+export const Container = styled.div`
   width: 100%;
 `;
 
@@ -38,7 +38,7 @@ export const InputContainer = styled.div<{
   }}
 `;
 
-export const InputIconContainer = styled.div`
+export const IconContainer = styled.div`
   margin-left: ${CONTAINER_MARGIN_DEFAULT}px;
   margin-right: ${CONTAINER_MARGIN_SMALL}px;
   display: flex;
@@ -93,7 +93,7 @@ export const Subtext = styled.span`
   margin-bottom: ${CONTAINER_MARGIN_DEFAULT}px;
 `;
 
-export const InputError = styled.span`
+export const Error = styled.span`
   color: ${color("SystemError2")};
   font-size: ${LABEL_SIZE}px;
   margin-left: ${CONTAINER_MARGIN_SMALL}px;

@@ -5,7 +5,7 @@ import {
 } from "@styles/constants";
 import { color } from "@styles/colors";
 
-export const ResetPasswordContainer = styled.div`
+export const Container = styled.div`
   align-items: center;
   justify-content: center;
   height: 100%;
@@ -18,13 +18,13 @@ export const ResetPasswordContainer = styled.div`
   margin-bottom: auto;
 `;
 
-export const ResetPasswordInputsContainer = styled.div`
+export const InputsContainer = styled.div`
   width: 100%;
   padding: ${CONTAINER_PADDING_DEFAULT}px 0 ${CONTAINER_PADDING_DEFAULT}px 0;
   justify-content: space-between;
 `;
 
-export const ResetPasswordHeader = styled.div`
+export const Header = styled.div`
   color: ${color("SystemLabel1")};
   font-size: 20px;
   font-weight: 100;

@@ -1,7 +1,7 @@
 import { CONTAINER_PADDING_DEFAULT } from "@styles/constants";
 import styled from "styled-components";
 
-export const DashboardContainer = styled.div`
+export const Container = styled.div`
   align-items: center;
   justify-content: center;
   height: 100%;
@@ -9,10 +9,10 @@ export const DashboardContainer = styled.div`
   width: 100%;
 `;
 
-export const DashboardContentCalendarContainer = styled.div`
+export const CalendarContainer = styled.div`
   min-height: 200px;
 `;
-export const DashboardContentHeader = styled.h1`
+export const SectionHeader = styled.h1`
   padding-left: 10px;
   font-size: 15px;
   font-weight: 100;
@@ -23,24 +23,24 @@ export const DashboardContentHeader = styled.h1`
   margin-bottom: 5px;
 `;
 
-export const DashboardContentJournalEntryContainer = styled.div``;
+export const JournalEntriesContainer = styled.div``;
 
 export const DashboardContentOtherContainer = styled.div``;
 
-export const DashboardTopSectionContainer = styled.div`
+export const TopSection = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
 `;
 
-export const DashboardTopSectionLeftContainer = styled.div`
+export const LeftContainer = styled.div`
   flex: 2 1 auto;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 `;
 
-export const DashboardTopSectionRightContainer = styled.div`
+export const RightContainer = styled.div`
   width: 300px;
   min-width: 300px;
   background: #ac4242;
