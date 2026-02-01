@@ -1,4 +1,5 @@
 import { Box, Collapse } from "@mui/material";
+import { color } from "@styles/colors";
 import styled from "styled-components";
 
 export const Container = styled.div`
@@ -142,7 +143,7 @@ export const AccountTradingDaysComplete = styled.span`
 export const AccountSubtitleHighlighted = styled.span`
   margin-left: 5px;
   font-size: 15px;
-  color: #a9d1a9;
+  color: ${color("SystemBlue5")};
 `;
 
 export const DaysContainer = styled.div`
@@ -162,7 +163,8 @@ export const DaysItemValue = styled.span<{
   $positive?: boolean;
 }>`
   z-index: 10;
-  color: ${({ $positive }): string => ($positive ? "#85d297" : "#d56060")};
+  color: ${({ $positive }): string =>
+    $positive ? color("SystemBlue5") : "#d56060"};
 `;
 
 export const DaysItemSubtitle = styled.span`
@@ -196,17 +198,13 @@ export const BufferAmountHighlighted = styled.span<{
 }>`
   font-size: 13px;
   color: ${(props): string =>
-    props.$bufferPercent > 70
-      ? "#80ae70"
-      : props.$bufferPercent > 40
-      ? "#cf943b"
-      : "#d56060"};
+    props.$bufferPercent > 60 ? color("SystemBlue5") : "#cf943b"};
   font-weight: 100;
   margin-left: 5px;
   margin-right: 5px;
 `;
 
-export const PnLContainer = styled.div`
+export const StatusContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -214,31 +212,11 @@ export const PnLContainer = styled.div`
   align-items: center;
 `;
 
-export const PnLValue = styled.span<{
+export const Status = styled.span<{
   $bufferPercent: number;
 }>`
   color: ${(props): string =>
-    props.$bufferPercent > 70
-      ? "#80ae70"
-      : props.$bufferPercent > 40
-      ? "#cf943b"
-      : "#d56060"};
+    props.$bufferPercent > 60 ? color("SystemBlue5") : "#cf943b"};
   font-size: 21px;
   font-weight: 100;
-`;
-
-export const PnLWithdrawable = styled.span<{
-  $positive: boolean;
-}>`
-  color: ${(props): string => (props.$positive ? "#80ae70" : "#aeaeae")};
-  font-size: 11px;
-  letter-spacing: 1px;
-  display: flex;
-  align-items: center;
-`;
-export const PnLWithdrawableText = styled.span`
-  color: #aeaeae;
-  font-size: 9px;
-  letter-spacing: 1px;
-  margin-right: 5px;
 `;

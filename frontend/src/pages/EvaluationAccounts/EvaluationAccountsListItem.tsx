@@ -7,6 +7,7 @@ import LinearProgress, {
 } from "@mui/material/LinearProgress";
 
 import InfoPopout from "@components/InfoPopout/InfoPopout";
+import { color } from "@styles/colors";
 import {
   BufferContainer,
   BufferAmount,
@@ -17,27 +18,27 @@ import {
   DaysItemSubtitle,
   DaysItemValue,
   AccountImage,
-  PnLContainer,
-  PnLValue,
-  PnLWithdrawable,
-  PnLWithdrawableText,
+  StatusContainer,
+  Status,
   AccountSubtitle,
   AccountSubtitleHighlighted,
   AccountTitle,
   AccountTitleContainer,
   ListItemContainer,
   AccountTradingDaysComplete,
-} from "./FundedAccountsStyledComponents";
-import styles from "./FundedAccountsStyles";
+} from "./EvaluationAccountsStyledComponents";
+import styles from "./EvaluationAccountsStyles";
+import useGetEvalProgressStatus from "./hooks/useGetEvalProgressStatus";
 
-export interface FundedAccountsListItemDetails {
+export interface EvaluationAccountsListItemDetails {
   accountName: string;
   accountSize: number;
   accountBalance: number;
+  profitTarget: number;
   firm: string;
   firmMinDays?: number;
-  firmMinDayPnL?: number;
   currentDayCount: number;
+  currentConsistencyScore: number;
   dayValues: {
     value: number;
     day: string;
@@ -45,7 +46,7 @@ export interface FundedAccountsListItemDetails {
   noGlow: boolean;
   noShine: boolean;
   minBuffer: number;
-  bufferPercent: number;
+  tileGlowPositive?: boolean | undefined;
 }
 
 const BorderLinearProgress = styled(LinearProgress)<{ $bufferPercent: number }>(
@@ -57,40 +58,39 @@ const BorderLinearProgress = styled(LinearProgress)<{ $bufferPercent: number }>(
     },
     [`& .${linearProgressClasses.bar}`]: {
       borderRadius: 5,
-      backgroundColor:
-        $bufferPercent > 70
-          ? "#86c169"
-          : $bufferPercent > 40
-          ? "#cf943b"
-          : "#d56060",
+      backgroundColor: $bufferPercent > 60 ? color("SystemBlue5") : "#cf943b",
     },
   })
 );
 
-const FundedAccountsListItem: React.FunctionComponent<
-  FundedAccountsListItemDetails
+const EvaluationAccountsListItem: React.FunctionComponent<
+  EvaluationAccountsListItemDetails
 > = ({
   accountName,
   accountSize,
   accountBalance,
+  profitTarget,
   firm,
   firmMinDays,
   currentDayCount,
+  currentConsistencyScore,
   dayValues,
   noGlow,
   noShine,
   minBuffer,
-  bufferPercent,
+  tileGlowPositive,
 }) => {
   const formatter = Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     maximumFractionDigits: 0,
   });
+  const evalProgressStatus = useGetEvalProgressStatus();
+  const progress = ((accountBalance - accountSize) / profitTarget) * 100;
 
   return (
     <GlassTile
-      positive
+      positive={tileGlowPositive}
       featureTile
       minHeight={70}
       noGlow={noGlow}
@@ -107,11 +107,9 @@ const FundedAccountsListItem: React.FunctionComponent<
             </AccountSubtitleHighlighted>
           </AccountSubtitle>
           <AccountTradingDaysComplete>
-            {`Eligible Days: ${currentDayCount ?? "N/A"}/${
-              firmMinDays ?? "N/A"
-            }`}
+            Consistency Score: {currentConsistencyScore}%
             <InfoPopout
-              infoDescription={`This account requires a minimum of ${firmMinDays} eligible trading days.`}
+              infoDescription={`Your current consistency score based on the highest day PnL and account profit target`}
             />
           </AccountTradingDaysComplete>
         </AccountTitleContainer>
@@ -135,38 +133,29 @@ const FundedAccountsListItem: React.FunctionComponent<
         </DaysContainer>
         <BufferContainer>
           <BufferText>
-            Min Payout Buffer:
-            <BufferAmountHighlighted $bufferPercent={bufferPercent}>
+            Profit Target:
+            <BufferAmountHighlighted $bufferPercent={progress}>
               {formatter.format(accountBalance - accountSize)}
             </BufferAmountHighlighted>
-            /<BufferAmount>{formatter.format(minBuffer)}</BufferAmount>
-            <InfoPopout
-              infoDescription={`This account requires a minimum buffer of $${minBuffer} before a payout can be requested.`}
-            />
+            /<BufferAmount>{formatter.format(profitTarget)}</BufferAmount>
           </BufferText>
           <BorderLinearProgress
-            $bufferPercent={bufferPercent}
+            $bufferPercent={progress}
             variant="determinate"
-            value={bufferPercent}
+            value={progress}
             style={styles.progressBar}
           />
         </BufferContainer>
-        <PnLContainer>
-          <PnLValue $bufferPercent={bufferPercent}>
-            {formatter.format(accountBalance - accountSize)}
-          </PnLValue>
-          <PnLWithdrawable
-            $positive={accountBalance - accountSize - minBuffer > 0}
-          >
-            <PnLWithdrawableText>Withdrawable:</PnLWithdrawableText>
-            {accountBalance - accountSize - minBuffer < 0
-              ? formatter.format(0)
-              : formatter.format(accountBalance - accountSize - minBuffer)}
-          </PnLWithdrawable>
-        </PnLContainer>
+        <StatusContainer>
+          <Status $bufferPercent={progress}>
+            {evalProgressStatus(
+              ((accountBalance - accountSize) / profitTarget) * 100
+            )}
+          </Status>
+        </StatusContainer>
       </ListItemContainer>
     </GlassTile>
   );
 };
 
-export default FundedAccountsListItem;
+export default EvaluationAccountsListItem;

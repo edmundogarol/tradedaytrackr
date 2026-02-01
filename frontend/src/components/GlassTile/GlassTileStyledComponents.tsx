@@ -69,7 +69,9 @@ export const BoxGlow = styled.div<{
     inset: 0;
 
     ${(props): string =>
-      props.$positive
+      props.$positive === undefined
+        ? ""
+        : props.$positive
         ? `
         background-image:
           radial-gradient(

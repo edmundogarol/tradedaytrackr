@@ -3,7 +3,7 @@ import Gap from "@components/Gap/Gap";
 import Page from "@components/Page/Page";
 import StatsSummary from "@components/Stats/StatsSummary/StatsSummary";
 import DropdownMultiselect from "@components/DropdownMultiselect/DropdownMultiselect";
-import { color } from "@styles/colors";
+
 import {
   Container,
   DropdownsSection,
@@ -14,13 +14,15 @@ import {
   DaysHeader,
   PnLHeader,
   Title,
-} from "./FundedAccountsStyledComponents";
-import useGetFundedAccountsStatsSummaryDetails from "./hooks/useGetFundedAccountsStatsSummaryDetails";
-import useGetFundedAccountsList from "./hooks/useGetFundedAccountsList";
-import ListItem from "./FundedAccountsListItem";
+} from "./EvaluationAccountsStyledComponents";
+import { useGetEvaluationAccountsStatsSummaryDetails } from "./hooks/useGetEvaluationAccountsStatsSummaryDetails";
+import useGetEvaluationAccountsList from "./hooks/useGetEvaluationAccountsList";
+import ListItem from "./EvaluationAccountsListItem";
+import { EvalProgressStatus } from "./hooks/useGetEvalProgressStatus";
 
-const FundedAccounts: React.FunctionComponent = () => {
-  const fundedStatsSummaryDetails = useGetFundedAccountsStatsSummaryDetails();
+const EvaluationAccounts: React.FunctionComponent = () => {
+  const evaluationStatsSummaryDetails =
+    useGetEvaluationAccountsStatsSummaryDetails();
   const firmsList = [
     "My Funded Futures",
     "Apex",
@@ -31,27 +33,33 @@ const FundedAccounts: React.FunctionComponent = () => {
     "Bulenox",
     "Alpha Futures",
   ];
-  const bufferState = ["< 20%", "> 50%", "> 90%", "Complete"];
-  const accountsList = useGetFundedAccountsList();
+  const bufferState = [
+    EvalProgressStatus.Started,
+    EvalProgressStatus.InProgress,
+    EvalProgressStatus.OnTrack,
+    EvalProgressStatus.NearPass,
+    EvalProgressStatus.Complete,
+  ];
+  const accountsList = useGetEvaluationAccountsList();
 
   return (
     <Page topBarShowMenu={true}>
       <Container>
-        <Title>Funded Accounts</Title>
+        <Title>Evaluation Accounts</Title>
         <StatsSummary
-          statsSummaryTilesDetails={fundedStatsSummaryDetails}
+          statsSummaryTilesDetails={evaluationStatsSummaryDetails}
           featureTiles
         />
         <Gap level={2} />
         <DropdownsSection>
           <DropdownMultiselect items={firmsList} title="All Firms" />
-          <DropdownMultiselect items={bufferState} title="Buffer Built" />
+          <DropdownMultiselect items={bufferState} title="Status" />
         </DropdownsSection>
         <ListHeaders>
           <AccountHeader>Account</AccountHeader>
           <DaysHeader>Trading Days</DaysHeader>
-          <BufferHeader>Min Buffer</BufferHeader>
-          <PnLHeader>PnL</PnLHeader>
+          <BufferHeader>Profit Target</BufferHeader>
+          <PnLHeader>Status</PnLHeader>
         </ListHeaders>
         <ListContainer>
           {accountsList.map((account, index) => (
@@ -63,4 +71,4 @@ const FundedAccounts: React.FunctionComponent = () => {
   );
 };
 
-export default FundedAccounts;
+export default EvaluationAccounts;

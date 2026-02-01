@@ -2,15 +2,29 @@ import { color } from "@styles/colors";
 import { CONTAINER_PADDING_LARGE } from "@styles/constants";
 import styled from "styled-components";
 
-export const Container = styled.div<{ $withSideDrawer?: boolean }>`
+export const Container = styled.div<{
+  $withSideDrawer?: boolean;
+  $backgroundColor?: {
+    $light: string;
+    $dark: string;
+  };
+}>`
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   background: linear-gradient(
     0deg,
-    ${color("SystemBackground")} 35%,
-    rgba(48, 66, 97, 1) 100%
+    ${(props): string =>
+        props?.$backgroundColor?.$dark
+          ? props?.$backgroundColor?.$dark
+          : color("SystemBackground")}
+      35%,
+    ${(props): string =>
+        props?.$backgroundColor?.$light
+          ? props?.$backgroundColor?.$light
+          : color("SystemBackground2")}
+      100%
   );
 
   ${({ $withSideDrawer }): string =>

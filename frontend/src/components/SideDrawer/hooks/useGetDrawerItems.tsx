@@ -20,11 +20,6 @@ export const useGetDrawerItems = (): Array<{
         onClick: (): void => navigation.navigate(PageEnum.Dashboard),
       },
       {
-        text: "Journal",
-        icon: <MenuBook />,
-        onClick: (): void => navigation.navigate(PageEnum.Journal),
-      },
-      {
         text: "Funded Accounts",
         icon: <AssuredWorkloadIcon />,
         onClick: (): void => navigation.navigate(PageEnum.FundedAccounts),
@@ -33,6 +28,11 @@ export const useGetDrawerItems = (): Array<{
         text: "Evaluation Accounts",
         icon: <StickyNote2Icon />,
         onClick: (): void => navigation.navigate(PageEnum.EvaluationAccounts),
+      },
+      {
+        text: "Journal",
+        icon: <MenuBook />,
+        onClick: (): void => navigation.navigate(PageEnum.Journal),
       },
     ],
     []

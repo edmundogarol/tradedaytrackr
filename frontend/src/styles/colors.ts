@@ -3,14 +3,19 @@ export type ColorKey =
   | "SystemBlue2"
   | "SystemBlue3"
   | "SystemBlue4"
+  | "SystemBlue5"
   | "SystemBorder"
   | "SystemLabel1"
   | "SystemLabel2"
   | "SystemBackground"
   | "SystemBackground1"
+  | "SystemBackground2"
+  | "SystemBackgroundFundeds"
+  | "SystemBackgroundFundeds2"
   | "SystemGrey1"
   | "SystemError1"
   | "SystemError2"
+  | "SystemRed"
   | "SystemSuccess1"
   | "SystemSuccess2"
   | "SystemLabel3"
@@ -23,15 +28,20 @@ const colorsMap = {
   SystemBlue2: "#2e4365",
   SystemBlue3: "#658fb5",
   SystemBlue4: "#b7d3e8",
+  SystemBlue5: "#4a9fad",
   SystemBorder: "#aaaaaa",
   SystemLabel1: "#adadad",
   SystemLabel2: "#323232",
   SystemLabel3: "#737373",
   SystemBackground: "#121822",
   SystemBackground1: "#f2f2f2",
+  SystemBackground2: "#304261",
+  SystemBackgroundFundeds: "#122213",
+  SystemBackgroundFundeds2: "#1b3b24",
   SystemGrey1: "#cecece",
   SystemError1: "#ff3c3c",
   SystemError2: "#ff7575",
+  SystemRed: "#d56060",
   SystemSuccess1: "#7dc770",
   SystemSuccess2: "#5e9f53",
   SystemTeal: "#66d3bf",

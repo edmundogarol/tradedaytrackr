@@ -22,7 +22,7 @@ interface GlassTileProps {
 
 const GlassTile: React.FunctionComponent<GlassTileProps> = ({
   overlay,
-  positive = false,
+  positive,
   children,
   featureTile = false,
   leftAlign = false,

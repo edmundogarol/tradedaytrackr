@@ -10,6 +10,7 @@ import ResetPassword from "@pages/ResetPassword/ResetPassword";
 import Dashboard from "@pages/Dashboard/Dashboard";
 import LoadingPage from "@components/Loading/LoadingPage";
 import FundedAccounts from "@pages/FundedAccounts/FundedAccounts";
+import EvaluationAccounts from "@pages/EvaluationAccounts/EvaluationAccounts";
 import RequireAuth from "./RequireAuth";
 import checkAuth from "./hooks/checkAuth";
 
@@ -32,6 +33,10 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
       <Route element={<RequireAuth />}>
         <Route path={PageEnum.Dashboard} element={<Dashboard />} />
         <Route path={PageEnum.FundedAccounts} element={<FundedAccounts />} />
+        <Route
+          path={PageEnum.EvaluationAccounts}
+          element={<EvaluationAccounts />}
+        />
       </Route>
       {/* Root */}
       <Route path="/" element={checkAuth({ user })} />
