@@ -1,4 +1,5 @@
 import { Box, Collapse } from "@mui/material";
+import { color } from "@styles/colors";
 import styled from "styled-components";
 
 export const Container = styled.div`
@@ -162,7 +163,8 @@ export const DaysItemValue = styled.span<{
   $positive?: boolean;
 }>`
   z-index: 10;
-  color: ${({ $positive }): string => ($positive ? "#85d297" : "#d56060")};
+  color: ${({ $positive }): string =>
+    $positive ? color("SystemGreen") : "#d56060"};
 `;
 
 export const DaysItemSubtitle = styled.span`
@@ -197,7 +199,7 @@ export const BufferAmountHighlighted = styled.span<{
   font-size: 13px;
   color: ${(props): string =>
     props.$bufferPercent > 70
-      ? "#80ae70"
+      ? color("SystemGreen")
       : props.$bufferPercent > 40
       ? "#cf943b"
       : "#d56060"};
@@ -219,7 +221,7 @@ export const PnLValue = styled.span<{
 }>`
   color: ${(props): string =>
     props.$bufferPercent > 70
-      ? "#80ae70"
+      ? color("SystemGreen")
       : props.$bufferPercent > 40
       ? "#cf943b"
       : "#d56060"};
@@ -230,7 +232,8 @@ export const PnLValue = styled.span<{
 export const PnLWithdrawable = styled.span<{
   $positive: boolean;
 }>`
-  color: ${(props): string => (props.$positive ? "#80ae70" : "#aeaeae")};
+  color: ${(props): string =>
+    props.$positive ? color("SystemGreen") : "#aeaeae"};
   font-size: 11px;
   letter-spacing: 1px;
   display: flex;

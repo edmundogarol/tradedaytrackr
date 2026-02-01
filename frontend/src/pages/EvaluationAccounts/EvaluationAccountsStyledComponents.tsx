@@ -217,6 +217,6 @@ export const Status = styled.span<{
 }>`
   color: ${(props): string =>
     props.$bufferPercent > 60 ? color("SystemBlue5") : "#cf943b"};
-  font-size: 21px;
+  font-size: 17px;
   font-weight: 100;
 `;

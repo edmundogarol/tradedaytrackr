@@ -36,6 +36,10 @@ export const PressableWrapper = styled.button<{
   &:hover {
     cursor: pointer;
   }
+
+  &:active {
+    opacity: 0.8;
+  }
 `;
 
 export const ButtonText = styled.span<{ $buttonType?: ButtonType }>`

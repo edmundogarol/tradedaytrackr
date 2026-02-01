@@ -4,6 +4,9 @@ import Page from "@components/Page/Page";
 import StatsSummary from "@components/Stats/StatsSummary/StatsSummary";
 import DropdownMultiselect from "@components/DropdownMultiselect/DropdownMultiselect";
 
+import Button from "@components/Button/Button";
+import { IconTypeEnum } from "@components/Icon/IconInterfaces";
+import { color } from "@styles/colors";
 import {
   Container,
   DropdownsSection,
@@ -19,6 +22,7 @@ import { useGetEvaluationAccountsStatsSummaryDetails } from "./hooks/useGetEvalu
 import useGetEvaluationAccountsList from "./hooks/useGetEvaluationAccountsList";
 import ListItem from "./EvaluationAccountsListItem";
 import { EvalProgressStatus } from "./hooks/useGetEvalProgressStatus";
+import styles from "./EvaluationAccountsStyles";
 
 const EvaluationAccounts: React.FunctionComponent = () => {
   const evaluationStatsSummaryDetails =
@@ -54,6 +58,13 @@ const EvaluationAccounts: React.FunctionComponent = () => {
         <DropdownsSection>
           <DropdownMultiselect items={firmsList} title="All Firms" />
           <DropdownMultiselect items={bufferState} title="Status" />
+          <Button
+            text={"Add Eval"}
+            iconType={IconTypeEnum.MaterialIcons}
+            iconLeft={"add"}
+            textStyle={styles.addButton.text}
+            style={styles.addButton.button}
+          />
         </DropdownsSection>
         <ListHeaders>
           <AccountHeader>Account</AccountHeader>
