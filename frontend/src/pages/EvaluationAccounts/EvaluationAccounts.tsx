@@ -6,7 +6,6 @@ import DropdownMultiselect from "@components/DropdownMultiselect/DropdownMultise
 
 import Button from "@components/Button/Button";
 import { IconTypeEnum } from "@components/Icon/IconInterfaces";
-import { color } from "@styles/colors";
 import {
   Container,
   DropdownsSection,

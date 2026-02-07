@@ -40,7 +40,6 @@ export const BoxContainer = styled(Box)`
 export const ListContainer = styled.div`
   height: auto;
   max-height: 240px;
-  overflow: scroll;
   background-color: #626a7aa6;
   border-radius: 5px;
 
