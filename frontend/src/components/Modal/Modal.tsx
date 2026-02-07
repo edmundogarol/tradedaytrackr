@@ -2,6 +2,7 @@ import React from "react";
 import { Modal } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import {
+  CloseContainer,
   Content,
   Header,
   ModalContainer,
@@ -23,14 +24,26 @@ const ModalWrapper: React.FunctionComponent<ModalWrapperProps> = ({
   setOpen,
 }) => {
   return (
-    <Modal open={open} style={modalStyles.modal}>
+    <Modal
+      open={open}
+      style={modalStyles.modal}
+      slotProps={{
+        backdrop: {
+          style: {
+            backgroundColor: "rgb(0 0 0 / 69%)",
+          },
+        },
+      }}
+    >
       <ModalContainer>
         <Header>
           <ModalTitle>{title}</ModalTitle>
-          <CancelIcon
-            style={modalStyles.closeButton}
-            onClick={(): void => setOpen(false)}
-          />
+          <CloseContainer>
+            <CancelIcon
+              style={modalStyles.closeButton}
+              onClick={(): void => setOpen(false)}
+            />
+          </CloseContainer>
         </Header>
         <Content>{children}</Content>
       </ModalContainer>

@@ -7,8 +7,6 @@ const styles = {
   closeButton: {
     cursor: "pointer",
     color: "#536686f2",
-    marginLeft: "auto",
-    marginRight: 15,
   } as React.CSSProperties,
 };
 

@@ -51,6 +51,7 @@ const SignUp: React.FunctionComponent = () => {
                 signUpFormErrors.first_name
               )}
             />
+            <Gap level={1} />
             <Input
               label="Last Name"
               placeholder="Enter last name"
@@ -65,6 +66,7 @@ const SignUp: React.FunctionComponent = () => {
                 signUpFormErrors.last_name
               )}
             />
+            <Gap level={1} />
             <Input
               label="Email"
               placeholder="Enter email"
@@ -79,6 +81,7 @@ const SignUp: React.FunctionComponent = () => {
                 signUpFormErrors.email
               )}
             />
+            <Gap level={1} />
             <Input
               label="Password"
               placeholder="Enter password"
@@ -94,6 +97,7 @@ const SignUp: React.FunctionComponent = () => {
               )}
               type="password"
             />
+            <Gap level={1} />
             <Input
               label="Confirm Password"
               placeholder="Confirm password"
@@ -109,6 +113,7 @@ const SignUp: React.FunctionComponent = () => {
               )}
               type="password"
             />
+            <Gap level={1} />
             <FormError
               error={signUpFormErrors["error"] || signUpFormErrors["detail"]}
             />

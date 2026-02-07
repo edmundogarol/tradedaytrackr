@@ -3,6 +3,7 @@ import {
   BUTTON_SIZE,
   CONTAINER_PADDING_DEFAULT,
   CONTAINER_PADDING_SMALL,
+  TEXT_SIZE,
 } from "@styles/constants";
 import styled from "styled-components";
 import { ButtonType } from "./ButtonInterfaces";
@@ -35,6 +36,7 @@ export const PressableWrapper = styled.button<{
 
   &:hover {
     cursor: pointer;
+    filter: brightness(1.1);
   }
 
   &:active {
@@ -43,7 +45,7 @@ export const PressableWrapper = styled.button<{
 `;
 
 export const ButtonText = styled.span<{ $buttonType?: ButtonType }>`
-  font-size: 17px;
+  font-size: ${TEXT_SIZE}px;
   color: ${({ $buttonType }): string => {
     switch ($buttonType) {
       case ButtonType.Block:

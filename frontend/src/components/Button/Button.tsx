@@ -13,7 +13,6 @@ export interface ButtonWrapperProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   tdtrButtonType?: ButtonType;
   text?: string | React.ReactElement;
-  label?: string;
   loading?: boolean;
   disabled?: boolean;
   disabledBlock?: boolean;

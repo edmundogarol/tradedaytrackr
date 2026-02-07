@@ -27,7 +27,6 @@ export const InputContainer = styled.div<{
   border-color: ${color("SystemBorder")};
   flex-direction: row;
   border-radius: ${CONTAINER_BORDER_RADIUS_SMALL}px;
-  margin-bottom: ${CONTAINER_MARGIN_DEFAULT}px;
   ${({ $error }): any => {
     if ($error) {
       return css`
@@ -84,8 +83,12 @@ export const InputLabel = styled(Label)<{
       : $disabled
       ? color("SystemLabel3")
       : color("SystemLabel1")};
-  font-size: ${LABEL_SIZE_MEDIUM}px;
-  margin-bottom: ${6}px;
+  margin-bottom: 10px;
+  display: inline-block;
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 1px;
+  font-weight: 100;
 `;
 
 export const Subtext = styled.span`

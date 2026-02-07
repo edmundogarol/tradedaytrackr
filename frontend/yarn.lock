@@ -1955,6 +1955,19 @@
     reselect "^5.1.1"
     use-sync-external-store "^1.6.0"
 
+"@mui/x-date-pickers@^8.0.0":
+  version "8.27.0"
+  resolved "https://registry.yarnpkg.com/@mui/x-date-pickers/-/x-date-pickers-8.27.0.tgz#fdc2f4a116cab28e86b981105e902455c5b4432c"
+  integrity sha512-mw47IgelP5qFSBANqxUhqDEly2XO9RT/BcNKwgumy8BmmdosrGAmTev8dgFMoWg20iPHxEczlpBdDGyV6ht0jg==
+  dependencies:
+    "@babel/runtime" "^7.28.4"
+    "@mui/utils" "^7.3.5"
+    "@mui/x-internals" "8.26.0"
+    "@types/react-transition-group" "^4.4.12"
+    clsx "^2.1.1"
+    prop-types "^15.8.1"
+    react-transition-group "^4.4.5"
+
 "@mui/x-internal-gestures@0.4.0":
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/@mui/x-internal-gestures/-/x-internal-gestures-0.4.0.tgz#68d0d23ab794de186e02e6f29116d1fe1d9211c8"
@@ -1966,6 +1979,16 @@
   version "8.23.0"
   resolved "https://registry.yarnpkg.com/@mui/x-internals/-/x-internals-8.23.0.tgz#f02c126e68896b2fc23b877a0112d2a7f2d110c6"
   integrity sha512-FN7wdqwTxqq1tJBYVz8TA/HMcViuaHS0Jphr4pEjT/8Iuf94Yt3P82WbsTbXyYrgOQDQl07UqE7qWcJetRcHcg==
+  dependencies:
+    "@babel/runtime" "^7.28.4"
+    "@mui/utils" "^7.3.5"
+    reselect "^5.1.1"
+    use-sync-external-store "^1.6.0"
+
+"@mui/x-internals@8.26.0":
+  version "8.26.0"
+  resolved "https://registry.yarnpkg.com/@mui/x-internals/-/x-internals-8.26.0.tgz#49caacac954c29a1b10425c67418310ceb9c8cfa"
+  integrity sha512-B9OZau5IQUvIxwpJZhoFJKqRpmWf5r0yMmSXjQuqb5WuqM755EuzWJOenY48denGoENzMLT8hQpA0hRTeU2IPA==
   dependencies:
     "@babel/runtime" "^7.28.4"
     "@mui/utils" "^7.3.5"
@@ -7987,6 +8010,11 @@ mkdirp@~0.5.1:
   integrity sha512-FP+p8RB8OWpF3YZBCrP5gtADmtXApB5AMLn+vdyA+PyxCjrCs00mjyUozssO33cwDeT3wNGdLxJ5M//YqtHAJw==
   dependencies:
     minimist "^1.2.6"
+
+moment@^2.30.1:
+  version "2.30.1"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.30.1.tgz#f8c91c07b7a786e30c59926df530b4eac96974ae"
+  integrity sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==
 
 ms@2.0.0:
   version "2.0.0"

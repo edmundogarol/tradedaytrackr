@@ -11,7 +11,7 @@ export const CONTAINER_BORDER_RADIUS_SMALL = 4;
 
 export const INPUT_PADDING_W_ICON = 10;
 
-export const TEXT_SIZE = 16;
+export const TEXT_SIZE = 14;
 export const LABEL_SIZE = 14;
 export const LABEL_SIZE_LARGE = 18;
 export const LABEL_SIZE_MEDIUM = 16;

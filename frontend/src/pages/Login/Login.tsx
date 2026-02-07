@@ -66,6 +66,7 @@ const Login: React.FunctionComponent = () => {
                 loginFormErrors.email
               )}
             />
+            <Gap level={1} />
             <Input
               value={loginForm.password}
               error={loginFormErrors.password}
@@ -83,6 +84,7 @@ const Login: React.FunctionComponent = () => {
               )}
               type="password"
             />
+            <Gap level={1} />
             <FormError
               error={loginFormErrors["error"] || loginFormErrors["detail"]}
             />
