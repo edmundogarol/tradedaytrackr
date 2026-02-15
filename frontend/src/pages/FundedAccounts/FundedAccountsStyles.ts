@@ -1,10 +1,6 @@
 import { color } from "@styles/colors";
 
 const styles = {
-  progressBar: {
-    height: 8,
-    width: "100%",
-  } as React.CSSProperties,
   addButton: {
     text: {
       fontSize: 12,
