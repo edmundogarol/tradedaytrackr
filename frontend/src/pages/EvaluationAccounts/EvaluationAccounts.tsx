@@ -22,6 +22,8 @@ import useGetEvaluationAccountsList from "./hooks/useGetEvaluationAccountsList";
 import ListItem from "./EvaluationAccountsListItem";
 import { EvalProgressStatus } from "./hooks/useGetEvalProgressStatus";
 import styles from "./EvaluationAccountsStyles";
+import AddTradingDayModal from "./AddEvaluationTradingDayModal/AddTradingDayModal";
+import AddEvaluationAccountsModal from "./AddEvaluationAccountModal/AddEvaluationAccountsModal";
 
 const EvaluationAccounts: React.FunctionComponent = () => {
   const evaluationStatsSummaryDetails =
@@ -36,6 +38,13 @@ const EvaluationAccounts: React.FunctionComponent = () => {
     "Bulenox",
     "Alpha Futures",
   ];
+  const accountTemplateList = [
+    "MFFU 50k Flex",
+    "MFFU 50k Rapid",
+    "Apex 50k",
+    "Bulenox 50k",
+    "Alpha Futures Zero 50k",
+  ];
   const bufferState = [
     EvalProgressStatus.Started,
     EvalProgressStatus.InProgress,
@@ -44,9 +53,21 @@ const EvaluationAccounts: React.FunctionComponent = () => {
     EvalProgressStatus.Complete,
   ];
   const accountsList = useGetEvaluationAccountsList();
-
+  const [modalOpen, setModalOpen] = React.useState<boolean>(false);
+  const [addTradingDayOpen, setAddTradingDayOpen] =
+    React.useState<boolean>(false);
   return (
     <Page topBarShowMenu={true}>
+      <AddTradingDayModal
+        modalOpen={addTradingDayOpen}
+        setModalOpen={setAddTradingDayOpen}
+      />
+      <AddEvaluationAccountsModal
+        accountTemplates={accountTemplateList}
+        modalOpen={modalOpen}
+        setModalOpen={setModalOpen}
+        setAddTradingDayOpen={setAddTradingDayOpen}
+      />
       <Container>
         <Title>Evaluation Accounts</Title>
         <StatsSummary
@@ -58,6 +79,7 @@ const EvaluationAccounts: React.FunctionComponent = () => {
           <DropdownMultiselect items={firmsList} title="All Firms" />
           <DropdownMultiselect items={bufferState} title="Status" />
           <Button
+            onClick={() => setModalOpen(true)}
             text={"Add Eval"}
             iconType={IconTypeEnum.MaterialIcons}
             iconLeft={"add"}
