@@ -149,7 +149,7 @@ export const AccountSubtitleHighlighted = styled.span`
 export const DaysContainer = styled.div`
   display: flex;
   flex-direction: row;
-  flex: 1.5;
+  flex: 1.7;
 `;
 
 export const DaysItem = styled.div`
@@ -163,6 +163,10 @@ export const DaysItemValue = styled.span<{
   $positive?: boolean;
 }>`
   z-index: 10;
+  pointer-events: auto;
+  min-width: 25px;
+  text-align: center;
+  cursor: pointer;
   color: ${({ $positive }): string =>
     $positive ? color("SystemGreen") : "#d56060"};
 `;
@@ -201,8 +205,8 @@ export const BufferAmountHighlighted = styled.span<{
     props.$bufferPercent > 70
       ? color("SystemGreen")
       : props.$bufferPercent > 40
-      ? "#cf943b"
-      : "#d56060"};
+        ? "#cf943b"
+        : "#d56060"};
   font-weight: 100;
   margin-left: 5px;
   margin-right: 5px;
@@ -223,8 +227,8 @@ export const PnLValue = styled.span<{
     props.$bufferPercent > 70
       ? color("SystemGreen")
       : props.$bufferPercent > 40
-      ? "#cf943b"
-      : "#d56060"};
+        ? "#cf943b"
+        : "#d56060"};
   font-size: 21px;
   font-weight: 100;
 `;

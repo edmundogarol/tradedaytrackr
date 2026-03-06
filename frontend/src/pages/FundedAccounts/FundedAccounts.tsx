@@ -82,7 +82,11 @@ const FundedAccounts: React.FunctionComponent = () => {
         </ListHeaders>
         <ListContainer>
           {accountsList.map((account, index) => (
-            <ListItem key={index} {...account} />
+            <ListItem
+              key={index}
+              {...account}
+              openAddTradingDayModal={setAddTradingDayOpen}
+            />
           ))}
         </ListContainer>
       </Container>
