@@ -34,7 +34,7 @@ const DropdownMultiselect: React.FunctionComponent<DropdownProps> = ({
 
   const handleToggle = (value: string) => (): void => {
     setChecked((prev) =>
-      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
+      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value],
     );
   };
 
@@ -64,9 +64,9 @@ const DropdownMultiselect: React.FunctionComponent<DropdownProps> = ({
           <ListContainer>
             <BoxContainer>
               <List sx={styles.list}>
-                {items.map((value) => {
+                {items.map((value, idx) => {
                   return (
-                    <ListItem key={value} disablePadding>
+                    <ListItem key={idx} disablePadding>
                       <ListItemButton
                         role={undefined}
                         onClick={handleToggle(value)}

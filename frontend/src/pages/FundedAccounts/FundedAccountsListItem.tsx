@@ -61,10 +61,10 @@ const BorderLinearProgress = styled(LinearProgress)<{ $bufferPercent: number }>(
         $bufferPercent > 70
           ? "#86c169"
           : $bufferPercent > 40
-          ? "#cf943b"
-          : "#d56060",
+            ? "#cf943b"
+            : "#d56060",
     },
-  })
+  }),
 );
 
 const FundedAccountsListItem: React.FunctionComponent<
@@ -116,8 +116,8 @@ const FundedAccountsListItem: React.FunctionComponent<
           </AccountTradingDaysComplete>
         </AccountTitleContainer>
         <DaysContainer>
-          {dayValues.map((dayValue) => (
-            <DaysItem>
+          {dayValues.map((dayValue, idx) => (
+            <DaysItem key={idx}>
               <GlassTile
                 positive={dayValue.value > 0}
                 featureTile

@@ -26,7 +26,8 @@ export const Container = styled.div<{
     position: absolute;
     inset: 0;
 
-    background-image: radial-gradient(
+    background-image:
+      radial-gradient(
         60% 100% at 50% 0%,
         rgb(255 236 80) 0%,
         rgb(255 234 47 / 40%) 35%,
@@ -43,14 +44,18 @@ export const Container = styled.div<{
 
     background-repeat: no-repeat;
     background-size: 100% 4%;
-    background-position: top center, bottom center;
+    background-position:
+      top center,
+      bottom center;
 
     filter: blur(0.5px);
     opacity: 0.95;
 
     transform: translateX(-10px);
 
-    transition: background-image 200ms ease, opacity 200ms ease;
+    transition:
+      background-image 200ms ease,
+      opacity 200ms ease;
     pointer-events: none;
   }
 `;
@@ -72,7 +77,7 @@ export const BoxGlow = styled.div<{
       props.$positive === undefined
         ? ""
         : props.$positive
-        ? `
+          ? `
         background-image:
           radial-gradient(
             60% 100% at 50% 0%,
@@ -89,7 +94,7 @@ export const BoxGlow = styled.div<{
             transparent 75%
           );
         `
-        : `
+          : `
         background-image:
           radial-gradient(
             60% 100% at 50% 0%,
@@ -109,14 +114,18 @@ export const BoxGlow = styled.div<{
 
     background-repeat: no-repeat;
     background-size: 100% ${(props): number => (props.$featureTile ? 9 : 4)}%;
-    background-position: top center, bottom center;
+    background-position:
+      top center,
+      bottom center;
 
     filter: blur(${(props): number => (props.$featureTile ? 1.5 : 0.5)}px);
     opacity: 0.95;
 
     transform: translateX(-10px);
 
-    transition: background-image 200ms ease, opacity 200ms ease;
+    transition:
+      background-image 200ms ease,
+      opacity 200ms ease;
   }
 `;
 
@@ -125,7 +134,8 @@ export const Shine = styled.div`
   inset: 0;
   z-index: 2;
   overflow: hidden;
-  box-shadow: inset 4px 5px 7px -1px rgba(255, 255, 255, 0.1),
+  box-shadow:
+    inset 4px 5px 7px -1px rgba(255, 255, 255, 0.1),
     inset -1px -1px 1px 1px rgba(255, 255, 255, 0.1);
   border-radius: 7px;
   background: #6060601c;

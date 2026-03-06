@@ -129,7 +129,9 @@ export const CalendarSummaryTileBoxGlow = styled.div<{ $positive?: boolean }>`
 
     background-repeat: no-repeat;
     background-size: 100% 4%;
-    background-position: top center, bottom center;
+    background-position:
+      top center,
+      bottom center;
 
     filter: blur(0.5px);
     opacity: 0.95;
@@ -143,7 +145,8 @@ export const CalendarSummaryGlassShine = styled.div`
   inset: 0;
   z-index: 2;
   overflow: hidden;
-  box-shadow: inset 4px 5px 7px -1px rgba(255, 255, 255, 0.1),
+  box-shadow:
+    inset 4px 5px 7px -1px rgba(255, 255, 255, 0.1),
     inset -1px -1px 1px 1px rgba(255, 255, 255, 0.1);
   border-radius: 7px;
   background: #6060601c;
@@ -166,6 +169,19 @@ export const TileDate = styled.span`
   justify-content: start;
   position: absolute;
   z-index: 1;
+`;
+
+export const TileAccs = styled.span`
+  padding: 10px;
+  align-items: start;
+  justify-content: start;
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  color: white;
+  font-size: 12px;
+  padding: unset;
+  padding-right: 5px;
 `;
 
 export const TileDateText = styled.p`

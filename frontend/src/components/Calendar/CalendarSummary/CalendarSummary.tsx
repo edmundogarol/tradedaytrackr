@@ -2,6 +2,7 @@ import React from "react";
 import GlassTile from "@components/GlassTile/GlassTile";
 import {
   Container,
+  TileAccs,
   TileContainer,
   TileDate,
   TileDateText,
@@ -32,13 +33,14 @@ const CalendarSummary: React.FunctionComponent<CalendarSummaryProps> = ({
         const randomTradeCount = Math.floor(Math.random() * 1) + 1;
         const positivePnL = parseFloat(randomPnL) >= 0;
         return (
-          <TileContainer>
+          <TileContainer key={index}>
             <GlassTile
               key={index}
               positive={positivePnL}
               overlay={
                 <TileDate>
                   <TileDateText>Dec {index + 1}</TileDateText>
+                  <TileAccs>{`x${index} Accs`}</TileAccs>
                   <TileInfo>
                     <TilePnL $positive={positivePnL}>${randomPnL}</TilePnL>
                     <TileTradeCount className="trade-count">

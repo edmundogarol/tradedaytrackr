@@ -8,6 +8,7 @@ import LinearProgress, {
 
 import InfoPopout from "@components/InfoPopout/InfoPopout";
 import { color } from "@styles/colors";
+import AlertPopout from "@components/Alert/AlertPopout";
 import {
   BufferContainer,
   BufferAmount,
@@ -47,6 +48,7 @@ export interface EvaluationAccountsListItemDetails {
   noShine: boolean;
   minBuffer: number;
   tileGlowPositive?: boolean | undefined;
+  openAddTradingDayModal: (open: boolean) => void;
 }
 
 const BorderLinearProgress = styled(LinearProgress)<{ $bufferPercent: number }>(
@@ -60,7 +62,7 @@ const BorderLinearProgress = styled(LinearProgress)<{ $bufferPercent: number }>(
       borderRadius: 5,
       backgroundColor: $bufferPercent > 60 ? color("SystemBlue5") : "#cf943b",
     },
-  })
+  }),
 );
 
 const EvaluationAccountsListItem: React.FunctionComponent<
@@ -79,7 +81,9 @@ const EvaluationAccountsListItem: React.FunctionComponent<
   noShine,
   minBuffer,
   tileGlowPositive,
+  openAddTradingDayModal,
 }) => {
+  const [alertNoRecord, setAlertNoRecord] = React.useState(false);
   const formatter = Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -96,6 +100,12 @@ const EvaluationAccountsListItem: React.FunctionComponent<
       noGlow={noGlow}
       noShine={noShine}
     >
+      <AlertPopout
+        open={alertNoRecord}
+        message="This trade has no journal entry. Please add or link it to a journal entry to view details."
+        setPopoutOpen={setAlertNoRecord}
+        hideDuration={5000}
+      />
       <ListItemContainer>
         <AccountImage src={imageSrc(firmLogoSrc(firm))} />
         <AccountTitleContainer>
@@ -114,8 +124,8 @@ const EvaluationAccountsListItem: React.FunctionComponent<
           </AccountTradingDaysComplete>
         </AccountTitleContainer>
         <DaysContainer>
-          {dayValues.map((dayValue) => (
-            <DaysItem>
+          {dayValues.map((dayValue, idx) => (
+            <DaysItem key={idx} onClick={() => setAlertNoRecord(true)}>
               <GlassTile
                 positive={dayValue.value > 0}
                 featureTile
@@ -130,6 +140,26 @@ const EvaluationAccountsListItem: React.FunctionComponent<
               <DaysItemSubtitle>{dayValue.day}</DaysItemSubtitle>
             </DaysItem>
           ))}
+          <DaysItem>
+            <GlassTile
+              positive={true}
+              featureTile
+              minHeight={10}
+              minWidth={10}
+              padding={7}
+            >
+              <DaysItemValue
+                $positive={true}
+                onClick={() => {
+                  openAddTradingDayModal(true);
+                  console.log("open add trading day modal");
+                }}
+              >
+                {"+"}
+              </DaysItemValue>
+            </GlassTile>
+            <DaysItemSubtitle>{"Add"}</DaysItemSubtitle>
+          </DaysItem>
         </DaysContainer>
         <BufferContainer>
           <BufferText>
@@ -149,7 +179,7 @@ const EvaluationAccountsListItem: React.FunctionComponent<
         <StatusContainer>
           <Status $bufferPercent={progress}>
             {evalProgressStatus(
-              ((accountBalance - accountSize) / profitTarget) * 100
+              ((accountBalance - accountSize) / profitTarget) * 100,
             )}
           </Status>
         </StatusContainer>

@@ -149,7 +149,7 @@ export const AccountSubtitleHighlighted = styled.span`
 export const DaysContainer = styled.div`
   display: flex;
   flex-direction: row;
-  flex: 1.5;
+  flex: 1.7;
 `;
 
 export const DaysItem = styled.div`
@@ -165,6 +165,10 @@ export const DaysItemValue = styled.span<{
   z-index: 10;
   color: ${({ $positive }): string =>
     $positive ? color("SystemBlue5") : "#d56060"};
+  pointer-events: auto;
+  min-width: 25px;
+  text-align: center;
+  cursor: pointer;
 `;
 
 export const DaysItemSubtitle = styled.span`
