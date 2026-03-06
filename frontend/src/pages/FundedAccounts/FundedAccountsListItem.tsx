@@ -8,6 +8,9 @@ import LinearProgress, {
 
 import InfoPopout from "@components/InfoPopout/InfoPopout";
 import AlertPopout from "@components/Alert/AlertPopout";
+import { useNavigation } from "react-router";
+import { PageEnum } from "@interfaces/NavigationTypes";
+import useReactNavigation from "@navigation/hooks/useReactNavigation";
 import {
   BufferContainer,
   BufferAmount,
@@ -32,9 +35,14 @@ import {
 import styles from "./FundedAccountsStyles";
 
 export interface FundedAccountsListItemDetails {
+  id: number;
   accountName: string;
   accountSize: number;
   accountBalance: number;
+  accountType: {
+    id: number;
+    name: string;
+  };
   firm: string;
   firmMinDays?: number;
   firmMinDayPnL?: number;
@@ -47,7 +55,7 @@ export interface FundedAccountsListItemDetails {
   noShine: boolean;
   minBuffer: number;
   bufferPercent: number;
-  openAddTradingDayModal: (open: boolean) => void;
+  openAddTradingDayModal?: (open: boolean) => void;
 }
 
 const BorderLinearProgress = styled(LinearProgress)<{ $bufferPercent: number }>(
@@ -72,6 +80,7 @@ const BorderLinearProgress = styled(LinearProgress)<{ $bufferPercent: number }>(
 const FundedAccountsListItem: React.FunctionComponent<
   FundedAccountsListItemDetails
 > = ({
+  id,
   accountName,
   accountSize,
   accountBalance,
@@ -85,6 +94,7 @@ const FundedAccountsListItem: React.FunctionComponent<
   bufferPercent,
   openAddTradingDayModal,
 }) => {
+  const navigation = useReactNavigation();
   const [alertNoRecord, setAlertNoRecord] = React.useState(false);
   const formatter = Intl.NumberFormat("en-US", {
     style: "currency",
@@ -109,7 +119,15 @@ const FundedAccountsListItem: React.FunctionComponent<
       <ListItemContainer>
         <AccountImage src={imageSrc(firmLogoSrc(firm))} />
         <AccountTitleContainer>
-          <AccountTitle>{accountName}</AccountTitle>
+          <AccountTitle
+            onClick={() =>
+              navigation.navigate(PageEnum.FundedAccountDetail, {
+                id,
+              })
+            }
+          >
+            {accountName}
+          </AccountTitle>
           <AccountSubtitle>
             Balance:
             <AccountSubtitleHighlighted>
@@ -153,7 +171,7 @@ const FundedAccountsListItem: React.FunctionComponent<
               <DaysItemValue
                 $positive={true}
                 onClick={() => {
-                  openAddTradingDayModal(true);
+                  openAddTradingDayModal && openAddTradingDayModal(true);
                   console.log("open add trading day modal");
                 }}
               >

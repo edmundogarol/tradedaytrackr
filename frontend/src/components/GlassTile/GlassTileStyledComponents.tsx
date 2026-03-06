@@ -5,6 +5,7 @@ export const Container = styled.div<{
   $minHeight?: number;
   $minWidth?: number;
   $padding?: number;
+  $hoverEffect?: boolean;
 }>`
   height: 100%;
   display: flex;
@@ -21,6 +22,9 @@ export const Container = styled.div<{
 
   width: 100%;
   /* ✅ HOVER THE REAL ELEMENT */
+  ${(props): string =>
+    props.$hoverEffect
+      ? `
   &:hover::before {
     content: "";
     position: absolute;
@@ -57,7 +61,8 @@ export const Container = styled.div<{
       background-image 200ms ease,
       opacity 200ms ease;
     pointer-events: none;
-  }
+  }`
+      : ""}
 `;
 
 export const BoxGlow = styled.div<{

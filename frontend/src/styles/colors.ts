@@ -22,7 +22,8 @@ export type ColorKey =
   | "SystemLabel3"
   | "SystemTeal"
   | "SystemPurple"
-  | "SystemWhite";
+  | "SystemWhite"
+  | "SystemTitleWhite";
 
 const colorsMap = {
   SystemBlue1: "#1a2241",
@@ -49,6 +50,7 @@ const colorsMap = {
   SystemTeal: "#66d3bf",
   SystemPurple: "#b27cdc",
   SystemWhite: "#ffffff",
+  SystemTitleWhite: "#d8d8d8",
 };
 
 export const color = (colorKey: ColorKey): string => {

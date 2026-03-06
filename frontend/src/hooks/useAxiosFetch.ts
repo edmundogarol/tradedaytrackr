@@ -39,7 +39,7 @@ const useAxiosFetch = <T>(
     params?: { [key: string]: any };
   },
   useUrl?: string,
-  skip?: boolean
+  skip?: boolean,
 ): AxiosFetchWrapperResponse<T> => {
   const [data, setData] = useState<T | undefined>(undefined);
   const [loading, setLoading] = useState(false);
@@ -68,7 +68,6 @@ const useAxiosFetch = <T>(
         ...params,
       });
 
-      console.log({ response: response.toString() });
       fetchData = response.data || response.config.data;
       if (fetchData) {
         console.debug("Ok!", response.config.url);

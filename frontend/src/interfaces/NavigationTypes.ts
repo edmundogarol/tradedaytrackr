@@ -8,6 +8,7 @@ export enum PageEnum {
   Journal = "/journal",
   FundedAccounts = "/fundedAccounts",
   EvaluationAccounts = "/evaluationAccounts",
+  FundedAccountDetail = "/fundedAccountDetail",
 }
 
 export type AuthenticatedStackNavigatorParams = {
@@ -16,6 +17,7 @@ export type AuthenticatedStackNavigatorParams = {
   [PageEnum.Journal]: undefined;
   [PageEnum.FundedAccounts]: undefined;
   [PageEnum.EvaluationAccounts]: undefined;
+  [PageEnum.FundedAccountDetail]: { id: number };
 };
 
 export type UnauthenticatedStackNavigatorParams = {
@@ -27,7 +29,7 @@ export type UnauthenticatedStackNavigatorParams = {
 
 export interface Navigation {
   navigate: (page: PageEnum, params?: any) => void;
-  replace: (page: PageEnum) => void;
+  replace: (page: PageEnum, params?: any) => void;
   goBack: () => void;
   getCurrentPageName: () => PageEnum | null;
 }

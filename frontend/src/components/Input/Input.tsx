@@ -14,8 +14,7 @@ import {
   IconContainer,
 } from "./InputStyledComponents";
 
-export interface InputWrapperProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputWrapperProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   disabled?: boolean;
   icon?: React.ReactElement;
@@ -28,10 +27,12 @@ export interface InputWrapperProps
       place_id: string;
       structured_formatting: { main_text: string };
     },
-    details: any
+    details: any,
   ) => void;
   debounce?: number;
   updateCallback?: (text: string) => void;
+  inputContainerStyle?: React.CSSProperties;
+  containerStyle?: React.CSSProperties;
 }
 
 const Input: React.FunctionComponent<InputWrapperProps> = ({
@@ -41,19 +42,21 @@ const Input: React.FunctionComponent<InputWrapperProps> = ({
   placeholder,
   error,
   subtext,
+  containerStyle,
+  inputContainerStyle,
   ...props
 }) => {
   return (
-    <Container>
+    <Container style={containerStyle}>
       <If condition={!!label}>
         <Label $disabled={disabled} $error={!!error}>
           {label}
         </Label>
       </If>
-      <InputContainer $error={!!error}>
-        <IconContainer>
-          <If condition={!!icon}>{icon}</If>
-        </IconContainer>
+      <InputContainer $error={!!error} style={inputContainerStyle}>
+        <If condition={!!icon}>
+          <IconContainer>{icon}</IconContainer>
+        </If>
         <InputStyled
           {...props}
           disabled={disabled}

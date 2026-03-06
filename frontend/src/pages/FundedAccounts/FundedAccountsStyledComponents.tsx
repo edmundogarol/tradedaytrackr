@@ -127,6 +127,8 @@ export const AccountTitleContainer = styled.div`
 export const AccountTitle = styled.span`
   font-size: 16px;
   color: #b5b5b5;
+  cursor: pointer;
+  pointer-events: auto;
 `;
 
 export const AccountSubtitle = styled.span`
