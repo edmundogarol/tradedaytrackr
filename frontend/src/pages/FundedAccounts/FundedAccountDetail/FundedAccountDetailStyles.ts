@@ -51,6 +51,7 @@ const styles = {
       fontSize: 12,
       textTransform: "uppercase",
       letterSpacing: 1,
+      marginLeft: 5,
     } as React.CSSProperties,
     button: {
       display: "flex",
@@ -60,6 +61,18 @@ const styles = {
       marginLeft: "auto",
       border: "none",
       backgroundColor: color("SystemGreen"),
+    } as React.CSSProperties,
+  },
+  payoutButton: {
+    button: {
+      display: "flex",
+      alignItems: "center",
+      color: "white",
+      maxWidth: 170,
+      marginLeft: "auto",
+      marginRight: 10,
+      border: "none",
+      backgroundColor: color("SystemRed"),
     } as React.CSSProperties,
   },
 };

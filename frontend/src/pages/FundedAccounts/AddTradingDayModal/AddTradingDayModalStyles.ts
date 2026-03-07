@@ -12,6 +12,10 @@ const styles = {
   submitButton: {
     marginLeft: "auto",
   } as React.CSSProperties,
+  payoutButton: {
+    marginLeft: "auto",
+    backgroundColor: color("SystemRed"),
+  } as React.CSSProperties,
 };
 
 export default styles;

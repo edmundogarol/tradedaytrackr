@@ -73,7 +73,7 @@ const FundedAccountDetail: React.FunctionComponent<
   let [searchParams] = useSearchParams();
   const [addTradingDayOpen, setAddTradingDayOpen] =
     React.useState<boolean>(false);
-
+  const [payoutRecord, setPayoutRecord] = React.useState<boolean>(false);
   const {
     id,
     accountName,
@@ -108,6 +108,7 @@ const FundedAccountDetail: React.FunctionComponent<
       <AddTradingDayModal
         modalOpen={addTradingDayOpen}
         setModalOpen={setAddTradingDayOpen}
+        payoutRecord={payoutRecord}
       />
       <Container>
         <ListHeaders>
@@ -233,12 +234,26 @@ const FundedAccountDetail: React.FunctionComponent<
         <TradingDaysHeaderContainer>
           <Title>Trades</Title>
           <Button
+            text={"Record Payout"}
+            iconType={IconTypeEnum.MaterialIcons}
+            iconLeft={"money"}
+            textStyle={styles.addButton.text}
+            style={styles.payoutButton.button}
+            onClick={(): void => {
+              setAddTradingDayOpen(true);
+              setPayoutRecord(true);
+            }}
+          />
+          <Button
             text={"Add Trade"}
             iconType={IconTypeEnum.MaterialIcons}
             iconLeft={"add"}
             textStyle={styles.addButton.text}
             style={styles.addButton.button}
-            onClick={(): void => setAddTradingDayOpen(true)}
+            onClick={(): void => {
+              setAddTradingDayOpen(true);
+              setPayoutRecord(false);
+            }}
           />
         </TradingDaysHeaderContainer>
         <GlassTile featureTile minHeight={70} noGlow={true} noShine={false}>

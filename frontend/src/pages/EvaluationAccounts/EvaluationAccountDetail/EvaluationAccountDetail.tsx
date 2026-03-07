@@ -20,6 +20,8 @@ import Icon from "@components/Icon/Icon";
 import { IconTypeEnum } from "@components/Icon/IconInterfaces";
 import { color } from "@styles/colors";
 import { BorderLinearProgress } from "@pages/FundedAccounts/FundedAccountsListItem";
+import WifiProtectedSetupIcon from "@mui/icons-material/WifiProtectedSetup";
+
 import {
   AccountImage,
   BufferAmount,
@@ -252,13 +254,22 @@ const EvaluationAccountDetail: React.FunctionComponent<
                         <InfoPopout
                           infoDescription={`Link or convert to journal entry`}
                         >
-                          <Icon
-                            type={IconTypeEnum.FontAwesome5}
-                            name="link"
-                            size={40}
-                            color={color("SystemLabel1")}
-                            style={{ transform: "rotate(135deg)" }}
-                          />
+                          <div>
+                            <Icon
+                              type={IconTypeEnum.FontAwesome5}
+                              name="link"
+                              size={30}
+                              color={color("SystemLabel1")}
+                              style={{ transform: "rotate(135deg)" }}
+                            />
+                            <WifiProtectedSetupIcon
+                              style={{
+                                height: 30,
+                                width: 30,
+                                color: color("SystemLabel1"),
+                              }}
+                            />
+                          </div>
                         </InfoPopout>
                       )}
                     </TradePreviewContainer>
