@@ -9,6 +9,8 @@ import LinearProgress, {
 import InfoPopout from "@components/InfoPopout/InfoPopout";
 import { color } from "@styles/colors";
 import AlertPopout from "@components/Alert/AlertPopout";
+import useReactNavigation from "@navigation/hooks/useReactNavigation";
+import { PageEnum } from "@interfaces/NavigationTypes";
 import {
   BufferContainer,
   BufferAmount,
@@ -32,12 +34,18 @@ import styles from "./EvaluationAccountsStyles";
 import useGetEvalProgressStatus from "./hooks/useGetEvalProgressStatus";
 
 export interface EvaluationAccountsListItemDetails {
+  id: number;
   accountName: string;
   accountSize: number;
   accountBalance: number;
+  accountType: {
+    id: number;
+    name: string;
+  };
   profitTarget: number;
   firm: string;
   firmMinDays?: number;
+  firmMinDayPnL?: number;
   currentDayCount: number;
   currentConsistencyScore: number;
   dayValues: {
@@ -48,7 +56,7 @@ export interface EvaluationAccountsListItemDetails {
   noShine: boolean;
   minBuffer: number;
   tileGlowPositive?: boolean | undefined;
-  openAddTradingDayModal: (open: boolean) => void;
+  openAddTradingDayModal?: (open: boolean) => void;
 }
 
 const BorderLinearProgress = styled(LinearProgress)<{ $bufferPercent: number }>(
@@ -68,6 +76,7 @@ const BorderLinearProgress = styled(LinearProgress)<{ $bufferPercent: number }>(
 const EvaluationAccountsListItem: React.FunctionComponent<
   EvaluationAccountsListItemDetails
 > = ({
+  id,
   accountName,
   accountSize,
   accountBalance,
@@ -91,7 +100,7 @@ const EvaluationAccountsListItem: React.FunctionComponent<
   });
   const evalProgressStatus = useGetEvalProgressStatus();
   const progress = ((accountBalance - accountSize) / profitTarget) * 100;
-
+  const navigation = useReactNavigation();
   return (
     <GlassTile
       positive={tileGlowPositive}
@@ -109,7 +118,15 @@ const EvaluationAccountsListItem: React.FunctionComponent<
       <ListItemContainer>
         <AccountImage src={imageSrc(firmLogoSrc(firm))} />
         <AccountTitleContainer>
-          <AccountTitle>{accountName}</AccountTitle>
+          <AccountTitle
+            onClick={() =>
+              navigation.navigate(PageEnum.EvaluationAccountDetail, {
+                id,
+              })
+            }
+          >
+            {accountName}
+          </AccountTitle>
           <AccountSubtitle>
             Balance:
             <AccountSubtitleHighlighted>
@@ -151,7 +168,7 @@ const EvaluationAccountsListItem: React.FunctionComponent<
               <DaysItemValue
                 $positive={true}
                 onClick={() => {
-                  openAddTradingDayModal(true);
+                  openAddTradingDayModal && openAddTradingDayModal(true);
                   console.log("open add trading day modal");
                 }}
               >

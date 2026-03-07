@@ -128,7 +128,7 @@ export const DayValue = styled.div`
 `;
 
 export const PnL = styled.div`
-  color: ${color("SystemGreen")};
+  color: ${color("SystemBlue5")};
   font-size: 20px;
   width: 100px;
 `;
@@ -154,7 +154,7 @@ export const ConsistencyContainer = styled.div`
   flex: 1;
 `;
 export const ConsistencyScore = styled.span`
-  color: ${color("SystemGreen")};
+  color: ${color("SystemBlue5")};
 `;
 export const ConsistencyLabel = styled.span`
   display: flex;

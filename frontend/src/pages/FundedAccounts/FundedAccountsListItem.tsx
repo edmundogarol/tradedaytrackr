@@ -50,6 +50,10 @@ export interface FundedAccountsListItemDetails {
   dayValues: {
     value: number;
     day: string;
+    image?: string;
+    id?: number;
+    time?: string;
+    date?: string;
   }[];
   noGlow: boolean;
   noShine: boolean;
@@ -58,24 +62,24 @@ export interface FundedAccountsListItemDetails {
   openAddTradingDayModal?: (open: boolean) => void;
 }
 
-const BorderLinearProgress = styled(LinearProgress)<{ $bufferPercent: number }>(
-  ({ $bufferPercent }) => ({
-    height: 10,
+export const BorderLinearProgress = styled(LinearProgress)<{
+  $bufferPercent: number;
+}>(({ $bufferPercent }) => ({
+  height: 10,
+  borderRadius: 5,
+  [`&.${linearProgressClasses.colorPrimary}`]: {
+    backgroundColor: "#404f5e",
+  },
+  [`& .${linearProgressClasses.bar}`]: {
     borderRadius: 5,
-    [`&.${linearProgressClasses.colorPrimary}`]: {
-      backgroundColor: "#404f5e",
-    },
-    [`& .${linearProgressClasses.bar}`]: {
-      borderRadius: 5,
-      backgroundColor:
-        $bufferPercent > 70
-          ? "#86c169"
-          : $bufferPercent > 40
-            ? "#cf943b"
-            : "#d56060",
-    },
-  }),
-);
+    backgroundColor:
+      $bufferPercent > 70
+        ? "#86c169"
+        : $bufferPercent > 40
+          ? "#cf943b"
+          : "#d56060",
+  },
+}));
 
 const FundedAccountsListItem: React.FunctionComponent<
   FundedAccountsListItemDetails

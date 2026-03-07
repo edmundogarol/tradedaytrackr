@@ -12,6 +12,7 @@ import LoadingPage from "@components/Loading/LoadingPage";
 import FundedAccounts from "@pages/FundedAccounts/FundedAccounts";
 import EvaluationAccounts from "@pages/EvaluationAccounts/EvaluationAccounts";
 import FundedAccountDetail from "@pages/FundedAccounts/FundedAccountDetail/FundedAccountDetail";
+import EvaluationAccountDetail from "@pages/EvaluationAccounts/EvaluationAccountDetail/EvaluationAccountDetail";
 import RequireAuth from "./RequireAuth";
 import checkAuth from "./hooks/checkAuth";
 
@@ -41,6 +42,10 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
         <Route
           path={PageEnum.FundedAccountDetail}
           element={<FundedAccountDetail />}
+        />
+        <Route
+          path={PageEnum.EvaluationAccountDetail}
+          element={<EvaluationAccountDetail />}
         />
       </Route>
       {/* Root */}

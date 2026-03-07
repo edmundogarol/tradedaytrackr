@@ -11,19 +11,23 @@ import styles from "./SelectWrapperStyles";
 interface SelectWrapperProps {
   items?: string[];
   label?: string;
+  style?: React.CSSProperties;
+  onSelect?: (selected: string) => void;
 }
 
 const SelectWrapper: React.FunctionComponent<SelectWrapperProps> = ({
   items,
   label,
+  style,
+  onSelect,
 }) => {
   return (
     <>
       <If condition={!!label}>
         <Label>{label}</Label>
       </If>
-      <SelectContainer>
-        <Select>
+      <SelectContainer style={style}>
+        <Select onChange={(e) => onSelect && onSelect(e.target.value)}>
           {items?.map((item, index) => (
             <option key={index} value={item}>
               {item}

@@ -4,12 +4,17 @@ export const useGetEvaluationAccountsList =
   (): EvaluationAccountsListItemDetails[] => {
     return [
       {
+        id: 1,
         accountName: "MFFUSFCR71",
         accountSize: 50000,
+        accountType: {
+          id: 1,
+          name: "Standard",
+        },
+        profitTarget: 3000,
         accountBalance: 51010,
         firm: "mffu",
         firmMinDays: 5,
-        profitTarget: 3000,
         currentDayCount: 5,
         currentConsistencyScore: 50,
         dayValues: [
@@ -39,8 +44,13 @@ export const useGetEvaluationAccountsList =
         minBuffer: 250,
       },
       {
+        id: 2,
         accountName: "MFFUSFCR72",
         accountSize: 50000,
+        accountType: {
+          id: 1,
+          name: "Standard",
+        },
         profitTarget: 3000,
         accountBalance: 52020,
         firm: "mffu",
@@ -75,9 +85,14 @@ export const useGetEvaluationAccountsList =
         minBuffer: 250,
       },
       {
+        id: 3,
         accountName: "PAAPEX022",
         accountSize: 50000,
         accountBalance: 51120,
+        accountType: {
+          id: 1,
+          name: "Standard",
+        },
         profitTarget: 3000,
         firm: "apex",
         firmMinDays: 8,
@@ -111,9 +126,14 @@ export const useGetEvaluationAccountsList =
         minBuffer: 2600,
       },
       {
+        id: 4,
         accountName: "BULENOX023",
         accountSize: 50000,
         accountBalance: 51530,
+        accountType: {
+          id: 1,
+          name: "Standard",
+        },
         profitTarget: 3000,
         firm: "bulenox",
         firmMinDays: 10,
@@ -147,8 +167,13 @@ export const useGetEvaluationAccountsList =
         minBuffer: 2500,
       },
       {
+        id: 5,
         accountName: "ALPHAFU002",
         accountSize: 50000,
+        accountType: {
+          id: 1,
+          name: "Standard",
+        },
         profitTarget: 3000,
         accountBalance: 50040,
         firm: "alpha",

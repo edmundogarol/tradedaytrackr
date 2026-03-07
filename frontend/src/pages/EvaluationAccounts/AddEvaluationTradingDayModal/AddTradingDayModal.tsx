@@ -65,7 +65,7 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
           >
             <SelectWrapper
               items={tradeEntryData}
-              label="Assign to existing trade entry"
+              label="Assign to existing Journal Entry"
             />
             <Gap level={2} />
             <Button

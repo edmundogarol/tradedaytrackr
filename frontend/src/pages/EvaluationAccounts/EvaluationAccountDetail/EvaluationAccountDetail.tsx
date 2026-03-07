@@ -4,9 +4,12 @@ import { useSearchParams } from "react-router";
 import GlassTile from "@components/GlassTile/GlassTile";
 import { firmLogoSrc, imageSrc } from "@utils/utils";
 import EditIcon from "@mui/icons-material/Edit";
-import { AccountTradingDaysComplete } from "@pages/EvaluationAccounts/EvaluationAccountsStyledComponents";
+import {
+  AccountTradingDaysComplete,
+  Status,
+  StatusContainer,
+} from "@pages/EvaluationAccounts/EvaluationAccountsStyledComponents";
 import InfoPopout from "@components/InfoPopout/InfoPopout";
-import WifiProtectedSetupIcon from "@mui/icons-material/WifiProtectedSetup";
 import Input from "@components/Input/Input";
 import { Else, If } from "@components/If/If";
 import Button from "@components/Button/Button";
@@ -16,6 +19,7 @@ import moment from "moment";
 import Icon from "@components/Icon/Icon";
 import { IconTypeEnum } from "@components/Icon/IconInterfaces";
 import { color } from "@styles/colors";
+import { BorderLinearProgress } from "@pages/FundedAccounts/FundedAccountsListItem";
 import {
   AccountImage,
   BufferAmount,
@@ -23,13 +27,8 @@ import {
   BufferContainer,
   BufferText,
   Container,
-  PnLContainer,
-  PnLValue,
-  PnLWithdrawable,
-  PnLWithdrawableText,
   Title,
-} from "../FundedAccountsStyledComponents";
-import useGetFundedAccountsList from "../hooks/useGetFundedAccountsList";
+} from "../EvaluationAccountsStyledComponents";
 import {
   AccountDetailContainer,
   AccountName,
@@ -54,14 +53,15 @@ import {
   TradePreviewContainer,
   TradingDaysContainer,
   TradingDaysHeaderContainer,
-} from "./FundedAccountDetailStyledComponents";
-import styles from "./FundedAccountDetailStyles";
-import { BorderLinearProgress } from "../FundedAccountsListItem";
-import AddTradingDayModal from "../AddTradingDayModal/AddTradingDayModal";
-interface FundedAccountDetailProps {}
+} from "./EvaluationAccountDetailStyledComponents";
+import styles from "./EvaluationAccountDetailStyles";
+import useGetEvaluationAccountsList from "../hooks/useGetEvaluationAccountsList";
+import AddTradingDayModal from "../AddEvaluationTradingDayModal/AddTradingDayModal";
+import useGetEvalProgressStatus from "../hooks/useGetEvalProgressStatus";
+interface EvaluationAccountDetailProps {}
 
-const FundedAccountDetail: React.FunctionComponent<
-  FundedAccountDetailProps
+const EvaluationAccountDetail: React.FunctionComponent<
+  EvaluationAccountDetailProps
 > = () => {
   const [accountNameTemp, setAccountNameTemp] = React.useState<string>(
     "MFFUSFCR72334300-232323231",
@@ -81,6 +81,7 @@ const FundedAccountDetail: React.FunctionComponent<
     accountBalance,
     accountType: { name: accountTypeName },
     firm,
+    profitTarget,
     firmMinDays,
     firmMinDayPnL,
     currentDayCount,
@@ -88,8 +89,7 @@ const FundedAccountDetail: React.FunctionComponent<
     noGlow,
     noShine,
     minBuffer,
-    bufferPercent,
-  } = useGetFundedAccountsList()[0];
+  } = useGetEvaluationAccountsList()[0];
   const accountTemplateList = [
     "MFFU 50k Flex",
     "MFFU 50k Rapid",
@@ -102,6 +102,8 @@ const FundedAccountDetail: React.FunctionComponent<
     currency: "USD",
     maximumFractionDigits: 0,
   });
+  const evalProgressStatus = useGetEvalProgressStatus();
+  const progress = ((accountBalance - accountSize) / profitTarget) * 100;
 
   return (
     <Page topBarShowMenu={true}>
@@ -111,10 +113,10 @@ const FundedAccountDetail: React.FunctionComponent<
       />
       <Container>
         <ListHeaders>
-          <Title>Funded Account Details</Title>
-          <BufferHeader>Min Buffer</BufferHeader>
+          <Title>Evaluation Account Details</Title>
+          <BufferHeader>Profit Target</BufferHeader>
           <BufferHeader>Consistency</BufferHeader>
-          <PnLHeader>PnL</PnLHeader>
+          <PnLHeader>Status</PnLHeader>
         </ListHeaders>
         <GlassTile featureTile minHeight={70} noGlow={true} noShine={false}>
           <HeaderContainer>
@@ -187,19 +189,16 @@ const FundedAccountDetail: React.FunctionComponent<
               <AccountPerformanceContainer>
                 <BufferContainer>
                   <BufferText>
-                    Min Buffer:
-                    <BufferAmountHighlighted $bufferPercent={bufferPercent}>
+                    Profit Target:
+                    <BufferAmountHighlighted $bufferPercent={70}>
                       {formatter.format(accountBalance - accountSize)}
                     </BufferAmountHighlighted>
                     /<BufferAmount>{formatter.format(minBuffer)}</BufferAmount>
-                    <InfoPopout
-                      infoDescription={`This account requires a minimum buffer of $${minBuffer} before a payout can be requested.`}
-                    />
                   </BufferText>
                   <BorderLinearProgress
-                    $bufferPercent={bufferPercent}
+                    $bufferPercent={70}
                     variant="determinate"
-                    value={bufferPercent}
+                    value={70}
                     style={styles.progressBar}
                   />
                 </BufferContainer>
@@ -207,21 +206,13 @@ const FundedAccountDetail: React.FunctionComponent<
                   <ConsistencyScore>{"50%"}</ConsistencyScore>
                   <ConsistencyLabel>{"Consistency"}</ConsistencyLabel>
                 </ConsistencyContainer>
-                <PnLContainer>
-                  <PnLValue $bufferPercent={bufferPercent}>
-                    {formatter.format(accountBalance - accountSize)}
-                  </PnLValue>
-                  <PnLWithdrawable
-                    $positive={accountBalance - accountSize - minBuffer > 0}
-                  >
-                    <PnLWithdrawableText>Withdrawable:</PnLWithdrawableText>
-                    {accountBalance - accountSize - minBuffer < 0
-                      ? formatter.format(0)
-                      : formatter.format(
-                          accountBalance - accountSize - minBuffer,
-                        )}
-                  </PnLWithdrawable>
-                </PnLContainer>
+                <StatusContainer>
+                  <Status $bufferPercent={progress}>
+                    {evalProgressStatus(
+                      ((accountBalance - accountSize) / profitTarget) * 100,
+                    )}
+                  </Status>
+                </StatusContainer>
               </AccountPerformanceContainer>
             </AccountNameContainer>
           </HeaderContainer>
@@ -261,22 +252,13 @@ const FundedAccountDetail: React.FunctionComponent<
                         <InfoPopout
                           infoDescription={`Link or convert to journal entry`}
                         >
-                          <div>
-                            <Icon
-                              type={IconTypeEnum.FontAwesome5}
-                              name="link"
-                              size={30}
-                              color={color("SystemLabel1")}
-                              style={{ transform: "rotate(135deg)" }}
-                            />
-                            <WifiProtectedSetupIcon
-                              style={{
-                                height: 30,
-                                width: 30,
-                                color: color("SystemLabel1"),
-                              }}
-                            />
-                          </div>
+                          <Icon
+                            type={IconTypeEnum.FontAwesome5}
+                            name="link"
+                            size={40}
+                            color={color("SystemLabel1")}
+                            style={{ transform: "rotate(135deg)" }}
+                          />
                         </InfoPopout>
                       )}
                     </TradePreviewContainer>
@@ -309,4 +291,4 @@ const FundedAccountDetail: React.FunctionComponent<
   );
 };
 
-export default FundedAccountDetail;
+export default EvaluationAccountDetail;

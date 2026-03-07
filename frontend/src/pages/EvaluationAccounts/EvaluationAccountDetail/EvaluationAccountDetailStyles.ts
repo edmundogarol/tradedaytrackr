@@ -59,7 +59,7 @@ const styles = {
       maxWidth: 170,
       marginLeft: "auto",
       border: "none",
-      backgroundColor: color("SystemGreen"),
+      backgroundColor: color("SystemBlue5"),
     } as React.CSSProperties,
   },
 };

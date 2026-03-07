@@ -19,6 +19,7 @@ export const Title = styled.h1`
   text-transform: uppercase;
   letter-spacing: 2px;
   margin-bottom: 5px;
+  flex: 4;
 `;
 
 export const DropdownsSection = styled.div`
@@ -51,6 +52,7 @@ export const BufferHeader = styled.div`
 
 export const PnLHeader = styled.div`
   flex: 1;
+  align-items: center;
 `;
 
 export const ListContainer = styled.div`
@@ -129,6 +131,9 @@ export const AccountTitle = styled.span`
   color: #b5b5b5;
   cursor: pointer;
   pointer-events: auto;
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 export const AccountSubtitle = styled.span`

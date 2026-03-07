@@ -19,6 +19,7 @@ const styles = {
     pointerEvents: "auto",
   } as React.CSSProperties,
   infoIconContainer: {
+    pointerEvents: "auto",
     display: "inline-flex",
   } as React.CSSProperties,
 };

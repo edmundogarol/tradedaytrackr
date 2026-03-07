@@ -4,23 +4,28 @@ import Typography from "@mui/material/Typography";
 import InfoOutlineIcon from "@mui/icons-material/InfoOutlined";
 import Popper from "@mui/material/Popper";
 import styles from "./InfoPopoutStyles";
+import { Container } from "./InfoPopoutStyledComponents";
 
 export interface InfoPopoutProps {
   infoDescription: string;
+  children?: React.ReactNode;
 }
 
-const InfoPopout: React.FC<InfoPopoutProps> = ({ infoDescription }) => {
+const InfoPopout: React.FC<InfoPopoutProps> = ({
+  infoDescription,
+  children,
+}) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
 
   return (
-    <>
+    <Container>
       <Popper
         anchorEl={anchorEl}
         open={open}
-        placement="top-end"
+        placement="top-start"
         disablePortal
-        sx={{ zIndex: 1300 }}
+        sx={{ zIndex: 1300, pointerEvents: "auto" }}
       >
         <Paper style={styles.paperStyle}>
           <Typography sx={styles.contentStyle}>{infoDescription}</Typography>
@@ -32,9 +37,9 @@ const InfoPopout: React.FC<InfoPopoutProps> = ({ infoDescription }) => {
         onMouseLeave={() => setAnchorEl(null)}
         style={styles.infoIconContainer}
       >
-        <InfoOutlineIcon style={styles.infoIconStyle} />
+        {children ? children : <InfoOutlineIcon style={styles.infoIconStyle} />}
       </span>
-    </>
+    </Container>
   );
 };
 
