@@ -304,7 +304,9 @@ const FundedAccountDetail: React.FunctionComponent<
                     {moment().add(index, "days").format("MMM D, YYYY")}
                     <Time>{`10:${index}0 AM`}</Time>
                   </DateContainer>
-                  <PnL>{formatter.format(dayValue.value)}</PnL>
+                  <PnL $positive={dayValue.value >= 0}>
+                    {formatter.format(dayValue.value)}
+                  </PnL>
 
                   <InfoPopout infoDescription="Edit Details">
                     <EditContainer>

@@ -5,6 +5,7 @@ import StatsSummary from "@components/Stats/StatsSummary/StatsSummary";
 import DropdownMultiselect from "@components/DropdownMultiselect/DropdownMultiselect";
 import Button from "@components/Button/Button";
 import { IconTypeEnum } from "@components/Icon/IconInterfaces";
+import { SectionTitle } from "@styles/globalStyledComponents";
 import {
   Container,
   DropdownsSection,
@@ -14,7 +15,6 @@ import {
   BufferHeader,
   DaysHeader,
   PnLHeader,
-  Title,
 } from "./FundedAccountsStyledComponents";
 import useGetFundedAccountsStatsSummaryDetails from "./hooks/useGetFundedAccountsStatsSummaryDetails";
 import useGetFundedAccountsList from "./hooks/useGetFundedAccountsList";
@@ -53,7 +53,7 @@ const FundedAccounts: React.FunctionComponent = () => {
         setAddTradingDayOpen={setAddTradingDayOpen}
       />
       <Container>
-        <Title>Funded Accounts</Title>
+        <SectionTitle>Funded Accounts</SectionTitle>
         <StatsSummary
           statsSummaryTilesDetails={fundedStatsSummaryDetails}
           featureTiles

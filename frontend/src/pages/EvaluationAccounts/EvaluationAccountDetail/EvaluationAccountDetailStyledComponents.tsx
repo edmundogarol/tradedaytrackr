@@ -127,8 +127,9 @@ export const DayValue = styled.div`
   border-radius: 4px;
 `;
 
-export const PnL = styled.div`
-  color: ${color("SystemBlue5")};
+export const PnL = styled.div<{ $positive: boolean }>`
+  color: ${(props): string =>
+    props.$positive ? color("SystemBlue5") : color("SystemRed")};
   font-size: 20px;
   width: 100px;
 `;

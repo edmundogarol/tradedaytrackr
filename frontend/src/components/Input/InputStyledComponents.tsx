@@ -81,8 +81,8 @@ export const InputLabel = styled(Label)<{
     $error
       ? color("SystemError2")
       : $disabled
-      ? color("SystemLabel3")
-      : color("SystemLabel1")};
+        ? color("SystemLabel3")
+        : color("SystemLabel1")};
   margin-bottom: 10px;
   display: inline-block;
   text-transform: uppercase;
@@ -100,12 +100,14 @@ export const Error = styled.span`
   color: ${color("SystemError2")};
   font-size: ${LABEL_SIZE}px;
   margin-left: ${CONTAINER_MARGIN_SMALL}px;
-  margin-bottom: ${CONTAINER_MARGIN_SMALL}px;
   width: 90%;
 `;
 
 export const ErrorContainer = styled.div`
   flex-direction: row;
+  margin-top: ${CONTAINER_MARGIN_DEFAULT}px;
   margin-bottom: ${CONTAINER_MARGIN_DEFAULT}px;
   width: auto;
+  display: flex;
+  align-items: center;
 `;

@@ -24,7 +24,7 @@ export const debugBorder = (color: string): ReturnType<typeof css> => {
 };
 
 export const debugStylesBorder = (
-  color: string
+  color: string,
 ): { borderColor: string; borderWidth: number } => {
   return {
     borderColor: color,
@@ -45,3 +45,9 @@ export const isJson = (item: any): boolean => {
 
 export const delay = (ms: number): Promise<void> =>
   new Promise((res) => setTimeout(res, ms));
+
+export const formatter = Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 0,
+});

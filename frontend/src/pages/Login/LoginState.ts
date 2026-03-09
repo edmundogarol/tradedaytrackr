@@ -97,13 +97,13 @@ export const loginSlice = createSlice({
     },
     updateResetPasswordErrors: (
       state,
-      action: UpdateResetPasswordErrorsAction
+      action: UpdateResetPasswordErrorsAction,
     ) => {
       state.resetPasswordFormErrors = action.payload;
     },
     updateResetPasswordFormSent: (
       state,
-      action: UpdateResetPasswordFormSentAction
+      action: UpdateResetPasswordFormSentAction,
     ) => {
       state.resetPasswordFormSent = action.payload;
     },

@@ -24,7 +24,7 @@ export const useGetFundedAccountsList = (): FundedAccountsListItemDetails[] => {
           day: "D2",
         },
         {
-          value: 210,
+          value: -210,
           day: "D3",
         },
         {

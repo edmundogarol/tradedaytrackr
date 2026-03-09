@@ -18,6 +18,7 @@ export const Container = styled.div<{
   padding: ${(props): number => props.$padding ?? 12}px;
   box-shadow: 1px 13px 30px #00000047;
   min-height: ${(props): number => props.$minHeight ?? 112}px;
+  pointer-events: none;
 
   width: 100%;
   /* ✅ HOVER THE REAL ELEMENT */
