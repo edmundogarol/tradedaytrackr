@@ -42,7 +42,7 @@ const Journal: React.FunctionComponent = () => {
       dateTime: "2011-10-10T14:48:00.000+09:00",
       value: 4500,
       description:
-        "Added $500 to account after good week of trading with 3% drawdown and 10% gain. Added $4000 to account after good week of trading with 1% drawdown and 20% gain. ",
+        "Price delivered cleanly from the higher timeframe bias after sweeping liquidity and displacing strongly. I waited for the retrace into the 50% where an IFVG formed and executed the entry according to the model.",
       accountsCount: 3,
       image: "https://cdn-icons-png.flaticon.com/512/190/190411.png",
     },
@@ -51,7 +51,7 @@ const Journal: React.FunctionComponent = () => {
       dateTime: "2011-10-11T14:48:00.000+09:00",
       value: -2000,
       description:
-        "Removed $200 from account after bad week of trading with 10% drawdown and 5% loss. Removed $1800 from account after bad week of trading with 8% drawdown and 4% loss",
+        "Higher timeframe delivery was clear but the retrace into the 50% was messy and the IFVG lacked clean displacement, which made the setup lower quality.",
       accountsCount: 2,
       image: "https://cdn-icons-png.flaticon.com/512/190/190406.png",
     },
@@ -60,7 +60,7 @@ const Journal: React.FunctionComponent = () => {
       dateTime: "2011-10-12T14:48:00.000+09:00",
       value: 3000,
       description:
-        "Added $300 to account after good week of trading with 2% drawdown and 8% gain",
+        "Clean liquidity sweep followed by displacement, with price retracing directly into the 50% IFVG for entry.",
       accountsCount: 4,
       image: "https://cdn-icons-png.flaticon.com/512/190/190411.png",
     },
@@ -69,7 +69,7 @@ const Journal: React.FunctionComponent = () => {
       dateTime: "2011-10-13T14:48:00.000+09:00",
       value: -1500,
       description:
-        "Removed $150 from account after bad week of trading with 8% drawdown and 3% loss. Removed $1350 from account after bad week of trading with 5% drawdown and 2% loss",
+        "Higher timeframe bias aligned perfectly and the retracement into the 50% IFVG provided a straightforward mechanical entry.",
       accountsCount: 1,
       image: "https://cdn-icons-png.flaticon.com/512/190/190406.png",
     },
@@ -78,7 +78,7 @@ const Journal: React.FunctionComponent = () => {
       dateTime: "2011-10-14T14:48:00.000+09:00",
       value: 2500,
       description:
-        "Added $250 to account after good week of trading with 1% drawdown and 12% gain",
+        "The setup technically met the rules with a 50% retrace into an IFVG, but the overall delivery from the higher timeframe felt weak.",
       accountsCount: 5,
       image: "https://cdn-icons-png.flaticon.com/512/190/190411.png",
     },
@@ -87,7 +87,7 @@ const Journal: React.FunctionComponent = () => {
       dateTime: "2011-10-15T14:48:00.000+09:00",
       value: -1000,
       description:
-        "Removed $100 from account after bad week of trading with 5% drawdown and 2% loss",
+        "Clear displacement created an IFVG and price retraced into the 50% before continuing the higher timeframe move.",
       accountsCount: 2,
       image: "https://cdn-icons-png.flaticon.com/512/190/190406.png",
     },
@@ -96,7 +96,7 @@ const Journal: React.FunctionComponent = () => {
       dateTime: "2011-10-16T14:48:00.000+09:00",
       value: 4000,
       description:
-        "Added $400 to account after good week of trading with 3% drawdown and 15% gain. Added $3600 to account after good week of trading with 1% drawdown and 25% gain",
+        "Price delivered strongly from the higher timeframe narrative, sweeping liquidity before retracing into the 50% inefficiency.",
       accountsCount: 6,
       image: "https://cdn-icons-png.flaticon.com/512/190/190411.png",
     },
