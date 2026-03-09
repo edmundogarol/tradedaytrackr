@@ -12,18 +12,18 @@ const useLoginCheckHandler = ({
   const { updateUser } = useLoginDispatch();
 
   useEffect(() => {
-    if (data) {
-      if (data?.user) {
-        updateUser({
-          ...data?.user,
-          logged_in: data?.logged_in,
-        });
-      } else {
-        updateUser(data as unknown as User);
-      }
-    } else if (error) {
-      console.log("Login check fetch error", error);
-    }
+    // if (data) {
+    //   if (data?.user) {
+    //     updateUser({
+    //       ...data?.user,
+    //       logged_in: data?.logged_in,
+    //     });
+    //   } else {
+    //     updateUser(data as unknown as User);
+    //   }
+    // } else if (error) {
+    //   console.log("Login check fetch error", error);
+    // }
   }, [data, error, loading]);
 };
 

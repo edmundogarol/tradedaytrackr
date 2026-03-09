@@ -20,14 +20,14 @@ export interface LoginState {
 
 export const initialState: LoginState = {
   user: {
-    id: undefined,
-    first_name: "",
-    last_name: "",
-    username: "",
-    email: "",
-    phone: "",
-    birth_date: "",
-    logged_in: false,
+    id: 1,
+    first_name: "John",
+    last_name: "Doe",
+    username: "johndoe",
+    email: "johndoe@example.com",
+    phone: "123-456-7890",
+    birth_date: "1990-01-01",
+    logged_in: true,
     is_staff: false,
     verified: false,
   },
