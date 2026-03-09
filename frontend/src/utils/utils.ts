@@ -1,15 +1,15 @@
 import { css } from "styled-components";
 
 export const imageSrc = (imageName: string): string => {
-  return `/images/${imageName}`;
+  return `images/${imageName}`;
 };
 
 export const firmLogoSrc = (firmName: string): string => {
-  return `/firms/${firmName}.png`;
+  return `firms/${firmName}.png`;
 };
 
 export const devSrc = (imageName: string): string => {
-  return `/dev/${imageName}`;
+  return `dev/${imageName}`;
 };
 
 export const isNotEmptyString = (value: string): boolean => {
