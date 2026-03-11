@@ -1,5 +1,7 @@
+import { color } from "@styles/colors";
 import {
   CONTAINER_MARGIN_DEFAULT,
+  CONTAINER_MARGIN_SMALL,
   CONTAINER_PADDING_DEFAULT,
 } from "@styles/constants";
 import { Section } from "@styles/globalStyledComponents";
@@ -21,8 +23,14 @@ export const TradeInfo = styled.div`
 
 export const TradeCapture = styled.div`
   border-top: 1px solid #ffffff1f;
-  border-bottom: 1px solid #ffffff1f;
   margin-left: ${CONTAINER_MARGIN_DEFAULT}px;
+  display: flex;
+`;
+
+export const TradeSingleAccountInfo = styled.div`
+  flex: 1;
+  margin-left: ${CONTAINER_MARGIN_DEFAULT}px;
+  margin-top: ${CONTAINER_MARGIN_DEFAULT}px;
 `;
 
 export const TradeImage = styled.div<{ $src: string }>`
@@ -52,7 +60,7 @@ export const TagContainer = styled.div`
 `;
 export const Tag = styled.div`
   background: #c4ffc41c;
-  color: #b8f3b8;
+  color: ${color("SystemLightGreen")};
   font-size: 12px;
   display: flex;
   align-items: center;
@@ -78,6 +86,54 @@ export const ButtonContainer = styled.div`
   }
 `;
 
-export const Information = styled(Section)`
+export const Summary = styled(Section)`
   flex: 1;
+`;
+
+export const SummarySection = styled(Section)``;
+
+export const SummaryItem = styled.div`
+  margin-top: 5px;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #7881902e;
+  padding-bottom: 7px;
+`;
+
+export const SummaryItemTitle = styled.span`
+  color: #888888;
+  font-size: 14px;
+`;
+export const SummaryItemValue = styled.span`
+  color: ${color("SystemLightGreen")};
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+`;
+export const SummaryItemValueSubtext = styled.span`
+  color: #888888;
+  font-size: 14px;
+`;
+
+export const SummaryItemPnL = styled.span`
+  color: ${color("SystemLightGreen")};
+  font-size: 20px;
+`;
+
+export const DescriptionSection = styled(Section)`
+  padding-left: ${CONTAINER_MARGIN_SMALL}px;
+  padding-right: 20px;
+`;
+
+export const DescriptionText = styled.p`
+  color: #888888;
+  font-size: 14px;
+`;
+
+export const SummaryTitleInfoContainer = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
 `;

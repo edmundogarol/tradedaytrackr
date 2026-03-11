@@ -15,15 +15,25 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 import {
   ButtonContainer,
+  DescriptionSection,
+  DescriptionText,
   EditDeleteButtons,
   EntryDetails,
   EntryInfoContainer,
-  Information,
+  Summary,
+  SummaryItem,
+  SummaryItemPnL,
+  SummaryItemTitle,
+  SummaryItemValue,
+  SummaryItemValueSubtext,
+  SummarySection,
+  SummaryTitleInfoContainer,
   Tag,
   TagContainer,
   TradeCapture,
   TradeImage,
   TradeInfo,
+  TradeSingleAccountInfo,
   TradeSubtitle,
 } from "./JournalEntryStyledComponents";
 import styles from "./JournalEntryStyles";
@@ -74,11 +84,38 @@ const JournalEntry: React.FunctionComponent = () => {
                 </TradeInfo>
                 <TradeCapture>
                   <TradeImage $src={devSrc("trade1.png")} />
+                  <TradeSingleAccountInfo>
+                    <SummaryItem>
+                      <SummaryItemTitle>Risk</SummaryItemTitle>
+                      <SummaryItemValue>${"200"}</SummaryItemValue>
+                    </SummaryItem>
+                    <SummaryItem>
+                      <SummaryItemTitle>Contracts</SummaryItemTitle>
+                      <SummaryItemValue>{"x3"}</SummaryItemValue>
+                    </SummaryItem>
+                    <SummaryItem>
+                      <SummaryItemTitle>Outcome</SummaryItemTitle>
+                      <SummaryItemValue>${"210"}</SummaryItemValue>
+                    </SummaryItem>
+                    <SummaryItem>
+                      <SummaryItemTitle>RR</SummaryItemTitle>
+                      <SummaryItemValue>{1.2}</SummaryItemValue>
+                    </SummaryItem>
+                  </TradeSingleAccountInfo>
                 </TradeCapture>
+                <Gap level={1} />
+                <DescriptionSection>
+                  <SubsectionHeader>Description</SubsectionHeader>
+                  <DescriptionText>
+                    {
+                      "Price delivered from a higher timeframe bearish leg that had already swept external liquidity earlier in the session. Once the 5m structure shifted bearish, price retraced cleanly into the 50% of the impulse leg which also aligned with a small 1m IFVG. Entry was taken as price tapped the gap and showed immediate rejection. The trade worked quickly as the delivery continued toward the next pool of liquidity. The key element here was respecting the higher timeframe delivery and not anticipating the reversal before the structure shift occurred."
+                    }
+                  </DescriptionText>
+                </DescriptionSection>
               </Section>
             </GlassTile>
           </EntryDetails>
-          <Information>
+          <Summary>
             <GlassTile
               featureTile
               minHeight={10}
@@ -86,11 +123,36 @@ const JournalEntry: React.FunctionComponent = () => {
               padding={7}
               noGlow={true}
             >
-              <Section>
-                <SubsectionHeader>Information</SubsectionHeader>
-              </Section>
+              <SummaryTitleInfoContainer>
+                <Section>
+                  <SubsectionHeader>Summary</SubsectionHeader>
+                </Section>
+                <SummarySection>
+                  <SummaryItem>
+                    <SummaryItemTitle>Instrument</SummaryItemTitle>
+                    <SummaryItemValue>{"NQ"}</SummaryItemValue>
+                  </SummaryItem>
+                  <SummaryItem>
+                    <SummaryItemTitle>Total Contracts</SummaryItemTitle>
+                    <SummaryItemValue>
+                      {"x9"}{" "}
+                      <SummaryItemValueSubtext>
+                        {"[3 Accounts]"}
+                      </SummaryItemValueSubtext>
+                    </SummaryItemValue>
+                  </SummaryItem>
+                  <SummaryItem>
+                    <SummaryItemTitle>Session</SummaryItemTitle>
+                    <SummaryItemValue>{"NYAM"}</SummaryItemValue>
+                  </SummaryItem>
+                  <SummaryItem>
+                    <SummaryItemTitle>Total PnL</SummaryItemTitle>
+                    <SummaryItemPnL>{"$1,200"}</SummaryItemPnL>
+                  </SummaryItem>
+                </SummarySection>
+              </SummaryTitleInfoContainer>
             </GlassTile>
-          </Information>
+          </Summary>
         </EntryInfoContainer>
       </Container>
     </Page>
