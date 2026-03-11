@@ -55,6 +55,26 @@ export const TradeSubtitle = styled.div`
   border-right: 1px solid #9c9c9c6f;
 `;
 
+export const SaveButton = styled(TradeSubtitle)`
+  background: #d0d8e687;
+  color: black;
+  border-radius: 3px;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+export const TradeSubtitleEditing = styled(TradeSubtitle)`
+  background: #d0d8e687;
+  color: white;
+  border-radius: 3px;
+  margin-right: 5px;
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
 export const TagContainer = styled.div`
   padding-left: 5px;
   padding-right: 5px;
@@ -100,6 +120,7 @@ export const SummaryItem = styled.div`
   justify-content: space-between;
   border-bottom: 1px solid #7881902e;
   padding-bottom: 7px;
+  align-items: center;
 `;
 
 export const SummaryItemTitle = styled.span`
