@@ -175,11 +175,16 @@ export const Time = styled.div`
 export const EditContainer = styled.div`
   color: ${color("SystemLabel1")};
   font-size: 14px;
-  width: 50px;
 `;
 
 export const TradingDaysHeaderContainer = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 10px;
+`;
+
+export const EditDeleteContainer = styled.div`
+  display: flex;
+  padding: 10px;
+  /* gap: 20px; */
 `;

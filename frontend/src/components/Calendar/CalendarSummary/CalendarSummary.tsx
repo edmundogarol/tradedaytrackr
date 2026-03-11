@@ -1,5 +1,7 @@
 import React from "react";
 import GlassTile from "@components/GlassTile/GlassTile";
+import useReactNavigation from "@navigation/hooks/useReactNavigation";
+import { PageEnum } from "@interfaces/NavigationTypes";
 import {
   Container,
   TileAccs,
@@ -26,6 +28,7 @@ interface CalendarSummaryProps {
 const CalendarSummary: React.FunctionComponent<CalendarSummaryProps> = ({
   count,
 }) => {
+  const navigation = useReactNavigation();
   return (
     <Container>
       {Array.from({ length: count }).map((_, index) => {
@@ -33,7 +36,14 @@ const CalendarSummary: React.FunctionComponent<CalendarSummaryProps> = ({
         const randomTradeCount = Math.floor(Math.random() * 1) + 1;
         const positivePnL = parseFloat(randomPnL) >= 0;
         return (
-          <TileContainer key={index}>
+          <TileContainer
+            key={index}
+            onClick={() =>
+              navigation.navigate(PageEnum.JournalEntry, {
+                entryId: index,
+              })
+            }
+          >
             <GlassTile
               key={index}
               positive={positivePnL}

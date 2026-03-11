@@ -31,6 +31,9 @@ export const Container = styled.div`
 export const TileContainer = styled.div`
   height: 100px;
   margin: 10px;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 export const TradePreview = styled.div<{ $idx: number }>`

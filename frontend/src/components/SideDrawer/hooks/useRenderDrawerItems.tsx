@@ -77,6 +77,7 @@ const useRenderDrawerItems = ({ drawerItems }: UseRenderDrawerItemsProps) => {
               sx={[
                 {
                   opacity: 0,
+                  marginLeft: 1,
                 },
               ]}
             />

@@ -6,6 +6,7 @@ export enum PageEnum {
   PageNotFound = "/pageNotFound",
   Dashboard = "/dashboard",
   Journal = "/journal",
+  JournalEntry = "/journalEntry",
   FundedAccounts = "/fundedAccounts",
   EvaluationAccounts = "/evaluationAccounts",
   FundedAccountDetail = "/fundedAccountDetail",
@@ -16,6 +17,7 @@ export type AuthenticatedStackNavigatorParams = {
   [PageEnum.RootNavigator]: undefined;
   [PageEnum.Dashboard]: undefined;
   [PageEnum.Journal]: undefined;
+  [PageEnum.JournalEntry]: { id: number };
   [PageEnum.FundedAccounts]: undefined;
   [PageEnum.EvaluationAccounts]: undefined;
   [PageEnum.FundedAccountDetail]: { id: number };
