@@ -25,7 +25,7 @@ const InfoPopout: React.FC<InfoPopoutProps> = ({
         open={open}
         placement="top-start"
         disablePortal
-        sx={{ zIndex: 1300, pointerEvents: "auto" }}
+        sx={{ zIndex: 11, pointerEvents: "auto" }}
       >
         <Paper style={styles.paperStyle}>
           <Typography sx={styles.contentStyle}>{infoDescription}</Typography>

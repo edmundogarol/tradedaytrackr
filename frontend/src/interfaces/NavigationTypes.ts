@@ -11,6 +11,7 @@ export enum PageEnum {
   EvaluationAccounts = "/evaluationAccounts",
   FundedAccountDetail = "/fundedAccountDetail",
   EvaluationAccountDetail = "/evaluationAccountDetail",
+  TradeStats = "/tradeStats",
 }
 
 export type AuthenticatedStackNavigatorParams = {
@@ -22,6 +23,7 @@ export type AuthenticatedStackNavigatorParams = {
   [PageEnum.EvaluationAccounts]: undefined;
   [PageEnum.FundedAccountDetail]: { id: number };
   [PageEnum.EvaluationAccountDetail]: { id: number };
+  [PageEnum.TradeStats]: undefined;
 };
 
 export type UnauthenticatedStackNavigatorParams = {

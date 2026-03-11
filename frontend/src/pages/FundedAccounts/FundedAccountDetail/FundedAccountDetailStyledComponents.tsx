@@ -97,6 +97,10 @@ export const TradeDay = styled.div`
   z-index: 10;
   gap: 10px;
   justify-content: space-between;
+  &:hover {
+    opacity: 1;
+    cursor: pointer;
+  }
 `;
 
 export const TradePreview = styled.div<{ $idx: number }>`

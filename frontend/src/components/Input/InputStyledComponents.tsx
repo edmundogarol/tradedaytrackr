@@ -11,6 +11,7 @@ import {
 } from "@styles/constants";
 import { color } from "@styles/colors";
 import { Label } from "@styles/globalStyledComponents";
+import { List } from "@mui/material";
 
 export const Container = styled.div`
   width: 100%;
@@ -110,4 +111,42 @@ export const ErrorContainer = styled.div`
   width: auto;
   display: flex;
   align-items: center;
+`;
+
+export const ListContainer = styled.div`
+  background: white;
+  text-align: start;
+  color: black;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  width: 100px;
+  margin-top: -10px;
+  gap: 3px;
+  padding: 5px;
+  border-radius: 3px;
+`;
+
+export const ListItem = styled.div<{
+  $disabled?: boolean;
+  $selected?: boolean;
+}>`
+  padding: 5px;
+  border-radius: 3px;
+  ${({ $disabled, $selected }): any =>
+    $disabled
+      ? css`
+          font-size: 12px;
+          color: ${color("SystemLabel3")};
+        `
+      : $selected
+        ? css`
+            background-color: #3e52722e;
+          `
+        : css`
+            &:hover {
+              cursor: pointer;
+              background-color: #3e52722e;
+            }
+          `}
 `;

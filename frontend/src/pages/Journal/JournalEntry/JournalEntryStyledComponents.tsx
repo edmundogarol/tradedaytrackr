@@ -9,6 +9,7 @@ import styled from "styled-components";
 
 export const EntryDetails = styled(Section)`
   flex: 4;
+  z-index: 11;
 `;
 
 export const EntryInfoContainer = styled.div`
@@ -54,6 +55,26 @@ export const TradeSubtitle = styled.div`
   border-right: 1px solid #9c9c9c6f;
 `;
 
+export const SaveButton = styled(TradeSubtitle)`
+  background: #d0d8e687;
+  color: black;
+  border-radius: 3px;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+export const TradeSubtitleEditing = styled(TradeSubtitle)`
+  background: #d0d8e6f7;
+  color: black;
+  border-radius: 3px;
+  margin-right: 5px;
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
 export const TagContainer = styled.div`
   padding-left: 5px;
   padding-right: 5px;
@@ -88,6 +109,7 @@ export const ButtonContainer = styled.div`
 
 export const Summary = styled(Section)`
   flex: 1;
+  z-index: 10;
 `;
 
 export const SummarySection = styled(Section)``;
@@ -98,11 +120,13 @@ export const SummaryItem = styled.div`
   justify-content: space-between;
   border-bottom: 1px solid #7881902e;
   padding-bottom: 7px;
+  align-items: center;
 `;
 
 export const SummaryItemTitle = styled.span`
   color: #888888;
   font-size: 14px;
+  display: flex;
 `;
 export const SummaryItemValue = styled.span`
   color: ${color("SystemLightGreen")};
@@ -136,4 +160,54 @@ export const SummaryTitleInfoContainer = styled.div`
   flex: 1;
   flex-direction: column;
   align-items: center;
+`;
+
+export const DateTimePickerDate = styled.p`
+  text-align: center;
+  color: #b7b7b7;
+  margin-top: unset;
+`;
+
+export const TradesDetectedTrade = styled.div`
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border-bottom: 1px solid #3b4555;
+`;
+
+export const TradesDetectedPnL = styled.div`
+  margin-right: 20px;
+  margin-left: auto;
+  color: ${color("SystemLightGreen")};
+`;
+
+export const TradesDetectedTime = styled.div`
+  margin-right: 20px;
+  font-weight: 100;
+  margin-left: 20px;
+`;
+
+export const TradesDetectedContainer = styled.div`
+  font-weight: 100;
+  color: #8b8b8b;
+  margin-bottom: 10px;
+`;
+
+export const TradesDetectedPnLTotalHighlighted = styled.div`
+  color: ${color("SystemLightGreen")};
+  margin-left: 10px;
+`;
+
+export const TradesDetectedPnLTotal = styled.div`
+  margin-top: 20px;
+  font-weight: 100;
+  color: #8b8b8b;
+  display: flex;
+  justify-content: flex-start;
+`;
+
+export const TradeAccountsSelectSaveButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
 `;

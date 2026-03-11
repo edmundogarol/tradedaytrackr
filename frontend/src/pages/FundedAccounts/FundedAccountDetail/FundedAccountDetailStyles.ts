@@ -1,4 +1,5 @@
 import { color } from "@styles/colors";
+import { BUTTON_WIDTH } from "@styles/constants";
 
 const styles = {
   editIcon: {
@@ -57,7 +58,7 @@ const styles = {
       display: "flex",
       alignItems: "center",
       color: "white",
-      maxWidth: 170,
+      maxWidth: BUTTON_WIDTH,
       marginLeft: "auto",
       border: "none",
       backgroundColor: color("SystemGreen"),
@@ -68,7 +69,7 @@ const styles = {
       display: "flex",
       alignItems: "center",
       color: "white",
-      maxWidth: 170,
+      maxWidth: BUTTON_WIDTH,
       marginLeft: "auto",
       marginRight: 10,
       border: "none",

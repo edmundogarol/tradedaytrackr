@@ -12,6 +12,8 @@ import {
   Container,
   Subtext,
   IconContainer,
+  ListContainer,
+  ListItem,
 } from "./InputStyledComponents";
 
 export interface InputWrapperProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -20,22 +22,13 @@ export interface InputWrapperProps extends React.InputHTMLAttributes<HTMLInputEl
   icon?: React.ReactElement;
   error?: string;
   subtext?: string;
-  googleAutoComplete?: boolean;
-  onGoogleAutoCompleteChange?: (
-    data: {
-      description: string;
-      place_id: string;
-      structured_formatting: { main_text: string };
-    },
-    details: any,
-  ) => void;
-  debounce?: number;
-  updateCallback?: (text: string) => void;
+  suggestions?: { description: string }[];
+  onSuggestionClick?: (suggestion: string) => void;
   inputContainerStyle?: React.CSSProperties;
   containerStyle?: React.CSSProperties;
 }
 
-const Input: React.FunctionComponent<InputWrapperProps> = ({
+const Input: React.FC<InputWrapperProps> = ({
   label,
   disabled,
   icon,
@@ -44,8 +37,56 @@ const Input: React.FunctionComponent<InputWrapperProps> = ({
   subtext,
   containerStyle,
   inputContainerStyle,
+  suggestions = [],
+  onSuggestionClick,
+  value,
   ...props
 }) => {
+  const [focused, setFocused] = React.useState(false);
+  const [arrowIndex, setArrowIndex] = React.useState(-1);
+
+  const inputValue = String(value ?? "").toLowerCase();
+
+  const filteredSuggestions = React.useMemo(() => {
+    return suggestions.filter((s) =>
+      s.description.toLowerCase().includes(inputValue),
+    );
+  }, [suggestions, inputValue]);
+
+  const selectSuggestion = (suggestion: string): void => {
+    onSuggestionClick?.(suggestion);
+    setFocused(false);
+    setArrowIndex(-1);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
+    if (!filteredSuggestions.length) return;
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        setArrowIndex((prev) =>
+          prev < filteredSuggestions.length - 1 ? prev + 1 : prev,
+        );
+        break;
+
+      case "ArrowUp":
+        e.preventDefault();
+        setArrowIndex((prev) => (prev > 0 ? prev - 1 : prev));
+        break;
+
+      case "Enter":
+        if (arrowIndex >= 0) {
+          e.preventDefault();
+          selectSuggestion(filteredSuggestions[arrowIndex].description);
+        }
+        break;
+
+      default:
+        setArrowIndex(-1);
+    }
+  };
+
   return (
     <Container style={containerStyle}>
       <If condition={!!label}>
@@ -53,20 +94,43 @@ const Input: React.FunctionComponent<InputWrapperProps> = ({
           {label}
         </Label>
       </If>
+
       <InputContainer $error={!!error} style={inputContainerStyle}>
         <If condition={!!icon}>
           <IconContainer>{icon}</IconContainer>
         </If>
+
         <InputStyled
           {...props}
+          value={value}
           disabled={disabled}
           placeholder={placeholder}
+          onFocus={() => setFocused(true)}
+          onBlur={() => {
+            setTimeout(() => setFocused(false), 100);
+          }}
+          onKeyDown={handleKeyDown}
           $placeholderTextColor={
             error ? color("SystemError2") : color("SystemLabel1")
           }
-          aria-disabled={!disabled}
         />
       </InputContainer>
+
+      <If condition={focused && filteredSuggestions.length > 0}>
+        <ListContainer style={{ background: "white" }}>
+          <ListItem $disabled>{"Recently used"}</ListItem>
+          {filteredSuggestions.map((suggestion, idx) => (
+            <ListItem
+              key={suggestion.description}
+              $selected={idx === arrowIndex}
+              onMouseDown={() => selectSuggestion(suggestion.description)}
+            >
+              {suggestion.description}
+            </ListItem>
+          ))}
+        </ListContainer>
+      </If>
+
       <If condition={!!error}>
         <ErrorContainer>
           <Icon
@@ -77,10 +141,12 @@ const Input: React.FunctionComponent<InputWrapperProps> = ({
           <Error>{error}</Error>
         </ErrorContainer>
       </If>
+
       <If condition={!!subtext}>
         <Subtext>{subtext}</Subtext>
       </If>
     </Container>
   );
 };
+
 export default Input;
