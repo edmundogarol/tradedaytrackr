@@ -40,3 +40,10 @@ export const Section = styled.div`
   z-index: 11;
   width: 100%;
 `;
+
+export const DropdownsSection = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  justify-content: space-between;
+`;

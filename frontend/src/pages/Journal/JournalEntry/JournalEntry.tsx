@@ -14,6 +14,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 import {
+  ButtonContainer,
   EditDeleteButtons,
   EntryDetails,
   EntryInfoContainer,
@@ -57,14 +58,18 @@ const JournalEntry: React.FunctionComponent = () => {
                   )}
                   <EditDeleteButtons>
                     {/* Add edit and delete buttons here */}
-                    <EditIcon
-                      style={styles.editIcon}
-                      onClick={() => alert("edit")}
-                    />
-                    <DeleteOutlineIcon
-                      style={styles.editIcon}
-                      onClick={() => alert("Delete Trade")}
-                    />
+                    <ButtonContainer>
+                      <EditIcon
+                        style={styles.editIcon}
+                        onClick={() => alert("edit")}
+                      />
+                    </ButtonContainer>
+                    <ButtonContainer>
+                      <DeleteOutlineIcon
+                        style={styles.editIcon}
+                        onClick={() => alert("Delete Trade")}
+                      />
+                    </ButtonContainer>
                   </EditDeleteButtons>
                 </TradeInfo>
                 <TradeCapture>

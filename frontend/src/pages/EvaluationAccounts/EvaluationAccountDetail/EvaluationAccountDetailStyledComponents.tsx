@@ -186,5 +186,4 @@ export const TradingDaysHeaderContainer = styled.div`
 export const EditDeleteContainer = styled.div`
   display: flex;
   padding: 10px;
-  /* gap: 20px; */
 `;

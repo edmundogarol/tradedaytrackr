@@ -9,6 +9,7 @@ import Button from "@mui/material/Button";
 import GlassTile from "@components/GlassTile/GlassTile";
 import { ExpandMore } from "@mui/icons-material";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
+import { Else, If } from "@components/If/If";
 import {
   BoxContainer,
   CollapseStyled,
@@ -22,17 +23,28 @@ import styles from "./DropdownMultiselectStyles";
 export interface DropdownProps {
   items: string[];
   title: string;
+  singleSelect?: boolean;
+  leftAligned?: boolean;
+  icon?: React.ReactNode;
 }
 
 const DropdownMultiselect: React.FunctionComponent<DropdownProps> = ({
   items,
   title,
+  leftAligned = true,
+  singleSelect = false,
+  icon,
 }) => {
   const [collapsed, setCollapsed] = React.useState(true);
 
   const [checked, setChecked] = React.useState<string[]>([]);
 
   const handleToggle = (value: string) => (): void => {
+    if (singleSelect) {
+      setChecked((prev) => (prev.includes(value) ? [] : [value]));
+      setCollapsed(true);
+      return;
+    }
     setChecked((prev) =>
       prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value],
     );
@@ -55,12 +67,19 @@ const DropdownMultiselect: React.FunctionComponent<DropdownProps> = ({
         >
           <GlassTile positive featureTile minHeight={20} noGlow>
             <TitleContainer>
-              <TitleText>{title}</TitleText>
-              <ExpandMore style={styles.expandMoreIcon} />
+              <TitleText>
+                {singleSelect ? checked[0] || title : title}
+              </TitleText>
+              <If condition={!!icon}>
+                {icon}
+                <Else>
+                  <ExpandMore style={styles.expandMoreIcon} />
+                </Else>
+              </If>
             </TitleContainer>
           </GlassTile>
         </Button>
-        <CollapseStyled in={!collapsed}>
+        <CollapseStyled in={!collapsed} $leftAligned={leftAligned}>
           <ListContainer>
             <BoxContainer>
               <List sx={styles.list}>
