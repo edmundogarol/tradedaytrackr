@@ -16,8 +16,10 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import InfoPopout from "@components/InfoPopout/InfoPopout";
 import { Else, If } from "@components/If/If";
 import Input from "@components/Input/Input";
+import CalendarPicker from "@components/Input/CalendarPicker/CalendarPicker";
 import {
   ButtonContainer,
+  DateTimePickerDate,
   DescriptionSection,
   DescriptionText,
   EditDeleteButtons,
@@ -45,6 +47,7 @@ import styles from "./JournalEntryStyles";
 interface JournalEntryProps {}
 const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
   const [editing, setEditing] = React.useState(false);
+  const [editingDate, setEditingDate] = React.useState(false);
   const [mockEntry, setMockEntry] = React.useState({
     dateTime: "2011-10-10T14:48:00.000+09:00",
     risk: 300,
@@ -88,9 +91,25 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
               <Section>
                 <TradeInfo>
                   <If condition={editing}>
-                    <TradeSubtitleEditing>
-                      {mockEntry.dateTime}
+                    <TradeSubtitleEditing onClick={() => setEditingDate(true)}>
+                      {moment(mockEntry.dateTime).format("YYYY-MM-DD hh:mm A")}
                     </TradeSubtitleEditing>
+                    <DateTimePickerDate />
+                    <CalendarPicker
+                      onSaveCallback={(pickerOpen) => {
+                        setEditingDate(pickerOpen);
+                      }}
+                      showPicker={editingDate}
+                      value={moment(mockEntry.dateTime)}
+                      onChange={(val) =>
+                        setMockEntry({
+                          ...mockEntry,
+                          dateTime: val
+                            ? val.toISOString()
+                            : mockEntry.dateTime,
+                        })
+                      }
+                    />
                     <Else>
                       <TradeSubtitle>
                         {moment(mockEntry.dateTime).format(

@@ -161,3 +161,9 @@ export const SummaryTitleInfoContainer = styled.div`
   flex-direction: column;
   align-items: center;
 `;
+
+export const DateTimePickerDate = styled.p`
+  text-align: center;
+  color: #b7b7b7;
+  margin-top: unset;
+`;
