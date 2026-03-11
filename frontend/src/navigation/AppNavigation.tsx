@@ -14,6 +14,7 @@ import EvaluationAccounts from "@pages/EvaluationAccounts/EvaluationAccounts";
 import FundedAccountDetail from "@pages/FundedAccounts/FundedAccountDetail/FundedAccountDetail";
 import EvaluationAccountDetail from "@pages/EvaluationAccounts/EvaluationAccountDetail/EvaluationAccountDetail";
 import Journal from "@pages/Journal/Journal";
+import JournalEntry from "@pages/Journal/JournalEntry/JournalEntry";
 import RequireAuth from "./RequireAuth";
 import checkAuth from "./hooks/checkAuth";
 
@@ -49,6 +50,7 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
           element={<EvaluationAccountDetail />}
         />
         <Route path={PageEnum.Journal} element={<Journal />} />
+        <Route path={PageEnum.JournalEntry} element={<JournalEntry />} />
       </Route>
       {/* Root */}
       <Route path="/" element={checkAuth({ user })} />

@@ -18,6 +18,7 @@ interface GlassTileProps {
   padding?: number;
   noGlow?: boolean;
   noShine?: boolean;
+  containerStyle?: React.CSSProperties;
 }
 
 const GlassTile: React.FunctionComponent<GlassTileProps> = ({
@@ -31,6 +32,7 @@ const GlassTile: React.FunctionComponent<GlassTileProps> = ({
   padding,
   noGlow = false,
   noShine = false,
+  containerStyle,
 }) => {
   return (
     <Container
@@ -38,6 +40,7 @@ const GlassTile: React.FunctionComponent<GlassTileProps> = ({
       $minHeight={minHeight}
       $minWidth={minWidth}
       $padding={padding}
+      style={containerStyle}
     >
       {overlay}
       <GlassEffect />

@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router";
 import GlassTile from "@components/GlassTile/GlassTile";
 import { firmLogoSrc, imageSrc } from "@utils/utils";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import {
   AccountTradingDaysComplete,
   Status,
@@ -22,6 +23,8 @@ import { color } from "@styles/colors";
 import { BorderLinearProgress } from "@pages/FundedAccounts/FundedAccountsListItem";
 import WifiProtectedSetupIcon from "@mui/icons-material/WifiProtectedSetup";
 
+import useReactNavigation from "@navigation/hooks/useReactNavigation";
+import { PageEnum } from "@interfaces/NavigationTypes";
 import {
   AccountImage,
   BufferAmount,
@@ -44,6 +47,7 @@ import {
   DateContainer,
   DayValue,
   EditContainer,
+  EditDeleteContainer,
   HeaderContainer,
   ListHeaders,
   PnL,
@@ -75,7 +79,7 @@ const EvaluationAccountDetail: React.FunctionComponent<
   let [searchParams] = useSearchParams();
   const [addTradingDayOpen, setAddTradingDayOpen] =
     React.useState<boolean>(false);
-
+  const navigation = useReactNavigation();
   const {
     id,
     accountName,
@@ -249,7 +253,14 @@ const EvaluationAccountDetail: React.FunctionComponent<
                   <PreviewDayValueContainer>
                     <TradePreviewContainer>
                       {index % 2 === 0 ? (
-                        <TradePreview $idx={index} />
+                        <TradePreview
+                          $idx={index}
+                          onClick={() =>
+                            navigation.navigate(PageEnum.JournalEntry, {
+                              id: index,
+                            })
+                          }
+                        />
                       ) : (
                         <InfoPopout
                           infoDescription={`Link or convert to journal entry`}
@@ -285,15 +296,24 @@ const EvaluationAccountDetail: React.FunctionComponent<
                   <PnL $positive={dayValue.value >= 0}>
                     {formatter.format(dayValue.value)}
                   </PnL>
-
-                  <InfoPopout infoDescription="Edit Details">
-                    <EditContainer>
-                      <EditIcon
-                        style={styles.editIcon}
-                        onClick={() => setAddTradingDayOpen(true)}
-                      />
-                    </EditContainer>
-                  </InfoPopout>
+                  <EditDeleteContainer>
+                    <InfoPopout infoDescription="Edit Details">
+                      <EditContainer>
+                        <EditIcon
+                          style={styles.editIcon}
+                          onClick={() => setAddTradingDayOpen(true)}
+                        />
+                      </EditContainer>
+                    </InfoPopout>
+                    <InfoPopout infoDescription="Delete Trade">
+                      <EditContainer>
+                        <DeleteOutlineIcon
+                          style={styles.editIcon}
+                          onClick={() => alert("Delete Trade")}
+                        />
+                      </EditContainer>
+                    </InfoPopout>
+                  </EditDeleteContainer>
                 </TradeDay>
               </GlassTile>
             ))}

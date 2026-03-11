@@ -23,3 +23,20 @@ export const SectionTitle = styled.h1`
   margin-bottom: 5px;
   flex: 1;
 `;
+
+export const SubsectionHeader = styled.div`
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 5px;
+  color: #888888;
+  font-weight: 200;
+  z-index: 11;
+  align-self: flex-start;
+  border-bottom: 1px solid #88888870;
+`;
+
+export const Section = styled.div`
+  margin: 5px;
+  z-index: 11;
+  width: 100%;
+`;

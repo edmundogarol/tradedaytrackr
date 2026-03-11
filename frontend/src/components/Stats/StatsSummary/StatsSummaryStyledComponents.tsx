@@ -41,7 +41,7 @@ export const Subtitle = styled.span`
   font-size: 14px;
   color: #a2a2a2;
   font-weight: 400;
-  z-index: 1;
+  z-index: 11;
   display: flex;
   flex-direction: row;
   pointer-events: auto;

@@ -26,6 +26,8 @@ import { IconTypeEnum } from "@components/Icon/IconInterfaces";
 import { color } from "@styles/colors";
 import moment from "moment";
 import { formatter } from "@utils/utils";
+import useReactNavigation from "@navigation/hooks/useReactNavigation";
+import { PageEnum } from "@interfaces/NavigationTypes";
 import {
   Description,
   Entry,
@@ -36,6 +38,7 @@ import {
 import styles from "./JournalStyles";
 
 const Journal: React.FunctionComponent = () => {
+  const navigation = useReactNavigation();
   const journalEntries = [
     {
       id: 1,
@@ -143,7 +146,11 @@ const Journal: React.FunctionComponent = () => {
                   <EditContainer>
                     <EditIcon
                       style={styles.editIcon}
-                      onClick={() => alert("Alert")}
+                      onClick={() =>
+                        navigation.navigate(PageEnum.JournalEntry, {
+                          id: entry.id,
+                        })
+                      }
                     />
                   </EditContainer>
                 </InfoPopout>

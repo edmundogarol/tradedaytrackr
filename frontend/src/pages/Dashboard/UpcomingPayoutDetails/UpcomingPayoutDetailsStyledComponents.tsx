@@ -34,7 +34,7 @@ export const FeatureTitle = styled.h2`
 `;
 
 export const FeatureContentContainer = styled.div`
-  z-index: 1;
+  z-index: 11;
   display: flex;
   width: 100%;
   justify-content: space-between;
