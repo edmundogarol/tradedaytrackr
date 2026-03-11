@@ -152,7 +152,13 @@ const Journal: React.FunctionComponent = () => {
                 </TileTradeCountContainer>
               }
             >
-              <TradeDay>
+              <TradeDay
+                onClick={() =>
+                  navigation.navigate(PageEnum.JournalEntry, {
+                    id: entry.id,
+                  })
+                }
+              >
                 <PreviewDayValueContainer>
                   <TradePreviewContainer>
                     <TradePreview $idx={index} />

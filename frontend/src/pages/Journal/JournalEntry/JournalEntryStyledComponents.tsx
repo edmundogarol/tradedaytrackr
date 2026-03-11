@@ -66,8 +66,8 @@ export const SaveButton = styled(TradeSubtitle)`
 `;
 
 export const TradeSubtitleEditing = styled(TradeSubtitle)`
-  background: #d0d8e687;
-  color: white;
+  background: #d0d8e6f7;
+  color: black;
   border-radius: 3px;
   margin-right: 5px;
   &:hover {
@@ -166,4 +166,48 @@ export const DateTimePickerDate = styled.p`
   text-align: center;
   color: #b7b7b7;
   margin-top: unset;
+`;
+
+export const TradesDetectedTrade = styled.div`
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border-bottom: 1px solid #3b4555;
+`;
+
+export const TradesDetectedPnL = styled.div`
+  margin-right: 20px;
+  margin-left: auto;
+  color: ${color("SystemLightGreen")};
+`;
+
+export const TradesDetectedTime = styled.div`
+  margin-right: 20px;
+  font-weight: 100;
+  margin-left: 20px;
+`;
+
+export const TradesDetectedContainer = styled.div`
+  font-weight: 100;
+  color: #8b8b8b;
+  margin-bottom: 10px;
+`;
+
+export const TradesDetectedPnLTotalHighlighted = styled.div`
+  color: ${color("SystemLightGreen")};
+  margin-left: 10px;
+`;
+
+export const TradesDetectedPnLTotal = styled.div`
+  margin-top: 20px;
+  font-weight: 100;
+  color: #8b8b8b;
+  display: flex;
+  justify-content: flex-start;
+`;
+
+export const TradeAccountsSelectSaveButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
 `;

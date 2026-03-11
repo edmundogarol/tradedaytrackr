@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Gap from "@components/Gap/Gap";
 import Page from "@components/Page/Page";
 import {
@@ -17,6 +17,13 @@ import InfoPopout from "@components/InfoPopout/InfoPopout";
 import { Else, If } from "@components/If/If";
 import Input from "@components/Input/Input";
 import CalendarPicker from "@components/Input/CalendarPicker/CalendarPicker";
+import Modal from "@components/Modal/Modal";
+import Checkbox from "@mui/material/Checkbox";
+import Button from "@components/Button/Button";
+import { color } from "@styles/colors";
+import { BUTTON_WIDTH } from "@styles/constants";
+import { set } from "lodash";
+import { mock } from "node:test";
 import {
   ButtonContainer,
   DateTimePickerDate,
@@ -35,9 +42,16 @@ import {
   SummaryTitleInfoContainer,
   Tag,
   TagContainer,
+  TradeAccountsSelectSaveButtonContainer,
   TradeCapture,
   TradeImage,
   TradeInfo,
+  TradesDetectedContainer,
+  TradesDetectedPnL,
+  TradesDetectedPnLTotal,
+  TradesDetectedPnLTotalHighlighted,
+  TradesDetectedTime,
+  TradesDetectedTrade,
   TradeSingleAccountInfo,
   TradeSubtitle,
   TradeSubtitleEditing,
@@ -48,6 +62,7 @@ interface JournalEntryProps {}
 const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
   const [editing, setEditing] = React.useState(false);
   const [editingDate, setEditingDate] = React.useState(false);
+  const [editingAccounts, setEditingAccounts] = React.useState(false);
   const [mockEntry, setMockEntry] = React.useState({
     dateTime: "2011-10-10T14:48:00.000+09:00",
     risk: 300,
@@ -57,25 +72,125 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
     description:
       "Price delivered from a higher timeframe bearish leg that had already swept external liquidity earlier in the session. Once the 5m structure shifted bearish, price retraced cleanly into the 50% of the impulse leg which also aligned with a small 1m IFVG. Entry was taken as price tapped the gap and showed immediate rejection. The trade worked quickly as the delivery continued toward the next pool of liquidity. The key element here was respecting the higher timeframe delivery and not anticipating the reversal before the structure shift occurred.",
     image: "https://cdn-icons-png.flaticon.com/512/190/190411.png",
-    trades: [
-      {
-        account: "Account 1",
-        pnl: 310,
-      },
-      {
-        account: "Account 2",
-        pnl: 310,
-      },
-      {
-        account: "Account 3",
-        pnl: 310,
-      },
-    ],
+    trades: [1, 2, 5],
     totalPnL: 930,
   });
+  const [selectedAccountTrades, setSelectedAccountTrades] = React.useState<
+    number[]
+  >([...mockEntry.trades]);
+
+  const availableAccountTradesOnDateMock = [
+    {
+      id: 1,
+      account: "MFFUSFCR71",
+      date: moment().add(1, "hour").toISOString(),
+      pnl: 310,
+    },
+    {
+      id: 2,
+      account: "MFFUSFCR72",
+      date: moment().add(2, "hour").toISOString(),
+      pnl: 310,
+    },
+    {
+      id: 3,
+      account: "MFFUSFCR73",
+      date: moment().add(3, "hour").toISOString(),
+      pnl: 310,
+    },
+    {
+      id: 4,
+      account: "APEXPA21",
+      date: moment().add(4, "hour").toISOString(),
+      pnl: 310,
+    },
+    {
+      id: 5,
+      account: "APEXPA23",
+      date: moment().add(5, "hour").toISOString(),
+      pnl: 310,
+    },
+  ];
+
+  const totalPnL = useMemo(() => {
+    return mockEntry.trades
+      .map((tradeId) => {
+        const trade = availableAccountTradesOnDateMock.find(
+          (t) => t.id === tradeId,
+        );
+        return trade ? trade.pnl : 0;
+      })
+      .reduce((sum, pnl) => sum + pnl, 0);
+  }, [mockEntry.trades]);
 
   return (
     <Page topBarShowMenu={true}>
+      <Modal
+        open={editingAccounts}
+        setOpen={setEditingAccounts}
+        title="Select Accounts Trades"
+        onClose={() => {
+          setEditingAccounts(false);
+          setMockEntry({
+            ...mockEntry,
+            trades: mockEntry.trades,
+          });
+        }}
+      >
+        <TradesDetectedContainer>
+          {`${availableAccountTradesOnDateMock.length} trades detected for ${moment(mockEntry.dateTime).format("MMM DD")}`}
+        </TradesDetectedContainer>
+        <TradesDetectedContainer>
+          {availableAccountTradesOnDateMock.map((trade, index) => (
+            <TradesDetectedTrade key={index}>
+              <Checkbox
+                sx={{ color: "#a9b1c2" }}
+                defaultChecked={mockEntry.trades.includes(trade.id)}
+                checked={selectedAccountTrades.includes(trade.id)}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setSelectedAccountTrades([
+                      ...selectedAccountTrades,
+                      trade.id,
+                    ]);
+                  } else {
+                    setSelectedAccountTrades(
+                      selectedAccountTrades.filter((id) => id !== trade.id),
+                    );
+                  }
+                }}
+              />
+              <div>{trade.account}</div>
+              <TradesDetectedTime>
+                {moment(trade.date).format("hh:mm A")}
+              </TradesDetectedTime>
+              <TradesDetectedPnL>{`$${trade.pnl}`}</TradesDetectedPnL>
+            </TradesDetectedTrade>
+          ))}
+        </TradesDetectedContainer>
+        <TradesDetectedPnLTotal>
+          {`Total selected PnL: `}
+          <TradesDetectedPnLTotalHighlighted>
+            $
+            {availableAccountTradesOnDateMock
+              .filter((trade) => selectedAccountTrades.includes(trade.id))
+              .reduce((total, trade) => total + trade.pnl, 0)}
+          </TradesDetectedPnLTotalHighlighted>
+        </TradesDetectedPnLTotal>
+        <TradeAccountsSelectSaveButtonContainer>
+          <Button
+            onClick={() => {
+              setEditingAccounts(false);
+              setMockEntry({
+                ...mockEntry,
+                trades: selectedAccountTrades,
+              });
+            }}
+            text={"Save"}
+            style={{ background: color("SystemGreen"), width: BUTTON_WIDTH }}
+          />
+        </TradeAccountsSelectSaveButtonContainer>
+      </Modal>
       <Container>
         <SectionTitle>Journal Entry</SectionTitle>
         <Gap level={1} />
@@ -119,7 +234,9 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                     </Else>
                   </If>
                   <If condition={editing}>
-                    <TradeSubtitleEditing>
+                    <TradeSubtitleEditing
+                      onClick={() => setEditingAccounts(true)}
+                    >
                       {`${mockEntry.trades.length} Accounts`}
                     </TradeSubtitleEditing>
                     <Else>
@@ -341,9 +458,9 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                   <SummaryItem>
                     <SummaryItemTitle>Total Contracts</SummaryItemTitle>
                     <SummaryItemValue>
-                      {`x${mockEntry.contracts * 3}`}
+                      {`x${mockEntry.contracts * mockEntry.trades.length}`}
                       <SummaryItemValueSubtext>
-                        {"[3 Accounts]"}
+                        {`[${mockEntry.trades.length} Accounts]`}
                       </SummaryItemValueSubtext>
                     </SummaryItemValue>
                   </SummaryItem>
@@ -353,7 +470,7 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                   </SummaryItem>
                   <SummaryItem>
                     <SummaryItemTitle>Total PnL</SummaryItemTitle>
-                    <SummaryItemPnL>{`$${mockEntry.totalPnL}`}</SummaryItemPnL>
+                    <SummaryItemPnL>{`$${totalPnL}`}</SummaryItemPnL>
                   </SummaryItem>
                 </SummarySection>
               </SummaryTitleInfoContainer>

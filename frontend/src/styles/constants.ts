@@ -20,4 +20,5 @@ export const LINK_SIZE = 14;
 export const LINK_SIZE_SMALL = 12;
 export const FORM_HEADER_SIZE = 20;
 export const BUTTON_SIZE = 48;
+export const BUTTON_WIDTH = 170;
 export const INPUT_SIZE = 48;

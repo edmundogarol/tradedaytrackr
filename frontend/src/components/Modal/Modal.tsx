@@ -15,6 +15,7 @@ interface ModalWrapperProps {
   children?: React.ReactNode;
   open?: boolean;
   setOpen: (open: boolean) => void;
+  onClose?: () => void;
 }
 
 const ModalWrapper: React.FunctionComponent<ModalWrapperProps> = ({
@@ -22,6 +23,7 @@ const ModalWrapper: React.FunctionComponent<ModalWrapperProps> = ({
   children,
   open = false,
   setOpen,
+  onClose,
 }) => {
   return (
     <Modal
@@ -41,7 +43,12 @@ const ModalWrapper: React.FunctionComponent<ModalWrapperProps> = ({
           <CloseContainer>
             <CancelIcon
               style={modalStyles.closeButton}
-              onClick={(): void => setOpen(false)}
+              onClick={(): void => {
+                setOpen(false);
+                if (onClose) {
+                  onClose();
+                }
+              }}
             />
           </CloseContainer>
         </Header>

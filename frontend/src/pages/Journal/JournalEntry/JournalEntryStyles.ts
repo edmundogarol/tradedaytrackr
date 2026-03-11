@@ -1,7 +1,7 @@
 const styles = {
   editIcon: {
-    height: 15,
-    width: 15,
+    height: 20,
+    width: 20,
     cursor: "pointer",
     pointerEvents: "auto",
     marginLeft: 5,
