@@ -2,16 +2,17 @@ import { Box, Collapse } from "@mui/material";
 import styled from "styled-components";
 
 export const DropdownContainer = styled.div`
+  z-index: 13;
   position: relative;
   width: max-content;
   margin-bottom: 5px;
 `;
 
-export const CollapseStyled = styled(Collapse)`
+export const CollapseStyled = styled(Collapse)<{ $leftAligned: boolean }>`
   position: absolute;
   right: 50px;
   width: max-content;
-  left: 0px;
+  ${(props): string => (props.$leftAligned ? `left: 0;` : "right: 0; ")}
   z-index: 11;
   top: 100%;
 `;

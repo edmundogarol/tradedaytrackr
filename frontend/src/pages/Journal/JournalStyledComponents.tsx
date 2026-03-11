@@ -36,3 +36,9 @@ export const TileTradeCountContainer = styled.div`
   margin-top: 6px;
   pointer-events: none;
 `;
+
+export const EditContainer = styled.div`
+  color: ${color("SystemLabel1")};
+  font-size: 14px;
+  margin-right: 10px;
+`;

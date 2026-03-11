@@ -115,6 +115,22 @@ export const TradePreview = styled.div<{ $idx: number }>`
   }
 `;
 
+export const TradeJournalPnL = styled.div<{ $positive: boolean }>`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  margin-left: 7px;
+  margin-bottom: 8px;
+
+  color: ${(props): string => (props.$positive ? "#85e986" : "#ffb0b0")};
+
+  z-index: 11;
+  background: ${(props): string =>
+    props.$positive ? "#0c370a69" : "#5f2b2b99"};
+  font-size: 13px;
+  padding: 3px;
+`;
+
 export const DayValue = styled.div`
   background-color: #3c5070f5;
   color: #d8d8d8;
@@ -175,11 +191,15 @@ export const Time = styled.div`
 export const EditContainer = styled.div`
   color: ${color("SystemLabel1")};
   font-size: 14px;
-  width: 50px;
 `;
 
 export const TradingDaysHeaderContainer = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 10px;
+`;
+
+export const EditDeleteContainer = styled.div`
+  display: flex;
+  padding: 10px;
 `;

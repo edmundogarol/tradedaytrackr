@@ -3,6 +3,7 @@ import Gap from "@components/Gap/Gap";
 import Page from "@components/Page/Page";
 import {
   PageContainer as Container,
+  DropdownsSection,
   SectionTitle,
 } from "@styles/globalStyledComponents";
 import WifiProtectedSetupIcon from "@mui/icons-material/WifiProtectedSetup";
@@ -12,7 +13,6 @@ import GlassTile from "@components/GlassTile/GlassTile";
 import {
   DateContainer,
   DayValue,
-  EditContainer,
   PnL,
   PreviewDayValueContainer,
   Time,
@@ -28,8 +28,12 @@ import moment from "moment";
 import { formatter } from "@utils/utils";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
 import { PageEnum } from "@interfaces/NavigationTypes";
+import DropdownMultiselect from "@components/DropdownMultiselect/DropdownMultiselect";
+import Button from "@components/Button/Button";
+import SelectWrapper from "@components/Select/SelectWrapper";
 import {
   Description,
+  EditContainer,
   Entry,
   JournalEntries,
   TileTradeCount,
@@ -105,11 +109,31 @@ const Journal: React.FunctionComponent = () => {
     },
   ];
 
+  const sortByOptions = {
+    title: "Sort By",
+    items: ["Date", "PnL", "Accounts Count"],
+  };
+
   return (
     <Page topBarShowMenu={true}>
       <Container>
         <SectionTitle>Journal</SectionTitle>
         <Gap level={1} />
+        <DropdownsSection>
+          <DropdownMultiselect {...sortByOptions} singleSelect />
+          <Button
+            onClick={() =>
+              navigation.navigate(PageEnum.JournalEntry, {
+                id: "new",
+              })
+            }
+            text={"Add Entry"}
+            iconType={IconTypeEnum.MaterialIcons}
+            iconLeft={"add"}
+            textStyle={styles.addButton.text}
+            style={styles.addButton.button}
+          />
+        </DropdownsSection>
         <JournalEntries>
           {/* <Entry></Entry> */}
           {journalEntries.reverse().map((entry, index) => (

@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router";
 import GlassTile from "@components/GlassTile/GlassTile";
 import { firmLogoSrc, imageSrc } from "@utils/utils";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { AccountTradingDaysComplete } from "@pages/EvaluationAccounts/EvaluationAccountsStyledComponents";
 import InfoPopout from "@components/InfoPopout/InfoPopout";
 import WifiProtectedSetupIcon from "@mui/icons-material/WifiProtectedSetup";
@@ -16,6 +17,8 @@ import moment from "moment";
 import Icon from "@components/Icon/Icon";
 import { IconTypeEnum } from "@components/Icon/IconInterfaces";
 import { color } from "@styles/colors";
+import useReactNavigation from "@navigation/hooks/useReactNavigation";
+import { PageEnum } from "@interfaces/NavigationTypes";
 import {
   AccountImage,
   BufferAmount,
@@ -43,6 +46,7 @@ import {
   DateContainer,
   DayValue,
   EditContainer,
+  EditDeleteContainer,
   HeaderContainer,
   ListHeaders,
   PnL,
@@ -50,6 +54,7 @@ import {
   PreviewDayValueContainer,
   Time,
   TradeDay,
+  TradeJournalPnL,
   TradePreview,
   TradePreviewContainer,
   TradingDaysContainer,
@@ -74,6 +79,8 @@ const FundedAccountDetail: React.FunctionComponent<
   const [addTradingDayOpen, setAddTradingDayOpen] =
     React.useState<boolean>(false);
   const [payoutRecord, setPayoutRecord] = React.useState<boolean>(false);
+  const navigation = useReactNavigation();
+
   const {
     id,
     accountName,
@@ -271,7 +278,19 @@ const FundedAccountDetail: React.FunctionComponent<
                   <PreviewDayValueContainer>
                     <TradePreviewContainer>
                       {index % 2 === 0 ? (
-                        <TradePreview $idx={index} />
+                        <>
+                          <TradePreview
+                            $idx={index}
+                            onClick={() =>
+                              navigation.navigate(PageEnum.JournalEntry, {
+                                id: index,
+                              })
+                            }
+                          />
+                          <TradeJournalPnL $positive={index !== 2}>
+                            ${1800}
+                          </TradeJournalPnL>
+                        </>
                       ) : (
                         <InfoPopout
                           infoDescription={`Link or convert to journal entry`}
@@ -308,14 +327,24 @@ const FundedAccountDetail: React.FunctionComponent<
                     {formatter.format(dayValue.value)}
                   </PnL>
 
-                  <InfoPopout infoDescription="Edit Details">
-                    <EditContainer>
-                      <EditIcon
-                        style={styles.editIcon}
-                        onClick={() => setAddTradingDayOpen(true)}
-                      />
-                    </EditContainer>
-                  </InfoPopout>
+                  <EditDeleteContainer>
+                    <InfoPopout infoDescription="Edit Details">
+                      <EditContainer>
+                        <EditIcon
+                          style={styles.editIcon}
+                          onClick={() => setAddTradingDayOpen(true)}
+                        />
+                      </EditContainer>
+                    </InfoPopout>
+                    <InfoPopout infoDescription="Delete Trade">
+                      <EditContainer>
+                        <DeleteOutlineIcon
+                          style={styles.editIcon}
+                          onClick={() => alert("Delete Trade")}
+                        />
+                      </EditContainer>
+                    </InfoPopout>
+                  </EditDeleteContainer>
                 </TradeDay>
               </GlassTile>
             ))}

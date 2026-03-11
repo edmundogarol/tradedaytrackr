@@ -3,7 +3,7 @@ import Gap from "@components/Gap/Gap";
 import Page from "@components/Page/Page";
 import StatsSummary from "@components/Stats/StatsSummary/StatsSummary";
 import DropdownMultiselect from "@components/DropdownMultiselect/DropdownMultiselect";
-
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import Button from "@components/Button/Button";
 import { IconTypeEnum } from "@components/Icon/IconInterfaces";
 import {
@@ -76,8 +76,16 @@ const EvaluationAccounts: React.FunctionComponent = () => {
         />
         <Gap level={2} />
         <DropdownsSection>
-          <DropdownMultiselect items={firmsList} title="All Firms" />
-          <DropdownMultiselect items={bufferState} title="Status" />
+          <DropdownMultiselect
+            items={firmsList}
+            title="All Firms"
+            icon={<FilterAltIcon style={{ color: "#c0c0c0" }} />}
+          />
+          <DropdownMultiselect
+            items={bufferState}
+            title="Status"
+            icon={<FilterAltIcon style={{ color: "#c0c0c0" }} />}
+          />
           <Button
             onClick={() => setModalOpen(true)}
             text={"Add Eval"}

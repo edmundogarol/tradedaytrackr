@@ -9,6 +9,10 @@ export const EntryDetails = styled(Section)`
   flex: 4;
 `;
 
+export const EntryInfoContainer = styled.div`
+  display: flex;
+`;
+
 export const TradeInfo = styled.div`
   flex: 1;
   display: flex;
@@ -61,17 +65,17 @@ export const Tag = styled.div`
 
 export const EditDeleteButtons = styled.div`
   color: #c9c9c9;
-  opacity: 0.7;
   margin-left: auto;
+  display: flex;
+`;
+
+export const ButtonContainer = styled.div`
+  opacity: 0.7;
 
   &:hover {
     opacity: 1;
     cursor: pointer;
   }
-`;
-
-export const EntryInfoContainer = styled.div`
-  display: flex;
 `;
 
 export const Information = styled(Section)`

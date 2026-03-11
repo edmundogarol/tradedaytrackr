@@ -4,6 +4,7 @@ import Page from "@components/Page/Page";
 import StatsSummary from "@components/Stats/StatsSummary/StatsSummary";
 import DropdownMultiselect from "@components/DropdownMultiselect/DropdownMultiselect";
 import Button from "@components/Button/Button";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import { IconTypeEnum } from "@components/Icon/IconInterfaces";
 import { SectionTitle } from "@styles/globalStyledComponents";
 import {
@@ -63,8 +64,13 @@ const FundedAccounts: React.FunctionComponent = () => {
           <DropdownMultiselect
             items={firmsList.concat(firmsList)}
             title="All Firms"
+            icon={<FilterAltIcon style={{ color: "#c0c0c0" }} />}
           />
-          <DropdownMultiselect items={bufferState} title="Buffer Built" />
+          <DropdownMultiselect
+            items={bufferState}
+            title="Buffer Built"
+            icon={<FilterAltIcon style={{ color: "#c0c0c0" }} />}
+          />
           <Button
             text={"Add Funded"}
             iconType={IconTypeEnum.MaterialIcons}
