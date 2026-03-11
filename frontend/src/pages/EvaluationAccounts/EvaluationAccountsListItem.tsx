@@ -142,7 +142,7 @@ const EvaluationAccountsListItem: React.FunctionComponent<
         </AccountTitleContainer>
         <DaysContainer>
           {dayValues.map((dayValue, idx) => (
-            <DaysItem key={idx} onClick={() => setAlertNoRecord(true)}>
+            <DaysItem key={idx}>
               <GlassTile
                 positive={dayValue.value > 0}
                 featureTile

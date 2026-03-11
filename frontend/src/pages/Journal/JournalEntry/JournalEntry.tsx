@@ -13,6 +13,7 @@ import moment from "moment";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
+import InfoPopout from "@components/InfoPopout/InfoPopout";
 import {
   ButtonContainer,
   DescriptionSection,
@@ -66,6 +67,11 @@ const JournalEntry: React.FunctionComponent = () => {
                       </TagContainer>
                     ),
                   )}
+                  <InfoPopout
+                    infoDescription={
+                      "Tags will be used for Trade Stats* [Upcoming Feature]"
+                    }
+                  />
                   <EditDeleteButtons>
                     {/* Add edit and delete buttons here */}
                     <ButtonContainer>
@@ -86,7 +92,12 @@ const JournalEntry: React.FunctionComponent = () => {
                   <TradeImage $src={devSrc("trade1.png")} />
                   <TradeSingleAccountInfo>
                     <SummaryItem>
-                      <SummaryItemTitle>Risk</SummaryItemTitle>
+                      <SummaryItemTitle>
+                        Risk
+                        <InfoPopout
+                          infoDescription={`Average across all accounts. Individual account risk may vary based on entry price and contracts traded.`}
+                        />
+                      </SummaryItemTitle>
                       <SummaryItemValue>${"200"}</SummaryItemValue>
                     </SummaryItem>
                     <SummaryItem>
@@ -122,6 +133,7 @@ const JournalEntry: React.FunctionComponent = () => {
               minWidth={10}
               padding={7}
               noGlow={true}
+              noGlassEffect={true}
             >
               <SummaryTitleInfoContainer>
                 <Section>

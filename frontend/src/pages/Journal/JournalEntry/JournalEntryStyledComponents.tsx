@@ -9,6 +9,7 @@ import styled from "styled-components";
 
 export const EntryDetails = styled(Section)`
   flex: 4;
+  z-index: 11;
 `;
 
 export const EntryInfoContainer = styled.div`
@@ -88,6 +89,7 @@ export const ButtonContainer = styled.div`
 
 export const Summary = styled(Section)`
   flex: 1;
+  z-index: 10;
 `;
 
 export const SummarySection = styled(Section)``;
@@ -103,6 +105,7 @@ export const SummaryItem = styled.div`
 export const SummaryItemTitle = styled.span`
   color: #888888;
   font-size: 14px;
+  display: flex;
 `;
 export const SummaryItemValue = styled.span`
   color: ${color("SystemLightGreen")};
