@@ -88,7 +88,7 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
     image: "https://cdn-icons-png.flaticon.com/512/190/190411.png",
     trades: [1, 2, 5],
     totalPnL: 930,
-    tags: ["IFVG", "Long", "IFVG", "Good momentum"],
+    tags: ["IFVG", "Long", "Good momentum"],
     // tags: [],
   });
   const [selectedAccountTrades, setSelectedAccountTrades] = React.useState<
