@@ -6,10 +6,12 @@ import {
 } from "@styles/constants";
 import { Section } from "@styles/globalStyledComponents";
 import styled from "styled-components";
+import CloseIcon from "@mui/icons-material/Close";
 
 export const EntryDetails = styled(Section)`
   flex: 4;
   z-index: 11;
+  min-width: 500px;
 `;
 
 export const EntryInfoContainer = styled.div`
@@ -66,7 +68,7 @@ export const SaveButton = styled(TradeSubtitle)`
 `;
 
 export const TradeSubtitleEditing = styled(TradeSubtitle)`
-  background: #d0d8e6f7;
+  background: white;
   color: black;
   border-radius: 3px;
   margin-right: 5px;
@@ -78,8 +80,27 @@ export const TradeSubtitleEditing = styled(TradeSubtitle)`
 export const TagContainer = styled.div`
   padding-left: 5px;
   padding-right: 5px;
+  margin-bottom: 5px;
+  display: flex;
 `;
-export const Tag = styled.div`
+
+export const TagsContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 100%;
+  min-width: 200px;
+`;
+
+export const TagInputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-width: 350px;
+  width: 100%;
+  margin-right: 10px;
+`;
+
+export const Tag = styled.div<{ $editing?: boolean }>`
   background: #c4ffc41c;
   color: ${color("SystemLightGreen")};
   font-size: 12px;
@@ -88,8 +109,22 @@ export const Tag = styled.div`
   padding: 2px;
   border-radius: 5px;
   padding-left: 7px;
-  padding-right: 7px;
   text-transform: capitalize;
+  ${({ $editing }): string =>
+    $editing
+      ? ``
+      : `
+      padding-right: 7px;
+      `}
+  word-spacing: -3px;
+`;
+
+export const CloseIconStyled = styled(CloseIcon)`
+  margin: unset;
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 export const EditDeleteButtons = styled.div`

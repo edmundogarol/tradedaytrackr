@@ -8,11 +8,11 @@ import {
   SubsectionHeader,
 } from "@styles/globalStyledComponents";
 import GlassTile from "@components/GlassTile/GlassTile";
-import { devSrc } from "@utils/utils";
+import { devSrc, sanitizeTag } from "@utils/utils";
 import moment from "moment";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-
+import CloseIcon from "@mui/icons-material/Close";
 import InfoPopout from "@components/InfoPopout/InfoPopout";
 import { Else, If } from "@components/If/If";
 import Input from "@components/Input/Input";
@@ -21,11 +21,12 @@ import Modal from "@components/Modal/Modal";
 import Checkbox from "@mui/material/Checkbox";
 import Button from "@components/Button/Button";
 import { color } from "@styles/colors";
-import { BUTTON_WIDTH } from "@styles/constants";
+import { BUTTON_WIDTH, CONTAINER_MARGIN_DEFAULT } from "@styles/constants";
 import { set } from "lodash";
 import { mock } from "node:test";
 import {
   ButtonContainer,
+  CloseIconStyled,
   DateTimePickerDate,
   DescriptionSection,
   DescriptionText,
@@ -42,6 +43,8 @@ import {
   SummaryTitleInfoContainer,
   Tag,
   TagContainer,
+  TagInputContainer,
+  TagsContainer,
   TradeAccountsSelectSaveButtonContainer,
   TradeCapture,
   TradeImage,
@@ -63,7 +66,18 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
   const [editing, setEditing] = React.useState(false);
   const [editingDate, setEditingDate] = React.useState(false);
   const [editingAccounts, setEditingAccounts] = React.useState(false);
-  const [mockEntry, setMockEntry] = React.useState({
+  const [mockEntry, setMockEntry] = React.useState<{
+    dateTime: string;
+    risk: number;
+    contracts: number;
+    outcome: number;
+    instrument: string;
+    description: string;
+    image: string;
+    trades: number[];
+    totalPnL: number;
+    tags: string[];
+  }>({
     dateTime: "2011-10-10T14:48:00.000+09:00",
     risk: 300,
     contracts: 3,
@@ -74,10 +88,13 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
     image: "https://cdn-icons-png.flaticon.com/512/190/190411.png",
     trades: [1, 2, 5],
     totalPnL: 930,
+    tags: ["IFVG", "Long", "IFVG", "Good momentum"],
+    // tags: [],
   });
   const [selectedAccountTrades, setSelectedAccountTrades] = React.useState<
     number[]
   >([...mockEntry.trades]);
+  const [currentTagInput, setCurrentTagInput] = React.useState("");
 
   const availableAccountTradesOnDateMock = [
     {
@@ -243,18 +260,107 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                       <TradeSubtitle>{`${mockEntry.trades.length} Accounts`}</TradeSubtitle>
                     </Else>
                   </If>
-                  {["IFVG", "Discount", "Long", "Momentum", "50% Tap"].map(
-                    (tag, index) => (
-                      <TagContainer key={index}>
-                        <Tag>#{tag.replace(" ", "")}</Tag>
-                      </TagContainer>
-                    ),
-                  )}
-                  <InfoPopout
-                    infoDescription={
-                      "Tags will be used for Trade Stats* [Upcoming Feature]"
-                    }
-                  />
+                  <TagInputContainer>
+                    <If condition={editing}>
+                      <Input
+                        type="text"
+                        maxInputLength={35}
+                        placeholder="Enter tag"
+                        onChange={(e) => setCurrentTagInput(e.target.value)}
+                        onEnterPress={(val) => {
+                          if (
+                            mockEntry.tags.some(
+                              (tag) => tag.toLowerCase() === val.toLowerCase(),
+                            )
+                          ) {
+                            setCurrentTagInput("");
+                            return;
+                          }
+                          setMockEntry({
+                            ...mockEntry,
+                            tags: [...mockEntry.tags, val],
+                          });
+                          setCurrentTagInput("");
+                        }}
+                        onSuggestionClick={(suggestion) => {
+                          setMockEntry({
+                            ...mockEntry,
+                            tags: [...mockEntry.tags, suggestion],
+                          });
+                          setCurrentTagInput("");
+                        }}
+                        value={currentTagInput}
+                        style={styles.tagInput}
+                        inputContainerStyle={styles.tagInputContainer}
+                        suggestions={[
+                          {
+                            description: "Momentum",
+                          },
+                          {
+                            description: "Reaction",
+                          },
+                          {
+                            description: "50% Block",
+                          },
+                          {
+                            description: "Premium",
+                          },
+                          {
+                            description: "Discount",
+                          },
+                          {
+                            description: "IFVG",
+                          },
+                          {
+                            description: "Long",
+                          },
+                          {
+                            description: "Short",
+                          },
+                        ].filter(
+                          (s) =>
+                            mockEntry.tags.every(
+                              (tag) =>
+                                tag.toLowerCase() !==
+                                s.description.toLowerCase(),
+                            ) &&
+                            s.description
+                              .toLowerCase()
+                              .includes(currentTagInput.toLowerCase()),
+                        )}
+                      />
+                    </If>
+                    <TagsContainer>
+                      {mockEntry.tags.map((tag, index) => (
+                        <TagContainer key={index}>
+                          <Tag $editing={editing}>
+                            #{sanitizeTag(tag)}
+                            <If condition={editing}>
+                              <CloseIconStyled
+                                style={{
+                                  height: 15,
+                                }}
+                                onClick={() => {
+                                  setMockEntry({
+                                    ...mockEntry,
+                                    tags: mockEntry.tags.filter(
+                                      (t) =>
+                                        t.toLowerCase() !== tag.toLowerCase(),
+                                    ),
+                                  });
+                                }}
+                              />
+                            </If>
+                          </Tag>
+                        </TagContainer>
+                      ))}
+                      <InfoPopout
+                        infoDescription={
+                          "Tags will be used for Trade Stats* [Upcoming Feature]"
+                        }
+                      />
+                    </TagsContainer>
+                  </TagInputContainer>
                   <EditDeleteButtons>
                     {/* Add edit and delete buttons here */}
                     <ButtonContainer>
@@ -374,6 +480,7 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                   <If condition={editing}>
                     <DescriptionText>
                       <textarea
+                        maxLength={1000}
                         onChange={(e) =>
                           setMockEntry({
                             ...mockEntry,

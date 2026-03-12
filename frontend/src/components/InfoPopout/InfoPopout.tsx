@@ -9,17 +9,19 @@ import { Container } from "./InfoPopoutStyledComponents";
 export interface InfoPopoutProps {
   infoDescription: string;
   children?: React.ReactNode;
+  containerStyle?: React.CSSProperties;
 }
 
 const InfoPopout: React.FC<InfoPopoutProps> = ({
   infoDescription,
   children,
+  containerStyle,
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
 
   return (
-    <Container>
+    <Container style={containerStyle}>
       <Popper
         anchorEl={anchorEl}
         open={open}
