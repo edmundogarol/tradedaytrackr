@@ -51,3 +51,13 @@ export const formatter = Intl.NumberFormat("en-US", {
   currency: "USD",
   maximumFractionDigits: 0,
 });
+
+export const sanitizeTag = (input: string): string => {
+  return input
+    .toLowerCase()
+    .trim()
+    .replace(/['"]/g, "") // remove quotes
+    .replace(/[^a-z0-9\s-]/g, "") // remove special chars
+    .replace(/-+/g, "") // collapse multiple dashes
+    .replace(/^-|-$/g, ""); // trim dashes from ends
+};

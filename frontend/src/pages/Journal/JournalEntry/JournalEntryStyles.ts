@@ -14,6 +14,25 @@ const styles = {
     fontSize: "inherit",
     textAlign: "end",
   } as React.CSSProperties,
+  tagInput: {
+    width: 100,
+    height: 20,
+    border: "none",
+    color: "black",
+    textAlign: "start",
+    borderRadius: 3,
+    fontSize: 12,
+  } as React.CSSProperties,
+  tagInputContainer: {
+    width: "100%",
+    height: 20,
+    border: "none",
+    color: "black",
+    fontSize: "inherit",
+    textAlign: "start",
+    marginLeft: 5,
+    position: "relative",
+  } as React.CSSProperties,
 };
 
 export default styles;

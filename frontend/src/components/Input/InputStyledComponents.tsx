@@ -36,6 +36,23 @@ export const InputContainer = styled.div<{
       `;
     }
   }}
+  width: 100%;
+`;
+export const MaxChar = styled.div`
+  color: #b9b9b9;
+  font-size: 11px;
+  margin-left: 10px;
+  align-items: center;
+  display: flex;
+  margin-right: 5px;
+`;
+
+export const CurrentCharCount = styled.span<{
+  $exceeded?: boolean;
+}>`
+  color: ${({ $exceeded }): string =>
+    $exceeded ? color("SystemError2") : "#b9b9b9"};
+  font-size: 11px;
 `;
 
 export const IconContainer = styled.div`
@@ -120,11 +137,28 @@ export const ListContainer = styled.div`
   display: flex;
   flex-direction: column;
   position: absolute;
-  width: 100px;
-  margin-top: -10px;
+  width: 120px;
   gap: 3px;
   padding: 5px;
   border-radius: 3px;
+  z-index: 13;
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 14px;
+
+  &::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 7px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(200, 200, 200, 0.5);
+  }
+
+  &::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
 `;
 
 export const ListItem = styled.div<{

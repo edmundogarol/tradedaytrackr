@@ -14,6 +14,9 @@ import {
   IconContainer,
   ListContainer,
   ListItem,
+  InputMaxCharContainer,
+  MaxChar,
+  CurrentCharCount,
 } from "./InputStyledComponents";
 
 export interface InputWrapperProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -26,6 +29,8 @@ export interface InputWrapperProps extends React.InputHTMLAttributes<HTMLInputEl
   onSuggestionClick?: (suggestion: string) => void;
   inputContainerStyle?: React.CSSProperties;
   containerStyle?: React.CSSProperties;
+  onEnterPress?: (value: string) => void;
+  maxInputLength?: number;
 }
 
 const Input: React.FC<InputWrapperProps> = ({
@@ -39,7 +44,9 @@ const Input: React.FC<InputWrapperProps> = ({
   inputContainerStyle,
   suggestions = [],
   onSuggestionClick,
+  onEnterPress,
   value,
+  maxInputLength,
   ...props
 }) => {
   const [focused, setFocused] = React.useState(false);
@@ -60,7 +67,18 @@ const Input: React.FC<InputWrapperProps> = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
-    if (!filteredSuggestions.length) return;
+    if (!filteredSuggestions.length) {
+      if (
+        e.key === "Enter" &&
+        !!onEnterPress &&
+        inputValue.trim() !== "" &&
+        (!maxInputLength || inputValue.length <= maxInputLength)
+      ) {
+        e.preventDefault();
+        onEnterPress(e.currentTarget.value);
+      }
+      return;
+    }
 
     switch (e.key) {
       case "ArrowDown":
@@ -76,6 +94,7 @@ const Input: React.FC<InputWrapperProps> = ({
         break;
 
       case "Enter":
+        console.log({ arrowIndex });
         if (arrowIndex >= 0) {
           e.preventDefault();
           selectSuggestion(filteredSuggestions[arrowIndex].description);
@@ -114,6 +133,13 @@ const Input: React.FC<InputWrapperProps> = ({
             error ? color("SystemError2") : color("SystemLabel1")
           }
         />
+        {maxInputLength && (
+          <MaxChar>
+            <CurrentCharCount
+              $exceeded={String(value ?? "").length > maxInputLength}
+            >{`${String(value ?? "").length}/${maxInputLength}`}</CurrentCharCount>
+          </MaxChar>
+        )}
       </InputContainer>
 
       <If condition={focused && filteredSuggestions.length > 0}>
