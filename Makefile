@@ -45,6 +45,9 @@ migrations: makemigrations migrate
 server:
 	DEVENV=development python manage.py runserver 0.0.0.0:8000
 
+testbe:
+	DEVENV=development pytest
+
 # Mailpit Server http://0.0.0.0:8025/
 mailserver:
 	brew services start mailpit

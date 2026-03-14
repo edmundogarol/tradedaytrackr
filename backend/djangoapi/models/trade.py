@@ -4,6 +4,13 @@ from backend.djangoapi.models.trading_account import TradingAccount
 
 class Trade(models.Model):
 
+    journal_entry = models.ForeignKey(
+        "JournalEntry",
+        on_delete=models.CASCADE,
+        related_name="entry_trades",
+        null=True,
+        blank=True,
+    )
     account = models.ForeignKey(
         TradingAccount, on_delete=models.CASCADE, related_name="trades"
     )
