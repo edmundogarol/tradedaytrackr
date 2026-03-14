@@ -10,7 +10,7 @@ from backend.djangoapi.managers.user import UserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    email = models.TextField(max_length=50, blank=False, unique=True)
+    email = models.EmailField(blank=False, unique=True)
     first_name = models.TextField(max_length=50, blank=True)
     last_name = models.TextField(max_length=50, blank=True)
     username = models.TextField(max_length=50, blank=True)
