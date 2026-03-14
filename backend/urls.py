@@ -44,7 +44,7 @@ router.register(
 )
 
 urlpatterns = [
-    path("docs", schema_view),
+    path("docs/", schema_view),
     path("api/", include(router.urls)),
     path("api/login/", views.account.LoginViewSet.as_view()),
     path("api/logout/", views.account.LogoutViewSet.as_view()),
