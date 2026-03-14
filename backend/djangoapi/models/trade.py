@@ -8,6 +8,8 @@ class Trade(models.Model):
         "JournalEntry",
         on_delete=models.CASCADE,
         related_name="trades",
+        null=True,
+        blank=True,
     )
 
     account = models.ForeignKey(

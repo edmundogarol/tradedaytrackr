@@ -17,7 +17,6 @@ class JournalEntry(models.Model):
     description = models.TextField(max_length=1000)
     image = models.URLField(blank=True, null=True)
     tags = models.JSONField(default=list)
-    trades = models.ManyToManyField(Trade, related_name="journal_entries")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
