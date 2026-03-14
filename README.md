@@ -2,7 +2,7 @@
 
 Repository: `tradedaytrackr`
 
-Website: tradedaytrackR.com
+Website: `www.tradedaytrackr.com`
 
 ## TradeDayTrackR - Trade Journal App
 
