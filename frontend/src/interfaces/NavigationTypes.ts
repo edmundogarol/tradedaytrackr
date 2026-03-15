@@ -1,5 +1,4 @@
 export enum PageEnum {
-  RootNavigator = "/root",
   Login = "/login",
   SignUp = "/signUp",
   ResetPassword = "/resetPassword",
@@ -15,7 +14,6 @@ export enum PageEnum {
 }
 
 export type AuthenticatedStackNavigatorParams = {
-  [PageEnum.RootNavigator]: undefined;
   [PageEnum.Dashboard]: undefined;
   [PageEnum.Journal]: undefined;
   [PageEnum.JournalEntry]: { id: number };

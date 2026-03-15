@@ -53,7 +53,7 @@ const useSignUpHandler = (): SignUpSubmitHandler => {
           set(
             signUpFormErrorsLocal,
             "confirm_password",
-            "Please confirm password"
+            "Please confirm password",
           );
         }
         if (
@@ -63,7 +63,7 @@ const useSignUpHandler = (): SignUpSubmitHandler => {
           set(
             signUpFormErrorsLocal,
             "confirm_password",
-            "Passwords do not match"
+            "Passwords do not match",
           );
         }
 
@@ -79,7 +79,7 @@ const useSignUpHandler = (): SignUpSubmitHandler => {
           updateLoginFormErrors({});
           updateSignUpFormErrors({});
           updateSignUpForm({ ...initialState.signUpForm });
-          navigation.navigate(PageEnum.RootNavigator);
+          navigation.navigate(PageEnum.Dashboard);
         } else {
           if (error) {
             updateSignUpFormErrors({ ...error });
