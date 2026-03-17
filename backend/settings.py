@@ -10,9 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
-import os
 import json
+import os
 from pathlib import Path
+
 from corsheaders.defaults import default_headers
 
 if "DEVENV" in os.environ:

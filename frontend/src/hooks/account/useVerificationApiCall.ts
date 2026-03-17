@@ -1,23 +1,39 @@
 import type { AxiosFetchWrapperResponse } from "@hooks/useAxiosFetch";
 import useAxiosFetch from "@hooks/useAxiosFetch";
-import type { User } from "@interfaces/CustomTypes";
 import { useEffect } from "react";
+import { useSearchParams } from "react-router";
 
 export interface VerificationApiCallData {
-  user: User;
-  logged_in: boolean;
+  detail?: string;
 }
 
-const useVerificationApiCall =
-  (): AxiosFetchWrapperResponse<VerificationApiCallData> => {
-    const { fetch, data, loading, error } =
-      useAxiosFetch<VerificationApiCallData>("verify-account/");
+export interface VerificationApiCallError {
+  error?: string;
+}
 
-    useEffect(() => {
+const useVerificationApiCall = (): AxiosFetchWrapperResponse<
+  VerificationApiCallData,
+  VerificationApiCallError
+> => {
+  const [searchParams] = useSearchParams();
+  const verification_token = searchParams.get("verification_token");
+  const { fetch, data, loading, error } = useAxiosFetch<
+    VerificationApiCallData,
+    VerificationApiCallError
+  >("verify-account/", {
+    method: "POST",
+    data: {
+      token: verification_token,
+    },
+  });
+
+  useEffect(() => {
+    if (verification_token) {
       fetch();
-    }, [fetch]);
+    }
+  }, []);
 
-    return { fetch, data, loading, error };
-  };
+  return { fetch, data, loading, error };
+};
 
 export default useVerificationApiCall;

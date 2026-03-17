@@ -1,22 +1,12 @@
-from time import timezone
-
-from rest_framework import status
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.response import Response
-
-from django.contrib.auth import password_validation
-from django.core.exceptions import ValidationError
-from django.core.validators import validate_email
-from django.db.utils import IntegrityError
+from django.contrib.auth import login
 from django.shortcuts import get_object_or_404
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 
-from secrets import token_urlsafe
-
-from backend.djangoapi.models import User, user
+from backend.djangoapi.models import User
 from backend.djangoapi.serializers import UserSerializer
-from backend.djangoapi.serializers.user import RegisterSerializer
-from backend.djangoapi.tasks.user import send_verification_email
-from backend.djangoapi.utils import visitor_ip_address
+from backend.djangoapi.serializers.user import RegisterSerializer, UpdateUserSerializer
 
 
 class UserViewSet(ModelViewSet):
@@ -41,9 +31,10 @@ class UserViewSet(ModelViewSet):
 
         user = serializer.save()
 
+        login(request, user)
         return Response(
             {
-                "user": str(user),
+                "user": UserSerializer(user).data,
                 "logged_in": True,
             },
             status=status.HTTP_201_CREATED,
@@ -56,8 +47,7 @@ class UserViewSet(ModelViewSet):
         return Response(serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
-
-        user = self.get_object()
+        user = request.user  # 🔥 secure: only update self
 
         serializer = UpdateUserSerializer(
             user,
@@ -69,4 +59,4 @@ class UserViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)

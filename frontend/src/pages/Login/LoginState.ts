@@ -1,6 +1,6 @@
+import type { User } from "@interfaces/CustomTypes";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import type { User } from "@interfaces/CustomTypes";
 import type {
   LoginForm,
   ResetPasswordForm,
@@ -16,6 +16,7 @@ export interface LoginState {
   readonly resetPasswordForm: ResetPasswordForm;
   readonly resetPasswordFormErrors: { [key: string]: any };
   readonly resetPasswordFormSent: boolean;
+  readonly verificationError: string;
 }
 
 export const initialState: LoginState = {
@@ -49,6 +50,7 @@ export const initialState: LoginState = {
   },
   resetPasswordFormErrors: {},
   resetPasswordFormSent: false,
+  verificationError: "",
 };
 
 type UpdateUserAction = PayloadAction<User>;
@@ -59,6 +61,7 @@ type UpdateSignUpFormErrorsAction = PayloadAction<{ [key: string]: any }>;
 type UpdateResetPasswordFormAction = PayloadAction<Partial<ResetPasswordForm>>;
 type UpdateResetPasswordErrorsAction = PayloadAction<{ [key: string]: any }>;
 type UpdateResetPasswordFormSentAction = PayloadAction<boolean>;
+type UpdateVerificationErrorAction = PayloadAction<string>;
 
 export type LoginAction =
   | UpdateUserAction
@@ -68,7 +71,8 @@ export type LoginAction =
   | UpdateSignUpFormErrorsAction
   | UpdateResetPasswordFormAction
   | UpdateResetPasswordErrorsAction
-  | UpdateResetPasswordFormSentAction;
+  | UpdateResetPasswordFormSentAction
+  | UpdateVerificationErrorAction;
 
 export const loginSlice = createSlice({
   name: "login",
@@ -107,6 +111,9 @@ export const loginSlice = createSlice({
     ) => {
       state.resetPasswordFormSent = action.payload;
     },
+    updateVerificationError: (state, action: UpdateVerificationErrorAction) => {
+      state.verificationError = action.payload;
+    },
   },
 });
 
@@ -119,6 +126,7 @@ export const {
   updateResetPasswordForm,
   updateResetPasswordErrors,
   updateResetPasswordFormSent,
+  updateVerificationError,
 } = loginSlice.actions;
 export const loginReducer = loginSlice.reducer;
 

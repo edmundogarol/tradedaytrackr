@@ -73,9 +73,7 @@ class RequestVerificationViewSet(viewsets.ViewSet):
         user.verification_sent_at = timezone.now()
         user.save()
 
-        verification_url = (
-            f"{settings.FRONTEND_URL}/verify-account/{user.verification_token}"
-        )
+        verification_url = f"{settings.WEB_APP_URL}/dashboard?verification_token={user.verification_token}"
 
         send_verification_email.delay(user.email, verification_url)
 

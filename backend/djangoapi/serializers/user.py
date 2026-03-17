@@ -1,10 +1,11 @@
-from rest_framework import serializers
-from django.contrib.auth import password_validation
-from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
-from django.utils import timezone
-from django.conf import settings
 from secrets import token_urlsafe
+
+from django.conf import settings
+from django.contrib.auth import password_validation
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+from django.utils import timezone
+from rest_framework import serializers
 
 from backend.djangoapi.models import User
 from backend.djangoapi.tasks.user import send_verification_email
@@ -30,7 +31,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserValidationSerializer(serializers.ModelSerializer):
-
     def validate_email(self, value):
         value = value.lower()
 
@@ -55,7 +55,6 @@ class UserValidationSerializer(serializers.ModelSerializer):
 
 
 class RegisterSerializer(UserValidationSerializer):
-
     class Meta:
         model = User
         fields = ["email", "password"]
@@ -74,9 +73,7 @@ class RegisterSerializer(UserValidationSerializer):
         user.verification_sent_at = timezone.now()
         user.save()
 
-        verification_url = (
-            f"{settings.WEB_API_URL}/?verification_token={user.verification_token}"
-        )
+        verification_url = f"{settings.WEB_APP_URL}/dashboard?verification_token={user.verification_token}"
 
         send_verification_email.delay(user.email, verification_url)
 
@@ -84,7 +81,6 @@ class RegisterSerializer(UserValidationSerializer):
 
 
 class UpdateUserSerializer(UserValidationSerializer):
-
     class Meta:
         model = User
         fields = ["email", "username", "password"]
@@ -103,8 +99,6 @@ class UpdateUserSerializer(UserValidationSerializer):
         return value
 
     def update(self, instance, validated_data):
-
-        email_changed = "email" in validated_data
         password = validated_data.pop("password", None)
 
         for attr, value in validated_data.items():
@@ -113,9 +107,5 @@ class UpdateUserSerializer(UserValidationSerializer):
         if password:
             instance.set_password(password)
 
-        if email_changed:
-            instance.is_verified = False
-
         instance.save()
-
         return instance

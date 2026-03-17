@@ -1,10 +1,10 @@
-import * as React from "react";
 import Snackbar from "@mui/material/Snackbar";
+import * as React from "react";
 
 interface AlertPopoutProps {
   open: boolean;
   message: string;
-  setPopoutOpen?: (open: boolean) => void;
+  setPopoutOpen?: () => void;
   hideDuration?: number;
 }
 
@@ -14,12 +14,6 @@ const AlertPopout: React.FC<AlertPopoutProps> = ({
   setPopoutOpen,
   hideDuration = 2000,
 }) => {
-  console.log(
-    "AlertPopout rendered with message:",
-    message,
-    "and open state:",
-    open,
-  );
   return (
     <Snackbar
       autoHideDuration={hideDuration}
@@ -27,7 +21,7 @@ const AlertPopout: React.FC<AlertPopoutProps> = ({
       open={open}
       message={message}
       key={"top" + "center"}
-      onClose={() => setPopoutOpen && setPopoutOpen(false)}
+      onClose={() => setPopoutOpen && setPopoutOpen()}
     />
   );
 };

@@ -1,32 +1,28 @@
-import { useEffect } from "react";
-import type { User } from "@interfaces/CustomTypes";
 import type { AxiosFetchWrapperResponse } from "@hooks/useAxiosFetch";
 import useLoginDispatch from "@pages/Login/hooks/useLoginDispatch";
-import { useSearchParams } from "react-router";
-import type { VerificationApiCallData } from "./useVerificationApiCall";
+import { useEffect } from "react";
+import type {
+  VerificationApiCallData,
+  VerificationApiCallError,
+} from "./useVerificationApiCall";
 
 const useVerificationHandler = ({
   data,
   loading,
   error,
-}: AxiosFetchWrapperResponse<VerificationApiCallData>): void => {
-  const { updateUser } = useLoginDispatch();
-  const [searchParams] = useSearchParams();
-  const verification_token = searchParams.get("verification_token");
-  console.log({ searchParams, verification_token });
-
+}: AxiosFetchWrapperResponse<
+  VerificationApiCallData,
+  VerificationApiCallError
+>): void => {
+  const { updateVerificationError } = useLoginDispatch();
   useEffect(() => {
-    if (data) {
-      if (data?.user) {
-        updateUser({
-          ...data?.user,
-          logged_in: data?.logged_in,
-        });
-      } else {
-        updateUser(data as unknown as User);
-      }
+    if (data?.detail) {
+      updateVerificationError(data.detail);
     } else if (error) {
-      console.log("Login check fetch error", error);
+      updateVerificationError(
+        error.error ||
+          "Account verification failed. Please try again or contact support if the issue persists.",
+      );
     }
   }, [data, error, loading]);
 };

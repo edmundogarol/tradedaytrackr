@@ -1,6 +1,11 @@
+import type { User } from "@interfaces/CustomTypes";
 import type { Dispatch } from "react";
 import { useDispatch } from "react-redux";
-import type { User } from "@interfaces/CustomTypes";
+import type {
+  LoginForm,
+  ResetPasswordForm,
+  SignUpForm,
+} from "../LoginInterfaces";
 import type { LoginAction } from "../LoginState";
 import {
   updateLoginForm,
@@ -11,12 +16,8 @@ import {
   updateSignUpForm,
   updateSignUpFormErrors,
   updateUser,
+  updateVerificationError,
 } from "../LoginState";
-import type {
-  LoginForm,
-  ResetPasswordForm,
-  SignUpForm,
-} from "../LoginInterfaces";
 
 interface LoginDispatch {
   updateUser(user: User): void;
@@ -29,6 +30,7 @@ interface LoginDispatch {
     [key: string]: any;
   }): void;
   updateResetPasswordFormSent(formSent: boolean): void;
+  updateVerificationError(error: string | null): void;
 }
 
 export const useLoginDispatch = (): LoginDispatch => {
@@ -50,7 +52,7 @@ export const useLoginDispatch = (): LoginDispatch => {
       dispatch(updateSignUpFormErrors(signUpFormError));
     },
     updateResetPasswordForm(
-      resetPasswordForm: Partial<ResetPasswordForm>
+      resetPasswordForm: Partial<ResetPasswordForm>,
     ): void {
       dispatch(updateResetPasswordForm(resetPasswordForm));
     },
@@ -61,6 +63,9 @@ export const useLoginDispatch = (): LoginDispatch => {
     },
     updateResetPasswordFormSent(formSent): void {
       dispatch(updateResetPasswordFormSent(formSent));
+    },
+    updateVerificationError(error: string): void {
+      dispatch(updateVerificationError(error));
     },
   };
 };
