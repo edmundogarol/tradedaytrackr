@@ -22,7 +22,9 @@ class UserSerializer(serializers.ModelSerializer):
             "birth_date",
             "is_staff",
             "last_login",
-            "verified",
+            "is_verified",
+            "verification_sent_at",
+            "verification_token",
             "last_ip",
         )
 
@@ -73,7 +75,7 @@ class RegisterSerializer(UserValidationSerializer):
         user.save()
 
         verification_url = (
-            f"{settings.WEB_API_URL}/verify-account/{user.verification_token}"
+            f"{settings.WEB_API_URL}/?verification_token={user.verification_token}"
         )
 
         send_verification_email.delay(user.email, verification_url)

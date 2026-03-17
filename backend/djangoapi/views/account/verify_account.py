@@ -1,13 +1,14 @@
+from datetime import timedelta
 from secrets import token_urlsafe
 
+from django.conf import settings
+from django.utils import timezone
 from rest_framework import status, viewsets
-from rest_framework.response import Response
-from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from backend.djangoapi.models.user import User
-from backend.djangoapi.serializers.user import UserSerializer
-from backend.djangoapi.tasks.user import send_welcome_email
+from backend.djangoapi.tasks.user import send_verification_email, send_welcome_email
 from backend.djangoapi.utils.account import PostOnly
 
 
@@ -15,14 +16,32 @@ class VerifyAccountViewSet(viewsets.ViewSet):
     permission_classes = (PostOnly,)
 
     def create(self, request):
-
         token = request.data.get("token")
 
+        if not token:
+            return Response(
+                {"error": "Verification token required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         try:
-            user = User.objects.get(verification_token=token, is_verified=False)
+            user = User.objects.get(
+                verification_token=token,
+                is_verified=False,
+            )
+
+            # 🔐 Expiry check (24h)
+            if user.verification_sent_at and (
+                timezone.now() - user.verification_sent_at > timedelta(hours=24)
+            ):
+                return Response(
+                    {"error": "Verification link expired."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             user.is_verified = True
             user.verification_token = None
+            user.verification_sent_at = None
             user.save()
 
             send_welcome_email.delay(user.email)
@@ -31,31 +50,33 @@ class VerifyAccountViewSet(viewsets.ViewSet):
 
         except User.DoesNotExist:
             return Response(
-                {
-                    "error": "Email Verification link expired. Please create another email verification request."
-                },
+                {"error": "Invalid or expired verification link."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
 
-class RequestVerificationViewSet(viewsets.ModelViewSet):
-    serializer_class = UserSerializer
+class RequestVerificationViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated,)
 
-    @action(detail=False, methods=["post"], url_path="email")
-    def email(self, request, *args, **kwargs):
+    def create(self, request):
 
-        try:
-            user = User.objects.get(email=self.request.user)
+        user = request.user
 
-            user.verified = token_urlsafe(20)
-            user.save()
-
-            content = {"detail": "Email Verification request complete."}
-            return Response(content)
-
-        except User.DoesNotExist:
+        if user.is_verified:
             return Response(
-                {"error": "Email Verification request failed."},
-                status=status.HTTP_401_UNAUTHORIZED,
+                {"detail": "User already verified."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # generate new token
+        user.verification_token = token_urlsafe(32)
+        user.verification_sent_at = timezone.now()
+        user.save()
+
+        verification_url = (
+            f"{settings.FRONTEND_URL}/verify-account/{user.verification_token}"
+        )
+
+        send_verification_email.delay(user.email, verification_url)
+
+        return Response({"detail": "Verification email sent."})

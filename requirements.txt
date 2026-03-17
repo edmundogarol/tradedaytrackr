@@ -1,5 +1,6 @@
 amqp==5.3.1
 asgiref==3.11.0
+astroid==4.0.4
 billiard==4.2.4
 black==25.12.0
 celery==5.6.2
@@ -12,6 +13,7 @@ click-repl==0.3.0
 coreapi==2.3.3
 coreschema==0.0.4
 coverage==7.13.4
+dill==0.4.1
 Django==6.0
 django-cors-headers==4.9.0
 django-rest-swagger==2.2.0
@@ -20,11 +22,13 @@ factory_boy==3.3.3
 Faker==40.11.0
 idna==3.11
 iniconfig==2.3.0
+isort==8.0.1
 itypes==1.2.0
 Jinja2==3.1.6
 kombu==5.6.2
 legacy-cgi==2.6.4
 MarkupSafe==3.0.3
+mccabe==0.7.0
 mypy_extensions==1.1.0
 openapi-codec==1.3.2
 packaging==25.0
@@ -33,6 +37,7 @@ platformdirs==4.5.1
 pluggy==1.6.0
 prompt_toolkit==3.0.52
 Pygments==2.19.2
+pylint==4.0.5
 pytest==9.0.2
 pytest-cov==7.0.0
 pytest-django==4.12.0
@@ -44,6 +49,7 @@ setuptools==66.1.1
 simplejson==3.20.2
 six==1.17.0
 sqlparse==0.5.5
+tomlkit==0.14.0
 tzdata==2025.3
 tzlocal==5.3.1
 uritemplate==4.2.0

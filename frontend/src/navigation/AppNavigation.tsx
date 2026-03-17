@@ -2,7 +2,7 @@ import React from "react";
 import useLoginState from "@pages/Login/hooks/useLoginState";
 import useLoginCheckApiCall from "@pages/Login/hooks/useLoginCheckApiCall";
 import useLoginCheckHandler from "@pages/Login/hooks/useLoginCheckHandler";
-import { Route, Routes } from "react-router";
+import { Route, Routes, useParams, useSearchParams } from "react-router";
 import { PageEnum } from "@interfaces/NavigationTypes";
 import PageNotFound from "@components/PageNotFound/PageNotFound";
 import SignUp from "@pages/SignUp/SignUp";
