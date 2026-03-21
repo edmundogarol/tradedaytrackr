@@ -1,100 +1,80 @@
-from smtplib import SMTPAuthenticationError
+from datetime import timedelta
 from secrets import token_urlsafe
-from threading import Thread
 
 from django.conf import settings
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
-
+from django.utils import timezone
 from rest_framework import status, viewsets
-from rest_framework.response import Response
-from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from backend.djangoapi.models.user import User
-from backend.djangoapi.serializers.user import UserSerializer
+from backend.djangoapi.tasks.user import send_verification_email, send_welcome_email
 from backend.djangoapi.utils.account import PostOnly
 
 
-def send_account_verification_email(user, token):
-    email_template_name = "emails/verify_account.html"
-
-    email_config = {
-        "email": user.email,
-        "website": "https://tradedaytrackr.com",
-        "user": user,
-        "token": token,
-        "EMAIL_ASSETS_BASE_URL": settings.EMAIL_ASSETS_BASE_URL,
-    }
-
-    try:
-        email = render_to_string(email_template_name, email_config)
-
-        send_mail(
-            subject="Verify Email for TradeDayTrackR Account",
-            message="Please use an HTML compatible email viewer!",
-            from_email="TradeDayTrackR<info@tradedaytrackr.com>",
-            recipient_list=[user.email],
-            fail_silently=False,
-            html_message=email,
-        )
-
-    except SMTPAuthenticationError:
-        print("Username and Password not accepted for smtp email config.")
-
-
-class VerifyAccountViewSet(viewsets.ModelViewSet):
-    serializer_class = UserSerializer
+class VerifyAccountViewSet(viewsets.ViewSet):
     permission_classes = (PostOnly,)
 
-    @action(detail=False, methods=["post"], url_path="email")
-    def email(self, request, *args, **kwargs):
-        data = request.data
-        token = data["token"]
+    def create(self, request):
+        token = request.data.get("token")
+
+        if not token:
+            return Response(
+                {"error": "Verification token required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         try:
-            user = User.objects.get(verified=token)
-            user.verified = "verified"
+            user = User.objects.get(
+                verification_token=token,
+                is_verified=False,
+            )
+
+            # 🔐 Expiry check (24h)
+            if user.verification_sent_at and (
+                timezone.now() - user.verification_sent_at > timedelta(hours=24)
+            ):
+                return Response(
+                    {"error": "Verification link expired."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            user.is_verified = True
+            user.verification_token = None
+            user.verification_sent_at = None
             user.save()
 
-            content = {"detail": "Verification complete."}
-            return Response(content)
+            send_welcome_email.delay(user.email)
+
+            return Response({"detail": "Verification complete."})
 
         except User.DoesNotExist:
             return Response(
-                {
-                    "error": "Email Verification link expired. Please create another email verification request."
-                },
-                status=status.HTTP_401_UNAUTHORIZED,
+                {"error": "Invalid or expired verification link."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
 
-class RequestVerificationViewSet(viewsets.ModelViewSet):
-    serializer_class = UserSerializer
+class RequestVerificationViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated,)
 
-    @action(detail=False, methods=["post"], url_path="email")
-    def email(self, request, *args, **kwargs):
+    def create(self, request):
 
-        try:
-            user = User.objects.get(email=self.request.user)
+        user = request.user
 
-            user.verified = token_urlsafe(20)
-            user.save()
-
-            Thread(
-                target=send_account_verification_email,
-                args=(
-                    user,
-                    user.verified,
-                ),
-            ).start()
-
-            content = {"detail": "Email Verification request complete."}
-            return Response(content)
-
-        except User.DoesNotExist:
+        if user.is_verified:
             return Response(
-                {"error": "Email Verification request failed."},
-                status=status.HTTP_401_UNAUTHORIZED,
+                {"detail": "User already verified."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # generate new token
+        user.verification_token = token_urlsafe(32)
+        user.verification_sent_at = timezone.now()
+        user.save()
+
+        verification_url = f"{settings.WEB_APP_URL}/dashboard?verification_token={user.verification_token}"
+
+        send_verification_email.delay(user.email, verification_url)
+
+        return Response({"detail": "Verification email sent."})

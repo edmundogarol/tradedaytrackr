@@ -38,12 +38,21 @@ makemigrations:
 	DEVENV=development python manage.py makemigrations 
 
 static:
-	DEPLOYENV=deployment python manage.py collectstatic --noinput 
+	DEVENV=deployment python manage.py collectstatic --noinput 
 
 migrations: makemigrations migrate
 
+redis:
+	DEVENV=development redis-server
+
+workers:
+	DEVENV=development celery -A backend worker --loglevel=info
+
 server:
 	DEVENV=development python manage.py runserver 0.0.0.0:8000
+
+testbe:
+	DEVENV=development pytest
 
 # Mailpit Server http://0.0.0.0:8025/
 mailserver:

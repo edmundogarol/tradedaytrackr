@@ -1,150 +1,177 @@
-<!DOCTYPE html>
-
-<html lang="en">
+<!doctype html>
+<html>
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <title>TradeDayTrackR Verify Account</title>
-    <meta name="description" content="TradeDayTrackR Verify Account" />
-    <meta name="author" content="TradeDayTrackR" />
-    <style type="text/css">
-      .link:hover {
-        cursor: pointer;
-      }
-
-      @media screen and (max-width: 600px),
-        screen and (max-device-width: 600px) {
-        .outer {
-          padding-left: unset !important;
-          padding-right: unset !important;
-        }
-        .footer-img {
-          width: unset !important;
-        }
-      }
-    </style>
+    <meta charset="UTF-8" />
+    <title>Verify Your Email - TradeDayTrackR</title>
   </head>
+
   <body
-    class="outer"
     style="
-      background: #eaeaea;
-      margin-left: auto;
-      margin-right: auto;
-      margin-top: 1em;
-      transform: scale(1.2);
-      padding: 2em;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f6f8;
+      font-family: Arial, Helvetica, sans-serif;
     "
   >
-    <div
-      style="
-        max-width: 36em;
-        margin-left: auto;
-        margin-right: auto;
-        font-family: sans-serif;
-        font-weight: 300;
-        background: white;
-        padding: 1em;
-        color: dimgray;
-      "
+    <table
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      style="background-color: #f4f6f8; padding: 40px 0"
     >
-      <table style="width: 100%; border-bottom: 1px solid #bfbfbf">
-        <tr>
-          <img
-            style="height: 4em"
-            src="{{ EMAIL_ASSETS_BASE_URL }}/logos/tradedaytrackr_icon.svg"
-          />
-          <td style="text-align: end">
-            <table style="width: 100%">
-              <tr>
-                <td>Verify Account</td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-      </table>
-      <div
-        style="
-          font-size: 1.5em;
-          font-weight: 400;
-          color: #8e8e8e;
-          text-align: center;
-          padding: 2em;
-          border-bottom: 1px solid #bfbfbf;
-        "
-      >
-        <div>Your account verification link is ready.</div>
-        <div style="margin-top: 1em">
-          <a
-            href="{{ website }}/verify-account/{{ token }}"
+      <tr>
+        <td align="center">
+          <table
+            width="600"
+            cellpadding="0"
+            cellspacing="0"
             style="
-              text-decoration: none;
-              height: 3em;
-              border: none;
-              background: dimgray;
-              color: white;
-              padding: 1em;
-              letter-spacing: 0.05em;
-              font-family: sans-serif;
-              font-size: 0.7em;
-              white-space: nowrap;
+              background: #ffffff;
+              border-radius: 8px;
+              padding: 40px;
+              box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
             "
           >
-            Verify Account
-          </a>
-        </div>
-      </div>
-      <table style="width: 100%">
-        <tr>
-          <td
-            class="address-field"
-            style="
-              padding-left: 1em;
-              padding-right: 1em;
-              width: 50%;
-              vertical-align: top;
-            "
-          >
-            <h4>Hi!</h4>
-            <span></span>
-            <p>
-              Verify your account today to start tracking your trade days on
-              TradeDayTrackR! To complete account registration verify your email
-              address to keep your account secure and provide a way to recover
-              your password. If you did not make this request, you can simply
-              ignore this email.
-            </p>
-            <p>Sincerely,</p>
-            <p>TradeDayTrackR Team</p>
-          </td>
-        </tr>
-      </table>
-      <table style="width: 100%; margin-top: 1em">
-        <tr style="background: #e9e9e9">
-          <td class="footer-img" style="float: right">
-            <img
-              style="height: 4em"
-              src="{{ EMAIL_ASSETS_BASE_URL }}/logos/tradedaytrackr_full_no_bg.svg"
-            />
-          </td>
-          <td style="font-family: sans-serif; font-size: 0.7em; color: dimgrey">
-            <table>
-              <tr>
-                <td style="text-transform: uppercase">
-                  TradeDayTrackR Website
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <a href="{{ website }}" target="_blank" style="margin: unset">
-                    www.tradedaytrackr.com
-                  </a>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-      </table>
-    </div>
+            <!-- Logo -->
+            <tr>
+              <td align="center" style="padding-bottom: 25px">
+                <img
+                  src="https://tradedaytrackr-extra-assets.s3.us-west-2.amazonaws.com/logos/tradedaytrackr_black.svg"
+                  alt="TradeDayTrackR"
+                  width="220"
+                  style="display: block"
+                />
+              </td>
+            </tr>
+
+            <!-- Title -->
+            <tr>
+              <td
+                style="
+                  font-size: 24px;
+                  font-weight: bold;
+                  color: #111;
+                  text-align: center;
+                  padding-bottom: 10px;
+                "
+              >
+                Verify Your Email Address
+              </td>
+            </tr>
+
+            <!-- Message -->
+            <tr>
+              <td
+                style="
+                  font-size: 16px;
+                  color: #444;
+                  line-height: 1.6;
+                  text-align: center;
+                  padding: 10px 20px;
+                "
+              >
+                Thanks for signing up for <strong>TradeDayTrackR</strong> 📈
+              </td>
+            </tr>
+
+            <tr>
+              <td
+                style="
+                  font-size: 16px;
+                  color: #444;
+                  line-height: 1.6;
+                  text-align: center;
+                  padding: 10px 20px;
+                "
+              >
+                Please confirm your email address to complete your account
+                registration and start tracking your trading days.
+              </td>
+            </tr>
+
+            <tr>
+              <td
+                style="
+                  font-size: 16px;
+                  color: #444;
+                  line-height: 1.6;
+                  text-align: center;
+                  padding: 10px 20px;
+                "
+              >
+                This helps us keep your account secure and ensures you can
+                recover your password if needed.
+              </td>
+            </tr>
+
+            <!-- CTA -->
+            <tr>
+              <td align="center" style="padding: 30px 0">
+                <a
+                  href="{{ verification_url }}"
+                  style="
+                    background-color: #28a745;
+                    color: #ffffff;
+                    padding: 14px 28px;
+                    text-decoration: none;
+                    border-radius: 6px;
+                    font-weight: bold;
+                    font-size: 16px;
+                  "
+                >
+                  Verify Email
+                </a>
+              </td>
+            </tr>
+
+            <!-- Backup link -->
+            <tr>
+              <td
+                style="
+                  font-size: 13px;
+                  color: #888;
+                  text-align: center;
+                  padding: 10px 30px;
+                  line-height: 1.5;
+                "
+              >
+                If the button above doesn't work, copy and paste this link into
+                your browser:
+                <br />
+                <span style="color: #28a745">{{ verification_url }}</span>
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td
+                style="
+                  font-size: 13px;
+                  color: #888;
+                  text-align: center;
+                  padding-top: 20px;
+                "
+              >
+                If you did not create a TradeDayTrackR account, you can safely
+                ignore this email.
+              </td>
+            </tr>
+
+            <tr>
+              <td
+                style="
+                  font-size: 13px;
+                  color: #888;
+                  text-align: center;
+                  padding-top: 8px;
+                "
+              >
+                © 2026 TradeDayTrackR
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
   </body>
 </html>

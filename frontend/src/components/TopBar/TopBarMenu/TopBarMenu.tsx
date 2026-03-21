@@ -1,4 +1,8 @@
-import { Settings, Logout } from "@mui/icons-material";
+import Dialog from "@components/Dialog/Dialog";
+import { useConfirmLogout } from "@hooks/account/useConfirmLogoutProps";
+import type { User } from "@interfaces/CustomTypes";
+import { PageEnum } from "@interfaces/NavigationTypes";
+import { Logout, Settings } from "@mui/icons-material";
 import {
   Avatar,
   Divider,
@@ -8,10 +12,8 @@ import {
   MenuItem,
   Tooltip,
 } from "@mui/material";
+import useReactNavigation from "@navigation/hooks/useReactNavigation";
 import React from "react";
-import type { User } from "@interfaces/CustomTypes";
-import Dialog from "@components/Dialog/Dialog";
-import { useConfirmLogout } from "@hooks/account/useConfirmLogoutProps";
 import { TopBarMenuContainer } from "../TopBarStyledComponents";
 
 export interface TopBarMenuProps {
@@ -22,6 +24,7 @@ const TopBarMenu: React.FunctionComponent<TopBarMenuProps> = ({ user }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const { openDialog, dialogProps } = useConfirmLogout();
+  const navigation = useReactNavigation();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>): void => {
     setAnchorEl(event.currentTarget);
@@ -33,8 +36,8 @@ const TopBarMenu: React.FunctionComponent<TopBarMenuProps> = ({ user }) => {
   const menuAvatarLetter = user.username
     ? user.username.charAt(0)
     : user.first_name
-    ? user.first_name.charAt(0)
-    : user.email.charAt(0);
+      ? user.first_name.charAt(0)
+      : user.email.charAt(0);
 
   return (
     <TopBarMenuContainer>
@@ -94,7 +97,11 @@ const TopBarMenu: React.FunctionComponent<TopBarMenuProps> = ({ user }) => {
           <Avatar /> Account
         </MenuItem>
         <Divider />
-        <MenuItem onClick={handleClose}>
+        <MenuItem
+          onClick={() => {
+            navigation.navigate(PageEnum.AccountSettings);
+          }}
+        >
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>

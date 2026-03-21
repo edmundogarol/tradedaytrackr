@@ -1,17 +1,17 @@
-import { useCallback, useState } from "react";
-import axios from "axios";
 import environmentConfig from "@utils/environmentConfig";
+import axios from "axios";
+import { useCallback, useState } from "react";
 
 export const APPLICATION_JSON = "application/json";
 axios.defaults.withCredentials = true;
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
 
-export interface AxiosFetchWrapperResponse<T> {
+export interface AxiosFetchWrapperResponse<T, E = {}> {
   fetch: () => Promise<{ data: T | undefined; error: object | undefined }>;
   data: T | undefined;
   loading: boolean;
-  error: object | undefined;
+  error: E | undefined;
 }
 
 function getCookie(name: string): string | null {
@@ -29,7 +29,7 @@ function getCookie(name: string): string | null {
   return cookieValue;
 }
 
-const useAxiosFetch = <T>(
+const useAxiosFetch = <T, E = {}>(
   url: string,
   params?: {
     data?: object;
@@ -40,10 +40,10 @@ const useAxiosFetch = <T>(
   },
   useUrl?: string,
   skip?: boolean,
-): AxiosFetchWrapperResponse<T> => {
+): AxiosFetchWrapperResponse<T, E> => {
   const [data, setData] = useState<T | undefined>(undefined);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<object | undefined>(undefined);
+  const [error, setError] = useState<E | undefined>(undefined);
   const baseUrl = (url: string): string =>
     `${environmentConfig.HOST}/api/${url}`;
 
@@ -80,13 +80,13 @@ const useAxiosFetch = <T>(
       }
       setData(fetchData);
     } catch (err) {
-      console.log({ err });
       if (axios.isAxiosError(err)) {
         setError(err.response?.data || { error: err.message });
         fetchError = err.response?.data || { error: err.message };
       } else {
-        setError({ error: err as unknown as string });
-        fetchError = { error: err as unknown as string };
+        const errorObj = { error: err as unknown as string } as E;
+        setError(errorObj);
+        fetchError = errorObj;
       }
       console.log("Fetch error: ", fetchError, url);
     } finally {

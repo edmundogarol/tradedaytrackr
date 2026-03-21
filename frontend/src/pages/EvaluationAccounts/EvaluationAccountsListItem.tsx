@@ -1,34 +1,34 @@
-import React from "react";
 import GlassTile from "@components/GlassTile/GlassTile";
-import { firmLogoSrc, imageSrc } from "@utils/utils";
-import styled from "styled-components";
 import LinearProgress, {
   linearProgressClasses,
 } from "@mui/material/LinearProgress";
+import { firmLogoSrc, imageSrc } from "@utils/utils";
+import React from "react";
+import styled from "styled-components";
 
-import InfoPopout from "@components/InfoPopout/InfoPopout";
-import { color } from "@styles/colors";
 import AlertPopout from "@components/Alert/AlertPopout";
-import useReactNavigation from "@navigation/hooks/useReactNavigation";
+import InfoPopout from "@components/InfoPopout/InfoPopout";
 import { PageEnum } from "@interfaces/NavigationTypes";
+import useReactNavigation from "@navigation/hooks/useReactNavigation";
+import { color } from "@styles/colors";
 import {
-  BufferContainer,
+  AccountImage,
+  AccountSubtitle,
+  AccountSubtitleHighlighted,
+  AccountTitle,
+  AccountTitleContainer,
+  AccountTradingDaysComplete,
   BufferAmount,
   BufferAmountHighlighted,
+  BufferContainer,
   BufferText,
   DaysContainer,
   DaysItem,
   DaysItemSubtitle,
   DaysItemValue,
-  AccountImage,
-  StatusContainer,
-  Status,
-  AccountSubtitle,
-  AccountSubtitleHighlighted,
-  AccountTitle,
-  AccountTitleContainer,
   ListItemContainer,
-  AccountTradingDaysComplete,
+  Status,
+  StatusContainer,
 } from "./EvaluationAccountsStyledComponents";
 import styles from "./EvaluationAccountsStyles";
 import useGetEvalProgressStatus from "./hooks/useGetEvalProgressStatus";
@@ -112,7 +112,7 @@ const EvaluationAccountsListItem: React.FunctionComponent<
       <AlertPopout
         open={alertNoRecord}
         message="This trade has no journal entry. Please add or link it to a journal entry to view details."
-        setPopoutOpen={setAlertNoRecord}
+        setPopoutOpen={() => setAlertNoRecord(false)}
         hideDuration={5000}
       />
       <ListItemContainer>

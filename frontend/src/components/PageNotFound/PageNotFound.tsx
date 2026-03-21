@@ -1,7 +1,7 @@
-import React from "react";
-import { imageSrc } from "@utils/utils";
-import { Link } from "react-router";
 import Page from "@components/Page/Page";
+import { imageSrc } from "@utils/utils";
+import React from "react";
+import { Link } from "react-router";
 import { Container, Logo, SubText, Text } from "./PageNotFoundStyledComponents";
 
 const PageNotFound: React.FunctionComponent = () => {

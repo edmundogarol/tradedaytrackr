@@ -1,5 +1,4 @@
 export enum PageEnum {
-  RootNavigator = "/root",
   Login = "/login",
   SignUp = "/signUp",
   ResetPassword = "/resetPassword",
@@ -12,10 +11,10 @@ export enum PageEnum {
   FundedAccountDetail = "/fundedAccountDetail",
   EvaluationAccountDetail = "/evaluationAccountDetail",
   TradeStats = "/tradeStats",
+  AccountSettings = "/accountSettings",
 }
 
 export type AuthenticatedStackNavigatorParams = {
-  [PageEnum.RootNavigator]: undefined;
   [PageEnum.Dashboard]: undefined;
   [PageEnum.Journal]: undefined;
   [PageEnum.JournalEntry]: { id: number };
@@ -24,6 +23,7 @@ export type AuthenticatedStackNavigatorParams = {
   [PageEnum.FundedAccountDetail]: { id: number };
   [PageEnum.EvaluationAccountDetail]: { id: number };
   [PageEnum.TradeStats]: undefined;
+  [PageEnum.AccountSettings]: undefined;
 };
 
 export type UnauthenticatedStackNavigatorParams = {

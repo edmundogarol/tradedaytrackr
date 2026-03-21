@@ -1,29 +1,28 @@
-import React, { useMemo } from "react";
+import Button from "@components/Button/Button";
 import Gap from "@components/Gap/Gap";
+import GlassTile from "@components/GlassTile/GlassTile";
+import { Else, If } from "@components/If/If";
+import InfoPopout from "@components/InfoPopout/InfoPopout";
+import CalendarPicker from "@components/Input/CalendarPicker/CalendarPicker";
+import Input from "@components/Input/Input";
+import Modal from "@components/Modal/Modal";
 import Page from "@components/Page/Page";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import EditIcon from "@mui/icons-material/Edit";
+import WallpaperIcon from "@mui/icons-material/Wallpaper";
+import Checkbox from "@mui/material/Checkbox";
+import { color } from "@styles/colors";
+import { BUTTON_WIDTH } from "@styles/constants";
 import {
   PageContainer as Container,
   Section,
   SectionTitle,
   SubsectionHeader,
 } from "@styles/globalStyledComponents";
-import GlassTile from "@components/GlassTile/GlassTile";
 import { devSrc, sanitizeTag } from "@utils/utils";
 import moment from "moment";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import CloseIcon from "@mui/icons-material/Close";
-import InfoPopout from "@components/InfoPopout/InfoPopout";
-import { Else, If } from "@components/If/If";
-import Input from "@components/Input/Input";
-import CalendarPicker from "@components/Input/CalendarPicker/CalendarPicker";
-import Modal from "@components/Modal/Modal";
-import Checkbox from "@mui/material/Checkbox";
-import Button from "@components/Button/Button";
-import { color } from "@styles/colors";
-import { BUTTON_WIDTH, CONTAINER_MARGIN_DEFAULT } from "@styles/constants";
-import { set } from "lodash";
-import { mock } from "node:test";
+import React, { useMemo } from "react";
+import { useSearchParams } from "react-router";
 import {
   ButtonContainer,
   CloseIconStyled,
@@ -33,6 +32,7 @@ import {
   EditDeleteButtons,
   EntryDetails,
   EntryInfoContainer,
+  IconContainer,
   Summary,
   SummaryItem,
   SummaryItemPnL,
@@ -63,9 +63,26 @@ import styles from "./JournalEntryStyles";
 
 interface JournalEntryProps {}
 const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
-  const [editing, setEditing] = React.useState(false);
+  let [searchParams] = useSearchParams();
+  const [editing, setEditing] = React.useState(
+    searchParams.get("id") === "new" || false,
+  );
   const [editingDate, setEditingDate] = React.useState(false);
   const [editingAccounts, setEditingAccounts] = React.useState(false);
+
+  const newEntry = {
+    dateTime: moment().toISOString(),
+    risk: 0,
+    contracts: 0,
+    outcome: 0,
+    instrument: "",
+    description: "",
+    image: "",
+    trades: [],
+    totalPnL: 0,
+    tags: [],
+  };
+
   const [mockEntry, setMockEntry] = React.useState<{
     dateTime: string;
     risk: number;
@@ -77,25 +94,32 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
     trades: number[];
     totalPnL: number;
     tags: string[];
-  }>({
-    dateTime: "2011-10-10T14:48:00.000+09:00",
-    risk: 300,
-    contracts: 3,
-    outcome: 310,
-    instrument: "NQ",
-    description:
-      "Price delivered from a higher timeframe bearish leg that had already swept external liquidity earlier in the session. Once the 5m structure shifted bearish, price retraced cleanly into the 50% of the impulse leg which also aligned with a small 1m IFVG. Entry was taken as price tapped the gap and showed immediate rejection. The trade worked quickly as the delivery continued toward the next pool of liquidity. The key element here was respecting the higher timeframe delivery and not anticipating the reversal before the structure shift occurred.",
-    image: "https://cdn-icons-png.flaticon.com/512/190/190411.png",
-    trades: [1, 2, 5],
-    totalPnL: 930,
-    tags: ["IFVG", "Long", "Good momentum"],
-    // tags: [],
-  });
+  }>(
+    searchParams.get("id") === "new"
+      ? newEntry
+      : {
+          dateTime: "2011-10-10T14:48:00.000+09:00",
+          risk: 300,
+          contracts: 3,
+          outcome: 310,
+          instrument: "NQ",
+          description:
+            "Price delivered from a higher timeframe bearish leg that had already swept external liquidity earlier in the session. Once the 5m structure shifted bearish, price retraced cleanly into the 50% of the impulse leg which also aligned with a small 1m IFVG. Entry was taken as price tapped the gap and showed immediate rejection. The trade worked quickly as the delivery continued toward the next pool of liquidity. The key element here was respecting the higher timeframe delivery and not anticipating the reversal before the structure shift occurred.",
+          image: "https://cdn-icons-png.flaticon.com/512/190/190411.png",
+          trades: [1, 2, 5],
+          totalPnL: 930,
+          tags: ["IFVG", "Long", "Good momentum"],
+          // tags: [],
+        },
+  );
   const [selectedAccountTrades, setSelectedAccountTrades] = React.useState<
     number[]
   >([...mockEntry.trades]);
   const [currentTagInput, setCurrentTagInput] = React.useState("");
-
+  const saveDisabled =
+    mockEntry.contracts <= 0 ||
+    mockEntry.risk <= 0 ||
+    mockEntry.instrument === "";
   const availableAccountTradesOnDateMock = [
     {
       id: 1,
@@ -263,6 +287,7 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                   <TagInputContainer>
                     <If condition={editing}>
                       <Input
+                        darkMode
                         type="text"
                         maxInputLength={35}
                         placeholder="Enter tag"
@@ -365,8 +390,21 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                     {/* Add edit and delete buttons here */}
                     <ButtonContainer>
                       <If condition={editing}>
-                        <TradeSubtitleEditing onClick={() => setEditing(false)}>
+                        <TradeSubtitleEditing
+                          $disabled={saveDisabled}
+                          onClick={() =>
+                            saveDisabled ? null : setEditing(false)
+                          }
+                        >
                           {"Save"}
+                        </TradeSubtitleEditing>
+                        <TradeSubtitleEditing
+                          onClick={() => {
+                            setEditing(false);
+                            setMockEntry(mockEntry);
+                          }}
+                        >
+                          {"Cancel"}
                         </TradeSubtitleEditing>
                         <Else>
                           <EditIcon
@@ -385,7 +423,21 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                   </EditDeleteButtons>
                 </TradeInfo>
                 <TradeCapture>
-                  <TradeImage $src={devSrc("trade1.png")} />
+                  <div>
+                    <TradeImage
+                      $src={
+                        searchParams.get("id") === "new"
+                          ? ""
+                          : devSrc("trade1.png")
+                      }
+                    >
+                      <If condition={editing}>
+                        <IconContainer>
+                          <WallpaperIcon style={{ fontSize: 60 }} />
+                        </IconContainer>
+                      </If>
+                    </TradeImage>
+                  </div>
                   <TradeSingleAccountInfo>
                     <SummaryItem>
                       <SummaryItemTitle>
@@ -397,6 +449,7 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                       <If condition={editing}>
                         <SummaryItemValue>
                           <Input
+                            darkMode
                             type="number"
                             onChange={(e) =>
                               setMockEntry({
@@ -423,6 +476,7 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                       <If condition={editing}>
                         <SummaryItemValue>
                           <Input
+                            darkMode
                             type="number"
                             onChange={(e) =>
                               setMockEntry({
@@ -446,6 +500,7 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                       <If condition={editing}>
                         <SummaryItemValue>
                           <Input
+                            darkMode
                             type="number"
                             onChange={(e) =>
                               setMockEntry({
@@ -494,6 +549,8 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                           resize: "none",
                           padding: 5,
                           fontFamily: "sans-serif",
+                          background: "#353f53",
+                          color: "#e5e5e5",
                         }}
                       />
                     </DescriptionText>
@@ -524,6 +581,7 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                     <If condition={editing}>
                       <SummaryItemValue>
                         <Input
+                          darkMode
                           type="text"
                           onChange={(e) =>
                             setMockEntry({
@@ -565,7 +623,7 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                   <SummaryItem>
                     <SummaryItemTitle>Total Contracts</SummaryItemTitle>
                     <SummaryItemValue>
-                      {`x${mockEntry.contracts * mockEntry.trades.length}`}
+                      {`x${mockEntry.trades.length === 0 ? mockEntry.contracts : mockEntry.contracts * mockEntry.trades.length}`}
                       <SummaryItemValueSubtext>
                         {`[${mockEntry.trades.length} Accounts]`}
                       </SummaryItemValueSubtext>

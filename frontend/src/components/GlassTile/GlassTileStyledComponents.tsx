@@ -208,3 +208,8 @@ export const GlowingIconWrapper = styled.div<{
     opacity: 1;
   }
 `;
+
+export const GlassTileChildrenWrapper = styled.div`
+  width: 100%;
+  z-index: 10;
+`;

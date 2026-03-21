@@ -42,6 +42,7 @@ export const TradeImage = styled.div<{ $src: string }>`
   background-image: url(${(props): string => props.$src});
   background-size: cover;
   background-position: center;
+  position: relative;
 `;
 
 export const TradeSubtitle = styled.div`
@@ -67,14 +68,28 @@ export const SaveButton = styled(TradeSubtitle)`
   }
 `;
 
-export const TradeSubtitleEditing = styled(TradeSubtitle)`
+export const TradeSubtitleEditing = styled(TradeSubtitle)<{
+  $disabled?: boolean;
+}>`
   background: white;
   color: black;
   border-radius: 3px;
   margin-right: 5px;
-  &:hover {
-    cursor: pointer;
-  }
+  ${({ $disabled }): any =>
+    $disabled
+      ? `
+    background: #d0d8e687;
+    &:hover {
+    pointer-events: auto;
+      cursor: not-allowed;
+    }
+  `
+      : `
+    &:hover {
+      cursor: pointer;
+      background: #efefef;
+    }
+  `}
 `;
 
 export const TagContainer = styled.div`
@@ -119,6 +134,23 @@ export const Tag = styled.div<{ $editing?: boolean }>`
   word-spacing: -3px;
 `;
 
+export const IconContainer = styled.div`
+  position: absolute;
+  font-size: 45px;
+  color: #ffffff;
+  background: #00000030;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  &:hover {
+    cursor: pointer;
+    opacity: 1;
+  }
+`;
+
 export const CloseIconStyled = styled(CloseIcon)`
   margin: unset;
 
@@ -135,11 +167,11 @@ export const EditDeleteButtons = styled.div`
 
 export const ButtonContainer = styled.div`
   opacity: 0.7;
-
-  &:hover {
+  display: flex;
+  /* &:hover {
     opacity: 1;
     cursor: pointer;
-  }
+  } */
 `;
 
 export const Summary = styled(Section)`

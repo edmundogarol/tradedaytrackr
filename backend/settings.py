@@ -10,18 +10,23 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
-import os
 import json
+import os
 from pathlib import Path
+
 from corsheaders.defaults import default_headers
 
 if "DEVENV" in os.environ:
     # SECURITY WARNING: don't run with debug turned on in production!
     DEBUG = True
     dbconfig = "./tdtr-config.json"
+    WEB_APP_URL = "http://localhost:3000"
+    WEB_API_URL = "http://localhost:8000"
 else:
     DEBUG = False
     dbconfig = "/opt/app/tdtr-config.json"
+    WEB_APP_URL = "http://tradedaytrackr.com"
+    WEB_API_URL = "http://tradedaytrackr.com"
 
 SETTINGS = None
 with open(dbconfig) as f:
@@ -174,4 +179,10 @@ STATICFILES_DIRS = [
     BASE_DIR / "backend" / "static",
 ]
 
-EMAIL_ASSETS_BASE_URL = "https://tradedaytrackr-extra-assets.s3.us-west-2.amazonaws.com"
+EMAIL_ASSETS_BASE_URL = (
+    "https://tradedaytrackr-extra-assets.s3.us-west-2.amazonaws.com/logos"
+)
+
+CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"

@@ -1,6 +1,4 @@
-from .user import UserViewSet
-from .login import LoginViewSet
-from .login import LogoutViewSet
+from .login import LoginViewSet, LogoutViewSet
 from .reset_password import ResetPasswordViewSet
-from .verify_account import VerifyAccountViewSet
-from .verify_account import RequestVerificationViewSet
+from .user import UserViewSet
+from .verify_account import RequestVerificationViewSet, VerifyAccountViewSet
