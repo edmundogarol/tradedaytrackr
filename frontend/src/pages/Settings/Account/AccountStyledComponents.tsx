@@ -38,10 +38,14 @@ export const AccountDetailsSection = styled(Section)`
   padding-right: ${CONTAINER_PADDING_LARGE}px;
   min-width: 300px;
   flex: 1;
+  display: flex;
+  flex-direction: column;
 `;
 export const EmailPreferencesSection = styled(Section)`
   padding: ${CONTAINER_PADDING_SMALL}px;
   flex: 1;
+  display: flex;
+  flex-direction: column;
 `;
 
 export const SwitchItemRow = styled.div`

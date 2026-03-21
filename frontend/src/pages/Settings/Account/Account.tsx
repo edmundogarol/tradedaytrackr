@@ -10,6 +10,7 @@ import DoneOutlineIcon from "@mui/icons-material/Done";
 import LockIcon from "@mui/icons-material/Lock";
 import Switch from "@mui/material/Switch";
 import { color } from "@styles/colors";
+import { BUTTON_WIDTH } from "@styles/constants";
 import {
   PageContainer as Container,
   SectionText,
@@ -56,7 +57,14 @@ const Account: React.FunctionComponent<AccountProps> = () => {
                   <Input label="Email" value="johndoe@example.com" darkMode />
                   <Gap level={1} />
                   <Input label="Full Name" value="John Doe" darkMode />
-                  <Gap level={1} />
+                  <Gap level={2} />
+                  <Button
+                    text={"Save Changes"}
+                    style={{
+                      marginLeft: "auto",
+                      maxWidth: `${BUTTON_WIDTH}px`,
+                    }}
+                  />
                 </AccountDetailsSection>
                 <EmailPreferencesSection>
                   <SubsectionHeader>Email Preferences</SubsectionHeader>
@@ -138,7 +146,14 @@ const Account: React.FunctionComponent<AccountProps> = () => {
                       type="password"
                       darkMode
                     />
-                    <Gap level={1} />
+                    <Gap level={2} />
+                    <Button
+                      text={"Save Password"}
+                      style={{
+                        marginLeft: "auto",
+                        maxWidth: `${BUTTON_WIDTH}px`,
+                      }}
+                    />
                   </AccountDetailsSection>
                 </AccountSettingsContainer>
               </GlassTileChildrenWrapper>
