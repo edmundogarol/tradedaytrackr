@@ -1,30 +1,27 @@
-import React, { useMemo } from "react";
+import Button from "@components/Button/Button";
 import Gap from "@components/Gap/Gap";
+import GlassTile from "@components/GlassTile/GlassTile";
+import { Else, If } from "@components/If/If";
+import InfoPopout from "@components/InfoPopout/InfoPopout";
+import CalendarPicker from "@components/Input/CalendarPicker/CalendarPicker";
+import Input from "@components/Input/Input";
+import Modal from "@components/Modal/Modal";
 import Page from "@components/Page/Page";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import EditIcon from "@mui/icons-material/Edit";
+import WallpaperIcon from "@mui/icons-material/Wallpaper";
+import Checkbox from "@mui/material/Checkbox";
+import { color } from "@styles/colors";
+import { BUTTON_WIDTH } from "@styles/constants";
 import {
   PageContainer as Container,
   Section,
   SectionTitle,
   SubsectionHeader,
 } from "@styles/globalStyledComponents";
-import GlassTile from "@components/GlassTile/GlassTile";
 import { devSrc, sanitizeTag } from "@utils/utils";
 import moment from "moment";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import CloseIcon from "@mui/icons-material/Close";
-import WallpaperIcon from "@mui/icons-material/Wallpaper";
-import InfoPopout from "@components/InfoPopout/InfoPopout";
-import { Else, If } from "@components/If/If";
-import Input from "@components/Input/Input";
-import CalendarPicker from "@components/Input/CalendarPicker/CalendarPicker";
-import Modal from "@components/Modal/Modal";
-import Checkbox from "@mui/material/Checkbox";
-import Button from "@components/Button/Button";
-import { color } from "@styles/colors";
-import { BUTTON_WIDTH, CONTAINER_MARGIN_DEFAULT } from "@styles/constants";
-import { set } from "lodash";
-import { mock } from "node:test";
+import React, { useMemo } from "react";
 import { useSearchParams } from "react-router";
 import {
   ButtonContainer,
@@ -290,6 +287,7 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                   <TagInputContainer>
                     <If condition={editing}>
                       <Input
+                        darkMode
                         type="text"
                         maxInputLength={35}
                         placeholder="Enter tag"
@@ -451,6 +449,7 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                       <If condition={editing}>
                         <SummaryItemValue>
                           <Input
+                            darkMode
                             type="number"
                             onChange={(e) =>
                               setMockEntry({
@@ -477,6 +476,7 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                       <If condition={editing}>
                         <SummaryItemValue>
                           <Input
+                            darkMode
                             type="number"
                             onChange={(e) =>
                               setMockEntry({
@@ -500,6 +500,7 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                       <If condition={editing}>
                         <SummaryItemValue>
                           <Input
+                            darkMode
                             type="number"
                             onChange={(e) =>
                               setMockEntry({
@@ -548,6 +549,8 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                           resize: "none",
                           padding: 5,
                           fontFamily: "sans-serif",
+                          background: "#353f53",
+                          color: "#e5e5e5",
                         }}
                       />
                     </DescriptionText>
@@ -578,6 +581,7 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                     <If condition={editing}>
                       <SummaryItemValue>
                         <Input
+                          darkMode
                           type="text"
                           onChange={(e) =>
                             setMockEntry({

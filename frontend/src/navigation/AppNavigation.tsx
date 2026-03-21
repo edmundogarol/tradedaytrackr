@@ -16,6 +16,7 @@ import useLoginCheckHandler from "@pages/Login/hooks/useLoginCheckHandler";
 import useLoginDispatch from "@pages/Login/hooks/useLoginDispatch";
 import useLoginState from "@pages/Login/hooks/useLoginState";
 import ResetPassword from "@pages/ResetPassword/ResetPassword";
+import Account from "@pages/Settings/Account/Account";
 import SignUp from "@pages/SignUp/SignUp";
 import { isNotEmptyString } from "@utils/utils";
 import React from "react";
@@ -66,6 +67,7 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
           />
           <Route path={PageEnum.Journal} element={<Journal />} />
           <Route path={PageEnum.JournalEntry} element={<JournalEntry />} />
+          <Route path={PageEnum.AccountSettings} element={<Account />} />
         </Route>
         {/* Root */}
         <Route path="/" element={checkAuth({ user })} />

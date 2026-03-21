@@ -41,6 +41,11 @@ export const Section = styled.div`
   width: 100%;
 `;
 
+export const SectionText = styled.p`
+  color: #b5b5b5;
+  font-weight: 200;
+`;
+
 export const DropdownsSection = styled.div`
   display: flex;
   gap: 10px;

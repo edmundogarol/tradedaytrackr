@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import { color } from "@styles/colors";
 import {
   CONTAINER_BORDER_RADIUS_SMALL,
   CONTAINER_MARGIN_DEFAULT,
@@ -6,18 +6,17 @@ import {
   CONTAINER_PADDING_SMALL,
   INPUT_SIZE,
   LABEL_SIZE,
-  LABEL_SIZE_MEDIUM,
   TEXT_SIZE,
 } from "@styles/constants";
-import { color } from "@styles/colors";
 import { Label } from "@styles/globalStyledComponents";
-import { List } from "@mui/material";
+import styled, { css } from "styled-components";
 
 export const Container = styled.div`
   width: 100%;
 `;
 
 export const InputContainer = styled.div<{
+  $darkMode?: boolean;
   $error?: boolean;
 }>`
   background-color: ${color("SystemBackground1")};
@@ -37,6 +36,13 @@ export const InputContainer = styled.div<{
     }
   }}
   width: 100%;
+
+  ${({ $darkMode }): any => {
+    if ($darkMode)
+      return css`
+        background: unset;
+      `;
+  }}
 `;
 export const MaxChar = styled.div`
   color: #b9b9b9;
@@ -64,6 +70,7 @@ export const IconContainer = styled.div`
 `;
 
 export const InputStyled = styled.input<{
+  $darkMode?: boolean;
   $disabled?: boolean;
   $placeholderTextColor?: string;
 }>`
@@ -86,6 +93,16 @@ export const InputStyled = styled.input<{
     if ($disabled)
       return css`
         color: ${color("SystemLabel1")};
+      `;
+  }}
+  ${({ $darkMode }): any => {
+    if ($darkMode)
+      return css`
+        background: #353f53;
+        color: #bdbdbd;
+        border: none;
+        padding-left: 10px;
+        border-radius: 4px;
       `;
   }}
 `;

@@ -10,6 +10,7 @@ const styles = {
     width: 100,
     height: 30,
     border: "none",
+    color: "black",
     fontSize: "inherit",
     textAlign: "end",
   } as React.CSSProperties,

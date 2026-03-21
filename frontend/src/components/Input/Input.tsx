@@ -1,22 +1,21 @@
-import React from "react";
-import { If } from "@components/If/If";
-import { color } from "@styles/colors";
 import Icon from "@components/Icon/Icon";
 import { IconTypeEnum } from "@components/Icon/IconInterfaces";
+import { If } from "@components/If/If";
+import { color } from "@styles/colors";
+import React from "react";
 import {
-  InputLabel as Label,
-  InputContainer,
-  InputStyled,
+  Container,
+  CurrentCharCount,
   Error,
   ErrorContainer,
-  Container,
-  Subtext,
   IconContainer,
+  InputContainer,
+  InputStyled,
+  InputLabel as Label,
   ListContainer,
   ListItem,
-  InputMaxCharContainer,
   MaxChar,
-  CurrentCharCount,
+  Subtext,
 } from "./InputStyledComponents";
 
 export interface InputWrapperProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -31,6 +30,7 @@ export interface InputWrapperProps extends React.InputHTMLAttributes<HTMLInputEl
   containerStyle?: React.CSSProperties;
   onEnterPress?: (value: string) => void;
   maxInputLength?: number;
+  darkMode?: boolean;
 }
 
 const Input: React.FC<InputWrapperProps> = ({
@@ -47,6 +47,7 @@ const Input: React.FC<InputWrapperProps> = ({
   onEnterPress,
   value,
   maxInputLength,
+  darkMode,
   ...props
 }) => {
   const [focused, setFocused] = React.useState(false);
@@ -114,7 +115,11 @@ const Input: React.FC<InputWrapperProps> = ({
         </Label>
       </If>
 
-      <InputContainer $error={!!error} style={inputContainerStyle}>
+      <InputContainer
+        $error={!!error}
+        style={inputContainerStyle}
+        $darkMode={darkMode}
+      >
         <If condition={!!icon}>
           <IconContainer>{icon}</IconContainer>
         </If>
@@ -132,6 +137,7 @@ const Input: React.FC<InputWrapperProps> = ({
           $placeholderTextColor={
             error ? color("SystemError2") : color("SystemLabel1")
           }
+          $darkMode={darkMode}
         />
         {maxInputLength && (
           <MaxChar>
