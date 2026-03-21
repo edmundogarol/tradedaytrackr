@@ -1,9 +1,9 @@
-import styled from "styled-components";
+import { color } from "@styles/colors";
 import {
   CONTAINER_PADDING_DEFAULT,
   CONTAINER_PADDING_LARGE,
 } from "@styles/constants";
-import { color } from "@styles/colors";
+import styled from "styled-components";
 
 export const Container = styled.div`
   width: 100%;

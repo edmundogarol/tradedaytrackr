@@ -1,5 +1,5 @@
-import type { RuleSet } from "styled-components";
-import styled, { css, keyframes } from "styled-components";
+import Button from "@components/Button/Button";
+import { color } from "@styles/colors";
 import {
   CONTAINER_MARGIN_DEFAULT,
   CONTAINER_MARGIN_SMALL,
@@ -9,9 +9,9 @@ import {
   LABEL_SIZE_SMALL,
   LINK_SIZE_SMALL,
 } from "@styles/constants";
-import { color } from "@styles/colors";
-import Button from "@components/Button/Button";
 import { Link } from "react-router";
+import type { RuleSet } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 
 const shine = keyframes`
   0% {
@@ -108,7 +108,8 @@ export const MainImage = styled.div<{ $shineDone?: boolean }>`
           background: url("/images/tradedaytrackr_full_no_background.svg");
           background-repeat: no-repeat;
           background-position: center;
-          animation: ${fadeIn} 1s ease-out forwards,
+          animation:
+            ${fadeIn} 1s ease-out forwards,
             fadeOut 0.5s ease-out 1s forwards;
         `
       : css`
@@ -121,7 +122,9 @@ export const MainImage = styled.div<{ $shineDone?: boolean }>`
             #333 100%
           );
           background-size: 300% auto;
-          animation: ${shine} 1s ease-out forwards, fadeOut 1s ease-out forwards,
+          animation:
+            ${shine} 1s ease-out forwards,
+            fadeOut 1s ease-out forwards,
             ${fadeOut} 1s ease-out 1s forwards;
 
           mask-image: url("/images/tradedaytrackr_full_no_background.svg");

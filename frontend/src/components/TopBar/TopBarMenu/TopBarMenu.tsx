@@ -93,7 +93,11 @@ const TopBarMenu: React.FunctionComponent<TopBarMenuProps> = ({ user }) => {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem onClick={handleClose}>
+        <MenuItem
+          onClick={() => {
+            navigation.navigate(PageEnum.AccountSettings);
+          }}
+        >
           <Avatar /> Account
         </MenuItem>
         <Divider />
