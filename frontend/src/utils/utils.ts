@@ -5,7 +5,7 @@ export const imageSrc = (imageName: string): string => {
 };
 
 export const firmLogoSrc = (firmName: string): string => {
-  return `/firms/${firmName}.png`;
+  return `firms/${firmName}.png`;
 };
 
 export const devSrc = (imageName: string): string => {
