@@ -44,6 +44,7 @@ export const Section = styled.div`
 export const SectionText = styled.p`
   color: #b5b5b5;
   font-weight: 200;
+  font-size: 14px;
 `;
 
 export const DropdownsSection = styled.div`
