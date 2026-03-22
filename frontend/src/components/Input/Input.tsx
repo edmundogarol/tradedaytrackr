@@ -19,7 +19,7 @@ import {
 } from "./InputStyledComponents";
 
 export interface InputWrapperProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
+  label?: string | React.ReactNode;
   disabled?: boolean;
   icon?: React.ReactElement;
   error?: string;
@@ -31,6 +31,7 @@ export interface InputWrapperProps extends React.InputHTMLAttributes<HTMLInputEl
   onEnterPress?: (value: string) => void;
   maxInputLength?: number;
   darkMode?: boolean;
+  positiveOnly?: boolean;
 }
 
 const Input: React.FC<InputWrapperProps> = ({
@@ -48,6 +49,7 @@ const Input: React.FC<InputWrapperProps> = ({
   value,
   maxInputLength,
   darkMode,
+  positiveOnly,
   ...props
 }) => {
   const [focused, setFocused] = React.useState(false);
@@ -138,6 +140,12 @@ const Input: React.FC<InputWrapperProps> = ({
             error ? color("SystemError2") : color("SystemLabel1")
           }
           $darkMode={darkMode}
+          onChange={(e) => {
+            if (positiveOnly && Number(e.target.value) < 0) {
+              return;
+            }
+            props.onChange?.(e);
+          }}
         />
         {maxInputLength && (
           <MaxChar>

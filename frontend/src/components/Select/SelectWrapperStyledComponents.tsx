@@ -21,7 +21,7 @@ export const SelectContainer = styled.div`
 
 export const Label = styled.span`
   color: #b8b8b8;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   display: inline-block;
   text-transform: uppercase;
   font-size: 13px;

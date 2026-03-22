@@ -1,10 +1,10 @@
-import { useState } from "react";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
 import InfoOutlineIcon from "@mui/icons-material/InfoOutlined";
+import Paper from "@mui/material/Paper";
 import Popper from "@mui/material/Popper";
-import styles from "./InfoPopoutStyles";
+import Typography from "@mui/material/Typography";
+import { useState } from "react";
 import { Container } from "./InfoPopoutStyledComponents";
+import styles from "./InfoPopoutStyles";
 
 export interface InfoPopoutProps {
   infoDescription: string;

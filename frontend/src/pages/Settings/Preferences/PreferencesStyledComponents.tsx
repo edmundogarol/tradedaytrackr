@@ -7,7 +7,6 @@ import styled from "styled-components";
 
 export const SectionContainer = styled.div`
   display: flex;
-  flex-wrap: wrap;
   flex-direction: row;
   gap: 16px;
   padding: ${CONTAINER_PADDING_SMALL}px;
@@ -45,4 +44,17 @@ export const CheckDescriptionContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+`;
+
+export const AddTemplateSection = styled.div`
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+`;
+
+export const AddTemplateSectionHalf = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1 1 300px;
 `;
