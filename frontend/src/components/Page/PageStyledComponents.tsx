@@ -36,6 +36,8 @@ export const Container = styled.div<{
 
 export const ChildrenContainer = styled.div`
   flex: 1;
+  width: 100%;
+  max-width: 1200px;
 
   display: flex;
   flex-direction: column;

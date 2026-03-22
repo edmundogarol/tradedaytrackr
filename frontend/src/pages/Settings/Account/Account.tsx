@@ -35,8 +35,7 @@ const Account: React.FunctionComponent<AccountProps> = () => {
   return (
     <Page topBarShowMenu={true}>
       <Container>
-        <SectionTitle>Account Settings</SectionTitle>
-        <Gap level={1} />
+        <SectionTitle>Account</SectionTitle>
         <AccountSettingsContainer>
           <GlassTile
             featureTile
@@ -148,7 +147,7 @@ const Account: React.FunctionComponent<AccountProps> = () => {
                     />
                     <Gap level={2} />
                     <Button
-                      text={"Save Password"}
+                      text={"Update Password"}
                       style={{
                         marginLeft: "auto",
                         maxWidth: `${BUTTON_WIDTH}px`,

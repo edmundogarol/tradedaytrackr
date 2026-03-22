@@ -3,6 +3,7 @@ import { useConfirmLogout } from "@hooks/account/useConfirmLogoutProps";
 import type { User } from "@interfaces/CustomTypes";
 import { PageEnum } from "@interfaces/NavigationTypes";
 import { Logout, Settings } from "@mui/icons-material";
+import CreditCardIcon from "@mui/icons-material/CreditCard";
 import {
   Avatar,
   Divider,
@@ -74,6 +75,7 @@ const TopBarMenu: React.FunctionComponent<TopBarMenuProps> = ({ user }) => {
                 height: 32,
                 ml: -0.5,
                 mr: 1,
+                backgroundColor: "#757575",
               },
               "&::before": {
                 content: '""',
@@ -100,10 +102,18 @@ const TopBarMenu: React.FunctionComponent<TopBarMenuProps> = ({ user }) => {
         >
           <Avatar /> Account
         </MenuItem>
+        <MenuItem
+          onClick={() => {
+            navigation.navigate(PageEnum.Billing);
+          }}
+        >
+          <CreditCardIcon style={{ color: "#757575", marginRight: 10 }} />{" "}
+          Billing
+        </MenuItem>
         <Divider />
         <MenuItem
           onClick={() => {
-            navigation.navigate(PageEnum.AccountSettings);
+            navigation.navigate(PageEnum.Preferences);
           }}
         >
           <ListItemIcon>

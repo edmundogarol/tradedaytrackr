@@ -12,6 +12,8 @@ export enum PageEnum {
   EvaluationAccountDetail = "/evaluationAccountDetail",
   TradeStats = "/tradeStats",
   AccountSettings = "/accountSettings",
+  Preferences = "/preferences",
+  Billing = "/billing",
 }
 
 export type AuthenticatedStackNavigatorParams = {
@@ -24,6 +26,8 @@ export type AuthenticatedStackNavigatorParams = {
   [PageEnum.EvaluationAccountDetail]: { id: number };
   [PageEnum.TradeStats]: undefined;
   [PageEnum.AccountSettings]: undefined;
+  [PageEnum.Preferences]: undefined;
+  [PageEnum.Billing]: undefined;
 };
 
 export type UnauthenticatedStackNavigatorParams = {

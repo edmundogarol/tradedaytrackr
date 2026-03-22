@@ -44,6 +44,7 @@ export const Section = styled.div`
 export const SectionText = styled.p`
   color: #b5b5b5;
   font-weight: 200;
+  font-size: 14px;
 `;
 
 export const DropdownsSection = styled.div`
@@ -51,4 +52,29 @@ export const DropdownsSection = styled.div`
   gap: 10px;
   margin-bottom: 10px;
   justify-content: space-between;
+`;
+
+export const Table = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const TableItem = styled.div<{
+  $header?: boolean;
+  $idx?: number;
+}>`
+  display: flex;
+  color: ${({ $header }): string => ($header ? "#9f9f9f" : "#d5d5d5")};
+  border: 1px solid #fcfcfc17;
+  padding: 10px;
+  font-weight: 100;
+  font-size: 14px;
+  background-color: ${({ $idx }): string =>
+    $idx !== undefined && $idx % 2 === 0 ? "#5161821f" : "transparent"};
+`;
+
+export const TableField = styled.div<{ $flexSize?: number }>`
+  flex: ${({ $flexSize }): string => ($flexSize ? $flexSize.toString() : "1")};
+  display: flex;
+  gap: 10px;
 `;
