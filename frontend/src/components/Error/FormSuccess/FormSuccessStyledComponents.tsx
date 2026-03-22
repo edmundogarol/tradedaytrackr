@@ -18,4 +18,5 @@ export const FormSuccessContainer = styled.div`
   flex-direction: row;
   margin-bottom: ${CONTAINER_MARGIN_DEFAULT}px;
   width: auto;
+  display: flex;
 `;

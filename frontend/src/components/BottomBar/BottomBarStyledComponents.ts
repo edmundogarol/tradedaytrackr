@@ -10,6 +10,11 @@ export const Container = styled.div<{ $transparent?: boolean }>`
     $transparent
       ? `background-color: transparent;`
       : `background-color: ${color("SystemBackground1")};`}
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: ${color("SystemLabel1")};
+  font-size: 12px;
 `;
 
 export const BottomBarLink = styled(Link)`

@@ -10,10 +10,20 @@ const BottomBar: React.FunctionComponent<BottomBarProps> = ({
 }) => {
   return (
     <Container $transparent={transparent}>
-      <span>© 2026 TradeDayTrackR. All rights reserved.</span>
-      <Link to="/help">Help</Link>
-      <Link to="/faq">FAQ</Link>
-      <Link to="/contactUs">Contact Us</Link>
+      <span
+        style={{
+          borderRight: "1px solid grey",
+          paddingRight: 10,
+          marginRight: 5,
+        }}
+      >
+        © 2026 TradeDayTrackR. All rights reserved.
+      </span>
+      <div>
+        <Link to="/help">Help</Link>
+        <Link to="/faq">FAQ</Link>
+        <Link to="/contactUs">Contact Us</Link>
+      </div>
     </Container>
   );
 };
