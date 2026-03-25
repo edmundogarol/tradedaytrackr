@@ -47,7 +47,7 @@ const Billing: React.FunctionComponent<BillingProps> = () => {
               <SectionContainer>
                 <SectionText>View your current subscription plan</SectionText>
                 <PlansContainer>
-                  <PlanTile>
+                  <PlanTile $currentPlan={true}>
                     <PlanHeader>
                       <PlanLeftContainer>Free</PlanLeftContainer>
                       <PlanRightContainer>
@@ -159,19 +159,7 @@ const Billing: React.FunctionComponent<BillingProps> = () => {
                           <DoneOutlineIcon
                             style={{ color: "#4caf50", fontSize: 18 }}
                           />
-                          Priority email & chat
-                        </PlanDetailsItem>
-                        <PlanDetailsItem>
-                          <DoneOutlineIcon
-                            style={{ color: "#4caf50", fontSize: 18 }}
-                          />
-                          Custom templates
-                        </PlanDetailsItem>
-                        <PlanDetailsItem>
-                          <DoneOutlineIcon
-                            style={{ color: "#4caf50", fontSize: 18 }}
-                          />
-                          Personal coaching
+                          Priority support with dedicated agent
                         </PlanDetailsItem>
                       </PlanLeftContainer>
                     </PlanDetails>

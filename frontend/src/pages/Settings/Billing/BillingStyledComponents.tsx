@@ -57,13 +57,23 @@ export const PlansContainer = styled.div`
   gap: 16px;
 `;
 
-export const PlanTile = styled.div<{ $backgroundColor?: string }>`
+export const PlanTile = styled.div<{
+  $backgroundColor?: string;
+  $currentPlan?: boolean;
+}>`
   flex: 1;
   background: ${({ $backgroundColor }): string =>
     $backgroundColor || "#ffffff0a"};
   border-radius: 4px;
   padding: 10px;
   border: 1px solid #ffffff24;
+  ${({ $currentPlan }): string =>
+    $currentPlan ? "border-color: #c1fec3;" : ""}
+
+  &:hover {
+    box-shadow: 0px 0px 10px -2px white;
+    cursor: pointer;
+  }
 `;
 export const PlanHeader = styled.div`
   display: flex;
