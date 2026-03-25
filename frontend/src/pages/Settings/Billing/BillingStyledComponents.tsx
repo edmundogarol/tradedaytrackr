@@ -51,3 +51,61 @@ export const CheckDescriptionContainer = styled.div`
   align-items: center;
   gap: 10px;
 `;
+
+export const PlansContainer = styled.div`
+  display: flex;
+  gap: 16px;
+`;
+
+export const PlanTile = styled.div<{
+  $backgroundColor?: string;
+  $currentPlan?: boolean;
+}>`
+  flex: 1;
+  background: ${({ $backgroundColor }): string =>
+    $backgroundColor || "#ffffff0a"};
+  border-radius: 4px;
+  padding: 10px;
+  border: 1px solid #ffffff24;
+  ${({ $currentPlan }): string =>
+    $currentPlan ? "border-color: #c1fec3;" : ""}
+
+  &:hover {
+    box-shadow: 0px 0px 10px -2px white;
+    cursor: pointer;
+  }
+`;
+export const PlanHeader = styled.div`
+  display: flex;
+  border-bottom: 1px solid #ffffff3d;
+  color: #ffffffc9;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+`;
+export const PlanDetails = styled.div`
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+  color: #ffffff9c;
+  font-size: 13px;
+  text-align: center;
+`;
+
+export const PlanDetailsItem = styled.span`
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  gap: 5px;
+`;
+
+export const PlanLeftContainer = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+`;
+export const PlanRightContainer = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+`;

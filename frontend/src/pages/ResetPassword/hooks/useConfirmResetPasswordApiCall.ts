@@ -2,10 +2,10 @@ import type { AxiosFetchWrapperResponse } from "@hooks/useAxiosFetch";
 import useAxiosFetch from "@hooks/useAxiosFetch";
 import useLoginState from "@pages/Login/hooks/useLoginState";
 
-const useResetPasswordApiCall = (): AxiosFetchWrapperResponse<{}> => {
+const useConfirmResetPasswordApiCall = (): AxiosFetchWrapperResponse<{}> => {
   const { resetPasswordForm } = useLoginState();
   const { fetch, data, loading, error } = useAxiosFetch<{}>(
-    "request-password-reset/",
+    "submit-password-reset/",
     {
       method: "POST",
       data: resetPasswordForm,
@@ -20,4 +20,4 @@ const useResetPasswordApiCall = (): AxiosFetchWrapperResponse<{}> => {
   };
 };
 
-export default useResetPasswordApiCall;
+export default useConfirmResetPasswordApiCall;

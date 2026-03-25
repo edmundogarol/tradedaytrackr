@@ -11,4 +11,7 @@ export interface SignUpForm extends LoginForm {
 
 export interface ResetPasswordForm {
   email: string;
+  password?: string;
+  confirm_password?: string;
+  token?: string;
 }

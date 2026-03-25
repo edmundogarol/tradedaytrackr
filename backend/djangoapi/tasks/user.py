@@ -61,3 +61,29 @@ def send_welcome_email(email):
 
     email_message.attach_alternative(html_content, "text/html")
     email_message.send()
+
+
+@shared_task
+def send_reset_password_email(email, reset_url):
+
+    subject = "Reset your password - TradeDayTrackR"
+
+    html_content = render_to_string(
+        "emails/reset_password.html",
+        {"reset_url": reset_url},
+    )
+
+    text_content = f"""
+        Reset your TradeDayTrackR password using the link below:
+        {reset_url}
+    """
+
+    email_message = EmailMultiAlternatives(
+        subject,
+        text_content,
+        "no-reply@tradedaytrackr.com",
+        [email],
+    )
+
+    email_message.attach_alternative(html_content, "text/html")
+    email_message.send()
