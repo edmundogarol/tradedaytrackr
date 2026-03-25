@@ -166,7 +166,7 @@ const Billing: React.FunctionComponent<BillingProps> = () => {
                   </PlanTile>
                 </PlansContainer>
                 <SectionText>
-                  Manage your account subscription through the Whop platform.{" "}
+                  Manage your account subscription through Whop.
                   <a
                     target="__blank"
                     href="https://whop.com/"
@@ -174,6 +174,7 @@ const Billing: React.FunctionComponent<BillingProps> = () => {
                       color: "#bfbfbf",
                       textDecoration: "underline",
                       cursor: "pointer",
+                      marginLeft: 5,
                     }}
                   >
                     Click here to manage your subscription.

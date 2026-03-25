@@ -1,14 +1,15 @@
 from secrets import token_urlsafe
 
 from django.conf import settings
-from django.contrib.auth import password_validation
+from django.contrib.auth import get_user_model, password_validation
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.utils import timezone
 from rest_framework import serializers
 
-from backend.djangoapi.models import User
 from backend.djangoapi.tasks.user import send_verification_email
+
+User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):

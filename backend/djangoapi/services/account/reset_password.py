@@ -2,13 +2,15 @@ from datetime import datetime
 from secrets import token_urlsafe
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.contrib.sessions.models import Session
 from django.utils import timezone
 from rest_framework import exceptions
 
 from backend.djangoapi.models.account.reset_password import ResetPasswordSession
-from backend.djangoapi.models.user import User
 from backend.djangoapi.tasks.user import send_reset_password_email
+
+User = get_user_model()
 
 
 def is_expired(created_date, minutes):

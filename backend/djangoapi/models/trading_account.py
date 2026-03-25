@@ -1,13 +1,12 @@
 from django.db import models
 
 from backend.djangoapi.models.trading_account_template import TradingAccountTemplate
-from backend.djangoapi.models.user import User
 from backend.djangoapi.querysets.trading_account_queryset import TradingAccountQuerySet
 
 
 class TradingAccount(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="trading_accounts"
+        "djangoapi.User", on_delete=models.CASCADE, related_name="trading_accounts"
     )
     objects = TradingAccountQuerySet.as_manager()
     template = models.ForeignKey(

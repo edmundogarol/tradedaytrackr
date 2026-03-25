@@ -1,17 +1,17 @@
 import datetime
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from django.contrib.auth import get_user_model, login, logout
+from django.contrib.auth.hashers import check_password
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from django.contrib.auth import login, logout
-from django.contrib.auth.hashers import check_password
-
-from backend.djangoapi.utils import visitor_ip_address
-from backend.djangoapi.models import User
 from backend.djangoapi.serializers import UserSerializer
+from backend.djangoapi.utils import visitor_ip_address
+
+User = get_user_model()
 
 
 class LogoutViewSet(APIView):

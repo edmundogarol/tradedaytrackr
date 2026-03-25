@@ -1,12 +1,13 @@
-from django.contrib.auth import login
+from django.contrib.auth import get_user_model, login
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from backend.djangoapi.models import User
 from backend.djangoapi.serializers import UserSerializer
 from backend.djangoapi.serializers.user import RegisterSerializer, UpdateUserSerializer
+
+User = get_user_model()
 
 
 class UserViewSet(ModelViewSet):

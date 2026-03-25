@@ -2,14 +2,16 @@ from datetime import timedelta
 from secrets import token_urlsafe
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.utils import timezone
 from rest_framework import status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from backend.djangoapi.models.user import User
 from backend.djangoapi.tasks.user import send_verification_email, send_welcome_email
 from backend.djangoapi.utils.account import PostOnly
+
+User = get_user_model()
 
 
 class VerifyAccountViewSet(viewsets.ViewSet):
