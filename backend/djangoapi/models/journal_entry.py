@@ -1,12 +1,9 @@
 from django.db import models
-from backend.djangoapi.models.user import User
-from backend.djangoapi.models.trade import Trade
 
 
 class JournalEntry(models.Model):
-
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="journal_entries"
+        "djangoapi.User", on_delete=models.CASCADE, related_name="journal_entries"
     )
 
     date_time = models.DateTimeField()

@@ -1,9 +1,7 @@
 from django.db import models
-from backend.djangoapi.models.trading_account import TradingAccount
 
 
 class Trade(models.Model):
-
     journal_entry = models.ForeignKey(
         "JournalEntry",
         on_delete=models.CASCADE,
@@ -13,7 +11,7 @@ class Trade(models.Model):
     )
 
     account = models.ForeignKey(
-        TradingAccount, on_delete=models.CASCADE, related_name="trades"
+        "djangoapi.TradingAccount", on_delete=models.CASCADE, related_name="trades"
     )
 
     date_time = models.DateTimeField()

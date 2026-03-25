@@ -2,4 +2,8 @@ from django.apps import AppConfig
 
 
 class DjangoapiConfig(AppConfig):
-    name = 'backend.djangoapi'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "backend.djangoapi"
+
+    def ready(self):
+        import backend.djangoapi.signals.user  # noqa: F401

@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from backend.djangoapi.models.trading_account_template import TradingAccountTemplate
+
+from backend.djangoapi.models import TradingAccountTemplate
 
 
 class TradingAccountTemplateSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = TradingAccountTemplate
         fields = [

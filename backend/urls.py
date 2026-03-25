@@ -13,6 +13,7 @@ from backend.djangoapi.views.account.verify_account import (
     RequestVerificationViewSet,
     VerifyAccountViewSet,
 )
+from backend.djangoapi.views.webhooks.whop import WhopWebhookView
 
 schema_view = get_swagger_view(title="TradeDayTrackR API")
 
@@ -57,6 +58,7 @@ urlpatterns = [
         "api/submit-password-reset/",
         SubmitPasswordResetViewSet.as_view({"post": "create"}),
     ),
+    path("api/webhooks/whop/membership_activated", WhopWebhookView.as_view()),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     path("admin/", admin.site.urls),
     re_path(r"^.*$", views.ReactAppView.as_view(), name="react-app"),

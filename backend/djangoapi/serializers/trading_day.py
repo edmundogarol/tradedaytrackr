@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from backend.djangoapi.models.trading_day import TradingDay
+
+from backend.djangoapi.models import TradingDay
 
 
 class TradingDaySerializer(serializers.ModelSerializer):
-
     day = serializers.IntegerField(source="day_number")
 
     class Meta:

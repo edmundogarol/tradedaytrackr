@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from backend.djangoapi.models.account.reset_password import ResetPasswordSession
+
+from backend.djangoapi.models import ResetPasswordSession
 
 
 class ResetPasswordSerializer(serializers.ModelSerializer):

@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from backend.djangoapi.models.trading_account import TradingAccount
+
+from backend.djangoapi.models import TradingAccount
 from backend.djangoapi.serializers.trading_day import TradingDaySerializer
 
 

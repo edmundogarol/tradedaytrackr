@@ -1,14 +1,13 @@
-import React from "react";
-import { PageEnum } from "@interfaces/NavigationTypes";
+import LoadingPage from "@components/Loading/LoadingPage";
 import useLoginState from "@pages/Login/hooks/useLoginState";
 import { Navigate, Outlet } from "react-router";
 
-const RequireAuth: React.FC = () => {
+const RequireAuth = ({ loading }: { loading: boolean }): React.ReactElement => {
   const { user } = useLoginState();
 
-  if (!user?.logged_in) {
-    return <Navigate to={PageEnum.Login} replace />;
-  }
+  if (loading) return <LoadingPage />;
+
+  if (!user) return <Navigate to="/login" replace />;
 
   return <Outlet />;
 };

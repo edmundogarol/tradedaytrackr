@@ -40,6 +40,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = SETTINGS["SECRET_KEY"]
+WHOP_WEBHOOK_SECRET = SETTINGS["WHOP_WEBHOOK_SECRET"]
 
 if "DEVENV" in os.environ:
     ALLOWED_HOSTS = ["*"]

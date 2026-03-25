@@ -1,17 +1,25 @@
 from secrets import token_urlsafe
 
 from django.conf import settings
-from django.contrib.auth import password_validation
+from django.contrib.auth import get_user_model, password_validation
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.utils import timezone
 from rest_framework import serializers
 
-from backend.djangoapi.models import User
+from backend.djangoapi.models.account.membership import Membership
+from backend.djangoapi.serializers.account.email_preferences import (
+    EmailPreferencesSerializer,
+)
 from backend.djangoapi.tasks.user import send_verification_email
+
+User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
+    membership_active = serializers.SerializerMethodField()
+    email_preferences = EmailPreferencesSerializer(read_only=True)
+
     class Meta:
         model = User
         fields = (
@@ -27,7 +35,15 @@ class UserSerializer(serializers.ModelSerializer):
             "verification_sent_at",
             "verification_token",
             "last_ip",
+            "membership_active",
+            "email_preferences",
         )
+
+    def get_membership_active(self, obj):
+        try:
+            return obj.membership.is_active
+        except Membership.DoesNotExist:
+            return False
 
 
 class UserValidationSerializer(serializers.ModelSerializer):
