@@ -20,4 +20,5 @@ export interface User {
   logged_in: boolean;
   is_staff: boolean;
   verified: boolean;
+  membership_active?: boolean;
 }

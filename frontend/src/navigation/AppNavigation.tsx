@@ -23,7 +23,7 @@ import Preferences from "@pages/Settings/Preferences/Preferences";
 import SignUp from "@pages/SignUp/SignUp";
 import { isNotEmptyString } from "@utils/utils";
 import React from "react";
-import { Route, Routes } from "react-router";
+import { Navigate, Route, Routes } from "react-router";
 import RequireAuth from "./RequireAuth";
 import checkAuth from "./hooks/checkAuth";
 
@@ -38,6 +38,7 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
 
   if (loading) return <LoadingPage />;
 
+  const isAuthenticated = !!user;
   return (
     <>
       <AlertPopout
@@ -48,7 +49,7 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
       />
       <Routes>
         {/* Public routes */}
-        <Route path={PageEnum.Login} element={checkAuth({ user })} />
+        <Route path={PageEnum.Login} element={checkAuth({ user, loading })} />
         <Route path={PageEnum.SignUp} element={<SignUp />} />
         <Route path={PageEnum.ResetPassword} element={<ResetPassword />} />
         <Route
@@ -57,7 +58,7 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
         />
 
         {/* Protected routes */}
-        <Route element={<RequireAuth />}>
+        <Route element={<RequireAuth loading={loading} />}>
           <Route path={PageEnum.Dashboard} element={<Dashboard />} />
           <Route path={PageEnum.FundedAccounts} element={<FundedAccounts />} />
           <Route
@@ -78,8 +79,18 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
           <Route path={PageEnum.Preferences} element={<Preferences />} />
           <Route path={PageEnum.Billing} element={<Billing />} />
         </Route>
-        {/* Root */}
-        <Route path="/" element={checkAuth({ user })} />
+        <Route
+          path="/"
+          element={
+            loading ? (
+              <LoadingPage />
+            ) : isAuthenticated ? (
+              <Navigate to={PageEnum.Dashboard} replace />
+            ) : (
+              <Navigate to={PageEnum.Login} replace />
+            )
+          }
+        />
         {/* 404 */}
         <Route path="*" element={<PageNotFound />} />
       </Routes>

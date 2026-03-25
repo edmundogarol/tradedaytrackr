@@ -3,6 +3,8 @@ import Page from "@components/Page/Page";
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import DoneOutlineIcon from "@mui/icons-material/Done";
 
+import { If } from "@components/If/If";
+import useLoginState from "@pages/Login/hooks/useLoginState";
 import {
   PageContainer as Container,
   SectionText,
@@ -25,6 +27,9 @@ import {
 
 interface BillingProps {}
 const Billing: React.FunctionComponent<BillingProps> = () => {
+  const { user } = useLoginState();
+  const activeMembership = user.membership_active;
+
   return (
     <Page topBarShowMenu={true}>
       <Container>
@@ -47,7 +52,7 @@ const Billing: React.FunctionComponent<BillingProps> = () => {
               <SectionContainer>
                 <SectionText>View your current subscription plan</SectionText>
                 <PlansContainer>
-                  <PlanTile $currentPlan={true}>
+                  <PlanTile $currentPlan={!activeMembership}>
                     <PlanHeader>
                       <PlanLeftContainer>Free</PlanLeftContainer>
                       <PlanRightContainer>
@@ -83,12 +88,17 @@ const Billing: React.FunctionComponent<BillingProps> = () => {
                           Community Support
                         </PlanDetailsItem>
                       </PlanLeftContainer>
-                      <PlanRightContainer>
-                        <span>Current Plan</span>
-                      </PlanRightContainer>
+                      <If condition={!activeMembership}>
+                        <PlanRightContainer>
+                          <span>Current Plan</span>
+                        </PlanRightContainer>
+                      </If>
                     </PlanDetails>
                   </PlanTile>
-                  <PlanTile $backgroundColor="#385c48">
+                  <PlanTile
+                    $backgroundColor="#385c48"
+                    $currentPlan={activeMembership}
+                  >
                     <PlanHeader>
                       <PlanLeftContainer>Funded</PlanLeftContainer>
                       {/* <PlanRightContainer>
@@ -130,6 +140,11 @@ const Billing: React.FunctionComponent<BillingProps> = () => {
                           Advanced analytics
                         </PlanDetailsItem>
                       </PlanLeftContainer>
+                      <If condition={activeMembership}>
+                        <PlanRightContainer>
+                          <span>Current Plan</span>
+                        </PlanRightContainer>
+                      </If>
                     </PlanDetails>
                   </PlanTile>
                   <PlanTile $backgroundColor="#366283">

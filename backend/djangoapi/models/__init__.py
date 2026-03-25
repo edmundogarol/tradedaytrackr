@@ -1,4 +1,5 @@
 from .account import ResetPasswordSession
+from .account.membership import Membership
 from .journal_entry import JournalEntry
 from .trade import Trade
 from .trading_account import TradingAccount

@@ -7,12 +7,15 @@ from django.core.validators import validate_email
 from django.utils import timezone
 from rest_framework import serializers
 
+from backend.djangoapi.models.account.membership import Membership
 from backend.djangoapi.tasks.user import send_verification_email
 
 User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
+    membership_active = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = (
@@ -28,7 +31,14 @@ class UserSerializer(serializers.ModelSerializer):
             "verification_sent_at",
             "verification_token",
             "last_ip",
+            "membership_active",
         )
+
+    def get_membership_active(self, obj):
+        try:
+            return obj.membership.is_active
+        except Membership.DoesNotExist:
+            return False
 
 
 class UserValidationSerializer(serializers.ModelSerializer):
