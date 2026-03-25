@@ -28,7 +28,7 @@ import RequireAuth from "./RequireAuth";
 import checkAuth from "./hooks/checkAuth";
 
 const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
-  const { user, verificationError } = useLoginState();
+  const { user, verificationError, isHydrated } = useLoginState();
   const { updateVerificationError } = useLoginDispatch();
   const loginCheckApiCall = useLoginCheckApiCall();
   const { loading } = loginCheckApiCall;
@@ -36,11 +36,10 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
   const verificationApiCall = useVerificationApiCall();
   useVerificationHandler(verificationApiCall);
 
-  if (loading) return <LoadingPage />;
-
-  const isAuthenticated = !!user;
   return (
     <>
+      {loading && <LoadingPage />}
+
       <AlertPopout
         hideDuration={4000}
         open={isNotEmptyString(verificationError)}
@@ -49,7 +48,10 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
       />
       <Routes>
         {/* Public routes */}
-        <Route path={PageEnum.Login} element={checkAuth({ user, loading })} />
+        <Route
+          path={PageEnum.Login}
+          element={checkAuth({ user, isHydrated })}
+        />
         <Route path={PageEnum.SignUp} element={<SignUp />} />
         <Route path={PageEnum.ResetPassword} element={<ResetPassword />} />
         <Route
@@ -58,7 +60,7 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
         />
 
         {/* Protected routes */}
-        <Route element={<RequireAuth loading={loading} />}>
+        <Route element={<RequireAuth />}>
           <Route path={PageEnum.Dashboard} element={<Dashboard />} />
           <Route path={PageEnum.FundedAccounts} element={<FundedAccounts />} />
           <Route
@@ -80,18 +82,15 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
           <Route path={PageEnum.Billing} element={<Billing />} />
         </Route>
         <Route
-          path="/"
+          index
           element={
-            loading ? (
-              <LoadingPage />
-            ) : isAuthenticated ? (
+            user.logged_in ? (
               <Navigate to={PageEnum.Dashboard} replace />
             ) : (
               <Navigate to={PageEnum.Login} replace />
             )
           }
         />
-        {/* 404 */}
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </>

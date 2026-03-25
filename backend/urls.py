@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import include, path, re_path
+from django.views.generic import TemplateView
 from rest_framework import routers
 from rest_framework_swagger.views import get_swagger_view
 
@@ -61,5 +62,6 @@ urlpatterns = [
     path("api/webhooks/whop/membership_activated", WhopWebhookView.as_view()),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     path("admin/", admin.site.urls),
-    re_path(r"^.*$", views.ReactAppView.as_view(), name="react-app"),
+    # re_path(r"^.*$", views.ReactAppView.as_view(), name="react-app"),
+    re_path(r"^.*$", TemplateView.as_view(template_name="index.html")),
 ]
