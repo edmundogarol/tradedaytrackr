@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from backend.djangoapi.models.trade import Trade
+
+from backend.djangoapi.models import Trade
 
 
 class TradeSerializer(serializers.ModelSerializer):
-
     account = serializers.CharField(source="account.account_name")
     date = serializers.DateTimeField(source="date_time")
 

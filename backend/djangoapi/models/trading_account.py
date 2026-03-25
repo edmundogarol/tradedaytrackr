@@ -1,6 +1,5 @@
 from django.db import models
 
-from backend.djangoapi.models.trading_account_template import TradingAccountTemplate
 from backend.djangoapi.querysets.trading_account_queryset import TradingAccountQuerySet
 
 
@@ -10,7 +9,9 @@ class TradingAccount(models.Model):
     )
     objects = TradingAccountQuerySet.as_manager()
     template = models.ForeignKey(
-        TradingAccountTemplate, on_delete=models.PROTECT, related_name="accounts"
+        "djangoapi.TradingAccountTemplate",
+        on_delete=models.PROTECT,
+        related_name="accounts",
     )
     account_name = models.CharField(max_length=150)
     account_balance = models.DecimalField(max_digits=12, decimal_places=2)

@@ -1,12 +1,11 @@
-from rest_framework import serializers
 from django.db.models import Sum
+from rest_framework import serializers
 
-from backend.djangoapi.models.journal_entry import JournalEntry
+from backend.djangoapi.models import JournalEntry
 from backend.djangoapi.serializers.trade import TradeSerializer
 
 
 class JournalEntrySerializer(serializers.ModelSerializer):
-
     trades = TradeSerializer(many=True, read_only=True)
 
     totalPnL = serializers.SerializerMethodField()

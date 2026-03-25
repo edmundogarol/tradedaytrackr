@@ -7,7 +7,7 @@ from django.contrib.sessions.models import Session
 from django.utils import timezone
 from rest_framework import exceptions
 
-from backend.djangoapi.models.account.reset_password import ResetPasswordSession
+from backend.djangoapi.models import ResetPasswordSession
 from backend.djangoapi.tasks.user import send_reset_password_email
 
 User = get_user_model()
