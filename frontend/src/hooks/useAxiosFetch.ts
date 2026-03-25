@@ -1,4 +1,5 @@
 import environmentConfig from "@utils/environmentConfig";
+import type { AxiosError } from "axios";
 import axios from "axios";
 import { useCallback, useState } from "react";
 
@@ -75,6 +76,9 @@ const useAxiosFetch = <T, E = {}>(
         console.debug("Login required");
       } else if (response.status === 503) {
         console.error("Timeout", response);
+      } else if (response.status === 500) {
+        console.error("Server error", response);
+        fetchError = { error: "Something went wrong on the server" } as E;
       } else {
         console.error("Bad request", response.status, url);
       }
@@ -87,6 +91,10 @@ const useAxiosFetch = <T, E = {}>(
         const errorObj = { error: err as unknown as string } as E;
         setError(errorObj);
         fetchError = errorObj;
+      }
+      if ((err as AxiosError).status === 500) {
+        console.error("Server error", err);
+        fetchError = { error: "Something went wrong on the server" } as E;
       }
       console.log("Fetch error: ", fetchError, url);
     } finally {

@@ -2,6 +2,7 @@ export enum PageEnum {
   Login = "/login",
   SignUp = "/signUp",
   ResetPassword = "/resetPassword",
+  ResetPasswordConfirmation = "/confirmResetPassword",
   PageNotFound = "/pageNotFound",
   Dashboard = "/dashboard",
   Journal = "/journal",
@@ -34,6 +35,7 @@ export type UnauthenticatedStackNavigatorParams = {
   [PageEnum.Login]: undefined;
   [PageEnum.SignUp]: undefined;
   [PageEnum.ResetPassword]: undefined;
+  [PageEnum.ResetPasswordConfirmation]: { token: string };
   [PageEnum.PageNotFound]: undefined;
 };
 

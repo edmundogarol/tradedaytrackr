@@ -4,6 +4,11 @@ from rest_framework import routers
 from rest_framework_swagger.views import get_swagger_view
 
 from backend.djangoapi import views
+from backend.djangoapi.views.account.reset_password import (
+    RequestPasswordResetViewSet,
+    SubmitPasswordResetViewSet,
+    VerifyPasswordResetViewSet,
+)
 from backend.djangoapi.views.account.verify_account import (
     RequestVerificationViewSet,
     VerifyAccountViewSet,
@@ -26,9 +31,6 @@ class DocumentedRouter(routers.DefaultRouter):
 
 router = DocumentedRouter()
 router.register(r"user", views.account.UserViewSet)
-router.register(
-    r"reset-password", views.account.ResetPasswordViewSet, basename="reset-password"
-)
 
 urlpatterns = [
     path("docs/", schema_view),
@@ -42,6 +44,18 @@ urlpatterns = [
     path(
         "api/request-verification/",
         RequestVerificationViewSet.as_view({"post": "create"}),
+    ),
+    path(
+        "api/request-password-reset/",
+        RequestPasswordResetViewSet.as_view({"post": "create"}),
+    ),
+    path(
+        "api/verify-password-reset/",
+        VerifyPasswordResetViewSet.as_view({"post": "create"}),
+    ),
+    path(
+        "api/submit-password-reset/",
+        SubmitPasswordResetViewSet.as_view({"post": "create"}),
     ),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     path("admin/", admin.site.urls),

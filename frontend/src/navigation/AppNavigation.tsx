@@ -15,6 +15,7 @@ import useLoginCheckApiCall from "@pages/Login/hooks/useLoginCheckApiCall";
 import useLoginCheckHandler from "@pages/Login/hooks/useLoginCheckHandler";
 import useLoginDispatch from "@pages/Login/hooks/useLoginDispatch";
 import useLoginState from "@pages/Login/hooks/useLoginState";
+import ConfirmPassword from "@pages/ResetPassword/ConfirmPassword/ConfirmPassword";
 import ResetPassword from "@pages/ResetPassword/ResetPassword";
 import Account from "@pages/Settings/Account/Account";
 import Billing from "@pages/Settings/Billing/Billing";
@@ -50,6 +51,10 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
         <Route path={PageEnum.Login} element={checkAuth({ user })} />
         <Route path={PageEnum.SignUp} element={<SignUp />} />
         <Route path={PageEnum.ResetPassword} element={<ResetPassword />} />
+        <Route
+          path={PageEnum.ResetPasswordConfirmation}
+          element={<ConfirmPassword />}
+        />
 
         {/* Protected routes */}
         <Route element={<RequireAuth />}>
