@@ -8,6 +8,9 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from backend.djangoapi.models.account.membership import Membership
+from backend.djangoapi.serializers.account.email_preferences import (
+    EmailPreferencesSerializer,
+)
 from backend.djangoapi.tasks.user import send_verification_email
 
 User = get_user_model()
@@ -15,6 +18,7 @@ User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
     membership_active = serializers.SerializerMethodField()
+    email_preferences = EmailPreferencesSerializer(read_only=True)
 
     class Meta:
         model = User
@@ -32,6 +36,7 @@ class UserSerializer(serializers.ModelSerializer):
             "verification_token",
             "last_ip",
             "membership_active",
+            "email_preferences",
         )
 
     def get_membership_active(self, obj):

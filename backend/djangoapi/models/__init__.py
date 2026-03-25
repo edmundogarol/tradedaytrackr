@@ -1,5 +1,6 @@
-from .account import ResetPasswordSession
+from .account.email_preferences import EmailPreferences
 from .account.membership import Membership
+from .account.reset_password import ResetPasswordSession
 from .journal_entry import JournalEntry
 from .trade import Trade
 from .trading_account import TradingAccount
