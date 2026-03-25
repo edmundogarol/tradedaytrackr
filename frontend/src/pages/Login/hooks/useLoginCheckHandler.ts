@@ -1,15 +1,22 @@
-import { useEffect } from "react";
-import type { User } from "@interfaces/CustomTypes";
 import type { AxiosFetchWrapperResponse } from "@hooks/useAxiosFetch";
-import type { LoginCheckApiCallData } from "./useLoginCheckApiCall";
+import { useEffect } from "react";
+import type {
+  LoginCheckApiCallData,
+  LoginCheckApiCallError,
+} from "./useLoginCheckApiCall";
 import useLoginDispatch from "./useLoginDispatch";
+import useLoginState from "./useLoginState";
 
 const useLoginCheckHandler = ({
   data,
   loading,
   error,
-}: AxiosFetchWrapperResponse<LoginCheckApiCallData>): void => {
-  const { updateUser } = useLoginDispatch();
+}: AxiosFetchWrapperResponse<
+  LoginCheckApiCallData,
+  LoginCheckApiCallError
+>): void => {
+  const { user } = useLoginState();
+  const { updateUser, updateIsHydrated } = useLoginDispatch();
 
   useEffect(() => {
     // if (data) {

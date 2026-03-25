@@ -7,6 +7,8 @@ import type {
   SignUpForm,
 } from "./LoginInterfaces";
 
+export type AuthStatus = "loading" | "authenticated" | "unauthenticated";
+
 export interface LoginState {
   readonly user: User;
   readonly loginForm: LoginForm;
@@ -17,6 +19,8 @@ export interface LoginState {
   readonly resetPasswordFormErrors: { [key: string]: any };
   readonly resetPasswordFormSent: boolean;
   readonly verificationError: string;
+  readonly isHydrated?: boolean;
+  readonly authStatus: AuthStatus;
 }
 
 export const initialState: LoginState = {
@@ -32,6 +36,7 @@ export const initialState: LoginState = {
     is_staff: false,
     verified: false,
   },
+  isHydrated: false,
   loginForm: {
     email: "",
     password: "",
@@ -51,6 +56,7 @@ export const initialState: LoginState = {
   resetPasswordFormErrors: {},
   resetPasswordFormSent: false,
   verificationError: "",
+  authStatus: "loading",
 };
 
 type UpdateUserAction = PayloadAction<User>;
@@ -62,6 +68,8 @@ type UpdateResetPasswordFormAction = PayloadAction<Partial<ResetPasswordForm>>;
 type UpdateResetPasswordErrorsAction = PayloadAction<{ [key: string]: any }>;
 type UpdateResetPasswordFormSentAction = PayloadAction<boolean>;
 type UpdateVerificationErrorAction = PayloadAction<string>;
+type UpdateIsHydratedAction = PayloadAction<boolean>;
+type UpdateAuthStatusAction = PayloadAction<AuthStatus>;
 
 export type LoginAction =
   | UpdateUserAction
@@ -72,7 +80,9 @@ export type LoginAction =
   | UpdateResetPasswordFormAction
   | UpdateResetPasswordErrorsAction
   | UpdateResetPasswordFormSentAction
-  | UpdateVerificationErrorAction;
+  | UpdateVerificationErrorAction
+  | UpdateIsHydratedAction
+  | UpdateAuthStatusAction;
 
 export const loginSlice = createSlice({
   name: "login",
@@ -114,6 +124,12 @@ export const loginSlice = createSlice({
     updateVerificationError: (state, action: UpdateVerificationErrorAction) => {
       state.verificationError = action.payload;
     },
+    updateIsHydrated: (state, action: UpdateIsHydratedAction) => {
+      state.isHydrated = action.payload;
+    },
+    updateAuthStatus: (state, action: UpdateAuthStatusAction) => {
+      state.authStatus = action.payload;
+    },
   },
 });
 
@@ -127,6 +143,8 @@ export const {
   updateResetPasswordErrors,
   updateResetPasswordFormSent,
   updateVerificationError,
+  updateIsHydrated,
+  updateAuthStatus,
 } = loginSlice.actions;
 export const loginReducer = loginSlice.reducer;
 

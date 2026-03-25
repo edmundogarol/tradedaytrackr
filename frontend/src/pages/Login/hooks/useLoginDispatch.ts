@@ -6,8 +6,10 @@ import type {
   ResetPasswordForm,
   SignUpForm,
 } from "../LoginInterfaces";
-import type { LoginAction } from "../LoginState";
+import type { AuthStatus, LoginAction } from "../LoginState";
 import {
+  updateAuthStatus,
+  updateIsHydrated,
   updateLoginForm,
   updateLoginFormErrors,
   updateResetPasswordErrors,
@@ -31,6 +33,8 @@ interface LoginDispatch {
   }): void;
   updateResetPasswordFormSent(formSent: boolean): void;
   updateVerificationError(error: string | null): void;
+  updateIsHydrated(isHydrated: boolean): void;
+  updateAuthStatus(authStatus: AuthStatus): void;
 }
 
 export const useLoginDispatch = (): LoginDispatch => {
@@ -66,6 +70,12 @@ export const useLoginDispatch = (): LoginDispatch => {
     },
     updateVerificationError(error: string): void {
       dispatch(updateVerificationError(error));
+    },
+    updateIsHydrated(isHydrated: boolean): void {
+      dispatch(updateIsHydrated(isHydrated));
+    },
+    updateAuthStatus(authStatus: AuthStatus): void {
+      dispatch(updateAuthStatus(authStatus));
     },
   };
 };
