@@ -34,13 +34,22 @@ export const PressableWrapper = styled.button<{
   border-radius: 5px;
   align-items: center;
 
-  &:hover {
+  /* &:hover {
     cursor: pointer;
     filter: brightness(1.1);
-  }
+  } */
 
   &:active {
     opacity: 0.8;
+  }
+
+  &:hover {
+    ${({ $disabledBlock }): string =>
+      $disabledBlock
+        ? `
+      cursor: not-allowed; 
+      `
+        : "cursor: pointer;"}
   }
 `;
 

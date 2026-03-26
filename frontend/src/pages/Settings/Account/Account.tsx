@@ -4,31 +4,25 @@ import GlassTile from "@components/GlassTile/GlassTile";
 import { GlassTileChildrenWrapper } from "@components/GlassTile/GlassTileStyledComponents";
 import Input from "@components/Input/Input";
 import Page from "@components/Page/Page";
-import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import DoneOutlineIcon from "@mui/icons-material/Done";
 import LockIcon from "@mui/icons-material/Lock";
-import Switch from "@mui/material/Switch";
 import { color } from "@styles/colors";
 import { BUTTON_WIDTH } from "@styles/constants";
 import {
   PageContainer as Container,
   SectionText,
   SectionTitle,
-  SubsectionHeader,
 } from "@styles/globalStyledComponents";
 import React from "react";
 import {
   AccountDetailsSection,
   AccountSettingsContainer,
-  CheckDescriptionContainer,
   DeleteAccountChildWrapper,
   DeleteAccountSection,
-  EmailPreferencesSection,
   PasswordSection,
   SubsectionHeaderWrapper,
-  SwitchItemRow,
 } from "./AccountStyledComponents";
+import UserDetails from "./UserDetails/UserDetails";
 
 interface AccountProps {}
 const Account: React.FunctionComponent<AccountProps> = () => {
@@ -37,76 +31,7 @@ const Account: React.FunctionComponent<AccountProps> = () => {
       <Container>
         <SectionTitle>Account</SectionTitle>
         <AccountSettingsContainer>
-          <GlassTile
-            featureTile
-            minHeight={10}
-            minWidth={10}
-            padding={7}
-            noGlow={true}
-          >
-            <GlassTileChildrenWrapper>
-              <SubsectionHeaderWrapper>
-                <AccountBoxIcon style={{ color: "white", marginRight: 5 }} />
-                Account Details
-              </SubsectionHeaderWrapper>
-              <AccountSettingsContainer>
-                <AccountDetailsSection>
-                  <Input label="Username" value="johndoe" darkMode />
-                  <Gap level={1} />
-                  <Input label="Email" value="johndoe@example.com" darkMode />
-                  <Gap level={1} />
-                  <Input label="Full Name" value="John Doe" darkMode />
-                  <Gap level={2} />
-                  <Button
-                    text={"Save Changes"}
-                    style={{
-                      marginLeft: "auto",
-                      maxWidth: `${BUTTON_WIDTH}px`,
-                    }}
-                  />
-                </AccountDetailsSection>
-                <EmailPreferencesSection>
-                  <SubsectionHeader>Email Preferences</SubsectionHeader>
-                  <SwitchItemRow>
-                    <CheckDescriptionContainer>
-                      <DoneOutlineIcon
-                        style={{ color: "#4caf50", fontSize: 18 }}
-                      />
-                      <span>Payout Reports</span>
-                    </CheckDescriptionContainer>
-                    <Switch defaultChecked />
-                  </SwitchItemRow>
-                  <SwitchItemRow>
-                    <CheckDescriptionContainer>
-                      <DoneOutlineIcon
-                        style={{ color: "#4caf50", fontSize: 18 }}
-                      />
-                      <span>System Notifications</span>
-                    </CheckDescriptionContainer>
-                    <Switch defaultChecked />
-                  </SwitchItemRow>
-                  <SwitchItemRow>
-                    <CheckDescriptionContainer>
-                      <DoneOutlineIcon
-                        style={{ color: "#4caf50", fontSize: 18 }}
-                      />
-                      <span>Exclusive Offers and Promotions</span>
-                    </CheckDescriptionContainer>
-                    <Switch defaultChecked />
-                  </SwitchItemRow>
-                  <SwitchItemRow>
-                    <CheckDescriptionContainer>
-                      <DoneOutlineIcon
-                        style={{ color: "#4caf50", fontSize: 18 }}
-                      />
-                      <span>Unsubscribe from all emails</span>
-                    </CheckDescriptionContainer>
-                    <Switch defaultChecked={false} />
-                  </SwitchItemRow>
-                </EmailPreferencesSection>
-              </AccountSettingsContainer>
-            </GlassTileChildrenWrapper>
-          </GlassTile>
+          <UserDetails />
         </AccountSettingsContainer>
         <Gap level={2} />
         <AccountSettingsContainer>

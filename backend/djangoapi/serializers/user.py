@@ -99,7 +99,15 @@ class RegisterSerializer(UserValidationSerializer):
 class UpdateUserSerializer(UserValidationSerializer):
     class Meta:
         model = User
-        fields = ["email", "username", "password"]
+        fields = [
+            "email",
+            "username",
+            "password",
+            "is_verified",
+            "first_name",
+            "last_name",
+            "birth_date",
+        ]
         extra_kwargs = {"password": {"write_only": True, "required": False}}
 
     def validate_username(self, value):

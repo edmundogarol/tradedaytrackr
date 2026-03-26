@@ -39,6 +39,7 @@ urlpatterns = [
     path("api/", include(router.urls)),
     path("api/login/", views.account.LoginViewSet.as_view()),
     path("api/logout/", views.account.LogoutViewSet.as_view()),
+    path("api/email-preferences/", views.account.EmailPreferencesView.as_view()),
     path(
         "api/verify-account/",
         VerifyAccountViewSet.as_view({"post": "create"}),
@@ -62,6 +63,5 @@ urlpatterns = [
     path("api/webhooks/whop/membership_activated", WhopWebhookView.as_view()),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     path("admin/", admin.site.urls),
-    # re_path(r"^.*$", views.ReactAppView.as_view(), name="react-app"),
     re_path(r"^.*$", TemplateView.as_view(template_name="index.html")),
 ]

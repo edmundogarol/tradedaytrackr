@@ -9,6 +9,6 @@ class EmailPreferencesSerializer(serializers.ModelSerializer):
         fields = [
             "payout_reports",
             "system_notifications",
-            "promotions",
+            "promotional_offers",
             "unsubscribe_all",
         ]

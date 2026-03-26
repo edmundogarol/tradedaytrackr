@@ -21,6 +21,13 @@ export interface LoginState {
   readonly verificationError: string;
   readonly isHydrated?: boolean;
   readonly authStatus: AuthStatus;
+  readonly userUpdateSuccess: boolean;
+  readonly emailPreferences: {
+    payout_reports: boolean;
+    system_notifications: boolean;
+    promotional_offers: boolean;
+    unsubscribe_all: boolean;
+  };
 }
 
 export const initialState: LoginState = {
@@ -34,7 +41,7 @@ export const initialState: LoginState = {
     birth_date: "",
     logged_in: false,
     is_staff: false,
-    verified: false,
+    is_verified: false,
   },
   isHydrated: false,
   loginForm: {
@@ -57,6 +64,13 @@ export const initialState: LoginState = {
   resetPasswordFormSent: false,
   verificationError: "",
   authStatus: "loading",
+  userUpdateSuccess: false,
+  emailPreferences: {
+    payout_reports: true,
+    system_notifications: true,
+    promotional_offers: true,
+    unsubscribe_all: false,
+  },
 };
 
 type UpdateUserAction = PayloadAction<User>;
@@ -70,6 +84,13 @@ type UpdateResetPasswordFormSentAction = PayloadAction<boolean>;
 type UpdateVerificationErrorAction = PayloadAction<string>;
 type UpdateIsHydratedAction = PayloadAction<boolean>;
 type UpdateAuthStatusAction = PayloadAction<AuthStatus>;
+type UpdateUserUpdateSuccessAction = PayloadAction<boolean>;
+type UpdateEmailPreferencesAction = PayloadAction<{
+  payout_reports: boolean;
+  system_notifications: boolean;
+  promotional_offers: boolean;
+  unsubscribe_all: boolean;
+}>;
 
 export type LoginAction =
   | UpdateUserAction
@@ -82,7 +103,9 @@ export type LoginAction =
   | UpdateResetPasswordFormSentAction
   | UpdateVerificationErrorAction
   | UpdateIsHydratedAction
-  | UpdateAuthStatusAction;
+  | UpdateAuthStatusAction
+  | UpdateUserUpdateSuccessAction
+  | UpdateEmailPreferencesAction;
 
 export const loginSlice = createSlice({
   name: "login",
@@ -130,6 +153,12 @@ export const loginSlice = createSlice({
     updateAuthStatus: (state, action: UpdateAuthStatusAction) => {
       state.authStatus = action.payload;
     },
+    updateUserUpdateSuccess: (state, action: UpdateUserUpdateSuccessAction) => {
+      state.userUpdateSuccess = action.payload;
+    },
+    updateEmailPreferences: (state, action: UpdateEmailPreferencesAction) => {
+      state.emailPreferences = { ...state.emailPreferences, ...action.payload };
+    },
   },
 });
 
@@ -145,6 +174,8 @@ export const {
   updateVerificationError,
   updateIsHydrated,
   updateAuthStatus,
+  updateUserUpdateSuccess,
+  updateEmailPreferences,
 } = loginSlice.actions;
 export const loginReducer = loginSlice.reducer;
 

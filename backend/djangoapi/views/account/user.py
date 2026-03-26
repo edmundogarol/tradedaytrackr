@@ -1,11 +1,17 @@
+from secrets import token_urlsafe
+
+from django.conf import settings
 from django.contrib.auth import get_user_model, login
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from backend.djangoapi.serializers import UserSerializer
 from backend.djangoapi.serializers.user import RegisterSerializer, UpdateUserSerializer
+from backend.djangoapi.tasks.user import send_verification_email
 
 User = get_user_model()
 
@@ -48,7 +54,9 @@ class UserViewSet(ModelViewSet):
         return Response(serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
-        user = request.user  # 🔥 secure: only update self
+        user = request.user
+
+        old_email = user.email
 
         serializer = UpdateUserSerializer(
             user,
@@ -58,6 +66,42 @@ class UserViewSet(ModelViewSet):
         )
 
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        updated_user = serializer.save()
+
+        if "email" in request.data and old_email != updated_user.email:
+            updated_user.is_verified = False
+            updated_user.verification_token = token_urlsafe(32)
+            updated_user.verification_sent_at = timezone.now()
+            updated_user.save()
+
+            verification_url = f"{settings.WEB_APP_URL}/dashboard?verification_token={updated_user.verification_token}"
+            send_verification_email(updated_user, verification_url)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["patch"], url_path="me")
+    def update_me(self, request):
+        user = request.user
+
+        old_email = user.email
+
+        serializer = UpdateUserSerializer(
+            user,
+            data=request.data,
+            partial=True,
+            context={"request": request},
+        )
+
+        serializer.is_valid(raise_exception=True)
+        updated_user = serializer.save()
+
+        if "email" in request.data and old_email != updated_user.email:
+            updated_user.is_verified = False
+            updated_user.verification_token = token_urlsafe(32)
+            updated_user.verification_sent_at = timezone.now()
+            updated_user.save()
+
+            verification_url = f"{settings.WEB_APP_URL}/dashboard?verification_token={updated_user.verification_token}"
+            send_verification_email(updated_user, verification_url)
 
         return Response(serializer.data, status=status.HTTP_200_OK)

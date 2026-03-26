@@ -3,13 +3,31 @@ import type { AxiosError } from "axios";
 import axios from "axios";
 import { useCallback, useState } from "react";
 
+export type OverrideParams = Partial<{
+  data: object;
+  method: string;
+  contentType: string;
+  accept: string;
+  params: { [key: string]: any };
+  url: string;
+}>;
+
 export const APPLICATION_JSON = "application/json";
 axios.defaults.withCredentials = true;
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
 
 export interface AxiosFetchWrapperResponse<T, E = {}> {
-  fetch: () => Promise<{ data: T | undefined; error: object | undefined }>;
+  fetch: (
+    overrideParams?: Partial<{
+      data: object;
+      method: string;
+      contentType: string;
+      accept: string;
+      params: { [key: string]: any };
+      url: string;
+    }>,
+  ) => Promise<{ data: T | undefined; error: object | undefined }>;
   data: T | undefined;
   loading: boolean;
   error: E | undefined;
@@ -48,61 +66,65 @@ const useAxiosFetch = <T, E = {}>(
   const baseUrl = (url: string): string =>
     `${environmentConfig.HOST}/api/${url}`;
 
-  const fetch = useCallback(async () => {
-    let fetchData;
-    let fetchError;
+  const fetch = useCallback(
+    async (overrideParams: OverrideParams = {}) => {
+      let fetchData;
+      let fetchError;
 
-    setLoading(true);
-    if (skip) {
-      setLoading(false);
+      setLoading(true);
+      if (skip) {
+        setLoading(false);
+        return { data: fetchData, error: fetchError };
+      }
+
+      try {
+        const response = await axios({
+          url: overrideParams.url || (useUrl ? useUrl : baseUrl(url)),
+          headers: {
+            Accept: APPLICATION_JSON,
+            "X-CSRFToken": getCookie("csrftoken"),
+          },
+          withCredentials: true,
+          ...params, // base config
+          ...overrideParams, // 🔥 dynamic override
+        });
+
+        fetchData = response.data || response.config.data;
+        if (fetchData) {
+          console.debug("Ok!", response.config.url);
+        } else if (response.status === 403) {
+          console.debug("Login required");
+        } else if (response.status === 503) {
+          console.error("Timeout", response);
+        } else if (response.status === 500) {
+          console.error("Server error", response);
+          fetchError = { error: "Something went wrong on the server" } as E;
+        } else {
+          console.error("Bad request", response.status, url);
+        }
+        setData(fetchData);
+      } catch (err) {
+        if (axios.isAxiosError(err)) {
+          setError(err.response?.data || { error: err.message });
+          fetchError = err.response?.data || { error: err.message };
+        } else {
+          const errorObj = { error: err as unknown as string } as E;
+          setError(errorObj);
+          fetchError = errorObj;
+        }
+        if ((err as AxiosError).status === 500) {
+          console.error("Server error", err);
+          fetchError = { error: "Something went wrong on the server" } as E;
+        }
+        console.log("Fetch error: ", fetchError, url);
+      } finally {
+        setLoading(false);
+      }
+
       return { data: fetchData, error: fetchError };
-    }
-
-    try {
-      const response = await axios({
-        url: useUrl ? useUrl : baseUrl(url),
-        headers: {
-          Accept: APPLICATION_JSON,
-          "X-CSRFToken": getCookie("csrftoken"),
-        },
-        withCredentials: true,
-        ...params,
-      });
-
-      fetchData = response.data || response.config.data;
-      if (fetchData) {
-        console.debug("Ok!", response.config.url);
-      } else if (response.status === 403) {
-        console.debug("Login required");
-      } else if (response.status === 503) {
-        console.error("Timeout", response);
-      } else if (response.status === 500) {
-        console.error("Server error", response);
-        fetchError = { error: "Something went wrong on the server" } as E;
-      } else {
-        console.error("Bad request", response.status, url);
-      }
-      setData(fetchData);
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        setError(err.response?.data || { error: err.message });
-        fetchError = err.response?.data || { error: err.message };
-      } else {
-        const errorObj = { error: err as unknown as string } as E;
-        setError(errorObj);
-        fetchError = errorObj;
-      }
-      if ((err as AxiosError).status === 500) {
-        console.error("Server error", err);
-        fetchError = { error: "Something went wrong on the server" } as E;
-      }
-      console.log("Fetch error: ", fetchError, url);
-    } finally {
-      setLoading(false);
-    }
-
-    return { data: fetchData, error: fetchError };
-  }, [url, params, skip, useUrl]);
+    },
+    [url, params, skip, useUrl],
+  );
 
   return {
     fetch,

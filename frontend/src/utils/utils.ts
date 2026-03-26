@@ -13,7 +13,12 @@ export const devSrc = (imageName: string): string => {
 };
 
 export const isNotEmptyString = (value: string): boolean => {
-  return typeof value === "string" && !!value && value !== "";
+  return (
+    typeof value === "string" &&
+    !!value &&
+    value !== "" &&
+    value.replaceAll(" ", "") !== ""
+  );
 };
 
 export const debugBorder = (color: string): ReturnType<typeof css> => {

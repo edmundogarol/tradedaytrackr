@@ -1,3 +1,4 @@
+from .email_preferences import EmailPreferencesView
 from .login import LoginViewSet, LogoutViewSet
 from .reset_password import (
     RequestPasswordResetViewSet,

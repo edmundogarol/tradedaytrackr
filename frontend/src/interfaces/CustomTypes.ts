@@ -19,6 +19,10 @@ export interface User {
   birth_date?: string;
   logged_in: boolean;
   is_staff: boolean;
-  verified: boolean;
+  is_verified: boolean;
   membership_active?: boolean;
+  last_ip?: string;
+  verification_sent_at?: string;
+  verification_token?: string;
+  last_login?: string;
 }

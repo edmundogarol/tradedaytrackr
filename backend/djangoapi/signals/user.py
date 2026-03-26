@@ -10,4 +10,5 @@ User = get_user_model()
 @receiver(post_save, sender=User)
 def create_email_preferences(sender, instance, created, **kwargs):
     if created:
+        print("Signal triggered to create email preferences for user creation.")
         EmailPreferences.objects.create(user=instance)

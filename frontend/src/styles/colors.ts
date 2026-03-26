@@ -20,6 +20,7 @@ export type ColorKey =
   | "SystemRed"
   | "SystemSuccess1"
   | "SystemSuccess2"
+  | "SystemWarning"
   | "SystemLabel3"
   | "SystemTeal"
   | "SystemPurple"
@@ -49,6 +50,7 @@ const colorsMap = {
   SystemRed: "#d56060",
   SystemSuccess1: "#7dc770",
   SystemSuccess2: "#5e9f53",
+  SystemWarning: "#e5bd6f",
   SystemTeal: "#66d3bf",
   SystemPurple: "#b27cdc",
   SystemWhite: "#ffffff",

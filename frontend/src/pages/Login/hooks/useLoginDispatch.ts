@@ -9,6 +9,7 @@ import type {
 import type { AuthStatus, LoginAction } from "../LoginState";
 import {
   updateAuthStatus,
+  updateEmailPreferences,
   updateIsHydrated,
   updateLoginForm,
   updateLoginFormErrors,
@@ -18,6 +19,7 @@ import {
   updateSignUpForm,
   updateSignUpFormErrors,
   updateUser,
+  updateUserUpdateSuccess,
   updateVerificationError,
 } from "../LoginState";
 
@@ -35,6 +37,13 @@ interface LoginDispatch {
   updateVerificationError(error: string | null): void;
   updateIsHydrated(isHydrated: boolean): void;
   updateAuthStatus(authStatus: AuthStatus): void;
+  updateUserUpdateSuccess(userUpdateSuccess: boolean): void;
+  updateEmailPreferences(preferences: {
+    payout_reports: boolean;
+    system_notifications: boolean;
+    promotional_offers: boolean;
+    unsubscribe_all: boolean;
+  }): void;
 }
 
 export const useLoginDispatch = (): LoginDispatch => {
@@ -76,6 +85,17 @@ export const useLoginDispatch = (): LoginDispatch => {
     },
     updateAuthStatus(authStatus: AuthStatus): void {
       dispatch(updateAuthStatus(authStatus));
+    },
+    updateUserUpdateSuccess(userUpdateSuccess: boolean): void {
+      dispatch(updateUserUpdateSuccess(userUpdateSuccess));
+    },
+    updateEmailPreferences(preferences: {
+      payout_reports: boolean;
+      system_notifications: boolean;
+      promotional_offers: boolean;
+      unsubscribe_all: boolean;
+    }): void {
+      dispatch(updateEmailPreferences(preferences));
     },
   };
 };
