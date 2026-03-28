@@ -120,6 +120,35 @@ def send_membership_activated_email(email):
 
 
 @shared_task
+def send_membership_cancelled_email(email):
+
+    subject = "Your TradeDayTrackR Membership Has Been Cancelled"
+
+    html_content = render_to_string(
+        "emails/membership_deactivated.html",
+        {"url": settings.WEB_APP_URL},
+    )
+
+    text_content = """
+        Your membership has been cancelled.
+
+        You will no longer have access to TradeDayTrackR premium features.
+
+        {settings.WEB_APP_URL}
+        """
+
+    email_message = EmailMultiAlternatives(
+        subject,
+        text_content,
+        "no-reply@tradedaytrackr.com",
+        [email],
+    )
+
+    email_message.attach_alternative(html_content, "text/html")
+    email_message.send()
+
+
+@shared_task
 def send_connect_account_email(email):
 
     subject = "Complete Your TradeDayTrackR Access"
