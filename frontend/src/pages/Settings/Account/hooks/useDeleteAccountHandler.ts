@@ -1,11 +1,11 @@
 import type { AxiosFetchWrapperResponse } from "@hooks/useAxiosFetch";
+import { initialState } from "@pages/Login/LoginState";
+import useLoginDispatch from "@pages/Login/hooks/useLoginDispatch";
 import { useEffect } from "react";
-import { initialState } from "../LoginState";
 import type {
   DeleteAccountApiCallData,
   DeleteAccountApiCallError,
 } from "./useDeleteAccountApiCall";
-import useLoginDispatch from "./useLoginDispatch";
 
 const useDeleteAccountHandler = ({
   data,

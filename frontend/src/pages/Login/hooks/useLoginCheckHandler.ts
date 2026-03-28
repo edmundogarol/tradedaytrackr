@@ -16,7 +16,8 @@ const useLoginCheckHandler = ({
   LoginCheckApiCallError
 >): void => {
   const { user } = useLoginState();
-  const { updateUser, updateIsHydrated } = useLoginDispatch();
+  const { updateUser, updateIsHydrated, updateEmailPreferences } =
+    useLoginDispatch();
 
   useEffect(() => {
     if (!data && !error) return;
@@ -25,6 +26,7 @@ const useLoginCheckHandler = ({
       console.log("Login check fetch error", error);
 
       updateUser({ ...user, logged_in: false });
+      updateEmailPreferences({ ...user.email_preferences });
       updateIsHydrated(true);
       return;
     }

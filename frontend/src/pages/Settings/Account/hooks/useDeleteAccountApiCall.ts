@@ -15,7 +15,7 @@ const useDeleteAccountApiCall = (): AxiosFetchWrapperResponse<
   const { fetch, data, loading, error } = useAxiosFetch<
     DeleteAccountApiCallData,
     DeleteAccountApiCallError
-  >("user/me/", {
+  >("user/delete_me/", {
     method: "DELETE",
   });
 

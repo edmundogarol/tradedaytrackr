@@ -33,8 +33,12 @@ import useUpdateEmailPreferencesSubmitHandler from "../hooks/useUpdateEmailPrefe
 import useUpdateUserSubmitHandler from "../hooks/useUpdateUserSubmitHandler";
 
 const UserDetails: React.FunctionComponent = () => {
-  const { user, userUpdateSuccess, emailPreferences, userDetailsErrors } =
-    useLoginState();
+  const {
+    user,
+    user: { email_preferences },
+    userUpdateSuccess,
+    userDetailsErrors,
+  } = useLoginState();
   const { updateUser, updateUserUpdateSuccess, updateEmailPreferences } =
     useLoginDispatch();
   const [previousUserDetails, updatePreviousUserDetails] = React.useState({
@@ -188,11 +192,11 @@ const UserDetails: React.FunctionComponent = () => {
                 <span>Payout Reports</span>
               </CheckDescriptionContainer>
               <Switch
-                checked={emailPreferences.payout_reports}
-                defaultChecked={emailPreferences.payout_reports}
+                checked={email_preferences?.payout_reports}
+                defaultChecked={email_preferences?.payout_reports}
                 onChange={(checked) => {
                   updateEmailPreferences({
-                    ...emailPreferences,
+                    ...email_preferences,
                     payout_reports: checked.target.checked,
                   });
                   updateEmailPreferencesCall({
@@ -207,11 +211,11 @@ const UserDetails: React.FunctionComponent = () => {
                 <span>System Notifications</span>
               </CheckDescriptionContainer>
               <Switch
-                checked={emailPreferences.system_notifications}
-                defaultChecked={emailPreferences.system_notifications}
+                checked={email_preferences?.system_notifications}
+                defaultChecked={email_preferences?.system_notifications}
                 onChange={(checked) => {
                   updateEmailPreferences({
-                    ...emailPreferences,
+                    ...email_preferences,
                     system_notifications: checked.target.checked,
                   });
                   updateEmailPreferencesCall({
@@ -226,11 +230,11 @@ const UserDetails: React.FunctionComponent = () => {
                 <span>Exclusive Offers and Promotions</span>
               </CheckDescriptionContainer>
               <Switch
-                checked={emailPreferences.promotional_offers}
-                defaultChecked={emailPreferences.promotional_offers}
+                checked={email_preferences?.promotional_offers}
+                defaultChecked={email_preferences?.promotional_offers}
                 onChange={(checked) => {
                   updateEmailPreferences({
-                    ...emailPreferences,
+                    ...email_preferences,
                     promotional_offers: checked.target.checked,
                   });
                   updateEmailPreferencesCall({
@@ -245,11 +249,11 @@ const UserDetails: React.FunctionComponent = () => {
                 <span>Unsubscribe from all emails</span>
               </CheckDescriptionContainer>
               <Switch
-                checked={emailPreferences.unsubscribe_all}
-                defaultChecked={emailPreferences.unsubscribe_all}
+                checked={email_preferences?.unsubscribe_all}
+                defaultChecked={email_preferences?.unsubscribe_all}
                 onChange={(checked) => {
                   updateEmailPreferences({
-                    ...emailPreferences,
+                    ...email_preferences,
                     unsubscribe_all: checked.target.checked,
                   });
                   updateEmailPreferencesCall({

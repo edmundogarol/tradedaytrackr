@@ -15,6 +15,7 @@ import {
   updateLoginForm,
   updateLoginFormErrors,
   updatePasswordForm,
+  updatePasswordFormErrors,
   updateResetPasswordErrors,
   updateResetPasswordForm,
   updateResetPasswordFormSent,
@@ -42,10 +43,10 @@ interface LoginDispatch {
   updateAuthStatus(authStatus: AuthStatus): void;
   updateUserUpdateSuccess(userUpdateSuccess: boolean): void;
   updateEmailPreferences(preferences: {
-    payout_reports: boolean;
-    system_notifications: boolean;
-    promotional_offers: boolean;
-    unsubscribe_all: boolean;
+    payout_reports?: boolean;
+    system_notifications?: boolean;
+    promotional_offers?: boolean;
+    unsubscribe_all?: boolean;
   }): void;
   updateUserDetailsErrors(errors: { [key: string]: any }): void;
   updateDeleteAccountError(error: string): void;
@@ -54,6 +55,7 @@ interface LoginDispatch {
     new_password: string;
     confirm_new_password: string;
   }): void;
+  updatePasswordFormErrors(errors: { [key: string]: any }): void;
 }
 
 export const useLoginDispatch = (): LoginDispatch => {
@@ -100,10 +102,10 @@ export const useLoginDispatch = (): LoginDispatch => {
       dispatch(updateUserUpdateSuccess(userUpdateSuccess));
     },
     updateEmailPreferences(preferences: {
-      payout_reports: boolean;
-      system_notifications: boolean;
-      promotional_offers: boolean;
-      unsubscribe_all: boolean;
+      payout_reports?: boolean;
+      system_notifications?: boolean;
+      promotional_offers?: boolean;
+      unsubscribe_all?: boolean;
     }): void {
       dispatch(updateEmailPreferences(preferences));
     },
@@ -119,6 +121,9 @@ export const useLoginDispatch = (): LoginDispatch => {
       confirm_new_password: string;
     }): void {
       dispatch(updatePasswordForm(passwordForm));
+    },
+    updatePasswordFormErrors(errors: { [key: string]: any }): void {
+      dispatch(updatePasswordFormErrors(errors));
     },
   };
 };

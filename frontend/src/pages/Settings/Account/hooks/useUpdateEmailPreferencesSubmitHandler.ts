@@ -32,7 +32,6 @@ const useUpdateEmailPreferencesSubmitHandler =
           });
 
           if (!!data) {
-            console.log({ data });
             updateEmailPreferences({
               ...data,
             });

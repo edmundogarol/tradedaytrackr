@@ -1,6 +1,7 @@
 import type { User, UserPasswordUpdateData } from "@interfaces/CustomTypes";
 import useLoginDispatch from "@pages/Login/hooks/useLoginDispatch";
 import useLoginState from "@pages/Login/hooks/useLoginState";
+import { initialState } from "@pages/Login/LoginState";
 import { useCallback } from "react";
 import useLoginSubmitApiCall from "./useUpdateUserSubmitApiCall";
 
@@ -10,20 +11,22 @@ interface UpdateUserSubmitHandler {
 }
 
 const useUpdateUserSubmitHandler = (): UpdateUserSubmitHandler => {
-  const { updateUser, updateUserUpdateSuccess, updateUserDetailsErrors } =
-    useLoginDispatch();
+  const {
+    updateUser,
+    updateUserUpdateSuccess,
+    updateUserDetailsErrors,
+    updatePasswordFormErrors,
+  } = useLoginDispatch();
   const { user: userState } = useLoginState();
   const { fetch, loading } = useLoginSubmitApiCall();
+  const { updatePasswordForm } = useLoginDispatch();
 
   return {
     updateUser: useCallback(
       async (user: User | UserPasswordUpdateData) => {
         const { error, data } = await fetch({
           data: {
-            username: (user as User)?.username,
-            email: (user as User)?.email,
-            first_name: (user as User)?.first_name,
-            last_name: (user as User)?.last_name,
+            ...user,
           },
         });
 
@@ -32,11 +35,22 @@ const useUpdateUserSubmitHandler = (): UpdateUserSubmitHandler => {
             ...userState,
             ...data,
           });
-          updateUserUpdateSuccess(true);
+          if (
+            (user as User).email ||
+            (user as User).first_name ||
+            (user as User).last_name ||
+            (user as User).username
+          ) {
+            updateUserUpdateSuccess(true);
+          } else {
+            updatePasswordFormErrors(data);
+            updatePasswordForm(initialState.passwordForm);
+          }
         } else if (error) {
           console.log("Update User Post fetch error", error);
           updateUserUpdateSuccess(false);
           updateUserDetailsErrors(error);
+          updatePasswordFormErrors(error);
         }
       },
       [loading],

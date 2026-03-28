@@ -2,8 +2,6 @@ import Button from "@components/Button/Button";
 import GlassTile from "@components/GlassTile/GlassTile";
 import ModalWrapper from "@components/Modal/Modal";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import useDeleteAccountApiCall from "@pages/Login/hooks/useDeleteAccountApiCall";
-import useDeleteAccountHandler from "@pages/Login/hooks/useDeleteAccountHandler";
 import { color } from "@styles/colors";
 import { SectionText } from "@styles/globalStyledComponents";
 import React from "react";
@@ -14,6 +12,8 @@ import {
   DeleteAccountSection,
   SubsectionHeaderWrapper,
 } from "../AccountStyledComponents";
+import useDeleteAccountApiCall from "../hooks/useDeleteAccountApiCall";
+import useDeleteAccountHandler from "../hooks/useDeleteAccountHandler";
 
 const Delete: React.FunctionComponent = () => {
   const [showDeleteModal, setShowDeleteModal] = React.useState(false);

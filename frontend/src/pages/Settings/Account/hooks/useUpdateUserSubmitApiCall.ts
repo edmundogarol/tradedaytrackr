@@ -11,7 +11,7 @@ interface UpdateUserSubmitApiCallData {
 const useUpdateUserSubmitApiCall =
   (): AxiosFetchWrapperResponse<UpdateUserSubmitApiCallData> => {
     const { fetch, data, loading, error } =
-      useAxiosFetch<UpdateUserSubmitApiCallData>(`user/me/`, {
+      useAxiosFetch<UpdateUserSubmitApiCallData>(`user/update_me/`, {
         method: "PATCH",
       });
 

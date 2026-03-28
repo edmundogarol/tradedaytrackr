@@ -25,6 +25,12 @@ export interface User {
   verification_sent_at?: string;
   verification_token?: string;
   last_login?: string;
+  email_preferences?: {
+    payout_reports?: boolean;
+    system_notifications?: boolean;
+    promotional_offers?: boolean;
+    unsubscribe_all?: boolean;
+  };
 }
 
 export interface UserPasswordUpdateData {

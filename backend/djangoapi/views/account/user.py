@@ -84,7 +84,7 @@ class UserViewSet(ModelViewSet):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=["patch"], url_path="me", url_name="me")
+    @action(detail=False, methods=["patch"], url_path="update_me")
     def update_me(self, request):
         user = request.user
 
@@ -96,13 +96,32 @@ class UserViewSet(ModelViewSet):
             partial=True,
             context={"request": request},
         )
+        print(request.data.get("current_password"))
 
-        if request.data.get("password") and not user.check_password(
+        if request.data.get("current_password") and not user.check_password(
             request.data.get("current_password", "")
         ):
             return Response(
-                {"current_password": ["Current password is incorrect"]},
+                {"current_password": "Current password is incorrect"},
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+        elif request.data.get("new_password") != request.data.get(
+            "confirm_new_password"
+        ):
+            return Response(
+                {
+                    "confirm_new_password": "The passwords entered do not match",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        elif request.data.get("new_password"):
+            serializer.is_valid(raise_exception=True)
+            updated_user = serializer.save()
+            return Response(
+                {
+                    "detail": "Password updated successfully",
+                },
+                status=status.HTTP_200_OK,
             )
 
         serializer.is_valid(raise_exception=True)
@@ -134,7 +153,7 @@ class UserViewSet(ModelViewSet):
 
         return Response({"detail": "Account deleted"}, status=200)
 
-    @action(detail=False, methods=["delete"], url_path="me")
+    @action(detail=False, methods=["delete"], url_path="delete_me")
     def delete_me(self, request):
         user = request.user
 

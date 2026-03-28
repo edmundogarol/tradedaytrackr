@@ -22,8 +22,13 @@ import {
 import useUpdateUserSubmitHandler from "../hooks/useUpdateUserSubmitHandler";
 
 const Password: React.FunctionComponent = () => {
-  const { passwordForm, userUpdateSuccess } = useLoginState();
-  const { updatePasswordForm, updateUserUpdateSuccess } = useLoginDispatch();
+  const { passwordForm, userUpdateSuccess, passwordFormErrors } =
+    useLoginState();
+  const {
+    updatePasswordForm,
+    updateUserUpdateSuccess,
+    updatePasswordFormErrors,
+  } = useLoginDispatch();
   const { updateUser: updateUserCall, loading } = useUpdateUserSubmitHandler();
   const [previousPasswordDetails, setPreviousPasswordDetails] = React.useState(
     initialState.passwordForm,
@@ -75,12 +80,14 @@ const Password: React.FunctionComponent = () => {
                 label="Current Password"
                 type="password"
                 darkMode
+                error={passwordFormErrors.current_password}
                 onChange={(e) => {
                   updateUserUpdateSuccess(false);
                   updatePasswordForm({
                     ...passwordForm,
                     current_password: e.target.value,
                   });
+                  updatePasswordFormErrors({});
                 }}
               />
               <Gap level={1} />
@@ -90,12 +97,14 @@ const Password: React.FunctionComponent = () => {
                 label="New Password"
                 type="password"
                 darkMode
+                error={passwordFormErrors.new_password}
                 onChange={(e) => {
                   updateUserUpdateSuccess(false);
                   updatePasswordForm({
                     ...passwordForm,
                     new_password: e.target.value,
                   });
+                  updatePasswordFormErrors({});
                 }}
               />
               <Gap level={1} />
@@ -105,17 +114,19 @@ const Password: React.FunctionComponent = () => {
                 label="Confirm Password"
                 type="password"
                 darkMode
+                error={passwordFormErrors.confirm_new_password}
                 onChange={(e) => {
                   updateUserUpdateSuccess(false);
                   updatePasswordForm({
                     ...passwordForm,
                     confirm_new_password: e.target.value,
                   });
+                  updatePasswordFormErrors({});
                 }}
               />
               <Gap level={2} />
-              <If condition={userUpdateSuccess}>
-                <FormSuccess detail={"User details updated successfully!"} />
+              <If condition={!!passwordFormErrors}>
+                <FormSuccess detail={passwordFormErrors.detail} />
               </If>
               <Button
                 disabledBlock={!passwordFieldsAreDirty}

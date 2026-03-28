@@ -23,18 +23,14 @@ export interface LoginState {
   readonly isHydrated?: boolean;
   readonly authStatus: AuthStatus;
   readonly userUpdateSuccess: boolean;
-  readonly emailPreferences: {
-    payout_reports: boolean;
-    system_notifications: boolean;
-    promotional_offers: boolean;
-    unsubscribe_all: boolean;
-  };
+
   readonly userDetailsErrors: { [key: string]: any };
   readonly passwordForm: {
     current_password: string;
     new_password: string;
     confirm_new_password: string;
   };
+  readonly passwordFormErrors: { [key: string]: any };
 }
 
 export const initialState: LoginState = {
@@ -49,6 +45,12 @@ export const initialState: LoginState = {
     logged_in: false,
     is_staff: false,
     is_verified: false,
+    email_preferences: {
+      payout_reports: true,
+      system_notifications: true,
+      promotional_offers: true,
+      unsubscribe_all: false,
+    },
   },
   isHydrated: false,
   loginForm: {
@@ -73,18 +75,13 @@ export const initialState: LoginState = {
   deleteAccountError: "",
   authStatus: "loading",
   userUpdateSuccess: false,
-  emailPreferences: {
-    payout_reports: true,
-    system_notifications: true,
-    promotional_offers: true,
-    unsubscribe_all: false,
-  },
   userDetailsErrors: {},
   passwordForm: {
     current_password: "••••••••••••••••",
     new_password: "••••••••••••••••",
     confirm_new_password: "••••••••••••••••",
   },
+  passwordFormErrors: {},
 };
 
 type UpdateUserAction = PayloadAction<User>;
@@ -100,10 +97,10 @@ type UpdateIsHydratedAction = PayloadAction<boolean>;
 type UpdateAuthStatusAction = PayloadAction<AuthStatus>;
 type UpdateUserUpdateSuccessAction = PayloadAction<boolean>;
 type UpdateEmailPreferencesAction = PayloadAction<{
-  payout_reports: boolean;
-  system_notifications: boolean;
-  promotional_offers: boolean;
-  unsubscribe_all: boolean;
+  payout_reports?: boolean;
+  system_notifications?: boolean;
+  promotional_offers?: boolean;
+  unsubscribe_all?: boolean;
 }>;
 type UpdateUserDetailsErrorsAction = PayloadAction<{ [key: string]: any }>;
 type UpdateDeleteAccountErrorAction = PayloadAction<string>;
@@ -112,6 +109,7 @@ type UpdatePasswordFormAction = PayloadAction<{
   new_password: string;
   confirm_new_password: string;
 }>;
+type UpdatePasswordFormErrorsAction = PayloadAction<{ [key: string]: any }>;
 
 export type LoginAction =
   | UpdateUserAction
@@ -129,7 +127,8 @@ export type LoginAction =
   | UpdateEmailPreferencesAction
   | UpdateUserDetailsErrorsAction
   | UpdateDeleteAccountErrorAction
-  | UpdatePasswordFormAction;
+  | UpdatePasswordFormAction
+  | UpdatePasswordFormErrorsAction;
 
 export const loginSlice = createSlice({
   name: "login",
@@ -181,7 +180,10 @@ export const loginSlice = createSlice({
       state.userUpdateSuccess = action.payload;
     },
     updateEmailPreferences: (state, action: UpdateEmailPreferencesAction) => {
-      state.emailPreferences = { ...state.emailPreferences, ...action.payload };
+      state.user.email_preferences = {
+        ...state.user.email_preferences,
+        ...action.payload,
+      };
     },
     updateUserDetailsErrors: (state, action: UpdateUserDetailsErrorsAction) => {
       state.userDetailsErrors = action.payload;
@@ -194,6 +196,12 @@ export const loginSlice = createSlice({
     },
     updatePasswordForm: (state, action: UpdatePasswordFormAction) => {
       state.passwordForm = { ...state.passwordForm, ...action.payload };
+    },
+    updatePasswordFormErrors: (
+      state,
+      action: UpdatePasswordFormErrorsAction,
+    ) => {
+      state.passwordFormErrors = action.payload;
     },
   },
 });
@@ -215,6 +223,7 @@ export const {
   updateUserDetailsErrors,
   updateDeleteAccountError,
   updatePasswordForm,
+  updatePasswordFormErrors,
 } = loginSlice.actions;
 export const loginReducer = loginSlice.reducer;
 
