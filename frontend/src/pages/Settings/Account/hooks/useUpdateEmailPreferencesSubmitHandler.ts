@@ -16,7 +16,9 @@ interface UpdateEmailPreferencesSubmitHandler {
 const useUpdateEmailPreferencesSubmitHandler =
   (): UpdateEmailPreferencesSubmitHandler => {
     const { updateEmailPreferences } = useLoginDispatch();
-    const { emailPreferences: currentEmailPreferences } = useLoginState();
+    const {
+      user: { email_preferences: currentEmailPreferences },
+    } = useLoginState();
     const { fetch, loading } = useUpdateEmailPreferencesSubmitApiCall();
 
     return {

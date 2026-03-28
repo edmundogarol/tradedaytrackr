@@ -12,7 +12,7 @@ import useLoginState from "@pages/Login/hooks/useLoginState";
 import { initialState } from "@pages/Login/LoginState";
 import { BUTTON_WIDTH } from "@styles/constants";
 import { isNotEmptyString } from "@utils/utils";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   AccountDetailsSection,
   AccountSettingsContainer,
@@ -58,6 +58,11 @@ const Password: React.FunctionComponent = () => {
     }
   }, [isPristine, updatePasswordForm]);
 
+  useEffect(() => {
+    if (!!passwordFormErrors && !!passwordFormErrors.detail) {
+      setIsPristine(true);
+    }
+  }, [passwordFormErrors]);
   return (
     <PasswordSection>
       <GlassTile

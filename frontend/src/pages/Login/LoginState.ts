@@ -23,7 +23,6 @@ export interface LoginState {
   readonly isHydrated?: boolean;
   readonly authStatus: AuthStatus;
   readonly userUpdateSuccess: boolean;
-
   readonly userDetailsErrors: { [key: string]: any };
   readonly passwordForm: {
     current_password: string;
