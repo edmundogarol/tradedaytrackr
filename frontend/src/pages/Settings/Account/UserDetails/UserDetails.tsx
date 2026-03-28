@@ -33,7 +33,8 @@ import useUpdateEmailPreferencesSubmitHandler from "../hooks/useUpdateEmailPrefe
 import useUpdateUserSubmitHandler from "../hooks/useUpdateUserSubmitHandler";
 
 const UserDetails: React.FunctionComponent = () => {
-  const { user, userUpdateSuccess, emailPreferences } = useLoginState();
+  const { user, userUpdateSuccess, emailPreferences, userDetailsErrors } =
+    useLoginState();
   const { updateUser, updateUserUpdateSuccess, updateEmailPreferences } =
     useLoginDispatch();
   const [previousUserDetails, updatePreviousUserDetails] = React.useState({
@@ -83,6 +84,7 @@ const UserDetails: React.FunctionComponent = () => {
         <AccountSettingsContainer>
           <AccountDetailsSection>
             <Input
+              error={userDetailsErrors.username}
               label="Username"
               value={user.username}
               darkMode
@@ -117,6 +119,7 @@ const UserDetails: React.FunctionComponent = () => {
             </If>
             <Input
               label="Email"
+              error={userDetailsErrors.email}
               value={user.email}
               darkMode
               onChange={(e) => {
@@ -131,6 +134,7 @@ const UserDetails: React.FunctionComponent = () => {
             <UserNameContainer>
               <Input
                 label="First Name"
+                error={userDetailsErrors.first_name}
                 value={user.first_name}
                 darkMode
                 onChange={(e) => {
@@ -144,6 +148,7 @@ const UserDetails: React.FunctionComponent = () => {
               <Gap level={2} />
               <Input
                 label="Last Name"
+                error={userDetailsErrors.last_name}
                 value={user.last_name}
                 darkMode
                 onChange={(e) => {

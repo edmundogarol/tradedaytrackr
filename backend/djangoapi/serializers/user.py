@@ -47,6 +47,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserValidationSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(validators=[])
+
     def validate_email(self, value):
         value = value.lower()
 
@@ -73,16 +75,14 @@ class UserValidationSerializer(serializers.ModelSerializer):
 class RegisterSerializer(UserValidationSerializer):
     class Meta:
         model = User
-        fields = ["email", "password"]
+        fields = ["email", "password", "first_name", "last_name", "username"]
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
-
         request = self.context.get("request")
         ip = request.META.get("REMOTE_ADDR") if request else None
 
         user = User.objects.create_user(**validated_data)
-
         user.last_ip = ip
         user.is_verified = False
         user.verification_token = token_urlsafe(32)

@@ -9,16 +9,19 @@ import type {
 import type { AuthStatus, LoginAction } from "../LoginState";
 import {
   updateAuthStatus,
+  updateDeleteAccountError,
   updateEmailPreferences,
   updateIsHydrated,
   updateLoginForm,
   updateLoginFormErrors,
+  updatePasswordForm,
   updateResetPasswordErrors,
   updateResetPasswordForm,
   updateResetPasswordFormSent,
   updateSignUpForm,
   updateSignUpFormErrors,
   updateUser,
+  updateUserDetailsErrors,
   updateUserUpdateSuccess,
   updateVerificationError,
 } from "../LoginState";
@@ -43,6 +46,13 @@ interface LoginDispatch {
     system_notifications: boolean;
     promotional_offers: boolean;
     unsubscribe_all: boolean;
+  }): void;
+  updateUserDetailsErrors(errors: { [key: string]: any }): void;
+  updateDeleteAccountError(error: string): void;
+  updatePasswordForm(passwordForm: {
+    current_password: string;
+    new_password: string;
+    confirm_new_password: string;
   }): void;
 }
 
@@ -96,6 +106,19 @@ export const useLoginDispatch = (): LoginDispatch => {
       unsubscribe_all: boolean;
     }): void {
       dispatch(updateEmailPreferences(preferences));
+    },
+    updateUserDetailsErrors(errors: { [key: string]: any }): void {
+      dispatch(updateUserDetailsErrors(errors));
+    },
+    updateDeleteAccountError(error: string): void {
+      dispatch(updateDeleteAccountError(error));
+    },
+    updatePasswordForm(passwordForm: {
+      current_password: string;
+      new_password: string;
+      confirm_new_password: string;
+    }): void {
+      dispatch(updatePasswordForm(passwordForm));
     },
   };
 };

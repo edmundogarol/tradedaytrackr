@@ -26,3 +26,9 @@ export interface User {
   verification_token?: string;
   last_login?: string;
 }
+
+export interface UserPasswordUpdateData {
+  current_password: string;
+  new_password: string;
+  confirm_new_password: string;
+}

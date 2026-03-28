@@ -11,7 +11,10 @@ from rest_framework.viewsets import ModelViewSet
 
 from backend.djangoapi.serializers import UserSerializer
 from backend.djangoapi.serializers.user import RegisterSerializer, UpdateUserSerializer
-from backend.djangoapi.tasks.user import send_verification_email
+from backend.djangoapi.tasks.user import (
+    send_account_deleted_email,
+    send_verification_email,
+)
 
 User = get_user_model()
 
@@ -19,7 +22,6 @@ User = get_user_model()
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all().order_by("-id")
     serializer_class = UserSerializer
-    # TODO - PERMISSIONS - Fix permissions class for Auth Model / Models
 
     def list(self, request, *args, **kwargs):
         queryset = User.objects.all().order_by("-id")
@@ -34,6 +36,7 @@ class UserViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         serializer = RegisterSerializer(data=request.data, context={"request": request})
+
         serializer.is_valid(raise_exception=True)
 
         user = serializer.save()
@@ -48,14 +51,16 @@ class UserViewSet(ModelViewSet):
         )
 
     def retrieve(self, request, pk=None):
-        queryset = User.objects.all()
-        user = get_object_or_404(queryset, pk=pk)
+        user = get_object_or_404(User, pk=pk)
+
+        if request.user != user and not request.user.is_staff:
+            return Response({"detail": "Forbidden"}, status=403)
+
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
-        user = request.user
-
+        user = self.get_object()
         old_email = user.email
 
         serializer = UpdateUserSerializer(
@@ -79,7 +84,7 @@ class UserViewSet(ModelViewSet):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=["patch"], url_path="me")
+    @action(detail=False, methods=["patch"], url_path="me", url_name="me")
     def update_me(self, request):
         user = request.user
 
@@ -92,6 +97,14 @@ class UserViewSet(ModelViewSet):
             context={"request": request},
         )
 
+        if request.data.get("password") and not user.check_password(
+            request.data.get("current_password", "")
+        ):
+            return Response(
+                {"current_password": ["Current password is incorrect"]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         serializer.is_valid(raise_exception=True)
         updated_user = serializer.save()
 
@@ -105,3 +118,29 @@ class UserViewSet(ModelViewSet):
             send_verification_email(updated_user, verification_url)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def destroy(self, request, *args, **kwargs):
+        user = self.get_object()
+
+        if request.user != user:
+            return Response(
+                {"detail": "You can only delete your own account"}, status=403
+            )
+
+        email = user.email
+        user.delete()
+
+        send_account_deleted_email.delay(email)
+
+        return Response({"detail": "Account deleted"}, status=200)
+
+    @action(detail=False, methods=["delete"], url_path="me")
+    def delete_me(self, request):
+        user = request.user
+
+        email = user.email
+        user.delete()
+
+        send_account_deleted_email.delay(email)
+
+        return Response({"detail": "Account deleted"}, status=200)

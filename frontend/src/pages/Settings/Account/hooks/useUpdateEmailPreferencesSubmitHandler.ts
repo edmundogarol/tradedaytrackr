@@ -5,10 +5,10 @@ import useUpdateEmailPreferencesSubmitApiCall from "./useUpdateEmailPreferencesS
 
 interface UpdateEmailPreferencesSubmitHandler {
   update: (emailPreferences: {
-    payout_reports: boolean;
-    system_notifications: boolean;
-    promotional_offers: boolean;
-    unsubscribe_all: boolean;
+    payout_reports?: boolean;
+    system_notifications?: boolean;
+    promotional_offers?: boolean;
+    unsubscribe_all?: boolean;
   }) => Promise<void>;
   loading: boolean;
 }
