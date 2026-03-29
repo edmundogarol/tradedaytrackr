@@ -71,6 +71,16 @@ class UserValidationSerializer(serializers.ModelSerializer):
         password_validation.validate_password(value)
         return value
 
+    def validate_first_name(self, value):
+        if value is not None and len(value.strip()) == 0:
+            raise serializers.ValidationError("First name cannot be empty.")
+        return value.strip() if value else value
+
+    def validate_last_name(self, value):
+        if value is not None and len(value.strip()) == 0:
+            raise serializers.ValidationError("Last name cannot be empty.")
+        return value.strip() if value else value
+
 
 class RegisterSerializer(UserValidationSerializer):
     class Meta:

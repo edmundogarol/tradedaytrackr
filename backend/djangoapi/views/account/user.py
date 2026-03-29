@@ -96,7 +96,6 @@ class UserViewSet(ModelViewSet):
             partial=True,
             context={"request": request},
         )
-        print(request.data.get("current_password"))
 
         if request.data.get("current_password") and not user.check_password(
             request.data.get("current_password", "")

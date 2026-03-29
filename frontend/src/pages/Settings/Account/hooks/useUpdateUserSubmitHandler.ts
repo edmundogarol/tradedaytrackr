@@ -42,6 +42,7 @@ const useUpdateUserSubmitHandler = (): UpdateUserSubmitHandler => {
             (user as User).username
           ) {
             updateUserUpdateSuccess(true);
+            updateUserDetailsErrors({});
           } else {
             updatePasswordFormErrors(data);
             updatePasswordForm(initialState.passwordForm);

@@ -10,6 +10,7 @@ import { GlassTileChildrenWrapper } from "@components/GlassTile/GlassTileStyledC
 import { If } from "@components/If/If";
 import Input from "@components/Input/Input";
 import Loading from "@components/Loading/Loading";
+import type { User } from "@interfaces/CustomTypes";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import DoneOutlineIcon from "@mui/icons-material/Done";
 import Switch from "@mui/material/Switch";
@@ -90,7 +91,8 @@ const UserDetails: React.FunctionComponent = () => {
             <Input
               error={userDetailsErrors.username}
               label="Username"
-              value={user.username}
+              value={isNotEmptyString(user.username) ? user.username : ""}
+              placeholder="Enter username"
               darkMode
               onChange={(e) => {
                 updateUserUpdateSuccess(false);
@@ -139,7 +141,8 @@ const UserDetails: React.FunctionComponent = () => {
               <Input
                 label="First Name"
                 error={userDetailsErrors.first_name}
-                value={user.first_name}
+                value={isNotEmptyString(user.first_name) ? user.first_name : ""}
+                placeholder="Enter first name"
                 darkMode
                 onChange={(e) => {
                   updateUserUpdateSuccess(false);
@@ -153,7 +156,8 @@ const UserDetails: React.FunctionComponent = () => {
               <Input
                 label="Last Name"
                 error={userDetailsErrors.last_name}
-                value={user.last_name}
+                value={isNotEmptyString(user.last_name) ? user.last_name : ""}
+                placeholder="Enter last name"
                 darkMode
                 onChange={(e) => {
                   updateUserUpdateSuccess(false);
@@ -175,7 +179,12 @@ const UserDetails: React.FunctionComponent = () => {
                 if (!userFieldsAreDirty) {
                   return;
                 }
-                updateUserCall(user);
+                updateUserCall({
+                  username: user.username,
+                  email: user.email,
+                  first_name: user.first_name,
+                  last_name: user.last_name,
+                } as User);
                 updatePreviousUserDetails(user);
               }}
               style={{
