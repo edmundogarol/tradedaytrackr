@@ -105,16 +105,23 @@ class UserViewSet(ModelViewSet):
                 {"current_password": "Current password is incorrect"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        elif request.data.get("new_password") != request.data.get(
-            "confirm_new_password"
-        ):
+        elif request.data.get("current_password") and request.data.get(
+            "new_password"
+        ) != request.data.get("confirm_new_password"):
             return Response(
                 {
                     "confirm_new_password": "The passwords entered do not match",
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        elif request.data.get("new_password"):
+        elif request.data.get("current_password") and not request.data.get(
+            "new_password"
+        ):
+            return Response(
+                {"new_password": "Please enter a new password"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        elif request.data.get("current_password"):
             serializer.is_valid(raise_exception=True)
             updated_user = serializer.save()
             return Response(
