@@ -50,6 +50,7 @@ export const AddTemplateSection = styled.div`
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
+  width: 100%;
 `;
 
 export const AddTemplateSectionHalf = styled.div`
@@ -57,4 +58,39 @@ export const AddTemplateSectionHalf = styled.div`
   flex-direction: column;
   gap: 10px;
   flex: 1 1 300px;
+`;
+
+export const AccountImageSliderContainer = styled.div`
+  width: 200px;
+  border: 1px solid #ffffff75;
+  border-radius: 4px;
+  background: #0000003b;
+  margin-bottom: 20px;
+  position: relative;
+`;
+
+export const CarouselSliderTrackerDot = styled.span`
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+export const CarouselRightChevron = styled.div`
+  position: absolute;
+  right: 0;
+  transform: translateY(50%);
+  &:hover {
+    cursor: pointer;
+  }
+  z-index: 1;
+`;
+
+export const CarouselLeftChevron = styled.div`
+  position: absolute;
+  left: 0;
+  transform: translateY(50%);
+  &:hover {
+    cursor: pointer;
+  }
+  z-index: 1;
 `;

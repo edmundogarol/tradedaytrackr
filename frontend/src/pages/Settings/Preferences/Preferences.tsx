@@ -1,4 +1,5 @@
 import Button from "@components/Button/Button";
+import Carousel from "@components/Carousel/Carousel";
 import Gap from "@components/Gap/Gap";
 import GlassTile from "@components/GlassTile/GlassTile";
 import { GlassTileChildrenWrapper } from "@components/GlassTile/GlassTileStyledComponents";
@@ -8,10 +9,13 @@ import Input from "@components/Input/Input";
 import ModalWrapper from "@components/Modal/Modal";
 import Page from "@components/Page/Page";
 import SelectWrapper from "@components/Select/SelectWrapper";
+import type { AccountTemplate } from "@interfaces/CustomTypes";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import ArticleIcon from "@mui/icons-material/Article";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import { color } from "@styles/colors";
 import { BUTTON_WIDTH } from "@styles/constants";
 import {
   PageContainer as Container,
@@ -21,9 +25,10 @@ import {
   TableField,
   TableItem,
 } from "@styles/globalStyledComponents";
-import { formatter } from "@utils/utils";
+import { firmLogoSrc, formatter, imageSrc } from "@utils/utils";
 import React from "react";
 import {
+  AccountImageSliderContainer,
   AccountTemplatesSection,
   AddTemplateSection,
   AddTemplateSectionHalf,
@@ -34,26 +39,12 @@ import {
 
 interface PreferencesProps {}
 
-interface AccountTemplate {
-  name?: string;
-  firm?: string;
-  accountSize?: number;
-  minDaysToPayout?: number;
-  minBufferTarget?: number;
-  allowablePayoutRequest?: number;
-  profitSplit?: number;
-  minDayProfit?: number;
-  maxDrawdown?: number;
-  evalTemplate: boolean;
-  profitTarget?: number;
-  consistency?: number;
-}
-
 const Preferences: React.FunctionComponent<PreferencesProps> = () => {
   const [tagModalOpen, setTagModalOpen] = React.useState(false);
   const [templateModalOpen, setTemplateModalOpen] = React.useState(false);
-  const accountTemplatesMock = [
+  const accountTemplatesMock: AccountTemplate[] = [
     {
+      id: 1,
       name: "MyFundedFutures Flex",
       firm: "MyFundedFutures",
       accountSize: 50000,
@@ -67,6 +58,7 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
       consistency: 0,
     },
     {
+      id: 2,
       name: "MyFundedFutures Rapid",
       firm: "MyFundedFutures",
       accountSize: 50000,
@@ -80,6 +72,7 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
       consistency: 0,
     },
     {
+      id: 3,
       name: "Apex EOD",
       firm: "Apex",
       accountSize: 50000,
@@ -94,6 +87,7 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
       consistency: 0,
     },
     {
+      id: 4,
       name: "Bulenox EOD",
       firm: "Bulenox",
       accountSize: 50000,
@@ -127,6 +121,7 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
     },
   ];
   const newAccountTemplate: AccountTemplate = {
+    id: 0,
     name: undefined,
     firm: undefined,
     accountSize: undefined,
@@ -142,6 +137,8 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
   };
   const [mockAccountTemplate, setMockAccountTemplate] =
     React.useState<AccountTemplate>(newAccountTemplate);
+
+  const carouselImages = ["add", "myfundedfutures", "apex", "bulenox", "alpha"];
 
   return (
     <Page topBarShowMenu={true}>
@@ -160,6 +157,11 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
         </div>
       </ModalWrapper>
       <ModalWrapper
+        contentContainerStyle={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
         open={templateModalOpen}
         title="Create New Account Template"
         onClose={() => {
@@ -168,6 +170,29 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
         }}
         setOpen={setTemplateModalOpen}
       >
+        <SectionText>Add / Choose Account Image</SectionText>
+        <AccountImageSliderContainer>
+          <Carousel
+            items={carouselImages}
+            onItemShown={(item) => console.log(item)}
+            renderItem={(item) => {
+              return item === "add" ? (
+                <AddPhotoAlternateIcon
+                  style={{
+                    color: color("SystemLabel1"),
+                    height: 50,
+                    width: 50,
+                  }}
+                />
+              ) : (
+                <img
+                  style={{ height: 50, width: 50 }}
+                  src={imageSrc(firmLogoSrc(item as string))}
+                />
+              );
+            }}
+          />
+        </AccountImageSliderContainer>
         <AddTemplateSection>
           <AddTemplateSectionHalf>
             <Input
@@ -194,12 +219,12 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
             />
             <Input
               value={mockAccountTemplate.firm}
-              onChange={(e) =>
+              onChange={(e) => {
                 setMockAccountTemplate({
                   ...mockAccountTemplate,
                   firm: e.target.value,
-                })
-              }
+                });
+              }}
               onSuggestionClick={(value) => {
                 setMockAccountTemplate({
                   ...mockAccountTemplate,
@@ -217,6 +242,9 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                 },
                 {
                   description: "Bulenox",
+                },
+                {
+                  description: "Alpha",
                 },
               ]}
             />
@@ -252,6 +280,7 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
             />
             <If condition={!mockAccountTemplate.evalTemplate}>
               <Input
+                positiveOnly
                 value={mockAccountTemplate.minBufferTarget}
                 onChange={(e) =>
                   setMockAccountTemplate({
@@ -554,14 +583,14 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                       <TableItem key={template.name} $idx={idx}>
                         <TableField $flexSize={1.5}>{template.name}</TableField>
                         <TableField>
-                          {formatter.format(template.accountSize)}
+                          {formatter.format(template?.accountSize as number)}
                         </TableField>
                         <TableField>
                           {template.minDaysToPayout}{" "}
-                          {`day${template.minDaysToPayout > 1 ? "s" : ""}`}
+                          {`day${(template?.minDaysToPayout as number) > 1 ? "s" : ""}`}
                         </TableField>
                         <TableField>
-                          {formatter.format(template.minBufferTarget)}
+                          {formatter.format(template.minBufferTarget as number)}
                         </TableField>
                         <TableField $flexSize={0.5}>
                           <InfoPopout infoDescription="Edit Template">
@@ -609,11 +638,11 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                       <TableItem key={template.name} $idx={idx}>
                         <TableField $flexSize={1.5}>{template.name}</TableField>
                         <TableField>
-                          {formatter.format(template.accountSize)}
+                          {formatter.format(template.accountSize as number)}
                         </TableField>
                         <TableField>
                           {template?.profitTarget
-                            ? formatter.format(template.profitTarget)
+                            ? formatter.format(template.profitTarget as number)
                             : "N/A"}
                         </TableField>
                         <TableField>

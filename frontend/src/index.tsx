@@ -1,10 +1,11 @@
+import NavigationContainer from "@navigation/NavigationContainer";
+import store from "@redux/store";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
-import store from "@redux/store";
-import NavigationContainer from "@navigation/NavigationContainer";
-import reportWebVitals from "./reportWebVitals";
 import "./index.css";
+import reportWebVitals from "./reportWebVitals";
+import "./styles/plugins.css";
 
 const container = document.getElementById("app");
 const root = ReactDOM.createRoot(container as HTMLElement);
@@ -18,7 +19,7 @@ root.render(
     <Provider store={store}>
       <NavigationContainer />
     </Provider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 
 // If you want to start measuring performance in your app, pass a function

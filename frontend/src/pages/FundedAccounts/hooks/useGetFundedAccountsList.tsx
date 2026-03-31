@@ -11,7 +11,7 @@ export const useGetFundedAccountsList = (): FundedAccountsListItemDetails[] => {
         id: 1,
         name: "MFFU 50k Flex",
       },
-      firm: "mffu",
+      firm: "myfundedfutures",
       firmMinDays: 5,
       currentDayCount: 5,
       dayValues: [
@@ -51,7 +51,7 @@ export const useGetFundedAccountsList = (): FundedAccountsListItemDetails[] => {
         id: 1,
         name: "MFFU 50k Flex",
       },
-      firm: "mffu",
+      firm: "myfundedfutures",
       firmMinDays: 5,
       currentDayCount: 5,
       dayValues: [

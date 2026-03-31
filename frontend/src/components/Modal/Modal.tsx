@@ -17,6 +17,7 @@ export interface ModalWrapperProps {
   setOpen: (open: boolean) => void;
   onClose?: () => void;
   style?: React.CSSProperties;
+  contentContainerStyle?: React.CSSProperties;
 }
 
 const ModalWrapper: React.FunctionComponent<ModalWrapperProps> = ({
@@ -26,6 +27,7 @@ const ModalWrapper: React.FunctionComponent<ModalWrapperProps> = ({
   setOpen,
   onClose,
   style,
+  contentContainerStyle,
 }) => {
   return (
     <Modal
@@ -54,7 +56,7 @@ const ModalWrapper: React.FunctionComponent<ModalWrapperProps> = ({
             />
           </CloseContainer>
         </Header>
-        <Content>{children}</Content>
+        <Content style={contentContainerStyle}>{children}</Content>
       </ModalContainer>
     </Modal>
   );

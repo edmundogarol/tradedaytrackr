@@ -38,3 +38,20 @@ export interface UserPasswordUpdateData {
   new_password: string;
   confirm_new_password: string;
 }
+
+export interface AccountTemplate {
+  id: number;
+  image?: string;
+  name?: string;
+  firm?: string;
+  accountSize?: number;
+  minDaysToPayout?: number;
+  minBufferTarget?: number;
+  allowablePayoutRequest?: number;
+  profitSplit?: number;
+  minDayProfit?: number;
+  maxDrawdown?: number;
+  evalTemplate: boolean;
+  profitTarget?: number;
+  consistency?: number;
+}
