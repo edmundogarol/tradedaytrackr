@@ -51,7 +51,7 @@ export const initialState: LoginState = {
       unsubscribe_all: false,
     },
   },
-  isHydrated: false,
+  isHydrated: true,
   loginForm: {
     email: "",
     password: "",
