@@ -16,7 +16,8 @@ const useLoginCheckHandler = ({
   LoginCheckApiCallError
 >): void => {
   const { user } = useLoginState();
-  const { updateUser, updateIsHydrated } = useLoginDispatch();
+  const { updateUser, updateIsHydrated, updateEmailPreferences } =
+    useLoginDispatch();
 
   useEffect(() => {
     // if (data) {

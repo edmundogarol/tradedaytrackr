@@ -28,8 +28,10 @@ import RequireAuth from "./RequireAuth";
 import checkAuth from "./hooks/checkAuth";
 
 const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
-  const { user, verificationError, isHydrated } = useLoginState();
-  const { updateVerificationError } = useLoginDispatch();
+  const { user, verificationError, isHydrated, deleteAccountError } =
+    useLoginState();
+  const { updateVerificationError, updateDeleteAccountError } =
+    useLoginDispatch();
   const loginCheckApiCall = useLoginCheckApiCall();
   const { loading } = loginCheckApiCall;
   useLoginCheckHandler(loginCheckApiCall);
@@ -45,6 +47,12 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
         open={isNotEmptyString(verificationError)}
         message={verificationError}
         setPopoutOpen={() => updateVerificationError("")}
+      />
+      <AlertPopout
+        hideDuration={4000}
+        open={isNotEmptyString(deleteAccountError)}
+        message={deleteAccountError}
+        setPopoutOpen={() => updateDeleteAccountError("")}
       />
       <Routes>
         {/* Public routes */}

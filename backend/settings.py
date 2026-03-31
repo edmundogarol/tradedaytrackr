@@ -40,7 +40,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = SETTINGS["SECRET_KEY"]
-WHOP_WEBHOOK_SECRET = SETTINGS["WHOP_WEBHOOK_SECRET"]
+WHOP_WEBHOOK_ACTIVATE_MEMBERSHIP_SECRET = SETTINGS[
+    "WHOP_WEBHOOK_ACTIVATE_MEMBERSHIP_SECRET"
+]
+WHOP_WEBHOOK_DEACTIVATE_MEMBERSHIP_SECRET = SETTINGS[
+    "WHOP_WEBHOOK_DEACTIVATE_MEMBERSHIP_SECRET"
+]
 
 if "DEVENV" in os.environ:
     ALLOWED_HOSTS = ["*"]
@@ -150,6 +155,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {
+            "min_length": 8,
+        },
     },
     {
         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",

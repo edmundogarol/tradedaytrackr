@@ -19,6 +19,39 @@ export interface User {
   birth_date?: string;
   logged_in: boolean;
   is_staff: boolean;
-  verified: boolean;
+  is_verified: boolean;
   membership_active?: boolean;
+  last_ip?: string;
+  verification_sent_at?: string;
+  verification_token?: string;
+  last_login?: string;
+  email_preferences?: {
+    payout_reports?: boolean;
+    system_notifications?: boolean;
+    promotional_offers?: boolean;
+    unsubscribe_all?: boolean;
+  };
+}
+
+export interface UserPasswordUpdateData {
+  current_password: string;
+  new_password: string;
+  confirm_new_password: string;
+}
+
+export interface AccountTemplate {
+  id: number;
+  image?: string;
+  name?: string;
+  firm?: string;
+  accountSize?: number;
+  minDaysToPayout?: number;
+  minBufferTarget?: number;
+  allowablePayoutRequest?: number;
+  profitSplit?: number;
+  minDayProfit?: number;
+  maxDrawdown?: number;
+  evalTemplate: boolean;
+  profitTarget?: number;
+  consistency?: number;
 }

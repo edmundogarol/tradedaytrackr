@@ -41,6 +41,12 @@ export const AccountDetailsSection = styled(Section)`
   display: flex;
   flex-direction: column;
 `;
+
+export const UserNameContainer = styled.div`
+  display: flex;
+  gap: 10px;
+`;
+
 export const EmailPreferencesSection = styled(Section)`
   padding: ${CONTAINER_PADDING_SMALL}px;
   flex: 1;

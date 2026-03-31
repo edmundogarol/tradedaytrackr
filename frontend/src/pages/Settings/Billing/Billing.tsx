@@ -50,7 +50,12 @@ const Billing: React.FunctionComponent<BillingProps> = () => {
                 Manage Subscription
               </SubsectionHeaderWrapper>
               <SectionContainer>
-                <SectionText>View your current subscription plan</SectionText>
+                <SectionText style={{ marginBottom: 0 }}>
+                  Activate your membership by subscribing through Whop with the
+                  email associated with your account. You can manage your
+                  subscription, view invoices and access support through the
+                  Whop dashboard.
+                </SectionText>
                 <PlansContainer>
                   <PlanTile $currentPlan={!activeMembership}>
                     <PlanHeader>
@@ -184,7 +189,7 @@ const Billing: React.FunctionComponent<BillingProps> = () => {
                   Manage your account subscription through Whop.
                   <a
                     target="__blank"
-                    href="https://whop.com/"
+                    href="https://whop.com/joined/tradedaytrackr/"
                     style={{
                       color: "#bfbfbf",
                       textDecoration: "underline",

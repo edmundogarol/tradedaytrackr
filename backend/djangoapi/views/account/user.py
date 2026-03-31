@@ -1,11 +1,20 @@
+from secrets import token_urlsafe
+
+from django.conf import settings
 from django.contrib.auth import get_user_model, login
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from backend.djangoapi.serializers import UserSerializer
 from backend.djangoapi.serializers.user import RegisterSerializer, UpdateUserSerializer
+from backend.djangoapi.tasks.user import (
+    send_account_deleted_email,
+    send_verification_email,
+)
 
 User = get_user_model()
 
@@ -13,7 +22,6 @@ User = get_user_model()
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all().order_by("-id")
     serializer_class = UserSerializer
-    # TODO - PERMISSIONS - Fix permissions class for Auth Model / Models
 
     def list(self, request, *args, **kwargs):
         queryset = User.objects.all().order_by("-id")
@@ -28,6 +36,7 @@ class UserViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         serializer = RegisterSerializer(data=request.data, context={"request": request})
+
         serializer.is_valid(raise_exception=True)
 
         user = serializer.save()
@@ -42,13 +51,17 @@ class UserViewSet(ModelViewSet):
         )
 
     def retrieve(self, request, pk=None):
-        queryset = User.objects.all()
-        user = get_object_or_404(queryset, pk=pk)
+        user = get_object_or_404(User, pk=pk)
+
+        if request.user != user and not request.user.is_staff:
+            return Response({"detail": "Forbidden"}, status=403)
+
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
-        user = request.user  # 🔥 secure: only update self
+        user = self.get_object()
+        old_email = user.email
 
         serializer = UpdateUserSerializer(
             user,
@@ -58,6 +71,101 @@ class UserViewSet(ModelViewSet):
         )
 
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        updated_user = serializer.save()
+
+        if "email" in request.data and old_email != updated_user.email:
+            updated_user.is_verified = False
+            updated_user.verification_token = token_urlsafe(32)
+            updated_user.verification_sent_at = timezone.now()
+            updated_user.save()
+
+            verification_url = f"{settings.WEB_APP_URL}/dashboard?verification_token={updated_user.verification_token}"
+            send_verification_email(updated_user, verification_url)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["patch"], url_path="update_me")
+    def update_me(self, request):
+        user = request.user
+
+        old_email = user.email
+
+        serializer = UpdateUserSerializer(
+            user,
+            data=request.data,
+            partial=True,
+            context={"request": request},
+        )
+
+        if request.data.get("current_password") and not user.check_password(
+            request.data.get("current_password", "")
+        ):
+            return Response(
+                {"current_password": "Current password is incorrect"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        elif request.data.get("current_password") and request.data.get(
+            "new_password"
+        ) != request.data.get("confirm_new_password"):
+            return Response(
+                {
+                    "confirm_new_password": "The passwords entered do not match",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        elif request.data.get("current_password") and not request.data.get(
+            "new_password"
+        ):
+            return Response(
+                {"new_password": "Please enter a new password"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        elif request.data.get("current_password"):
+            serializer.is_valid(raise_exception=True)
+            updated_user = serializer.save()
+            return Response(
+                {
+                    "detail": "Password updated successfully",
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        serializer.is_valid(raise_exception=True)
+        updated_user = serializer.save()
+
+        if "email" in request.data and old_email != updated_user.email:
+            updated_user.is_verified = False
+            updated_user.verification_token = token_urlsafe(32)
+            updated_user.verification_sent_at = timezone.now()
+            updated_user.save()
+
+            verification_url = f"{settings.WEB_APP_URL}/dashboard?verification_token={updated_user.verification_token}"
+            send_verification_email(updated_user, verification_url)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def destroy(self, request, *args, **kwargs):
+        user = self.get_object()
+
+        if request.user != user:
+            return Response(
+                {"detail": "You can only delete your own account"}, status=403
+            )
+
+        email = user.email
+        user.delete()
+
+        send_account_deleted_email.delay(email)
+
+        return Response({"detail": "Account deleted"}, status=200)
+
+    @action(detail=False, methods=["delete"], url_path="delete_me")
+    def delete_me(self, request):
+        user = request.user
+
+        email = user.email
+        user.delete()
+
+        send_account_deleted_email.delay(email)
+
+        return Response({"detail": "Account deleted"}, status=200)

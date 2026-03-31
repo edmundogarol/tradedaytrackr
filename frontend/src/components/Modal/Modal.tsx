@@ -1,6 +1,3 @@
-import React from "react";
-import { Modal } from "@mui/material";
-import CancelIcon from "@mui/icons-material/Cancel";
 import {
   CloseContainer,
   Content,
@@ -9,13 +6,18 @@ import {
   Title as ModalTitle,
 } from "@components/Modal/ModalStyledComponents";
 import modalStyles from "@components/Modal/ModalStyles";
+import CancelIcon from "@mui/icons-material/Cancel";
+import { Modal } from "@mui/material";
+import React from "react";
 
-interface ModalWrapperProps {
+export interface ModalWrapperProps {
   title?: string;
   children?: React.ReactNode;
   open?: boolean;
   setOpen: (open: boolean) => void;
   onClose?: () => void;
+  style?: React.CSSProperties;
+  contentContainerStyle?: React.CSSProperties;
 }
 
 const ModalWrapper: React.FunctionComponent<ModalWrapperProps> = ({
@@ -24,6 +26,8 @@ const ModalWrapper: React.FunctionComponent<ModalWrapperProps> = ({
   open = false,
   setOpen,
   onClose,
+  style,
+  contentContainerStyle,
 }) => {
   return (
     <Modal
@@ -37,7 +41,7 @@ const ModalWrapper: React.FunctionComponent<ModalWrapperProps> = ({
         },
       }}
     >
-      <ModalContainer>
+      <ModalContainer style={style}>
         <Header>
           <ModalTitle>{title}</ModalTitle>
           <CloseContainer>
@@ -52,7 +56,7 @@ const ModalWrapper: React.FunctionComponent<ModalWrapperProps> = ({
             />
           </CloseContainer>
         </Header>
-        <Content>{children}</Content>
+        <Content style={contentContainerStyle}>{children}</Content>
       </ModalContainer>
     </Modal>
   );

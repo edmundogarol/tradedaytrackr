@@ -1,28 +1,28 @@
-import React, { useEffect, useState } from "react";
-import Input from "@components/Input/Input";
+import FormError from "@components/Error/FormError/FormError";
 import Gap from "@components/Gap/Gap";
+import { IconTypeEnum } from "@components/Icon/IconInterfaces";
+import { If } from "@components/If/If";
+import Input from "@components/Input/Input";
+import Page from "@components/Page/Page";
 import { PageEnum } from "@interfaces/NavigationTypes";
 import { linkToUrl } from "@navigation/hooks/link";
-import FormError from "@components/Error/FormError/FormError";
-import { If } from "@components/If/If";
-import { IconTypeEnum } from "@components/Icon/IconInterfaces";
-import Page from "@components/Page/Page";
+import React, { useEffect, useState } from "react";
 import useLoginDispatch from "./hooks/useLoginDispatch";
 import useLoginState from "./hooks/useLoginState";
 import {
-  ForgotPasswordLink,
-  LoginButton,
   Container,
+  ForgotPasswordLink,
   ImageContainer,
   InputsContainer,
+  LoginButton,
   MainImage,
   SignUpLink,
   SignUpText,
   SignUpTextContainer,
 } from "./LoginStyledComponents";
 
-import useCheckLoginFormErrors from "./hooks/useCheckLoginFormErrors";
 import useRenderInputIcon from "../../components/Input/hooks/useRenderInputIcon";
+import useCheckLoginFormErrors from "./hooks/useCheckLoginFormErrors";
 import useLoginSubmitHandler from "./hooks/useLoginSubmitHandler";
 import { updateResetPasswordForm } from "./LoginState";
 
@@ -63,7 +63,7 @@ const Login: React.FunctionComponent = () => {
               icon={renderInputIcon(
                 "person",
                 IconTypeEnum.MaterialIcons,
-                loginFormErrors.email
+                loginFormErrors.email,
               )}
             />
             <Gap level={1} />
@@ -80,7 +80,7 @@ const Login: React.FunctionComponent = () => {
               icon={renderInputIcon(
                 "lock",
                 IconTypeEnum.MaterialIcons,
-                loginFormErrors.password
+                loginFormErrors.password,
               )}
               type="password"
             />

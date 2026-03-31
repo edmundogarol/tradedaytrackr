@@ -9,15 +9,21 @@ import type {
 import type { AuthStatus, LoginAction } from "../LoginState";
 import {
   updateAuthStatus,
+  updateDeleteAccountError,
+  updateEmailPreferences,
   updateIsHydrated,
   updateLoginForm,
   updateLoginFormErrors,
+  updatePasswordForm,
+  updatePasswordFormErrors,
   updateResetPasswordErrors,
   updateResetPasswordForm,
   updateResetPasswordFormSent,
   updateSignUpForm,
   updateSignUpFormErrors,
   updateUser,
+  updateUserDetailsErrors,
+  updateUserUpdateSuccess,
   updateVerificationError,
 } from "../LoginState";
 
@@ -35,6 +41,21 @@ interface LoginDispatch {
   updateVerificationError(error: string | null): void;
   updateIsHydrated(isHydrated: boolean): void;
   updateAuthStatus(authStatus: AuthStatus): void;
+  updateUserUpdateSuccess(userUpdateSuccess: boolean): void;
+  updateEmailPreferences(preferences: {
+    payout_reports?: boolean;
+    system_notifications?: boolean;
+    promotional_offers?: boolean;
+    unsubscribe_all?: boolean;
+  }): void;
+  updateUserDetailsErrors(errors: { [key: string]: any }): void;
+  updateDeleteAccountError(error: string): void;
+  updatePasswordForm(passwordForm: {
+    current_password: string;
+    new_password: string;
+    confirm_new_password: string;
+  }): void;
+  updatePasswordFormErrors(errors: { [key: string]: any }): void;
 }
 
 export const useLoginDispatch = (): LoginDispatch => {
@@ -76,6 +97,33 @@ export const useLoginDispatch = (): LoginDispatch => {
     },
     updateAuthStatus(authStatus: AuthStatus): void {
       dispatch(updateAuthStatus(authStatus));
+    },
+    updateUserUpdateSuccess(userUpdateSuccess: boolean): void {
+      dispatch(updateUserUpdateSuccess(userUpdateSuccess));
+    },
+    updateEmailPreferences(preferences: {
+      payout_reports?: boolean;
+      system_notifications?: boolean;
+      promotional_offers?: boolean;
+      unsubscribe_all?: boolean;
+    }): void {
+      dispatch(updateEmailPreferences(preferences));
+    },
+    updateUserDetailsErrors(errors: { [key: string]: any }): void {
+      dispatch(updateUserDetailsErrors(errors));
+    },
+    updateDeleteAccountError(error: string): void {
+      dispatch(updateDeleteAccountError(error));
+    },
+    updatePasswordForm(passwordForm: {
+      current_password: string;
+      new_password: string;
+      confirm_new_password: string;
+    }): void {
+      dispatch(updatePasswordForm(passwordForm));
+    },
+    updatePasswordFormErrors(errors: { [key: string]: any }): void {
+      dispatch(updatePasswordFormErrors(errors));
     },
   };
 };

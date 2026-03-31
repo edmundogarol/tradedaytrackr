@@ -50,6 +50,7 @@ const Input: React.FC<InputWrapperProps> = ({
   maxInputLength,
   darkMode,
   positiveOnly,
+  onFocus,
   ...props
 }) => {
   const [focused, setFocused] = React.useState(false);
@@ -131,7 +132,10 @@ const Input: React.FC<InputWrapperProps> = ({
           value={value}
           disabled={disabled}
           placeholder={placeholder}
-          onFocus={() => setFocused(true)}
+          onFocus={(e) => {
+            onFocus?.(e);
+            setFocused(true);
+          }}
           onBlur={() => {
             setTimeout(() => setFocused(false), 100);
           }}

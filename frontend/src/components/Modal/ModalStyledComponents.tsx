@@ -40,6 +40,8 @@ export const Header = styled.div`
   align-content: center;
   border-top-right-radius: 5px;
   border-top-left-radius: 5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 `;
 
 export const Title = styled.span`

@@ -47,6 +47,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserValidationSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(validators=[])
+
     def validate_email(self, value):
         value = value.lower()
 
@@ -69,20 +71,28 @@ class UserValidationSerializer(serializers.ModelSerializer):
         password_validation.validate_password(value)
         return value
 
+    def validate_first_name(self, value):
+        if value is not None and len(value.strip()) == 0:
+            raise serializers.ValidationError("First name cannot be empty.")
+        return value.strip() if value else value
+
+    def validate_last_name(self, value):
+        if value is not None and len(value.strip()) == 0:
+            raise serializers.ValidationError("Last name cannot be empty.")
+        return value.strip() if value else value
+
 
 class RegisterSerializer(UserValidationSerializer):
     class Meta:
         model = User
-        fields = ["email", "password"]
+        fields = ["email", "password", "first_name", "last_name", "username"]
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
-
         request = self.context.get("request")
         ip = request.META.get("REMOTE_ADDR") if request else None
 
         user = User.objects.create_user(**validated_data)
-
         user.last_ip = ip
         user.is_verified = False
         user.verification_token = token_urlsafe(32)
@@ -99,7 +109,15 @@ class RegisterSerializer(UserValidationSerializer):
 class UpdateUserSerializer(UserValidationSerializer):
     class Meta:
         model = User
-        fields = ["email", "username", "password"]
+        fields = [
+            "email",
+            "username",
+            "password",
+            "is_verified",
+            "first_name",
+            "last_name",
+            "birth_date",
+        ]
         extra_kwargs = {"password": {"write_only": True, "required": False}}
 
     def validate_username(self, value):

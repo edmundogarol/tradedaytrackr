@@ -120,6 +120,35 @@ def send_membership_activated_email(email):
 
 
 @shared_task
+def send_membership_cancelled_email(email):
+
+    subject = "Your TradeDayTrackR Membership Has Been Cancelled"
+
+    html_content = render_to_string(
+        "emails/membership_deactivated.html",
+        {"url": settings.WEB_APP_URL},
+    )
+
+    text_content = """
+        Your membership has been cancelled.
+
+        You will no longer have access to TradeDayTrackR premium features.
+
+        {settings.WEB_APP_URL}
+        """
+
+    email_message = EmailMultiAlternatives(
+        subject,
+        text_content,
+        "no-reply@tradedaytrackr.com",
+        [email],
+    )
+
+    email_message.attach_alternative(html_content, "text/html")
+    email_message.send()
+
+
+@shared_task
 def send_connect_account_email(email):
 
     subject = "Complete Your TradeDayTrackR Access"
@@ -140,6 +169,39 @@ def send_connect_account_email(email):
         → Or sign up using this email
 
         Once matched, your access will activate automatically.
+        """
+
+    email_message = EmailMultiAlternatives(
+        subject,
+        text_content,
+        "no-reply@tradedaytrackr.com",
+        [email],
+    )
+
+    email_message.attach_alternative(html_content, "text/html")
+    email_message.send()
+
+
+@shared_task
+def send_account_deleted_email(email):
+
+    subject = "Your account has been deleted"
+
+    html_content = render_to_string(
+        "emails/account_deleted.html",
+        {"url": settings.WEB_APP_URL},
+    )
+
+    text_content = f"""
+        Your account has been successfully deleted.
+
+        All associated data has been removed from our system and is no longer accessible.
+
+        If you need assistance, you can contact us anytime.
+
+        {settings.WEB_APP_URL}
+
+        TradeDayTrackR
         """
 
     email_message = EmailMultiAlternatives(

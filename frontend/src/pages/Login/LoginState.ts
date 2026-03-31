@@ -19,8 +19,17 @@ export interface LoginState {
   readonly resetPasswordFormErrors: { [key: string]: any };
   readonly resetPasswordFormSent: boolean;
   readonly verificationError: string;
+  readonly deleteAccountError: string;
   readonly isHydrated?: boolean;
   readonly authStatus: AuthStatus;
+  readonly userUpdateSuccess: boolean;
+  readonly userDetailsErrors: { [key: string]: any };
+  readonly passwordForm: {
+    current_password: string;
+    new_password: string;
+    confirm_new_password: string;
+  };
+  readonly passwordFormErrors: { [key: string]: any };
 }
 
 export const initialState: LoginState = {
@@ -34,7 +43,13 @@ export const initialState: LoginState = {
     birth_date: "1990-01-01",
     logged_in: true,
     is_staff: false,
-    verified: false,
+    is_verified: false,
+    email_preferences: {
+      payout_reports: true,
+      system_notifications: true,
+      promotional_offers: true,
+      unsubscribe_all: false,
+    },
   },
   isHydrated: false,
   loginForm: {
@@ -56,7 +71,16 @@ export const initialState: LoginState = {
   resetPasswordFormErrors: {},
   resetPasswordFormSent: false,
   verificationError: "",
+  deleteAccountError: "",
   authStatus: "loading",
+  userUpdateSuccess: false,
+  userDetailsErrors: {},
+  passwordForm: {
+    current_password: "••••••••••••••••",
+    new_password: "••••••••••••••••",
+    confirm_new_password: "••••••••••••••••",
+  },
+  passwordFormErrors: {},
 };
 
 type UpdateUserAction = PayloadAction<User>;
@@ -70,6 +94,21 @@ type UpdateResetPasswordFormSentAction = PayloadAction<boolean>;
 type UpdateVerificationErrorAction = PayloadAction<string>;
 type UpdateIsHydratedAction = PayloadAction<boolean>;
 type UpdateAuthStatusAction = PayloadAction<AuthStatus>;
+type UpdateUserUpdateSuccessAction = PayloadAction<boolean>;
+type UpdateEmailPreferencesAction = PayloadAction<{
+  payout_reports?: boolean;
+  system_notifications?: boolean;
+  promotional_offers?: boolean;
+  unsubscribe_all?: boolean;
+}>;
+type UpdateUserDetailsErrorsAction = PayloadAction<{ [key: string]: any }>;
+type UpdateDeleteAccountErrorAction = PayloadAction<string>;
+type UpdatePasswordFormAction = PayloadAction<{
+  current_password: string;
+  new_password: string;
+  confirm_new_password: string;
+}>;
+type UpdatePasswordFormErrorsAction = PayloadAction<{ [key: string]: any }>;
 
 export type LoginAction =
   | UpdateUserAction
@@ -82,7 +121,13 @@ export type LoginAction =
   | UpdateResetPasswordFormSentAction
   | UpdateVerificationErrorAction
   | UpdateIsHydratedAction
-  | UpdateAuthStatusAction;
+  | UpdateAuthStatusAction
+  | UpdateUserUpdateSuccessAction
+  | UpdateEmailPreferencesAction
+  | UpdateUserDetailsErrorsAction
+  | UpdateDeleteAccountErrorAction
+  | UpdatePasswordFormAction
+  | UpdatePasswordFormErrorsAction;
 
 export const loginSlice = createSlice({
   name: "login",
@@ -130,6 +175,33 @@ export const loginSlice = createSlice({
     updateAuthStatus: (state, action: UpdateAuthStatusAction) => {
       state.authStatus = action.payload;
     },
+    updateUserUpdateSuccess: (state, action: UpdateUserUpdateSuccessAction) => {
+      state.userUpdateSuccess = action.payload;
+    },
+    updateEmailPreferences: (state, action: UpdateEmailPreferencesAction) => {
+      state.user.email_preferences = {
+        ...state.user.email_preferences,
+        ...action.payload,
+      };
+    },
+    updateUserDetailsErrors: (state, action: UpdateUserDetailsErrorsAction) => {
+      state.userDetailsErrors = action.payload;
+    },
+    updateDeleteAccountError: (
+      state,
+      action: UpdateDeleteAccountErrorAction,
+    ) => {
+      state.deleteAccountError = action.payload;
+    },
+    updatePasswordForm: (state, action: UpdatePasswordFormAction) => {
+      state.passwordForm = { ...state.passwordForm, ...action.payload };
+    },
+    updatePasswordFormErrors: (
+      state,
+      action: UpdatePasswordFormErrorsAction,
+    ) => {
+      state.passwordFormErrors = action.payload;
+    },
   },
 });
 
@@ -145,6 +217,12 @@ export const {
   updateVerificationError,
   updateIsHydrated,
   updateAuthStatus,
+  updateUserUpdateSuccess,
+  updateEmailPreferences,
+  updateUserDetailsErrors,
+  updateDeleteAccountError,
+  updatePasswordForm,
+  updatePasswordFormErrors,
 } = loginSlice.actions;
 export const loginReducer = loginSlice.reducer;
 

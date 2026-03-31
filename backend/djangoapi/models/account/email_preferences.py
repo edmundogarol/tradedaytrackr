@@ -10,7 +10,7 @@ class EmailPreferences(models.Model):
 
     payout_reports = models.BooleanField(default=True)
     system_notifications = models.BooleanField(default=True)
-    promotions = models.BooleanField(default=True)
+    promotional_offers = models.BooleanField(default=True)
 
     unsubscribe_all = models.BooleanField(default=False)
 
