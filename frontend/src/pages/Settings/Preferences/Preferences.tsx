@@ -26,7 +26,7 @@ import {
   TableItem,
 } from "@styles/globalStyledComponents";
 import { firmLogoSrc, formatter, imageSrc } from "@utils/utils";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   AccountImageSliderContainer,
   AccountTemplatesSection,
@@ -47,6 +47,7 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
       id: 1,
       name: "MyFundedFutures Flex",
       firm: "MyFundedFutures",
+      image: imageSrc(firmLogoSrc("myfundedfutures")),
       accountSize: 50000,
       minDaysToPayout: 5,
       minBufferTarget: 250,
@@ -61,6 +62,7 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
       id: 2,
       name: "MyFundedFutures Rapid",
       firm: "MyFundedFutures",
+      image: imageSrc(firmLogoSrc("myfundedfutures")),
       accountSize: 50000,
       minDaysToPayout: 1,
       minBufferTarget: 2600,
@@ -75,6 +77,7 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
       id: 3,
       name: "Apex EOD",
       firm: "Apex",
+      image: imageSrc(firmLogoSrc("apex")),
       accountSize: 50000,
       minDaysToPayout: 5,
       minBufferTarget: 2600,
@@ -90,6 +93,7 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
       id: 4,
       name: "Bulenox EOD",
       firm: "Bulenox",
+      image: imageSrc(firmLogoSrc("bulenox")),
       accountSize: 50000,
       minDaysToPayout: 10,
       minBufferTarget: 2600,
@@ -124,6 +128,7 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
     id: 0,
     name: undefined,
     firm: undefined,
+    image: undefined,
     accountSize: undefined,
     minDaysToPayout: undefined,
     minBufferTarget: undefined,
@@ -138,8 +143,21 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
   const [mockAccountTemplate, setMockAccountTemplate] =
     React.useState<AccountTemplate>(newAccountTemplate);
 
-  const carouselImages = ["add", "myfundedfutures", "apex", "bulenox", "alpha"];
+  const [carouselImages, setCarouselImages] = React.useState<string[]>([
+    "add",
+    "myfundedfutures",
+    "apex",
+    "bulenox",
+    "alpha",
+  ]);
 
+  console.log({ image: mockAccountTemplate.image });
+
+  useEffect(() => {
+    if (!!mockAccountTemplate.image) {
+      setCarouselImages([mockAccountTemplate.image, ...carouselImages]);
+    }
+  }, [mockAccountTemplate]);
   return (
     <Page topBarShowMenu={true}>
       <ModalWrapper
@@ -166,6 +184,13 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
         title="Create New Account Template"
         onClose={() => {
           setMockAccountTemplate(newAccountTemplate);
+          setCarouselImages([
+            "add",
+            "myfundedfutures",
+            "apex",
+            "bulenox",
+            "alpha",
+          ]);
           setTemplateModalOpen(false);
         }}
         setOpen={setTemplateModalOpen}
@@ -176,6 +201,14 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
             items={carouselImages}
             onItemShown={(item) => console.log(item)}
             renderItem={(item) => {
+              if (item.includes("/firms")) {
+                return (
+                  <img
+                    style={{ height: 50, width: 50 }}
+                    src={mockAccountTemplate.image}
+                  />
+                );
+              }
               return item === "add" ? (
                 <AddPhotoAlternateIcon
                   style={{
@@ -560,7 +593,16 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                 Account Templates
                 <Button
                   text="Add Template"
-                  onClick={() => setTemplateModalOpen(true)}
+                  onClick={() => {
+                    setTemplateModalOpen(true);
+                    setCarouselImages([
+                      "add",
+                      "myfundedfutures",
+                      "apex",
+                      "bulenox",
+                      "alpha",
+                    ]);
+                  }}
                   style={{ marginLeft: "auto", width: BUTTON_WIDTH }}
                 />
               </SubsectionHeaderWrapper>
@@ -571,6 +613,7 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                 </SectionText>
                 <Table>
                   <TableItem $header>
+                    <TableField $flexSize={0.5}>Icon</TableField>
                     <TableField $flexSize={1.5}>Funded Template</TableField>
                     <TableField>Account Size</TableField>
                     <TableField>Min Days to Payout</TableField>
@@ -581,6 +624,13 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                     .filter((acc) => !acc.evalTemplate)
                     .map((template, idx) => (
                       <TableItem key={template.name} $idx={idx}>
+                        <TableField $flexSize={0.5}>
+                          <img
+                            style={{ height: 50, width: 50 }}
+                            src={template.image}
+                            alt={template.name}
+                          />
+                        </TableField>
                         <TableField $flexSize={1.5}>{template.name}</TableField>
                         <TableField>
                           {formatter.format(template?.accountSize as number)}
@@ -597,6 +647,13 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                             <EditIcon
                               onClick={() => {
                                 setMockAccountTemplate(template);
+                                setCarouselImages([
+                                  "add",
+                                  "myfundedfutures",
+                                  "apex",
+                                  "bulenox",
+                                  "alpha",
+                                ]);
                                 setTemplateModalOpen(true);
                               }}
                               style={{
@@ -626,6 +683,7 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                 <Gap level={1} />
                 <Table>
                   <TableItem $header>
+                    <TableField $flexSize={0.5}>Icon</TableField>
                     <TableField $flexSize={1.5}>Evaluation Template</TableField>
                     <TableField>Account Size</TableField>
                     <TableField>Profit Target</TableField>
@@ -636,6 +694,13 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                     .filter((acc) => acc.evalTemplate)
                     .map((template, idx) => (
                       <TableItem key={template.name} $idx={idx}>
+                        <TableField $flexSize={0.5}>
+                          <img
+                            style={{ height: 50, width: 50 }}
+                            src={template.image}
+                            alt={template.name}
+                          />
+                        </TableField>
                         <TableField $flexSize={1.5}>{template.name}</TableField>
                         <TableField>
                           {formatter.format(template.accountSize as number)}
@@ -655,6 +720,13 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                             <EditIcon
                               onClick={() => {
                                 setMockAccountTemplate(template);
+                                setCarouselImages([
+                                  "add",
+                                  "myfundedfutures",
+                                  "apex",
+                                  "bulenox",
+                                  "alpha",
+                                ]);
                                 setTemplateModalOpen(true);
                               }}
                               style={{

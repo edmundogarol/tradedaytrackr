@@ -77,4 +77,5 @@ export const TableField = styled.div<{ $flexSize?: number }>`
   flex: ${({ $flexSize }): string => ($flexSize ? $flexSize.toString() : "1")};
   display: flex;
   gap: 10px;
+  align-items: center;
 `;
