@@ -1,7 +1,7 @@
 import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import path from "path";
-import type { Configuration as WebpackConfiguration } from "webpack";
+import webpack, { type Configuration as WebpackConfiguration } from "webpack";
 import type { Configuration as DevServerConfiguration } from "webpack-dev-server";
 const CopyPlugin = require("copy-webpack-plugin");
 
@@ -88,6 +88,11 @@ const config: WebpackConfiguration & {
           },
         },
       ],
+    }),
+    new webpack.DefinePlugin({
+      "process.env.REACT_APP_API_URL": JSON.stringify(
+        process.env.REACT_APP_API_URL,
+      ),
     }),
   ],
 };
