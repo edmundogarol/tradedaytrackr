@@ -173,11 +173,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [
-    BASE_DIR / "backend" / "static",
-]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 EMAIL_ASSETS_BASE_URL = (
     "https://tradedaytrackr-extra-assets.s3.us-west-2.amazonaws.com/logos"
