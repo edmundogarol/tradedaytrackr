@@ -173,5 +173,8 @@ backend/static/main.js
 backend/static/1.main*
 backend/static/main*
 
+# Django static files
+staticfiles/
+
 # Redis + background workers
 dump.rdb

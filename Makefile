@@ -21,6 +21,9 @@ deletedb:
 stoppg:
 	brew services stop postgresql@14 || true
 
+enterpsql:
+	psql -U postgres -d postgres
+
 dev:
 	source venv/bin/activate && brew services start postgresql
 
@@ -28,6 +31,9 @@ predev: stoppg dev
 
 build:
 	python -m pip install --upgrade pip && python -m pip install -r requirements.txt && pip list
+
+prodbuild:
+	python3 -m pip install --upgrade pip && python -m pip install -r requirements.txt && pip list
 
 env: dev build
 
