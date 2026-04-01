@@ -16,6 +16,12 @@ else:
     WEB_APP_URL = "http://tradedaytrackr.com"
     WEB_API_URL = "http://tradedaytrackr.com"
 
+print("=== ENV DEBUG ===")
+print("DB_HOSTNAME:", os.getenv("DB_HOSTNAME"))
+print("DB_USERNAME:", os.getenv("DB_USERNAME"))
+print("DB_NAME:", os.getenv("DB_NAME"))
+print("=================")
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
