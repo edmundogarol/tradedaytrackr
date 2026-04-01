@@ -35,9 +35,6 @@
     "web-vitals": "^2.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
     "dev": "webpack --mode development",
     "watch": "webpack --mode development --watch",
     "watchdev": "webpack serve --config webpack.config.ts",
@@ -70,6 +67,7 @@
     "@typescript-eslint/eslint-plugin": "^8.50.1",
     "@typescript-eslint/parser": "^8.50.1",
     "babel-plugin-styled-components": "^2.1.4",
+    "copy-webpack-plugin": "^14.0.0",
     "css-loader": "^7.1.2",
     "eslint": "^9.39.2",
     "eslint-import-resolver-typescript": "^4.4.4",

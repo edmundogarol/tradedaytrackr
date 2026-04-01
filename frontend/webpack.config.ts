@@ -1,8 +1,9 @@
+import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
+import HtmlWebpackPlugin from "html-webpack-plugin";
 import path from "path";
 import type { Configuration as WebpackConfiguration } from "webpack";
 import type { Configuration as DevServerConfiguration } from "webpack-dev-server";
-import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
-import HtmlWebpackPlugin from "html-webpack-plugin";
+const CopyPlugin = require("copy-webpack-plugin");
 
 const config: WebpackConfiguration & {
   devServer?: DevServerConfiguration;
@@ -76,6 +77,17 @@ const config: WebpackConfiguration & {
     new ReactRefreshWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, "public/index.html"),
+    }),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: "public",
+          to: "",
+          globOptions: {
+            ignore: ["**/index.html"],
+          },
+        },
+      ],
     }),
   ],
 };
