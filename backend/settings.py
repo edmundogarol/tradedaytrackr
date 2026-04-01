@@ -174,6 +174,7 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 EMAIL_ASSETS_BASE_URL = (
     "https://tradedaytrackr-extra-assets.s3.us-west-2.amazonaws.com/logos"
