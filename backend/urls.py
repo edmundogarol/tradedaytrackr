@@ -1,6 +1,6 @@
 from django.contrib import admin
-from django.urls import include, path, re_path
-from django.views.generic import TemplateView
+from django.http import HttpResponse
+from django.urls import include, path
 from rest_framework import routers
 from rest_framework_swagger.views import get_swagger_view
 
@@ -28,6 +28,10 @@ class TradeDayTrackRApi(routers.APIRootView):
     """
 
     pass
+
+
+def home(request):
+    return HttpResponse("API is running")
 
 
 class DocumentedRouter(routers.DefaultRouter):
@@ -73,5 +77,5 @@ urlpatterns = [
     ),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     path("admin/", admin.site.urls),
-    re_path(r"^.*$", TemplateView.as_view(template_name="index.html")),
+    path("", home),
 ]
