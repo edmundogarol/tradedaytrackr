@@ -35,8 +35,8 @@ WHOP_WEBHOOK_DEACTIVATE_MEMBERSHIP_SECRET = os.getenv(
 if "DEVENV" in os.environ:
     ALLOWED_HOSTS = ["*"]
 else:
-    # Update with Elastic Beanstalk URL when deployed
     ALLOWED_HOSTS = [
+        "*",
         "http://tradedaytrackr-env.eba-rs968fza.us-west-2.elasticbeanstalk.com/",
         "tradedaytrackr.com",
     ]
