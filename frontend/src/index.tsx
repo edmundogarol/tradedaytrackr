@@ -15,7 +15,7 @@ if (!container) {
   throw new Error("React mount point #app not found");
 }
 
-console.log(environmentConfig.HOST);
+console.log(environmentConfig);
 
 root.render(
   <React.StrictMode>
