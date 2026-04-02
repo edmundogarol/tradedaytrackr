@@ -82,7 +82,6 @@ const useAxiosFetch = <T, E = {}>(
           url: overrideParams.url || (useUrl ? useUrl : baseUrl(url)),
           headers: {
             Accept: APPLICATION_JSON,
-            "X-CSRFToken": getCookie("csrftoken"),
           },
           withCredentials: true,
           ...params, // base config
