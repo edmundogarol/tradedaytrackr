@@ -22,7 +22,7 @@ def send_verification_email(email, verification_url):
     email_message = EmailMultiAlternatives(
         subject,
         text_content,
-        "no-reply@tradedaytrackr.com",
+        settings.DEFAULT_FROM_EMAIL,
         [email],
     )
 
@@ -56,7 +56,7 @@ def send_welcome_email(email):
     email_message = EmailMultiAlternatives(
         subject,
         text_content,
-        "no-reply@tradedaytrackr.com",
+        settings.DEFAULT_FROM_EMAIL,
         [email],
     )
 
@@ -111,7 +111,7 @@ def send_membership_activated_email(email):
     email_message = EmailMultiAlternatives(
         subject,
         text_content,
-        "no-reply@tradedaytrackr.com",
+        settings.DEFAULT_FROM_EMAIL,
         [email],
     )
 
@@ -140,7 +140,7 @@ def send_membership_cancelled_email(email):
     email_message = EmailMultiAlternatives(
         subject,
         text_content,
-        "no-reply@tradedaytrackr.com",
+        settings.DEFAULT_FROM_EMAIL,
         [email],
     )
 
@@ -174,7 +174,7 @@ def send_connect_account_email(email):
     email_message = EmailMultiAlternatives(
         subject,
         text_content,
-        "no-reply@tradedaytrackr.com",
+        settings.DEFAULT_FROM_EMAIL,
         [email],
     )
 
@@ -207,7 +207,7 @@ def send_account_deleted_email(email):
     email_message = EmailMultiAlternatives(
         subject,
         text_content,
-        "no-reply@tradedaytrackr.com",
+        settings.DEFAULT_FROM_EMAIL,
         [email],
     )
 
