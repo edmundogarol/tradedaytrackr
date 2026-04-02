@@ -2,6 +2,7 @@ import datetime
 
 from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.hashers import check_password
+from django.db import transaction
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.permissions import AllowAny
@@ -14,10 +15,23 @@ from backend.djangoapi.utils import visitor_ip_address
 User = get_user_model()
 
 
+def reset_demo_user(user):
+    with transaction.atomic():
+        user.journal_entries.all().delete()
+        user.trading_accounts.all().delete()
+
+        # create_demo_data(user)
+
+
 class LogoutViewSet(APIView):
     authentication_classes = (SessionAuthentication,)
 
     def get(self, request):
+        user = request.user
+
+        if user.is_authenticated and user.is_demo:
+            reset_demo_user(user)
+
         logout(request)
         content = {
             "logged_in": False,
