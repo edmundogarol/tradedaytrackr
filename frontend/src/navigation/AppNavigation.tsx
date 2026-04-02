@@ -15,6 +15,7 @@ import useLoginCheckApiCall from "@pages/Login/hooks/useLoginCheckApiCall";
 import useLoginCheckHandler from "@pages/Login/hooks/useLoginCheckHandler";
 import useLoginDispatch from "@pages/Login/hooks/useLoginDispatch";
 import useLoginState from "@pages/Login/hooks/useLoginState";
+import useSetCSRFApiCall from "@pages/Login/hooks/useSetCSRFApiCall";
 import ConfirmPassword from "@pages/ResetPassword/ConfirmPassword/ConfirmPassword";
 import ResetPassword from "@pages/ResetPassword/ResetPassword";
 import Account from "@pages/Settings/Account/Account";
@@ -22,7 +23,7 @@ import Billing from "@pages/Settings/Billing/Billing";
 import Preferences from "@pages/Settings/Preferences/Preferences";
 import SignUp from "@pages/SignUp/SignUp";
 import { isNotEmptyString } from "@utils/utils";
-import React from "react";
+import React, { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router";
 import RequireAuth from "./RequireAuth";
 import checkAuth from "./hooks/checkAuth";
@@ -37,6 +38,13 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
   useLoginCheckHandler(loginCheckApiCall);
   const verificationApiCall = useVerificationApiCall();
   useVerificationHandler(verificationApiCall);
+  const { fetch: fetchCSRF } = useSetCSRFApiCall();
+
+  useEffect(() => {
+    if (!document.cookie.includes("csrftoken")) {
+      fetchCSRF();
+    }
+  }, []);
 
   return (
     <>

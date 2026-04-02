@@ -5,6 +5,7 @@ from rest_framework import routers
 from rest_framework_swagger.views import get_swagger_view
 
 from backend.djangoapi import views
+from backend.djangoapi.views import csrf
 from backend.djangoapi.views.account.reset_password import (
     RequestPasswordResetViewSet,
     SubmitPasswordResetViewSet,
@@ -44,6 +45,7 @@ router.register(r"user", views.account.UserViewSet)
 urlpatterns = [
     path("docs/", schema_view),
     path("api/", include(router.urls)),
+    path("api/csrf/", csrf),
     path("api/login/", views.account.LoginViewSet.as_view()),
     path("api/logout/", views.account.LogoutViewSet.as_view()),
     path("api/email-preferences/", views.account.EmailPreferencesView.as_view()),
