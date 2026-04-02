@@ -8,7 +8,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 const config: WebpackConfiguration & {
   devServer?: DevServerConfiguration;
 } = {
-  mode: "development",
+  mode: process.env.NODE_ENV === "production" ? "production" : "development",
   entry: path.resolve(process.cwd(), "./src/index.tsx"),
   devtool: "cheap-module-source-map",
 
