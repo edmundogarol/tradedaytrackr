@@ -3,6 +3,10 @@ import type { AxiosError } from "axios";
 import axios from "axios";
 import { useCallback, useState } from "react";
 
+axios.defaults.withCredentials = true;
+axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+axios.defaults.xsrfCookieName = "csrftoken";
+
 export type OverrideParams = Partial<{
   data: object;
   method: string;
