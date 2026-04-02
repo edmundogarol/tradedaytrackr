@@ -3,10 +3,6 @@ import type { AxiosError } from "axios";
 import axios from "axios";
 import { useCallback, useState } from "react";
 
-axios.defaults.withCredentials = true;
-axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
-axios.defaults.xsrfCookieName = "csrftoken";
-
 export type OverrideParams = Partial<{
   data: object;
   method: string;
@@ -20,6 +16,16 @@ export const APPLICATION_JSON = "application/json";
 axios.defaults.withCredentials = true;
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
+
+axios.interceptors.request.use((config) => {
+  const match = document.cookie.match(/csrftoken=([^;]+)/);
+
+  if (match) {
+    config.headers["X-CSRFToken"] = match[1];
+  }
+
+  return config;
+});
 
 export interface AxiosFetchWrapperResponse<T, E = {}> {
   fetch: (
