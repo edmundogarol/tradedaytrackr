@@ -46,7 +46,7 @@ class VerifyAccountViewSet(viewsets.ViewSet):
             user.verification_sent_at = None
             user.save()
 
-            send_welcome_email.delay(user.email)
+            send_welcome_email(user.email)
 
             return Response({"detail": "Verification complete."})
 
@@ -77,6 +77,6 @@ class RequestVerificationViewSet(viewsets.ViewSet):
 
         verification_url = f"{settings.WEB_APP_URL}/dashboard?verification_token={user.verification_token}"
 
-        send_verification_email.delay(user.email, verification_url)
+        send_verification_email(user.email, verification_url)
 
         return Response({"detail": "Verification email sent."})

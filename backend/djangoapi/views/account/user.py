@@ -171,7 +171,7 @@ class UserViewSet(ModelViewSet):
         email = user.email
         user.delete()
 
-        send_account_deleted_email.delay(email)
+        send_account_deleted_email(email)
 
         return Response({"detail": "Account deleted"}, status=200)
 
@@ -185,6 +185,6 @@ class UserViewSet(ModelViewSet):
         email = user.email
         user.delete()
 
-        send_account_deleted_email.delay(email)
+        send_account_deleted_email(email)
 
         return Response({"detail": "Account deleted"}, status=200)

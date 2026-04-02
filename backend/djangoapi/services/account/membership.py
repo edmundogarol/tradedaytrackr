@@ -23,7 +23,7 @@ def activate_membership_from_whop(data):
         user = User.objects.get(email__iexact=email)
     except User.DoesNotExist:
         print(f"No user found with email: {email}")
-        send_connect_account_email.delay(email)
+        send_connect_account_email(email)
         return
 
     membership_id = data.get("id")
@@ -42,7 +42,7 @@ def activate_membership_from_whop(data):
     membership.updated_at = timezone.now()
     membership.save()
 
-    send_membership_activated_email.delay(email)
+    send_membership_activated_email(email)
 
     print(f"Membership activated for {email}")
 
@@ -79,6 +79,6 @@ def cancel_membership_from_whop(data):
     membership.updated_at = timezone.now()
     membership.save()
 
-    send_membership_cancelled_email.delay(email)
+    send_membership_cancelled_email(email)
 
     print(f"Membership cancelled for {email}")

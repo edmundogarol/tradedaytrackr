@@ -102,7 +102,7 @@ class RegisterSerializer(UserValidationSerializer):
 
         verification_url = f"{settings.WEB_APP_URL}/dashboard?verification_token={user.verification_token}"
 
-        send_verification_email.delay(user.email, verification_url)
+        send_verification_email(user.email, verification_url)
 
         return user
 

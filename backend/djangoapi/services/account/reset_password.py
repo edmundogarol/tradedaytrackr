@@ -47,7 +47,7 @@ def create_password_reset(email):
 
     reset_url = f"{settings.WEB_APP_URL}/confirmResetPassword?token={token}"
 
-    send_reset_password_email.delay(user.email, reset_url)
+    send_reset_password_email(user.email, reset_url)
 
 
 def verify_password_reset_token(token):
