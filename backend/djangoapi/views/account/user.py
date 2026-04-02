@@ -101,6 +101,8 @@ class UserViewSet(ModelViewSet):
 
         old_email = user.email
 
+        request.data["password"] = request.data.get("new_password", "")
+
         serializer = UpdateUserSerializer(
             user,
             data=request.data,

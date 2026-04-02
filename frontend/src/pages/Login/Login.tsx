@@ -23,6 +23,7 @@ import {
 
 import useRenderInputIcon from "../../components/Input/hooks/useRenderInputIcon";
 import useCheckLoginFormErrors from "./hooks/useCheckLoginFormErrors";
+import useDemoUserLoginHandler from "./hooks/useDemoUserLoginHandler";
 import useLoginSubmitHandler from "./hooks/useLoginSubmitHandler";
 import { updateResetPasswordForm } from "./LoginState";
 
@@ -36,6 +37,7 @@ const Login: React.FunctionComponent = () => {
   const renderInputIcon = useRenderInputIcon();
   const { login, loading } = useLoginSubmitHandler();
   const [shineDone, setShineDone] = useState(false);
+  const { loginDemoUser, loading: demoLoading } = useDemoUserLoginHandler();
 
   useEffect(() => {
     const timer = setTimeout(() => setShineDone(true), 1500);
@@ -100,6 +102,12 @@ const Login: React.FunctionComponent = () => {
             </ForgotPasswordLink>
             <Gap level={1} />
             <LoginButton loading={loading} text={"Login"} onClick={login} />
+            <Gap level={1} />
+            <LoginButton
+              loading={demoLoading}
+              text={"Login as Demo User"}
+              onClick={loginDemoUser}
+            />
           </InputsContainer>
           <SignUpTextContainer>
             <SignUpText>{"Don't have an account?"}</SignUpText>
