@@ -44,21 +44,6 @@ export interface AxiosFetchWrapperResponse<T, E = {}> {
   error: E | undefined;
 }
 
-function getCookie(name: string): string | null {
-  let cookieValue = null;
-  if (document.cookie && document.cookie !== "") {
-    const cookies = document.cookie.split(";");
-    for (let cookie of cookies) {
-      cookie = cookie.trim();
-      if (cookie.startsWith(name + "=")) {
-        cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
-        break;
-      }
-    }
-  }
-  return cookieValue;
-}
-
 const useAxiosFetch = <T, E = {}>(
   url: string,
   params?: {
@@ -91,10 +76,6 @@ const useAxiosFetch = <T, E = {}>(
       try {
         const response = await axios({
           url: overrideParams.url || (useUrl ? useUrl : baseUrl(url)),
-          headers: {
-            ...overrideParams.headers,
-            Accept: APPLICATION_JSON,
-          },
           withCredentials: true,
           ...params, // base config
           ...overrideParams, // 🔥 dynamic override
