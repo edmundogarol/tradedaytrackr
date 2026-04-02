@@ -1,5 +1,6 @@
 import NavigationContainer from "@navigation/NavigationContainer";
 import store from "@redux/store";
+import environmentConfig from "@utils/environmentConfig";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
@@ -13,6 +14,8 @@ const root = ReactDOM.createRoot(container as HTMLElement);
 if (!container) {
   throw new Error("React mount point #app not found");
 }
+
+console.log(environmentConfig.HOST);
 
 root.render(
   <React.StrictMode>
