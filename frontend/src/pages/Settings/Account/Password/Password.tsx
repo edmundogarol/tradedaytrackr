@@ -1,4 +1,5 @@
 import Button from "@components/Button/Button";
+import FormError from "@components/Error/FormError/FormError";
 import FormSuccess from "@components/Error/FormSuccess/FormSuccess";
 import Gap from "@components/Gap/Gap";
 import GlassTile from "@components/GlassTile/GlassTile";
@@ -22,7 +23,7 @@ import {
 import useUpdateUserSubmitHandler from "../hooks/useUpdateUserSubmitHandler";
 
 const Password: React.FunctionComponent = () => {
-  const { passwordForm, userUpdateSuccess, passwordFormErrors } =
+  const { passwordForm, userDetailsErrors, passwordFormErrors } =
     useLoginState();
   const {
     updatePasswordForm,
@@ -132,6 +133,9 @@ const Password: React.FunctionComponent = () => {
               <Gap level={2} />
               <If condition={!!passwordFormErrors}>
                 <FormSuccess detail={passwordFormErrors.detail} />
+              </If>
+              <If condition={!!userDetailsErrors.password_error}>
+                <FormError error={userDetailsErrors.password_error} />
               </If>
               <Button
                 disabledBlock={!passwordFieldsAreDirty}

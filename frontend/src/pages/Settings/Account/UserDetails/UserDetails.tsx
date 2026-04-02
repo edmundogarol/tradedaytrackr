@@ -1,5 +1,6 @@
 import AlertPopout from "@components/Alert/AlertPopout";
 import Button from "@components/Button/Button";
+import FormError from "@components/Error/FormError/FormError";
 import FormInfo from "@components/Error/FormInfo/FormInfo";
 import { FormInfoLink } from "@components/Error/FormInfo/FormInfoStyledComponents";
 import FormSuccess from "@components/Error/FormSuccess/FormSuccess";
@@ -169,6 +170,9 @@ const UserDetails: React.FunctionComponent = () => {
               />
             </UserNameContainer>
             <Gap level={2} />
+            <If condition={!!userDetailsErrors.error}>
+              <FormError error={userDetailsErrors.error} />
+            </If>
             <If condition={userUpdateSuccess}>
               <FormSuccess detail={"User details updated successfully!"} />
             </If>

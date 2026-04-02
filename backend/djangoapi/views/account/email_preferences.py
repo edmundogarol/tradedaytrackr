@@ -10,6 +10,12 @@ from backend.djangoapi.serializers.account.email_preferences import (
 
 class EmailPreferencesView(APIView):
     def patch(self, request):
+        if request.user.is_demo:
+            return Response(
+                {"error": "Demo accounts cannot update email preferences"},
+                status=403,
+            )
+
         user = request.user
 
         prefs, _ = EmailPreferences.objects.get_or_create(user=user)

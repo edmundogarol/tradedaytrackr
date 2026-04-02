@@ -86,6 +86,17 @@ class UserViewSet(ModelViewSet):
 
     @action(detail=False, methods=["patch"], url_path="update_me")
     def update_me(self, request):
+        if request.user.is_demo and request.data.get("current_password"):
+            return Response(
+                {"password_error": "Demo accounts cannot update password"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        elif request.user.is_demo:
+            return Response(
+                {"error": "Demo accounts cannot be updated"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         user = request.user
 
         old_email = user.email
@@ -147,6 +158,9 @@ class UserViewSet(ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         user = self.get_object()
 
+        if user.is_demo:
+            return Response({"detail": "Demo accounts cannot be deleted"}, status=403)
+
         if request.user != user:
             return Response(
                 {"detail": "You can only delete your own account"}, status=403
@@ -161,6 +175,9 @@ class UserViewSet(ModelViewSet):
 
     @action(detail=False, methods=["delete"], url_path="delete_me")
     def delete_me(self, request):
+        if request.user.is_demo:
+            return Response({"detail": "Demo accounts cannot be deleted"}, status=403)
+
         user = request.user
 
         email = user.email

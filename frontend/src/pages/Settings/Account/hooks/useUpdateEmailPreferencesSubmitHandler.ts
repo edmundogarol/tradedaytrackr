@@ -15,7 +15,8 @@ interface UpdateEmailPreferencesSubmitHandler {
 
 const useUpdateEmailPreferencesSubmitHandler =
   (): UpdateEmailPreferencesSubmitHandler => {
-    const { updateEmailPreferences } = useLoginDispatch();
+    const { updateEmailPreferences, updateUserDetailsErrors } =
+      useLoginDispatch();
     const {
       user: { email_preferences: currentEmailPreferences },
     } = useLoginState();
@@ -43,6 +44,7 @@ const useUpdateEmailPreferencesSubmitHandler =
               updateEmailPreferences({
                 ...currentEmailPreferences,
               });
+              updateUserDetailsErrors(error);
             }, 300);
           }
         },

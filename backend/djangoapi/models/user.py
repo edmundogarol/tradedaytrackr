@@ -21,6 +21,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     verification_token = models.CharField(max_length=128, null=True, blank=True)
     verification_sent_at = models.DateTimeField(null=True, blank=True)
     last_ip = models.TextField(max_length=30, blank=False, null=True)
+    is_demo = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"
     objects = UserManager()

@@ -37,6 +37,7 @@ class UserSerializer(serializers.ModelSerializer):
             "last_ip",
             "membership_active",
             "email_preferences",
+            "is_demo",
         )
 
     def get_membership_active(self, obj):
