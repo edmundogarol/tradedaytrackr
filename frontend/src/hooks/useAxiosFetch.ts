@@ -10,6 +10,7 @@ export type OverrideParams = Partial<{
   accept: string;
   params: { [key: string]: any };
   url: string;
+  headers: { [key: string]: any };
 }>;
 
 export const APPLICATION_JSON = "application/json";
@@ -91,6 +92,7 @@ const useAxiosFetch = <T, E = {}>(
         const response = await axios({
           url: overrideParams.url || (useUrl ? useUrl : baseUrl(url)),
           headers: {
+            ...overrideParams.headers,
             Accept: APPLICATION_JSON,
           },
           withCredentials: true,
