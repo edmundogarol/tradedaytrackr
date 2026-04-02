@@ -37,17 +37,23 @@ if "DEVENV" in os.environ:
 else:
     ALLOWED_HOSTS = [
         "*",
-        "tradedaytrackr-env.eba-rs968fza.us-west-2.elasticbeanstalk.com",
+        "api.tradedaytrackr.com",
         "tradedaytrackr.com",
     ]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://192.168.254.161:3000",
+    "https://tradedaytrackr.vercel.app",
+    "https://tradedaytrackr.com",
+    "https://www.tradedaytrackr.com",
 ]
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://192.168.254.161:3000",
+    "https://tradedaytrackr.vercel.app",
+    "https://tradedaytrackr.com",
+    "https://www.tradedaytrackr.com",
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = list(default_headers) + [
