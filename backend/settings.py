@@ -31,6 +31,13 @@ LOGGING = {
         "handlers": ["console"],
         "level": "INFO",
     },
+    "loggers": {
+        "django.security.DisallowedHost": {
+            "handlers": ["console"],
+            "level": "CRITICAL",
+            "propagate": False,
+        },
+    },
 }
 
 SECRET_KEY = os.getenv("SECRET_KEY")
@@ -49,6 +56,9 @@ else:
     ALLOWED_HOSTS = [
         "api.tradedaytrackr.com",
         "tradedaytrackr.com",
+        ".tradedaytrackr.com",
+        "localhost",
+        "127.0.0.1",
     ]
 
 SESSION_COOKIE_SECURE = True
