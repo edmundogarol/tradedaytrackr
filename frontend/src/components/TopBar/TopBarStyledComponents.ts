@@ -24,7 +24,6 @@ export const TopBarMenuContainer = styled.div`
   display: flex;
   align-items: center;
   margin-right: ${CONTAINER_MARGIN_LARGE}px;
-  padding-top: ${CONTAINER_MARGIN_LARGE}px;
 `;
 
 export const TopBarMenuItem = styled.div`
@@ -36,4 +35,31 @@ export const TopBarMenuItem = styled.div`
 export const TopBarMenuItemText = styled.span`
   color: ${color("SystemLabel1")};
   font-size: 14px;
+`;
+
+export const TopBarAlertContainer = styled.div`
+  align-items: center;
+  display: flex;
+  background: #ffffff59;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: white;
+  padding-left: 15px;
+  padding-right: 15px;
+  gap: 10px;
+  min-width: 300px;
+
+  &.span {
+    color: ${color("SystemLabel1")};
+  }
+
+  &.Link {
+    color: ${color("SystemLabel1")};
+    text-decoration: none;
+  }
+`;
+
+export const AlertMenuContainer = styled.div`
+  display: flex;
 `;

@@ -1,10 +1,17 @@
-import React from "react";
 import { If } from "@components/If/If";
-import { imageSrc } from "@utils/utils";
-import { Link } from "react-router";
+import { PageEnum } from "@interfaces/NavigationTypes";
+import InfoIcon from "@mui/icons-material/Info";
 import useLoginState from "@pages/Login/hooks/useLoginState";
-import { Container, HomeLogo } from "./TopBarStyledComponents";
+import { imageSrc } from "@utils/utils";
+import React from "react";
+import { Link } from "react-router";
 import TopBarMenu from "./TopBarMenu/TopBarMenu";
+import {
+  AlertMenuContainer,
+  Container,
+  HomeLogo,
+  TopBarAlertContainer,
+} from "./TopBarStyledComponents";
 
 export interface TopBarProps {
   transparent?: boolean;
@@ -30,7 +37,19 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
         </Link>
       </If>
       <If condition={topBarShowMenu}>
-        <TopBarMenu user={user} />
+        <AlertMenuContainer>
+          <TopBarAlertContainer>
+            <InfoIcon style={{ height: 20, width: 20, color: "white" }} />
+            <span>
+              AI Feature Available: Go to{" "}
+              <Link style={{ color: "white" }} to={PageEnum.JournalEntry}>
+                Journal Entry
+              </Link>{" "}
+              to use auto tag detection"
+            </span>
+          </TopBarAlertContainer>
+          <TopBarMenu user={user} />
+        </AlertMenuContainer>
       </If>
     </Container>
   );
