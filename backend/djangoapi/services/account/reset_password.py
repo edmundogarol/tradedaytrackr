@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 from secrets import token_urlsafe
 
@@ -10,6 +11,7 @@ from rest_framework import exceptions
 from backend.djangoapi.models import ResetPasswordSession
 from backend.djangoapi.tasks.user import send_reset_password_email
 
+logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
@@ -25,16 +27,29 @@ def delete_all_unexpired_sessions_for_user(user):
         auth_user_id = session_data.get("_auth_user_id")
 
         if auth_user_id is None:
-            continue  # skip sessions with no user
+            logger.warning(
+                "Session without auth user ID found. Skipping session deletion.",
+                extra={"session_key": session.session_key},
+            )
+            continue
 
         if str(user.pk) == auth_user_id:
             session.delete()
+
+    logger.info(
+        "Deleted active sessions for user.",
+        extra={"user_id": user.id},
+    )
 
 
 def create_password_reset(email):
     try:
         user = User.objects.get(email=email)
     except User.DoesNotExist:
+        logger.warning(
+            "Password reset requested for non-existent email.",
+            extra={"email": email},
+        )
         return
 
     token = token_urlsafe(20)
@@ -47,17 +62,26 @@ def create_password_reset(email):
 
     reset_url = f"{settings.WEB_APP_URL}/confirmResetPassword?token={token}"
 
-    send_reset_password_email(user.email, reset_url)
+    try:
+        send_reset_password_email(user.email, reset_url)
+    except Exception:
+        logger.error(
+            "Failed to send password reset email.",
+            exc_info=True,
+            extra={"user_id": user.id},
+        )
 
 
 def verify_password_reset_token(token):
     try:
         session = ResetPasswordSession.objects.get(token=token)
     except ResetPasswordSession.DoesNotExist:
+        logger.warning("Invalid password reset token provided.")
         raise exceptions.AuthenticationFailed("Invalid reset link")
 
     if is_expired(session.created_date, 20):
         session.delete()
+        logger.warning("Password reset token expired.")
         raise exceptions.AuthenticationFailed("Reset link expired")
 
     session.verified_token = token_urlsafe(20)
@@ -70,10 +94,12 @@ def submit_password_reset(token, password):
     try:
         session = ResetPasswordSession.objects.get(token=token)
     except ResetPasswordSession.DoesNotExist:
+        logger.warning("Invalid password reset token provided.")
         raise exceptions.AuthenticationFailed("Invalid token")
 
     if is_expired(session.created_date, 5):
         session.delete()
+        logger.warning("Password reset token expired.")
         raise exceptions.AuthenticationFailed("Token expired")
 
     user = session.user
@@ -86,3 +112,8 @@ def submit_password_reset(token, password):
 
     user.set_password(password)
     user.save()
+
+    logger.info(
+        "Password reset completed.",
+        extra={"user_id": user.id},
+    )

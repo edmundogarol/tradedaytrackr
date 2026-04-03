@@ -1,10 +1,12 @@
+import logging
 import socket
 
 from rest_framework.permissions import BasePermission
 
+logger = logging.getLogger(__name__)
+
 
 def visitor_ip_address(request):
-
     x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
 
     if x_forwarded_for:
@@ -17,6 +19,10 @@ def visitor_ip_address(request):
         ip_valid = True
     except socket.error:
         ip_valid = False
+        logger.warning(
+            "Invalid visitor IP address detected.",
+            extra={"ip": ip},
+        )
 
     return {"ip": ip, "valid": ip_valid}
 

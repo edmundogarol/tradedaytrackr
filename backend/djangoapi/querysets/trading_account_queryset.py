@@ -1,5 +1,9 @@
+import logging
+
 from django.db import models
-from django.db.models import Max, Sum, F
+from django.db.models import F, Max, Sum
+
+logger = logging.getLogger(__name__)
 
 
 class TradingAccountQuerySet(models.QuerySet):

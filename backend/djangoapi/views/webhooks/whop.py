@@ -1,6 +1,7 @@
 import base64
 import hashlib
 import hmac
+import logging
 
 from django.conf import settings
 from django.utils.decorators import method_decorator
@@ -15,6 +16,8 @@ from backend.djangoapi.services.account.membership import (
 )
 from backend.djangoapi.utils.helpers import RequestPayload
 
+logger = logging.getLogger(__name__)
+
 
 def validate_whop_webhook(type, request):
     if type == "membership.activated":
@@ -22,6 +25,7 @@ def validate_whop_webhook(type, request):
     elif type == "membership.deactivated":
         secret = settings.WHOP_WEBHOOK_DEACTIVATE_MEMBERSHIP_SECRET
     else:
+        logger.warning("Invalid webhook type received.", extra={"type": type})
         return Response({"error": "Webhook access denied"}, status=400)
 
     webhook_id = request.headers.get("Webhook-Id")
@@ -29,6 +33,7 @@ def validate_whop_webhook(type, request):
     signature_header = request.headers.get("Webhook-Signature")
 
     if not webhook_id or not timestamp or not signature_header:
+        logger.warning("Missing webhook headers.")
         return Response({"error": "Missing headers"}, status=400)
 
     version, signature = signature_header.split(",")
@@ -40,6 +45,7 @@ def validate_whop_webhook(type, request):
     ).decode()
 
     if not hmac.compare_digest(signature, expected_signature):
+        logger.warning("Invalid webhook signature.")
         return Response({"error": "Invalid signature"}, status=401)
 
 
@@ -50,6 +56,9 @@ class WhopMembershipActivatedWebhookView(APIView):
 
     def post(self, request):
         payload = RequestPayload(request)
+
+        logger.info("Received membership activation webhook.")
+
         validate_whop_webhook(payload.get("type"), request)
         data = payload.get("data")
 
@@ -66,6 +75,9 @@ class WhopMembershipDeactivatedWebhookView(APIView):
 
     def post(self, request):
         payload = RequestPayload(request)
+
+        logger.info("Received membership cancellation webhook.")
+
         validate_whop_webhook(payload.get("type"), request)
         data = payload.get("data")
 

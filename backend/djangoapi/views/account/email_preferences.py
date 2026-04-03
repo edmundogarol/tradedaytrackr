@@ -1,3 +1,5 @@
+import logging
+
 from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -7,10 +9,16 @@ from backend.djangoapi.serializers.account.email_preferences import (
     EmailPreferencesSerializer,
 )
 
+logger = logging.getLogger(__name__)
+
 
 class EmailPreferencesView(APIView):
     def patch(self, request):
         if request.user.is_demo:
+            logger.warning(
+                "Demo user attempted to update email preferences.",
+                extra={"user_id": request.user.id},
+            )
             return Response(
                 {"error": "Demo accounts cannot update email preferences"},
                 status=403,
@@ -31,6 +39,11 @@ class EmailPreferencesView(APIView):
             prefs.updated_at = timezone.now()
             prefs.save()
 
+            logger.info(
+                "Email preferences updated.",
+                extra={"user_id": request.user.id},
+            )
+
             return Response(EmailPreferencesSerializer(prefs).data)
 
         # ✅ If any preference is turned ON → disable unsubscribe_all
@@ -50,6 +63,11 @@ class EmailPreferencesView(APIView):
             if should_disable_unsubscribe
             else prefs.unsubscribe_all,
             updated_at=timezone.now(),
+        )
+
+        logger.info(
+            "Email preferences updated.",
+            extra={"user_id": request.user.id},
         )
 
         return Response(EmailPreferencesSerializer(updated_prefs).data)

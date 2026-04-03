@@ -1,46 +1,60 @@
+import logging
+
 from celery import shared_task
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 
+logger = logging.getLogger(__name__)
+
 
 @shared_task
 def send_verification_email(email, verification_url):
-
     subject = "Verify your email - TradeDayTrackR"
 
-    html_content = render_to_string(
-        "emails/verify_account.html",
-        {"verification_url": verification_url},
-    )
+    try:
+        html_content = render_to_string(
+            "emails/verify_account.html",
+            {"verification_url": verification_url},
+        )
 
-    text_content = f"""
+        text_content = f"""
         Verify your email to complete your TradeDayTrackR account setup.
         {verification_url}
         """
 
-    email_message = EmailMultiAlternatives(
-        subject,
-        text_content,
-        settings.DEFAULT_FROM_EMAIL,
-        [email],
-    )
+        email_message = EmailMultiAlternatives(
+            subject,
+            text_content,
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+        )
 
-    email_message.attach_alternative(html_content, "text/html")
-    email_message.send()
+        email_message.attach_alternative(html_content, "text/html")
+        email_message.send()
+
+        logger.info("Verification email sent.", extra={"email": email})
+
+    except Exception:
+        logger.error(
+            "Failed to send verification email.",
+            exc_info=True,
+            extra={"email": email},
+        )
+        raise
 
 
 @shared_task
 def send_welcome_email(email):
-
     subject = "Welcome to TradeDayTrackR 🎉"
 
-    html_content = render_to_string(
-        "emails/welcome.html",
-        {"url": settings.WEB_APP_URL},
-    )
+    try:
+        html_content = render_to_string(
+            "emails/welcome.html",
+            {"url": settings.WEB_APP_URL},
+        )
 
-    text_content = """
+        text_content = """
         Welcome to TradeDayTrackR!
 
         Your account has been successfully verified and you're ready to start tracking your trading performance.
@@ -53,54 +67,74 @@ def send_welcome_email(email):
         The TradeDayTrackR Team
         """
 
-    email_message = EmailMultiAlternatives(
-        subject,
-        text_content,
-        settings.DEFAULT_FROM_EMAIL,
-        [email],
-    )
+        email_message = EmailMultiAlternatives(
+            subject,
+            text_content,
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+        )
 
-    email_message.attach_alternative(html_content, "text/html")
-    email_message.send()
+        email_message.attach_alternative(html_content, "text/html")
+        email_message.send()
+
+        logger.info("Welcome email sent.", extra={"email": email})
+
+    except Exception:
+        logger.error(
+            "Failed to send welcome email.",
+            exc_info=True,
+            extra={"email": email},
+        )
+        raise
 
 
 @shared_task
 def send_reset_password_email(email, reset_url):
-
     subject = "Reset your password - TradeDayTrackR"
 
-    html_content = render_to_string(
-        "emails/reset_password.html",
-        {"reset_url": reset_url},
-    )
+    try:
+        html_content = render_to_string(
+            "emails/reset_password.html",
+            {"reset_url": reset_url},
+        )
 
-    text_content = f"""
+        text_content = f"""
         Reset your TradeDayTrackR password using the link below:
         {reset_url}
     """
 
-    email_message = EmailMultiAlternatives(
-        subject,
-        text_content,
-        "no-reply@tradedaytrackr.com",
-        [email],
-    )
+        email_message = EmailMultiAlternatives(
+            subject,
+            text_content,
+            "no-reply@tradedaytrackr.com",
+            [email],
+        )
 
-    email_message.attach_alternative(html_content, "text/html")
-    email_message.send()
+        email_message.attach_alternative(html_content, "text/html")
+        email_message.send()
+
+        logger.info("Reset password email sent.", extra={"email": email})
+
+    except Exception:
+        logger.error(
+            "Failed to send reset password email.",
+            exc_info=True,
+            extra={"email": email},
+        )
+        raise
 
 
 @shared_task
 def send_membership_activated_email(email):
-
     subject = "Your TradeDayTrackR Membership is Active 🎉"
 
-    html_content = render_to_string(
-        "emails/membership_activated.html",
-        {"url": settings.WEB_APP_URL},
-    )
+    try:
+        html_content = render_to_string(
+            "emails/membership_activated.html",
+            {"url": settings.WEB_APP_URL},
+        )
 
-    text_content = """
+        text_content = """
         Your membership has been successfully activated.
 
         You now have full access to TradeDayTrackR features.
@@ -108,28 +142,38 @@ def send_membership_activated_email(email):
         {settings.WEB_APP_URL}
         """
 
-    email_message = EmailMultiAlternatives(
-        subject,
-        text_content,
-        settings.DEFAULT_FROM_EMAIL,
-        [email],
-    )
+        email_message = EmailMultiAlternatives(
+            subject,
+            text_content,
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+        )
 
-    email_message.attach_alternative(html_content, "text/html")
-    email_message.send()
+        email_message.attach_alternative(html_content, "text/html")
+        email_message.send()
+
+        logger.info("Membership activated email sent.", extra={"email": email})
+
+    except Exception:
+        logger.error(
+            "Failed to send membership activated email.",
+            exc_info=True,
+            extra={"email": email},
+        )
+        raise
 
 
 @shared_task
 def send_membership_cancelled_email(email):
-
     subject = "Your TradeDayTrackR Membership Has Been Cancelled"
 
-    html_content = render_to_string(
-        "emails/membership_deactivated.html",
-        {"url": settings.WEB_APP_URL},
-    )
+    try:
+        html_content = render_to_string(
+            "emails/membership_deactivated.html",
+            {"url": settings.WEB_APP_URL},
+        )
 
-    text_content = """
+        text_content = """
         Your membership has been cancelled.
 
         You will no longer have access to TradeDayTrackR premium features.
@@ -137,28 +181,38 @@ def send_membership_cancelled_email(email):
         {settings.WEB_APP_URL}
         """
 
-    email_message = EmailMultiAlternatives(
-        subject,
-        text_content,
-        settings.DEFAULT_FROM_EMAIL,
-        [email],
-    )
+        email_message = EmailMultiAlternatives(
+            subject,
+            text_content,
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+        )
 
-    email_message.attach_alternative(html_content, "text/html")
-    email_message.send()
+        email_message.attach_alternative(html_content, "text/html")
+        email_message.send()
+
+        logger.info("Membership cancelled email sent.", extra={"email": email})
+
+    except Exception:
+        logger.error(
+            "Failed to send membership cancelled email.",
+            exc_info=True,
+            extra={"email": email},
+        )
+        raise
 
 
 @shared_task
 def send_connect_account_email(email):
-
     subject = "Complete Your TradeDayTrackR Access"
 
-    html_content = render_to_string(
-        "emails/connect_account.html",
-        {"email": email, "url": settings.WEB_APP_URL},
-    )
+    try:
+        html_content = render_to_string(
+            "emails/connect_account.html",
+            {"email": email, "url": settings.WEB_APP_URL},
+        )
 
-    text_content = f"""
+        text_content = f"""
         You already purchased access 🎉
 
         To unlock your membership:
@@ -171,28 +225,38 @@ def send_connect_account_email(email):
         Once matched, your access will activate automatically.
         """
 
-    email_message = EmailMultiAlternatives(
-        subject,
-        text_content,
-        settings.DEFAULT_FROM_EMAIL,
-        [email],
-    )
+        email_message = EmailMultiAlternatives(
+            subject,
+            text_content,
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+        )
 
-    email_message.attach_alternative(html_content, "text/html")
-    email_message.send()
+        email_message.attach_alternative(html_content, "text/html")
+        email_message.send()
+
+        logger.info("Connect account email sent.", extra={"email": email})
+
+    except Exception:
+        logger.error(
+            "Failed to send connect account email.",
+            exc_info=True,
+            extra={"email": email},
+        )
+        raise
 
 
 @shared_task
 def send_account_deleted_email(email):
-
     subject = "Your account has been deleted"
 
-    html_content = render_to_string(
-        "emails/account_deleted.html",
-        {"url": settings.WEB_APP_URL},
-    )
+    try:
+        html_content = render_to_string(
+            "emails/account_deleted.html",
+            {"url": settings.WEB_APP_URL},
+        )
 
-    text_content = f"""
+        text_content = f"""
         Your account has been successfully deleted.
 
         All associated data has been removed from our system and is no longer accessible.
@@ -204,12 +268,22 @@ def send_account_deleted_email(email):
         TradeDayTrackR
         """
 
-    email_message = EmailMultiAlternatives(
-        subject,
-        text_content,
-        settings.DEFAULT_FROM_EMAIL,
-        [email],
-    )
+        email_message = EmailMultiAlternatives(
+            subject,
+            text_content,
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+        )
 
-    email_message.attach_alternative(html_content, "text/html")
-    email_message.send()
+        email_message.attach_alternative(html_content, "text/html")
+        email_message.send()
+
+        logger.info("Account deleted email sent.", extra={"email": email})
+
+    except Exception:
+        logger.error(
+            "Failed to send account deleted email.",
+            exc_info=True,
+            extra={"email": email},
+        )
+        raise

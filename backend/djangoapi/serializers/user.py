@@ -1,3 +1,4 @@
+import logging
 from secrets import token_urlsafe
 
 from django.conf import settings
@@ -13,6 +14,7 @@ from backend.djangoapi.serializers.account.email_preferences import (
 )
 from backend.djangoapi.tasks.user import send_verification_email
 
+logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
@@ -56,6 +58,10 @@ class UserValidationSerializer(serializers.ModelSerializer):
         try:
             validate_email(value)
         except ValidationError:
+            logger.warning(
+                "Invalid email format.",
+                extra={"email": value},
+            )
             raise serializers.ValidationError("Invalid email format.")
 
         qs = User.objects.filter(email=value)
@@ -64,6 +70,10 @@ class UserValidationSerializer(serializers.ModelSerializer):
             qs = qs.exclude(id=self.instance.id)
 
         if qs.exists():
+            logger.warning(
+                "Email address already in use.",
+                extra={"email": value},
+            )
             raise serializers.ValidationError("User with this email already exists.")
 
         return value
@@ -74,11 +84,19 @@ class UserValidationSerializer(serializers.ModelSerializer):
 
     def validate_first_name(self, value):
         if value is not None and len(value.strip()) == 0:
+            logger.warning(
+                "First name cannot be empty.",
+                extra={"first_name": value},
+            )
             raise serializers.ValidationError("First name cannot be empty.")
         return value.strip() if value else value
 
     def validate_last_name(self, value):
         if value is not None and len(value.strip()) == 0:
+            logger.warning(
+                "Last name cannot be empty.",
+                extra={"last_name": value},
+            )
             raise serializers.ValidationError("Last name cannot be empty.")
         return value.strip() if value else value
 
@@ -102,7 +120,19 @@ class RegisterSerializer(UserValidationSerializer):
 
         verification_url = f"{settings.WEB_APP_URL}/dashboard?verification_token={user.verification_token}"
 
-        send_verification_email(user.email, verification_url)
+        try:
+            send_verification_email(user.email, verification_url)
+        except Exception:
+            logger.error(
+                "Failed to send verification email during registration.",
+                exc_info=True,
+                extra={"user_id": user.id},
+            )
+
+        logger.info(
+            "User registered successfully.",
+            extra={"user_id": user.id},
+        )
 
         return user
 
@@ -122,13 +152,16 @@ class UpdateUserSerializer(UserValidationSerializer):
         extra_kwargs = {"password": {"write_only": True, "required": False}}
 
     def validate_username(self, value):
-
         qs = User.objects.filter(username=value)
 
         if self.instance:
             qs = qs.exclude(id=self.instance.id)
 
         if value and qs.exists():
+            logger.warning(
+                "Username already in use.",
+                extra={"username": value},
+            )
             raise serializers.ValidationError("User with this username already exists.")
 
         return value

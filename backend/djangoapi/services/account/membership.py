@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
@@ -8,22 +10,41 @@ from backend.djangoapi.tasks.user import (
     send_membership_cancelled_email,
 )
 
+logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
 def activate_membership_from_whop(data):
     email = data.get("email")
-    email = email.lower()
 
     if not email:
-        print("No email in webhook")
+        logger.error("No email provided in Whop webhook data.")
         return
+
+    email = email.lower()
+
+    logger.info(
+        "Processing membership activation webhook.",
+        extra={"email": email, "membership_id": data.get("id")},
+    )
 
     try:
         user = User.objects.get(email__iexact=email)
     except User.DoesNotExist:
-        print(f"No user found with email: {email}")
-        send_connect_account_email(email)
+        logger.warning(
+            "No user found for membership activation. Sending connect email.",
+            extra={"email": email},
+        )
+
+        try:
+            send_connect_account_email(email)
+        except Exception:
+            logger.error(
+                "Failed to send connect account email.",
+                exc_info=True,
+                extra={"email": email},
+            )
+
         return
 
     membership_id = data.get("id")
@@ -42,36 +63,63 @@ def activate_membership_from_whop(data):
     membership.updated_at = timezone.now()
     membership.save()
 
-    send_membership_activated_email(email)
+    try:
+        send_membership_activated_email(email)
+    except Exception:
+        logger.error(
+            "Failed to send membership activated email.",
+            exc_info=True,
+            extra={"email": email},
+        )
 
-    print(f"Membership activated for {email}")
+    logger.info(
+        "Membership activated.",
+        extra={"user_id": user.id, "membership_id": membership.id},
+    )
 
 
 def cancel_membership_from_whop(data):
     email = data.get("email")
 
     if not email:
-        print("No email in webhook")
+        logger.error("No email provided in Whop webhook data.")
         return
 
     email = email.lower()
 
+    logger.info(
+        "Processing membership cancellation webhook.",
+        extra={"email": email, "membership_id": data.get("id")},
+    )
+
     try:
         user = User.objects.get(email__iexact=email)
     except User.DoesNotExist:
-        print(f"No user found with email: {email}")
-        return  # no need to send connect email on cancellation
+        logger.warning(
+            "No user found for membership cancellation.",
+            extra={"email": email},
+        )
+        return
 
     membership_id = data.get("id")
     membership = Membership.objects.filter(user=user).first()
 
     if not membership:
-        print(f"No membership found for {email}")
+        logger.warning(
+            "No membership found for user during cancellation.",
+            extra={"email": email},
+        )
         return
 
-    # Optional safety: ensure we're modifying the correct membership
     if membership_id and membership.whop_membership_id != membership_id:
-        print(f"Membership ID mismatch for {email}")
+        logger.warning(
+            "Membership ID mismatch during cancellation.",
+            extra={
+                "email": email,
+                "expected": membership.whop_membership_id,
+                "received": membership_id,
+            },
+        )
         return
 
     membership.status = data.get("status", "cancelled")
@@ -79,6 +127,16 @@ def cancel_membership_from_whop(data):
     membership.updated_at = timezone.now()
     membership.save()
 
-    send_membership_cancelled_email(email)
+    try:
+        send_membership_cancelled_email(email)
+    except Exception:
+        logger.error(
+            "Failed to send membership cancelled email.",
+            exc_info=True,
+            extra={"email": email},
+        )
 
-    print(f"Membership cancelled for {email}")
+    logger.info(
+        "Membership cancelled.",
+        extra={"user_id": user.id, "membership_id": membership.id},
+    )
