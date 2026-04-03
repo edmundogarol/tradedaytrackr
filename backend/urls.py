@@ -15,6 +15,8 @@ from backend.djangoapi.views.account.verify_account import (
     RequestVerificationViewSet,
     VerifyAccountViewSet,
 )
+from backend.djangoapi.views.ai.strategy import DetectStrategyView
+from backend.djangoapi.views.ai.tagging import AutoTagView
 from backend.djangoapi.views.webhooks.whop import (
     WhopMembershipActivatedWebhookView,
     WhopMembershipDeactivatedWebhookView,
@@ -46,6 +48,8 @@ urlpatterns = [
     path("docs/", schema_view),
     path("api/", include(router.urls)),
     path("api/csrf/", csrf),
+    path("api/ai/tags/", AutoTagView.as_view()),
+    path("api/ai/strategy/", DetectStrategyView.as_view()),
     path("api/login/", views.account.LoginViewSet.as_view()),
     path("api/logout/", views.account.LogoutViewSet.as_view()),
     path("api/email-preferences/", views.account.EmailPreferencesView.as_view()),

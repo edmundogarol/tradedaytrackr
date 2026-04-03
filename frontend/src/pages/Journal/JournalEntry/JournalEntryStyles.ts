@@ -17,7 +17,7 @@ const styles = {
     width: 100,
     height: 20,
     border: "none",
-    color: "black",
+    color: "#b9b9b9",
     textAlign: "start",
     borderRadius: 3,
     fontSize: 12,
