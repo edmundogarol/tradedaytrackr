@@ -1,5 +1,6 @@
 import logging
 
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -9,6 +10,8 @@ logger = logging.getLogger(__name__)
 
 
 class AutoTagView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         description = request.data.get("description", "")
 
