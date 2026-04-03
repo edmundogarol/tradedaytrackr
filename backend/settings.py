@@ -32,9 +32,22 @@ LOGGING = {
         "level": "INFO",
     },
     "loggers": {
+        # remove DisallowedHost spam
         "django.security.DisallowedHost": {
             "handlers": ["console"],
             "level": "CRITICAL",
+            "propagate": False,
+        },
+        # remove 404 spam
+        "django.server": {
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+        # remove request-level noise
+        "django.request": {
+            "handlers": ["console"],
+            "level": "ERROR",
             "propagate": False,
         },
     },
