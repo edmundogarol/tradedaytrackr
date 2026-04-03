@@ -27,11 +27,6 @@ class LogoutViewSet(APIView):
     authentication_classes = (SessionAuthentication,)
 
     def get(self, request):
-        user = request.user
-
-        if user.is_authenticated and user.is_demo:
-            reset_demo_user(user)
-
         logout(request)
         content = {
             "logged_in": False,
@@ -65,6 +60,11 @@ class LoginViewSet(APIView):
             return Response(content)
 
     def post(self, request):
+
+        user = request.user
+
+        if user.is_authenticated and user.is_demo:
+            reset_demo_user(user)
 
         email = request.data.get("email", None)
         password = request.data.get("password", None)
