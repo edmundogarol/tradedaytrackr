@@ -5,11 +5,18 @@ from django.conf import settings
 from openai import OpenAI
 
 from backend.djangoapi.constants.trading import STRATEGY_TAG_MAP
-from backend.djangoapi.services.account.ai.strategy import detect_strategy
+from backend.djangoapi.services.ai.strategy import detect_strategy
 
 logger = logging.getLogger(__name__)
 
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
+
+import re
+
+
+def extract_json_array(text: str):
+    match = re.search(r"\[.*\]", text, re.DOTALL)
+    return match.group(0) if match else "[]"
 
 
 def generate_tags(description: str):
@@ -66,7 +73,8 @@ def generate_tags(description: str):
 
     # --- SAFE PARSE ---
     try:
-        tags = json.loads(content)
+        cleaned = extract_json_array(content)
+        tags = json.loads(cleaned)
     except Exception:
         logger.warning(
             "Failed to parse AI tag response.",

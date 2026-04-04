@@ -220,9 +220,12 @@ export const DescriptionSection = styled(Section)`
   padding-right: 20px;
 `;
 
-export const DescriptionText = styled.p`
+export const DescriptionText = styled.div`
   color: #888888;
   font-size: 14px;
+  display: flex;
+  gap: 10px;
+  align-items: start;
 `;
 
 export const SummaryTitleInfoContainer = styled.div`
@@ -301,4 +304,10 @@ export const TagInputWithAIButtonContainer = styled.div`
       cursor: pointer;
     }
   }
+`;
+
+export const DescriptionButtonsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 `;

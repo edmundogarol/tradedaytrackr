@@ -26,15 +26,19 @@ import { devSrc, formatter, isNotEmptyString, sanitizeTag } from "@utils/utils";
 import moment from "moment";
 import React, { useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router";
+import useGenerateDraftAIHandler from "../hooks/useGenerateDraftAIHandler";
 import useGenerateTagsAIHandler from "../hooks/useGenerateTagsAIHandler";
 import useJournalDispatch from "../hooks/useJournalDispatch";
 import useJournalState from "../hooks/useJournalState";
+import type { JournalEntry as JournalEntryType } from "../JournalInterfaces";
+import { initialState } from "../JournalState";
 import { mockJournalEntries } from "../mocks/journalEntries";
 import { availableAccountTradesOnDateMock } from "../mocks/tradesOnDate";
 import {
   ButtonContainer,
   CloseIconStyled,
   DateTimePickerDate,
+  DescriptionButtonsContainer,
   DescriptionSection,
   DescriptionText,
   EditDeleteButtons,
@@ -71,7 +75,12 @@ import {
 import styles from "./JournalEntryStyles";
 
 const JournalEntry: React.FunctionComponent = () => {
-  const { generateTags, loading } = useGenerateTagsAIHandler();
+  const [originalJournalEntry, setOriginalJournalEntry] =
+    React.useState<JournalEntryType>(initialState.journalEntry);
+  const { generateTags, loading: generateTagsLoading } =
+    useGenerateTagsAIHandler();
+  const { generateDraft, loading: generateDraftLoading } =
+    useGenerateDraftAIHandler();
   const { journalEntry, detectedTrades, journalErrors } = useJournalState();
   const { updateJournalEntry, updateDetectedTrades, updateJournalErrors } =
     useJournalDispatch();
@@ -105,6 +114,7 @@ const JournalEntry: React.FunctionComponent = () => {
     );
     if (currentEntry) {
       updateJournalEntry(currentEntry);
+      setOriginalJournalEntry(currentEntry);
     }
 
     updateDetectedTrades(availableAccountTradesOnDateMock);
@@ -121,7 +131,7 @@ const JournalEntry: React.FunctionComponent = () => {
       .filter((trade) => selectedAccountTrades.includes(trade.id))
       .reduce((total, trade) => total + trade.pnl, 0);
   }, [detectedTrades, selectedAccountTrades]);
-  console.log({ journalError: journalErrors.detail });
+
   return (
     <Page topBarShowMenu={true}>
       <AlertPopout
@@ -324,7 +334,7 @@ const JournalEntry: React.FunctionComponent = () => {
                             "Auto generate tags based on trade description"
                           }
                         >
-                          <If condition={loading}>
+                          <If condition={generateTagsLoading}>
                             <Loading size={20} />
                             <Else>
                               <AutoFixHighIcon
@@ -335,6 +345,16 @@ const JournalEntry: React.FunctionComponent = () => {
                               />
                             </Else>
                           </If>
+                        </InfoPopout>
+                        <InfoPopout infoDescription={"Clear tags"}>
+                          <DeleteOutlineIcon
+                            onClick={() => {
+                              updateJournalEntry({
+                                ...journalEntry,
+                                tags: [],
+                              });
+                            }}
+                          />
                         </InfoPopout>
                       </If>
                     </TagInputWithAIButtonContainer>
@@ -383,7 +403,7 @@ const JournalEntry: React.FunctionComponent = () => {
                         <TradeSubtitleEditing
                           onClick={() => {
                             setEditing(false);
-                            updateJournalEntry(journalEntry);
+                            updateJournalEntry(originalJournalEntry);
                           }}
                         >
                           {"Cancel"}
@@ -532,7 +552,7 @@ const JournalEntry: React.FunctionComponent = () => {
                             description: e.target.value,
                           })
                         }
-                        defaultValue={journalEntry.description}
+                        value={journalEntry.description}
                         style={{
                           height: 100,
                           width: "100%",
@@ -543,6 +563,35 @@ const JournalEntry: React.FunctionComponent = () => {
                           color: "#e5e5e5",
                         }}
                       />
+                      <DescriptionButtonsContainer>
+                        <InfoPopout
+                          infoDescription={
+                            "Auto generate draft based on trade tags"
+                          }
+                        >
+                          <If condition={generateDraftLoading}>
+                            <Loading size={20} />
+                            <Else>
+                              <AutoFixHighIcon
+                                style={{ marginLeft: 5 }}
+                                onClick={() => {
+                                  generateDraft(journalEntry.tags);
+                                }}
+                              />
+                            </Else>
+                          </If>
+                        </InfoPopout>
+                        <InfoPopout infoDescription={"Clear description"}>
+                          <DeleteOutlineIcon
+                            onClick={() => {
+                              updateJournalEntry({
+                                ...journalEntry,
+                                description: "",
+                              });
+                            }}
+                          />
+                        </InfoPopout>
+                      </DescriptionButtonsContainer>
                     </DescriptionText>
                     <Else>
                       <DescriptionText>

@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from backend.djangoapi.services.account.ai.strategy import detect_strategy
+from backend.djangoapi.services.ai.strategy import detect_strategy
 
 logger = logging.getLogger(__name__)
 
