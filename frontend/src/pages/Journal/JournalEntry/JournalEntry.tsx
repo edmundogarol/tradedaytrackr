@@ -19,10 +19,14 @@ import {
   SectionTitle,
   SubsectionHeader,
 } from "@styles/globalStyledComponents";
-import { devSrc, sanitizeTag } from "@utils/utils";
+import { devSrc, formatter, sanitizeTag } from "@utils/utils";
 import moment from "moment";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router";
+import useJournalDispatch from "../hooks/useJournalDispatch";
+import useJournalState from "../hooks/useJournalState";
+import { mockJournalEntries } from "../mocks/journalEntries";
+import { availableAccountTradesOnDateMock } from "../mocks/tradesOnDate";
 import {
   ButtonContainer,
   CloseIconStyled,
@@ -61,109 +65,58 @@ import {
 } from "./JournalEntryStyledComponents";
 import styles from "./JournalEntryStyles";
 
-interface JournalEntryProps {}
-const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
+const JournalEntry: React.FunctionComponent = () => {
+  const { journalEntry, detectedTrades } = useJournalState();
+  const { updateJournalEntry, updateDetectedTrades } = useJournalDispatch();
   let [searchParams] = useSearchParams();
   const [editing, setEditing] = React.useState(
     searchParams.get("id") === "new" || false,
   );
+  const [originalJournalEntry, setOriginalJournalEntry] =
+    React.useState<typeof journalEntry>();
   const [editingDate, setEditingDate] = React.useState(false);
   const [editingAccounts, setEditingAccounts] = React.useState(false);
-
-  const newEntry = {
-    dateTime: moment().toISOString(),
-    risk: 0,
-    contracts: 0,
-    outcome: 0,
-    instrument: "",
-    description: "",
-    image: "",
-    trades: [],
-    totalPnL: 0,
-    tags: [],
-  };
-
-  const [mockEntry, setMockEntry] = React.useState<{
-    dateTime: string;
-    risk: number;
-    contracts: number;
-    outcome: number;
-    instrument: string;
-    description: string;
-    image: string;
-    trades: number[];
-    totalPnL: number;
-    tags: string[];
-  }>(
-    searchParams.get("id") === "new"
-      ? newEntry
-      : {
-          dateTime: "2011-10-10T14:48:00.000+09:00",
-          risk: 300,
-          contracts: 3,
-          outcome: 310,
-          instrument: "NQ",
-          description:
-            "Price delivered from a higher timeframe bearish leg that had already swept external liquidity earlier in the session. Once the 5m structure shifted bearish, price retraced cleanly into the 50% of the impulse leg which also aligned with a small 1m IFVG. Entry was taken as price tapped the gap and showed immediate rejection. The trade worked quickly as the delivery continued toward the next pool of liquidity. The key element here was respecting the higher timeframe delivery and not anticipating the reversal before the structure shift occurred.",
-          image: "https://cdn-icons-png.flaticon.com/512/190/190411.png",
-          trades: [1, 2, 5],
-          totalPnL: 930,
-          tags: ["IFVG", "Long", "Good momentum"],
-          // tags: [],
-        },
-  );
   const [selectedAccountTrades, setSelectedAccountTrades] = React.useState<
     number[]
-  >([...mockEntry.trades]);
+  >([...journalEntry.trades]);
   const [currentTagInput, setCurrentTagInput] = React.useState("");
   const saveDisabled =
-    mockEntry.contracts <= 0 ||
-    mockEntry.risk <= 0 ||
-    mockEntry.instrument === "";
-  const availableAccountTradesOnDateMock = [
-    {
-      id: 1,
-      account: "MFFUSFCR71",
-      date: moment().add(1, "hour").toISOString(),
-      pnl: 310,
-    },
-    {
-      id: 2,
-      account: "MFFUSFCR72",
-      date: moment().add(2, "hour").toISOString(),
-      pnl: 310,
-    },
-    {
-      id: 3,
-      account: "MFFUSFCR73",
-      date: moment().add(3, "hour").toISOString(),
-      pnl: 310,
-    },
-    {
-      id: 4,
-      account: "APEXPA21",
-      date: moment().add(4, "hour").toISOString(),
-      pnl: 310,
-    },
-    {
-      id: 5,
-      account: "APEXPA23",
-      date: moment().add(5, "hour").toISOString(),
-      pnl: 310,
-    },
-  ];
+    journalEntry.contracts <= 0 ||
+    journalEntry.risk <= 0 ||
+    journalEntry.instrument === "";
 
   const totalPnL = useMemo(() => {
-    return mockEntry.trades
+    return journalEntry.trades
       .map((tradeId) => {
-        const trade = availableAccountTradesOnDateMock.find(
-          (t) => t.id === tradeId,
-        );
+        const trade = detectedTrades.find((t) => t.id === tradeId);
         return trade ? trade.pnl : 0;
       })
       .reduce((sum, pnl) => sum + pnl, 0);
-  }, [mockEntry.trades]);
+  }, [journalEntry.trades]);
 
+  useEffect(() => {
+    const currentEntry = mockJournalEntries.find(
+      (entry) => entry.id === parseInt(searchParams.get("id") || "0"),
+    );
+    if (currentEntry) {
+      updateJournalEntry(currentEntry);
+      setOriginalJournalEntry(currentEntry);
+    }
+
+    updateDetectedTrades(availableAccountTradesOnDateMock);
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (editingAccounts) {
+      setSelectedAccountTrades(journalEntry.trades);
+    }
+  }, [editingAccounts, journalEntry.trades]);
+
+  const detectedTradesPnL = useMemo(() => {
+    return detectedTrades
+      .filter((trade) => selectedAccountTrades.includes(trade.id))
+      .reduce((total, trade) => total + trade.pnl, 0);
+  }, [detectedTrades, selectedAccountTrades]);
   return (
     <Page topBarShowMenu={true}>
       <Modal
@@ -172,58 +125,55 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
         title="Select Accounts Trades"
         onClose={() => {
           setEditingAccounts(false);
-          setMockEntry({
-            ...mockEntry,
-            trades: mockEntry.trades,
+          updateJournalEntry({
+            ...journalEntry,
+            trades: journalEntry.trades,
           });
         }}
       >
         <TradesDetectedContainer>
-          {`${availableAccountTradesOnDateMock.length} trades detected for ${moment(mockEntry.dateTime).format("MMM DD")}`}
+          {`${detectedTrades.length} trades detected for ${moment(journalEntry.dateTime).format("MMM DD")}`}
         </TradesDetectedContainer>
         <TradesDetectedContainer>
-          {availableAccountTradesOnDateMock.map((trade, index) => (
-            <TradesDetectedTrade key={index}>
-              <Checkbox
-                sx={{ color: "#a9b1c2" }}
-                defaultChecked={mockEntry.trades.includes(trade.id)}
-                checked={selectedAccountTrades.includes(trade.id)}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setSelectedAccountTrades([
-                      ...selectedAccountTrades,
-                      trade.id,
-                    ]);
-                  } else {
-                    setSelectedAccountTrades(
-                      selectedAccountTrades.filter((id) => id !== trade.id),
-                    );
-                  }
-                }}
-              />
-              <div>{trade.account}</div>
-              <TradesDetectedTime>
-                {moment(trade.date).format("hh:mm A")}
-              </TradesDetectedTime>
-              <TradesDetectedPnL>{`$${trade.pnl}`}</TradesDetectedPnL>
-            </TradesDetectedTrade>
-          ))}
+          {detectedTrades.map((trade) => {
+            return (
+              <TradesDetectedTrade key={trade.id}>
+                <Checkbox
+                  sx={{ color: "#a9b1c2" }}
+                  checked={selectedAccountTrades.includes(trade.id)}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setSelectedAccountTrades((prev) => [...prev, trade.id]);
+                    } else {
+                      setSelectedAccountTrades((prev) =>
+                        prev.filter((id) => id !== trade.id),
+                      );
+                    }
+                  }}
+                />
+                <div>{trade.accountName}</div>
+                <TradesDetectedTime>
+                  {moment(trade.date).format("hh:mm A")}
+                </TradesDetectedTime>
+                <TradesDetectedPnL
+                  $positive={trade.pnl >= 0}
+                >{`$${trade.pnl}`}</TradesDetectedPnL>
+              </TradesDetectedTrade>
+            );
+          })}
         </TradesDetectedContainer>
         <TradesDetectedPnLTotal>
           {`Total selected PnL: `}
-          <TradesDetectedPnLTotalHighlighted>
-            $
-            {availableAccountTradesOnDateMock
-              .filter((trade) => selectedAccountTrades.includes(trade.id))
-              .reduce((total, trade) => total + trade.pnl, 0)}
+          <TradesDetectedPnLTotalHighlighted $positive={detectedTradesPnL >= 0}>
+            {formatter.format(detectedTradesPnL)}
           </TradesDetectedPnLTotalHighlighted>
         </TradesDetectedPnLTotal>
         <TradeAccountsSelectSaveButtonContainer>
           <Button
             onClick={() => {
               setEditingAccounts(false);
-              setMockEntry({
-                ...mockEntry,
+              updateJournalEntry({
+                ...journalEntry,
                 trades: selectedAccountTrades,
               });
             }}
@@ -248,7 +198,9 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                 <TradeInfo>
                   <If condition={editing}>
                     <TradeSubtitleEditing onClick={() => setEditingDate(true)}>
-                      {moment(mockEntry.dateTime).format("YYYY-MM-DD hh:mm A")}
+                      {moment(journalEntry.dateTime).format(
+                        "YYYY-MM-DD hh:mm A",
+                      )}
                     </TradeSubtitleEditing>
                     <DateTimePickerDate />
                     <CalendarPicker
@@ -256,19 +208,19 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                         setEditingDate(pickerOpen);
                       }}
                       showPicker={editingDate}
-                      value={moment(mockEntry.dateTime)}
+                      value={moment(journalEntry.dateTime)}
                       onChange={(val) =>
-                        setMockEntry({
-                          ...mockEntry,
+                        updateJournalEntry({
+                          ...journalEntry,
                           dateTime: val
                             ? val.toISOString()
-                            : mockEntry.dateTime,
+                            : journalEntry.dateTime,
                         })
                       }
                     />
                     <Else>
                       <TradeSubtitle>
-                        {moment(mockEntry.dateTime).format(
+                        {moment(journalEntry.dateTime).format(
                           "YYYY-MM-DD HH:mm A",
                         )}
                       </TradeSubtitle>
@@ -278,10 +230,10 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                     <TradeSubtitleEditing
                       onClick={() => setEditingAccounts(true)}
                     >
-                      {`${mockEntry.trades.length} Accounts`}
+                      {`${journalEntry.trades.length} Accounts`}
                     </TradeSubtitleEditing>
                     <Else>
-                      <TradeSubtitle>{`${mockEntry.trades.length} Accounts`}</TradeSubtitle>
+                      <TradeSubtitle>{`${journalEntry.trades.length} Accounts`}</TradeSubtitle>
                     </Else>
                   </If>
                   <TagInputContainer>
@@ -294,23 +246,23 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                         onChange={(e) => setCurrentTagInput(e.target.value)}
                         onEnterPress={(val) => {
                           if (
-                            mockEntry.tags.some(
+                            journalEntry.tags.some(
                               (tag) => tag.toLowerCase() === val.toLowerCase(),
                             )
                           ) {
                             setCurrentTagInput("");
                             return;
                           }
-                          setMockEntry({
-                            ...mockEntry,
-                            tags: [...mockEntry.tags, val],
+                          updateJournalEntry({
+                            ...journalEntry,
+                            tags: [...journalEntry.tags, val],
                           });
                           setCurrentTagInput("");
                         }}
                         onSuggestionClick={(suggestion) => {
-                          setMockEntry({
-                            ...mockEntry,
-                            tags: [...mockEntry.tags, suggestion],
+                          updateJournalEntry({
+                            ...journalEntry,
+                            tags: [...journalEntry.tags, suggestion],
                           });
                           setCurrentTagInput("");
                         }}
@@ -344,7 +296,7 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                           },
                         ].filter(
                           (s) =>
-                            mockEntry.tags.every(
+                            journalEntry.tags.every(
                               (tag) =>
                                 tag.toLowerCase() !==
                                 s.description.toLowerCase(),
@@ -356,7 +308,7 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                       />
                     </If>
                     <TagsContainer>
-                      {mockEntry.tags.map((tag, index) => (
+                      {journalEntry.tags.map((tag, index) => (
                         <TagContainer key={index}>
                           <Tag $editing={editing}>
                             #{sanitizeTag(tag)}
@@ -366,9 +318,9 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                                   height: 15,
                                 }}
                                 onClick={() => {
-                                  setMockEntry({
-                                    ...mockEntry,
-                                    tags: mockEntry.tags.filter(
+                                  updateJournalEntry({
+                                    ...journalEntry,
+                                    tags: journalEntry.tags.filter(
                                       (t) =>
                                         t.toLowerCase() !== tag.toLowerCase(),
                                     ),
@@ -401,7 +353,7 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                         <TradeSubtitleEditing
                           onClick={() => {
                             setEditing(false);
-                            setMockEntry(mockEntry);
+                            updateJournalEntry(journalEntry);
                           }}
                         >
                           {"Cancel"}
@@ -452,17 +404,19 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                             darkMode
                             type="number"
                             onChange={(e) =>
-                              setMockEntry({
-                                ...mockEntry,
+                              updateJournalEntry({
+                                ...journalEntry,
                                 risk: parseInt(e.target.value),
                               })
                             }
-                            defaultValue={mockEntry.risk}
+                            defaultValue={journalEntry.risk}
                             style={styles.input}
                           />
                         </SummaryItemValue>
                         <Else>
-                          <SummaryItemValue>${mockEntry.risk}</SummaryItemValue>
+                          <SummaryItemValue>
+                            ${journalEntry.risk}
+                          </SummaryItemValue>
                         </Else>
                       </If>
                     </SummaryItem>
@@ -479,18 +433,18 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                             darkMode
                             type="number"
                             onChange={(e) =>
-                              setMockEntry({
-                                ...mockEntry,
+                              updateJournalEntry({
+                                ...journalEntry,
                                 contracts: parseInt(e.target.value),
                               })
                             }
-                            defaultValue={mockEntry.contracts}
+                            defaultValue={journalEntry.contracts}
                             style={styles.input}
                           />
                         </SummaryItemValue>
                         <Else>
                           <SummaryItemValue>
-                            x{mockEntry.contracts}
+                            x{journalEntry.contracts}
                           </SummaryItemValue>
                         </Else>
                       </If>
@@ -503,27 +457,33 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                             darkMode
                             type="number"
                             onChange={(e) =>
-                              setMockEntry({
-                                ...mockEntry,
+                              updateJournalEntry({
+                                ...journalEntry,
                                 outcome: parseInt(e.target.value),
                               })
                             }
-                            defaultValue={mockEntry.outcome}
+                            defaultValue={journalEntry.outcome}
                             style={styles.input}
                           />
                         </SummaryItemValue>
                         <Else>
-                          <SummaryItemValue>
-                            ${mockEntry.outcome}
+                          <SummaryItemValue
+                            $isPositive={journalEntry.outcome >= 0}
+                          >
+                            {formatter.format(journalEntry.outcome)}
                           </SummaryItemValue>
                         </Else>
                       </If>
                     </SummaryItem>
                     <SummaryItem>
                       <SummaryItemTitle>RR</SummaryItemTitle>
-                      <SummaryItemValue>
-                        {Number.isFinite(mockEntry.outcome / mockEntry.risk)
-                          ? (mockEntry.outcome / mockEntry.risk).toFixed(2)
+                      <SummaryItemValue $isPositive={journalEntry.outcome >= 0}>
+                        {Number.isFinite(
+                          journalEntry.outcome / journalEntry.risk,
+                        )
+                          ? (journalEntry.outcome / journalEntry.risk).toFixed(
+                              2,
+                            )
                           : "N/A"}
                       </SummaryItemValue>
                     </SummaryItem>
@@ -537,12 +497,12 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                       <textarea
                         maxLength={1000}
                         onChange={(e) =>
-                          setMockEntry({
-                            ...mockEntry,
+                          updateJournalEntry({
+                            ...journalEntry,
                             description: e.target.value,
                           })
                         }
-                        defaultValue={mockEntry.description}
+                        defaultValue={journalEntry.description}
                         style={{
                           height: 100,
                           width: "100%",
@@ -555,7 +515,9 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                       />
                     </DescriptionText>
                     <Else>
-                      <DescriptionText>{mockEntry.description}</DescriptionText>
+                      <DescriptionText>
+                        {journalEntry.description}
+                      </DescriptionText>
                     </Else>
                   </If>
                 </DescriptionSection>
@@ -584,18 +546,18 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                           darkMode
                           type="text"
                           onChange={(e) =>
-                            setMockEntry({
-                              ...mockEntry,
+                            updateJournalEntry({
+                              ...journalEntry,
                               instrument: e.target.value,
                             })
                           }
                           onSuggestionClick={(suggestion) => {
-                            setMockEntry({
-                              ...mockEntry,
+                            updateJournalEntry({
+                              ...journalEntry,
                               instrument: suggestion,
                             });
                           }}
-                          value={mockEntry.instrument}
+                          value={journalEntry.instrument}
                           style={styles.input}
                           suggestions={[
                             {
@@ -615,7 +577,7 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                       </SummaryItemValue>
                       <Else>
                         <SummaryItemValue>
-                          {mockEntry.instrument}
+                          {journalEntry.instrument}
                         </SummaryItemValue>
                       </Else>
                     </If>
@@ -623,9 +585,9 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                   <SummaryItem>
                     <SummaryItemTitle>Total Contracts</SummaryItemTitle>
                     <SummaryItemValue>
-                      {`x${mockEntry.trades.length === 0 ? mockEntry.contracts : mockEntry.contracts * mockEntry.trades.length}`}
+                      {`x${journalEntry.trades.length === 0 ? journalEntry.contracts : journalEntry.contracts * journalEntry.trades.length}`}
                       <SummaryItemValueSubtext>
-                        {`[${mockEntry.trades.length} Accounts]`}
+                        {`[${journalEntry.trades.length} Accounts]`}
                       </SummaryItemValueSubtext>
                     </SummaryItemValue>
                   </SummaryItem>
@@ -635,7 +597,9 @@ const JournalEntry: React.FunctionComponent<JournalEntryProps> = () => {
                   </SummaryItem>
                   <SummaryItem>
                     <SummaryItemTitle>Total PnL</SummaryItemTitle>
-                    <SummaryItemPnL>{`$${totalPnL}`}</SummaryItemPnL>
+                    <SummaryItemPnL
+                      $isPositive={totalPnL >= 0}
+                    >{`${formatter.format(totalPnL)}`}</SummaryItemPnL>
                   </SummaryItem>
                 </SummarySection>
               </SummaryTitleInfoContainer>

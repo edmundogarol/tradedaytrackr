@@ -55,3 +55,11 @@ export interface AccountTemplate {
   profitTarget?: number;
   consistency?: number;
 }
+
+export interface Trade {
+  id: number;
+  date: string;
+  pnl: number;
+  accountName: string;
+  accountId: number;
+}

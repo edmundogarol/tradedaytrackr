@@ -1,3 +1,4 @@
+import CloseIcon from "@mui/icons-material/Close";
 import { color } from "@styles/colors";
 import {
   CONTAINER_MARGIN_DEFAULT,
@@ -6,7 +7,6 @@ import {
 } from "@styles/constants";
 import { Section } from "@styles/globalStyledComponents";
 import styled from "styled-components";
-import CloseIcon from "@mui/icons-material/Close";
 
 export const EntryDetails = styled(Section)`
   flex: 4;
@@ -195,8 +195,9 @@ export const SummaryItemTitle = styled.span`
   font-size: 14px;
   display: flex;
 `;
-export const SummaryItemValue = styled.span`
-  color: ${color("SystemLightGreen")};
+export const SummaryItemValue = styled.span<{ $isPositive?: boolean }>`
+  color: ${({ $isPositive = true }): string =>
+    $isPositive ? color("SystemLightGreen") : color("SystemRed")};
   font-size: 14px;
   display: flex;
   flex-direction: column;
@@ -207,8 +208,9 @@ export const SummaryItemValueSubtext = styled.span`
   font-size: 14px;
 `;
 
-export const SummaryItemPnL = styled.span`
-  color: ${color("SystemLightGreen")};
+export const SummaryItemPnL = styled.span<{ $isPositive?: boolean }>`
+  color: ${({ $isPositive = true }): string =>
+    $isPositive ? color("SystemLightGreen") : color("SystemRed")};
   font-size: 20px;
 `;
 
@@ -243,10 +245,11 @@ export const TradesDetectedTrade = styled.div`
   border-bottom: 1px solid #3b4555;
 `;
 
-export const TradesDetectedPnL = styled.div`
+export const TradesDetectedPnL = styled.div<{ $positive: boolean }>`
   margin-right: 20px;
   margin-left: auto;
-  color: ${color("SystemLightGreen")};
+  color: ${({ $positive = true }): string =>
+    $positive ? color("SystemLightGreen") : color("SystemRed")};
 `;
 
 export const TradesDetectedTime = styled.div`
@@ -261,8 +264,11 @@ export const TradesDetectedContainer = styled.div`
   margin-bottom: 10px;
 `;
 
-export const TradesDetectedPnLTotalHighlighted = styled.div`
-  color: ${color("SystemLightGreen")};
+export const TradesDetectedPnLTotalHighlighted = styled.div<{
+  $positive?: boolean;
+}>`
+  color: ${({ $positive = true }): string =>
+    $positive ? color("SystemLightGreen") : color("SystemRed")};
   margin-left: 10px;
 `;
 
