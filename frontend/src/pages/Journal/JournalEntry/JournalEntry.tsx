@@ -321,7 +321,7 @@ const JournalEntry: React.FunctionComponent = () => {
                         />
                         <InfoPopout
                           infoDescription={
-                            "Auto generate tags based on trade description."
+                            "Auto generate tags based on trade description"
                           }
                         >
                           <If condition={loading}>

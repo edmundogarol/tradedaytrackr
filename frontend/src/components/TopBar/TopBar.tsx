@@ -45,7 +45,7 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
               <Link style={{ color: "white" }} to={PageEnum.JournalEntry}>
                 Journal Entry
               </Link>{" "}
-              to use auto tag detection"
+              to use auto tag detection or draft creator
             </span>
           </TopBarAlertContainer>
           <TopBarMenu user={user} />
