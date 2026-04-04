@@ -24,7 +24,7 @@ import {
 } from "@styles/globalStyledComponents";
 import { devSrc, formatter, isNotEmptyString, sanitizeTag } from "@utils/utils";
 import moment from "moment";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 import useGenerateDraftAIHandler from "../hooks/useGenerateDraftAIHandler";
 import useGenerateTagsAIHandler from "../hooks/useGenerateTagsAIHandler";
@@ -76,7 +76,7 @@ import styles from "./JournalEntryStyles";
 
 const JournalEntry: React.FunctionComponent = () => {
   const [originalJournalEntry, setOriginalJournalEntry] =
-    React.useState<JournalEntryType>(initialState.journalEntry);
+    useState<JournalEntryType>(initialState.journalEntry);
   const { generateTags, loading: generateTagsLoading } =
     useGenerateTagsAIHandler();
   const { generateDraft, loading: generateDraftLoading } =
@@ -85,15 +85,15 @@ const JournalEntry: React.FunctionComponent = () => {
   const { updateJournalEntry, updateDetectedTrades, updateJournalErrors } =
     useJournalDispatch();
   let [searchParams] = useSearchParams();
-  const [editing, setEditing] = React.useState(
+  const [editing, setEditing] = useState(
     searchParams.get("id") === "new" || false,
   );
-  const [editingDate, setEditingDate] = React.useState(false);
-  const [editingAccounts, setEditingAccounts] = React.useState(false);
-  const [selectedAccountTrades, setSelectedAccountTrades] = React.useState<
-    number[]
-  >([...journalEntry.trades]);
-  const [currentTagInput, setCurrentTagInput] = React.useState("");
+  const [editingDate, setEditingDate] = useState(false);
+  const [editingAccounts, setEditingAccounts] = useState(false);
+  const [selectedAccountTrades, setSelectedAccountTrades] = useState<number[]>([
+    ...journalEntry.trades,
+  ]);
+  const [currentTagInput, setCurrentTagInput] = useState("");
   const saveDisabled =
     journalEntry.contracts <= 0 ||
     journalEntry.risk <= 0 ||
@@ -157,7 +157,7 @@ const JournalEntry: React.FunctionComponent = () => {
         }}
       >
         <TradesDetectedContainer>
-          {`${detectedTrades.length} trades detected for ${moment(journalEntry.dateTime).format("MMM DD")}`}
+          {`${detectedTrades.length} trades detected for ${moment(journalEntry.date_time).format("MMM DD")}`}
         </TradesDetectedContainer>
         <TradesDetectedContainer>
           {detectedTrades.map((trade) => {
@@ -223,7 +223,7 @@ const JournalEntry: React.FunctionComponent = () => {
                 <TradeInfo>
                   <If condition={editing}>
                     <TradeSubtitleEditing onClick={() => setEditingDate(true)}>
-                      {moment(journalEntry.dateTime).format(
+                      {moment(journalEntry.date_time).format(
                         "YYYY-MM-DD hh:mm A",
                       )}
                     </TradeSubtitleEditing>
@@ -233,19 +233,19 @@ const JournalEntry: React.FunctionComponent = () => {
                         setEditingDate(pickerOpen);
                       }}
                       showPicker={editingDate}
-                      value={moment(journalEntry.dateTime)}
+                      value={moment(journalEntry.date_time)}
                       onChange={(val) =>
                         updateJournalEntry({
                           ...journalEntry,
-                          dateTime: val
+                          date_time: val
                             ? val.toISOString()
-                            : journalEntry.dateTime,
+                            : journalEntry.date_time,
                         })
                       }
                     />
                     <Else>
                       <TradeSubtitle>
-                        {moment(journalEntry.dateTime).format(
+                        {moment(journalEntry.date_time).format(
                           "YYYY-MM-DD HH:mm A",
                         )}
                       </TradeSubtitle>

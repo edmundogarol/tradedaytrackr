@@ -12,6 +12,7 @@ export const Container = styled.div<{ $transparent?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
 `;
 
 export const HomeLogo = styled.img`

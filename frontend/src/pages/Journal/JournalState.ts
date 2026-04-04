@@ -3,17 +3,19 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
 import moment from "moment";
 import type { JournalEntry } from "./JournalInterfaces";
+import { mockJournalEntries } from "./mocks/journalEntries";
 
 export interface JournalState {
   readonly journalEntry: JournalEntry;
   readonly journalErrors: { [key: string]: any };
   readonly detectedTrades: Trade[];
+  readonly journalEntries: JournalEntry[];
 }
 
 export const initialState: JournalState = {
   journalEntry: {
     id: 0,
-    dateTime: moment().toISOString(),
+    date_time: moment().toISOString(),
     risk: 0,
     contracts: 0,
     outcome: 0,
@@ -25,6 +27,7 @@ export const initialState: JournalState = {
     tags: [],
     accounts: [],
   },
+  journalEntries: mockJournalEntries,
   journalErrors: {},
   detectedTrades: [],
 };
@@ -32,11 +35,13 @@ export const initialState: JournalState = {
 type UpdateJournalEntryAction = PayloadAction<JournalEntry>;
 type UpdateJournalErrorsAction = PayloadAction<{ [key: string]: any }>;
 type UpdateDetectedTradesAction = PayloadAction<Trade[]>;
+type UpdateJournalEntriesAction = PayloadAction<JournalEntry[]>;
 
 export type JournalAction =
   | UpdateJournalEntryAction
   | UpdateJournalErrorsAction
-  | UpdateDetectedTradesAction;
+  | UpdateDetectedTradesAction
+  | UpdateJournalEntriesAction;
 
 export const journalSlice = createSlice({
   name: "journal",
@@ -51,11 +56,18 @@ export const journalSlice = createSlice({
     updateDetectedTrades: (state, action: UpdateDetectedTradesAction) => {
       state.detectedTrades = action.payload;
     },
+    updateJournalEntries: (state, action: UpdateJournalEntriesAction) => {
+      state.journalEntries = action.payload;
+    },
   },
 });
 
-export const { updateJournalEntry, updateJournalErrors, updateDetectedTrades } =
-  journalSlice.actions;
+export const {
+  updateJournalEntry,
+  updateJournalErrors,
+  updateDetectedTrades,
+  updateJournalEntries,
+} = journalSlice.actions;
 
 export const journalReducer = journalSlice.reducer;
 

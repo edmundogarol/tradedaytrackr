@@ -26,6 +26,7 @@ import {
 } from "@pages/FundedAccounts/FundedAccountDetail/FundedAccountDetailStyledComponents";
 import { formatter } from "@utils/utils";
 import moment from "moment";
+import useJournalState from "./hooks/useJournalState";
 import {
   Description,
   EditContainer,
@@ -34,10 +35,10 @@ import {
   TileTradeCountContainer,
 } from "./JournalStyledComponents";
 import styles from "./JournalStyles";
-import { mockJournalEntries } from "./mocks/journalEntries";
 
 const Journal: React.FunctionComponent = () => {
   const navigation = useReactNavigation();
+  const { journalEntries } = useJournalState();
 
   const sortByOptions = {
     title: "Sort By",
@@ -65,7 +66,7 @@ const Journal: React.FunctionComponent = () => {
           />
         </DropdownsSection>
         <JournalEntries>
-          {mockJournalEntries.reverse().map((entry, index) => (
+          {[...journalEntries].reverse().map((entry, index) => (
             <GlassTile
               key={index}
               featureTile

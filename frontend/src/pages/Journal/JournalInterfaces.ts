@@ -1,6 +1,6 @@
 export interface JournalEntry {
   id: number;
-  dateTime: string;
+  date_time: string;
   risk: number;
   contracts: number;
   outcome: number;
