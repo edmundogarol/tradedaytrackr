@@ -41,7 +41,7 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
           <TopBarAlertContainer>
             <InfoIcon style={{ height: 20, width: 20, color: "white" }} />
             <span>
-              AI Feature Available: Go to{" "}
+              AI Feature Available: Create or edit{" "}
               <Link
                 style={{ color: "white" }}
                 to={PageEnum.JournalEntry + "?id=new"}
