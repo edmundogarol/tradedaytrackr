@@ -112,6 +112,10 @@ const JournalEntry: React.FunctionComponent = () => {
     const currentEntry = mockJournalEntries.find(
       (entry) => entry.id === parseInt(searchParams.get("id") || "0"),
     );
+    if (searchParams.get("id") === "new") {
+      updateJournalEntry(initialState.journalEntry);
+      return;
+    }
     if (currentEntry) {
       updateJournalEntry(currentEntry);
       setOriginalJournalEntry(currentEntry);

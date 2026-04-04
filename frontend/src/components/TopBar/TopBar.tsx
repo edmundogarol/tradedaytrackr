@@ -42,7 +42,10 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
             <InfoIcon style={{ height: 20, width: 20, color: "white" }} />
             <span>
               AI Feature Available: Go to{" "}
-              <Link style={{ color: "white" }} to={PageEnum.JournalEntry}>
+              <Link
+                style={{ color: "white" }}
+                to={PageEnum.JournalEntry + "?id=new"}
+              >
                 Journal Entry
               </Link>{" "}
               to use auto tag detection or draft creator

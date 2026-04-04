@@ -1,7 +1,7 @@
-import React from "react";
 import GlassTile from "@components/GlassTile/GlassTile";
-import useReactNavigation from "@navigation/hooks/useReactNavigation";
 import { PageEnum } from "@interfaces/NavigationTypes";
+import useReactNavigation from "@navigation/hooks/useReactNavigation";
+import React from "react";
 import {
   Container,
   TileAccs,
@@ -40,7 +40,7 @@ const CalendarSummary: React.FunctionComponent<CalendarSummaryProps> = ({
             key={index}
             onClick={() =>
               navigation.navigate(PageEnum.JournalEntry, {
-                entryId: index,
+                id: index + 1,
               })
             }
           >
