@@ -1,3 +1,4 @@
+import { uniq } from "lodash";
 import { useCallback } from "react";
 import useGenerateTagsAIApiCall from "./useGenerateTagsAIApiCall";
 import useJournalDispatch from "./useJournalDispatch";
@@ -36,9 +37,10 @@ const useGenerateTagsAIHandler = (): UseDemoUserLoginHandlerProps => {
         }
 
         if (!!data) {
+          const noDuplicateTags = uniq([...journalEntry.tags, ...data.tags]);
           updateJournalEntry({
             ...journalEntry,
-            tags: [...journalEntry.tags, ...data.tags],
+            tags: noDuplicateTags,
           });
 
           if (data.tags.length === 0) {
