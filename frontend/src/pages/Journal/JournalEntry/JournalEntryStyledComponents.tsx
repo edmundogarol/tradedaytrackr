@@ -22,6 +22,7 @@ export const TradeInfo = styled.div`
   flex: 1;
   display: flex;
   margin-bottom: 5px;
+  align-items: center;
 `;
 
 export const TradeCapture = styled.div`
@@ -51,11 +52,11 @@ export const TradeSubtitle = styled.div`
   color: #a3a3a3;
   font-weight: 200;
   z-index: 11;
-  align-self: flex-start;
   font-size: 14px;
   padding-left: ${CONTAINER_PADDING_DEFAULT}px;
   padding-right: ${CONTAINER_PADDING_DEFAULT}px;
   border-right: 1px solid #9c9c9c6f;
+  align-items: center;
 `;
 
 export const SaveButton = styled(TradeSubtitle)`
@@ -283,4 +284,21 @@ export const TradesDetectedPnLTotal = styled.div`
 export const TradeAccountsSelectSaveButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
+`;
+
+export const TagInputWithAIButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  svg {
+    color: #d5d5d5;
+    height: 20px;
+    width: 20px;
+
+    &:hover {
+      color: ${color("SystemLightGreen")};
+      cursor: pointer;
+    }
+  }
 `;

@@ -1,3 +1,4 @@
+import AlertPopout from "@components/Alert/AlertPopout";
 import Button from "@components/Button/Button";
 import Gap from "@components/Gap/Gap";
 import GlassTile from "@components/GlassTile/GlassTile";
@@ -5,8 +6,10 @@ import { Else, If } from "@components/If/If";
 import InfoPopout from "@components/InfoPopout/InfoPopout";
 import CalendarPicker from "@components/Input/CalendarPicker/CalendarPicker";
 import Input from "@components/Input/Input";
+import Loading from "@components/Loading/Loading";
 import Modal from "@components/Modal/Modal";
 import Page from "@components/Page/Page";
+import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
 import WallpaperIcon from "@mui/icons-material/Wallpaper";
@@ -19,10 +22,11 @@ import {
   SectionTitle,
   SubsectionHeader,
 } from "@styles/globalStyledComponents";
-import { devSrc, formatter, sanitizeTag } from "@utils/utils";
+import { devSrc, formatter, isNotEmptyString, sanitizeTag } from "@utils/utils";
 import moment from "moment";
 import React, { useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router";
+import useGenerateTagsAIHandler from "../hooks/useGenerateTagsAIHandler";
 import useJournalDispatch from "../hooks/useJournalDispatch";
 import useJournalState from "../hooks/useJournalState";
 import { mockJournalEntries } from "../mocks/journalEntries";
@@ -48,6 +52,7 @@ import {
   Tag,
   TagContainer,
   TagInputContainer,
+  TagInputWithAIButtonContainer,
   TagsContainer,
   TradeAccountsSelectSaveButtonContainer,
   TradeCapture,
@@ -66,14 +71,14 @@ import {
 import styles from "./JournalEntryStyles";
 
 const JournalEntry: React.FunctionComponent = () => {
-  const { journalEntry, detectedTrades } = useJournalState();
-  const { updateJournalEntry, updateDetectedTrades } = useJournalDispatch();
+  const { generateTags, loading } = useGenerateTagsAIHandler();
+  const { journalEntry, detectedTrades, journalErrors } = useJournalState();
+  const { updateJournalEntry, updateDetectedTrades, updateJournalErrors } =
+    useJournalDispatch();
   let [searchParams] = useSearchParams();
   const [editing, setEditing] = React.useState(
     searchParams.get("id") === "new" || false,
   );
-  const [originalJournalEntry, setOriginalJournalEntry] =
-    React.useState<typeof journalEntry>();
   const [editingDate, setEditingDate] = React.useState(false);
   const [editingAccounts, setEditingAccounts] = React.useState(false);
   const [selectedAccountTrades, setSelectedAccountTrades] = React.useState<
@@ -100,7 +105,6 @@ const JournalEntry: React.FunctionComponent = () => {
     );
     if (currentEntry) {
       updateJournalEntry(currentEntry);
-      setOriginalJournalEntry(currentEntry);
     }
 
     updateDetectedTrades(availableAccountTradesOnDateMock);
@@ -117,8 +121,15 @@ const JournalEntry: React.FunctionComponent = () => {
       .filter((trade) => selectedAccountTrades.includes(trade.id))
       .reduce((total, trade) => total + trade.pnl, 0);
   }, [detectedTrades, selectedAccountTrades]);
+  console.log({ journalError: journalErrors.detail });
   return (
     <Page topBarShowMenu={true}>
+      <AlertPopout
+        setPopoutOpen={() => updateJournalErrors({ detail: "" })}
+        hideDuration={4000}
+        open={isNotEmptyString(journalErrors.detail)}
+        message={journalErrors?.detail}
+      />
       <Modal
         open={editingAccounts}
         setOpen={setEditingAccounts}
@@ -237,76 +248,96 @@ const JournalEntry: React.FunctionComponent = () => {
                     </Else>
                   </If>
                   <TagInputContainer>
-                    <If condition={editing}>
-                      <Input
-                        darkMode
-                        type="text"
-                        maxInputLength={35}
-                        placeholder="Enter tag"
-                        onChange={(e) => setCurrentTagInput(e.target.value)}
-                        onEnterPress={(val) => {
-                          if (
-                            journalEntry.tags.some(
-                              (tag) => tag.toLowerCase() === val.toLowerCase(),
-                            )
-                          ) {
+                    <TagInputWithAIButtonContainer>
+                      <If condition={editing}>
+                        <Input
+                          darkMode
+                          type="text"
+                          maxInputLength={35}
+                          placeholder="Enter tag"
+                          onChange={(e) => setCurrentTagInput(e.target.value)}
+                          onEnterPress={(val) => {
+                            if (
+                              journalEntry.tags.some(
+                                (tag) =>
+                                  tag.toLowerCase() === val.toLowerCase(),
+                              )
+                            ) {
+                              setCurrentTagInput("");
+                              return;
+                            }
+                            updateJournalEntry({
+                              ...journalEntry,
+                              tags: [...journalEntry.tags, val],
+                            });
                             setCurrentTagInput("");
-                            return;
+                          }}
+                          onSuggestionClick={(suggestion) => {
+                            updateJournalEntry({
+                              ...journalEntry,
+                              tags: [...journalEntry.tags, suggestion],
+                            });
+                            setCurrentTagInput("");
+                          }}
+                          value={currentTagInput}
+                          style={styles.tagInput}
+                          inputContainerStyle={styles.tagInputContainer}
+                          suggestions={[
+                            {
+                              description: "Momentum",
+                            },
+                            {
+                              description: "Reaction",
+                            },
+                            {
+                              description: "50% Block",
+                            },
+                            {
+                              description: "Premium",
+                            },
+                            {
+                              description: "Discount",
+                            },
+                            {
+                              description: "IFVG",
+                            },
+                            {
+                              description: "Long",
+                            },
+                            {
+                              description: "Short",
+                            },
+                          ].filter(
+                            (s) =>
+                              journalEntry.tags.every(
+                                (tag) =>
+                                  tag.toLowerCase() !==
+                                  s.description.toLowerCase(),
+                              ) &&
+                              s.description
+                                .toLowerCase()
+                                .includes(currentTagInput.toLowerCase()),
+                          )}
+                        />
+                        <InfoPopout
+                          infoDescription={
+                            "Auto generate tags based on trade description."
                           }
-                          updateJournalEntry({
-                            ...journalEntry,
-                            tags: [...journalEntry.tags, val],
-                          });
-                          setCurrentTagInput("");
-                        }}
-                        onSuggestionClick={(suggestion) => {
-                          updateJournalEntry({
-                            ...journalEntry,
-                            tags: [...journalEntry.tags, suggestion],
-                          });
-                          setCurrentTagInput("");
-                        }}
-                        value={currentTagInput}
-                        style={styles.tagInput}
-                        inputContainerStyle={styles.tagInputContainer}
-                        suggestions={[
-                          {
-                            description: "Momentum",
-                          },
-                          {
-                            description: "Reaction",
-                          },
-                          {
-                            description: "50% Block",
-                          },
-                          {
-                            description: "Premium",
-                          },
-                          {
-                            description: "Discount",
-                          },
-                          {
-                            description: "IFVG",
-                          },
-                          {
-                            description: "Long",
-                          },
-                          {
-                            description: "Short",
-                          },
-                        ].filter(
-                          (s) =>
-                            journalEntry.tags.every(
-                              (tag) =>
-                                tag.toLowerCase() !==
-                                s.description.toLowerCase(),
-                            ) &&
-                            s.description
-                              .toLowerCase()
-                              .includes(currentTagInput.toLowerCase()),
-                        )}
-                      />
-                    </If>
+                        >
+                          <If condition={loading}>
+                            <Loading size={20} />
+                            <Else>
+                              <AutoFixHighIcon
+                                style={{ marginLeft: 5 }}
+                                onClick={() => {
+                                  generateTags(journalEntry.description);
+                                }}
+                              />
+                            </Else>
+                          </If>
+                        </InfoPopout>
+                      </If>
+                    </TagInputWithAIButtonContainer>
                     <TagsContainer>
                       {journalEntry.tags.map((tag, index) => (
                         <TagContainer key={index}>
@@ -339,7 +370,6 @@ const JournalEntry: React.FunctionComponent = () => {
                     </TagsContainer>
                   </TagInputContainer>
                   <EditDeleteButtons>
-                    {/* Add edit and delete buttons here */}
                     <ButtonContainer>
                       <If condition={editing}>
                         <TradeSubtitleEditing

@@ -22,18 +22,21 @@ class AutoTagView(APIView):
             return Response({"tags": []})
 
         try:
-            tags = generate_tags(description)
+            result = generate_tags(description)
+            tags = result.get("tags", [])
+            strategy = result.get("strategy")
 
             logger.info(
                 "Tag generation successful",
                 extra={
+                    "strategy": strategy,
                     "tags_count": len(tags),
                     "tags_preview": tags[:5],
                     "description_preview": description[:200],
                 },
             )
 
-            return Response({"tags": tags})
+            return Response({"tags": tags, "strategy": strategy})
 
         except Exception as e:
             logger.exception("Error in AutoTagView", extra={"error": str(e)})

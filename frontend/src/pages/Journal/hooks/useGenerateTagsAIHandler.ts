@@ -26,19 +26,32 @@ const useGenerateTagsAIHandler = (): UseDemoUserLoginHandlerProps => {
 
         if (error) {
           console.log("Tag generation error", error);
-          updateJournalErrors(error);
+          updateJournalErrors(
+            error || {
+              detail:
+                "An error occurred while generating tags. Please try again.",
+            },
+          );
           return;
         }
 
         if (!!data) {
           updateJournalEntry({
             ...journalEntry,
-            tags: data.tags,
+            tags: [...journalEntry.tags, ...data.tags],
           });
-          updateJournalErrors({});
+
+          if (data.tags.length === 0) {
+            updateJournalErrors({
+              detail:
+                "No tags were generated. Please try again or try adding more description.",
+            });
+            return;
+          }
+          updateJournalErrors({ detail: "Successfully generated tags" });
         }
       },
-      [loading],
+      [loading, journalEntry],
     ),
     loading,
   };

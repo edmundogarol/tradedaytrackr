@@ -9,7 +9,9 @@ export interface GenerateTagsAIApiCallData {
 const useGenerateTagsAIApiCall =
   (): AxiosFetchWrapperResponse<GenerateTagsAIApiCallData> => {
     const { fetch, data, loading, error } =
-      useAxiosFetch<GenerateTagsAIApiCallData>("login/");
+      useAxiosFetch<GenerateTagsAIApiCallData>("ai/tags/", {
+        method: "POST",
+      });
 
     return { fetch, data, loading, error };
   };

@@ -54,6 +54,8 @@ STRATEGY_TAG_MAP = {
         "high confluence",
         "momentum shift",
         "rejection wick",
+        "draw on liquidity",
+        "DOL",
     ],
     "AMD Model": [
         "accumulation",
