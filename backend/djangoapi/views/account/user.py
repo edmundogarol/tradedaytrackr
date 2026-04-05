@@ -143,103 +143,118 @@ class UserViewSet(ModelViewSet):
     @action(detail=False, methods=["patch"], url_path="update_me")
     def update_me(self, request):
         if not request.user.is_authenticated:
+            logger.warning("Unauthenticated user attempted update_me")
             return Response({"detail": "Not authenticated"}, status=401)
 
-        if request.user.is_demo and request.data.get("current_password"):
+        user = request.user
+        data = request.data.copy()
+        old_email = user.email
+
+        if user.is_demo:
             logger.warning(
-                "Demo user attempted to update password.",
-                extra={"user_id": request.user.id},
+                "Demo user attempted update.",
+                extra={"user_id": user.id},
             )
-            return Response(
-                {"password_error": "Demo accounts cannot update password"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-        elif request.user.is_demo:
-            logger.warning(
-                "Demo user attempted to update account.",
-                extra={"user_id": request.user.id},
-            )
+
+            if data.get("current_password"):
+                return Response(
+                    {"password_error": "Demo accounts cannot update password"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
             return Response(
                 {"error": "Demo accounts cannot be updated"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        user = request.user
-        old_email = user.email
+        if data.get("current_password"):
+            if not user.check_password(data.get("current_password")):
+                logger.warning(
+                    "Incorrect current password provided.",
+                    extra={"user_id": user.id},
+                )
+                return Response(
+                    {"current_password": "Current password is incorrect"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
-        request.data["password"] = request.data.get("new_password", "")
+            if not data.get("new_password"):
+                logger.warning(
+                    "Missing new password during update.",
+                    extra={"user_id": user.id},
+                )
+                return Response(
+                    {"new_password": "Please enter a new password"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if data.get("new_password") != data.get("confirm_new_password"):
+                logger.warning(
+                    "Password mismatch during update.",
+                    extra={"user_id": user.id},
+                )
+                return Response(
+                    {"confirm_new_password": "The passwords entered do not match"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            user.set_password(data.get("new_password"))
+            user.save()
+
+            logger.info(
+                "Password updated successfully.",
+                extra={"user_id": user.id},
+            )
+
+            return Response(
+                {"detail": "Password updated successfully"},
+                status=status.HTTP_200_OK,
+            )
 
         serializer = UpdateUserSerializer(
             user,
-            data=request.data,
+            data=data,
             partial=True,
             context={"request": request},
         )
 
-        if request.data.get("current_password") and not user.check_password(
-            request.data.get("current_password", "")
-        ):
-            logger.warning(
-                "User provided incorrect current password for update.",
-                extra={"user_id": request.user.id},
-            )
-            return Response(
-                {"current_password": "Current password is incorrect"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        elif request.data.get("current_password") and request.data.get(
-            "new_password"
-        ) != request.data.get("confirm_new_password"):
-            logger.warning(
-                "User provided non-matching new passwords for update.",
-                extra={"user_id": request.user.id},
-            )
-            return Response(
-                {
-                    "confirm_new_password": "The passwords entered do not match",
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        elif request.data.get("current_password") and not request.data.get(
-            "new_password"
-        ):
-            logger.warning(
-                "User did not provide a new password for update.",
-                extra={"user_id": request.user.id},
-            )
-            return Response(
-                {"new_password": "Please enter a new password"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        elif request.data.get("current_password"):
+        try:
             serializer.is_valid(raise_exception=True)
-            updated_user = serializer.save()
-            logger.info(
-                "Password updated successfully.",
-                extra={"user_id": request.user.id},
+        except Exception:
+            logger.error(
+                "User update validation failed.",
+                exc_info=True,
+                extra={"user_id": user.id},
             )
-            return Response(
-                {
-                    "detail": "Password updated successfully",
-                },
-                status=status.HTTP_200_OK,
-            )
+            raise
 
-        serializer.is_valid(raise_exception=True)
         updated_user = serializer.save()
 
-        if "email" in request.data and old_email != updated_user.email:
+        logger.info(
+            "User profile updated successfully.",
+            extra={"user_id": user.id},
+        )
+
+        if "email" in data and old_email != updated_user.email:
             logger.info(
                 "User email updated, sending verification email.",
-                extra={"user_id": request.user.id},
+                extra={"user_id": user.id},
             )
+
             updated_user.is_verified = False
             updated_user.verification_token = token_urlsafe(32)
             updated_user.verification_sent_at = timezone.now()
             updated_user.save()
 
-            verification_url = f"{settings.WEB_APP_URL}/dashboard?verification_token={updated_user.verification_token}"
-            send_verification_email(updated_user, verification_url)
+            try:
+                verification_url = f"{settings.WEB_APP_URL}/dashboard?verification_token={updated_user.verification_token}"
+                send_verification_email(updated_user, verification_url)
+            except Exception:
+                logger.error(
+                    "Failed to send verification email.",
+                    exc_info=True,
+                    extra={"user_id": user.id},
+                )
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
