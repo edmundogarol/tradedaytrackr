@@ -11,7 +11,6 @@ logger = logging.getLogger(__name__)
 
 class JournalEntrySerializer(serializers.ModelSerializer):
     trades = TradeSerializer(many=True, read_only=True)
-
     totalPnL = serializers.SerializerMethodField()
 
     class Meta:

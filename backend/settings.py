@@ -75,12 +75,20 @@ else:
         "127.0.0.1",
     ]
 
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SAMESITE = "None"
-CSRF_COOKIE_SAMESITE = "None"
-CSRF_COOKIE_DOMAIN = ".tradedaytrackr.com"
-SESSION_COOKIE_DOMAIN = ".tradedaytrackr.com"
+if "DEVENV" in os.environ:
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    SESSION_COOKIE_SAMESITE = "Lax"
+    CSRF_COOKIE_SAMESITE = "Lax"
+    SESSION_COOKIE_DOMAIN = None
+    CSRF_COOKIE_DOMAIN = None
+else:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SAMESITE = "None"
+    CSRF_COOKIE_SAMESITE = "None"
+    SESSION_COOKIE_DOMAIN = ".tradedaytrackr.com"
+    CSRF_COOKIE_DOMAIN = ".tradedaytrackr.com"
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",

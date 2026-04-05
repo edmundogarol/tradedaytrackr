@@ -11,6 +11,7 @@ from backend.djangoapi.views.account.reset_password import (
     SubmitPasswordResetViewSet,
     VerifyPasswordResetViewSet,
 )
+from backend.djangoapi.views.account.user import UserViewSet
 from backend.djangoapi.views.account.verify_account import (
     RequestVerificationViewSet,
     VerifyAccountViewSet,
@@ -18,6 +19,7 @@ from backend.djangoapi.views.account.verify_account import (
 from backend.djangoapi.views.ai.drafting import GenerateDraftView
 from backend.djangoapi.views.ai.strategy import DetectStrategyView
 from backend.djangoapi.views.ai.tagging import AutoTagView
+from backend.djangoapi.views.journal.journal_entry import JournalEntryViewSet
 from backend.djangoapi.views.webhooks.whop import (
     WhopMembershipActivatedWebhookView,
     WhopMembershipDeactivatedWebhookView,
@@ -43,7 +45,8 @@ class DocumentedRouter(routers.DefaultRouter):
 
 
 router = DocumentedRouter()
-router.register(r"user", views.account.UserViewSet)
+router.register(r"user", UserViewSet, basename="user")
+router.register(r"journal-entries", JournalEntryViewSet, basename="journal-entries")
 
 urlpatterns = [
     path("docs/", schema_view),

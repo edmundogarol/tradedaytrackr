@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -26,7 +27,15 @@ class UserViewSet(ModelViewSet):
     queryset = User.objects.all().order_by("-id")
     serializer_class = UserSerializer
 
+    def get_permissions(self):
+        if self.action == "list":
+            return [IsAdminUser()]
+        return [IsAuthenticated()]
+
     def list(self, request, *args, **kwargs):
+        if not request.user.is_staff:
+            return Response({"detail": "Forbidden"}, status=403)
+
         search = request.GET.get("search", None)
 
         if search:
@@ -133,6 +142,9 @@ class UserViewSet(ModelViewSet):
 
     @action(detail=False, methods=["patch"], url_path="update_me")
     def update_me(self, request):
+        if not request.user.is_authenticated:
+            return Response({"detail": "Not authenticated"}, status=401)
+
         if request.user.is_demo and request.data.get("current_password"):
             logger.warning(
                 "Demo user attempted to update password.",
