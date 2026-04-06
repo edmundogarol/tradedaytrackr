@@ -15,8 +15,8 @@ export enum PageEnum {
   AccountSettings = "/accountSettings",
   Preferences = "/preferences",
   Billing = "/billing",
-  PrivacyPolicy = "/privacyPolicy",
-  TermsOfService = "/termsOfService",
+  PrivacyPolicy = "/privacy",
+  TermsOfService = "/terms",
   FrequentlyAskedQuestions = "/faq",
   ContactUs = "/contactUs",
 }
