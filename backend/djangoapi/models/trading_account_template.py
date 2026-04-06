@@ -6,7 +6,7 @@ class TradingAccountTemplate(models.Model):
     firm = models.CharField(max_length=100)
     account_size = models.IntegerField()
     is_evaluation = models.BooleanField()
-
+    image = models.URLField(blank=True, null=True)
     profit_target = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True
     )

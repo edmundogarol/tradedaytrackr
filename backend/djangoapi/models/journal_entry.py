@@ -5,7 +5,6 @@ class JournalEntry(models.Model):
     user = models.ForeignKey(
         "djangoapi.User", on_delete=models.CASCADE, related_name="journal_entries"
     )
-
     date_time = models.DateTimeField()
     instrument = models.CharField(max_length=10)
     risk = models.DecimalField(max_digits=10, decimal_places=2)
