@@ -15,6 +15,10 @@ export enum PageEnum {
   AccountSettings = "/accountSettings",
   Preferences = "/preferences",
   Billing = "/billing",
+  PrivacyPolicy = "/privacyPolicy",
+  TermsOfService = "/termsOfService",
+  FrequentlyAskedQuestions = "/faq",
+  ContactUs = "/contactUs",
 }
 
 export type AuthenticatedStackNavigatorParams = {
@@ -37,6 +41,10 @@ export type UnauthenticatedStackNavigatorParams = {
   [PageEnum.ResetPassword]: undefined;
   [PageEnum.ResetPasswordConfirmation]: { token: string };
   [PageEnum.PageNotFound]: undefined;
+  [PageEnum.PrivacyPolicy]: undefined;
+  [PageEnum.TermsOfService]: undefined;
+  [PageEnum.FrequentlyAskedQuestions]: undefined;
+  [PageEnum.ContactUs]: undefined;
 };
 
 export interface Navigation {

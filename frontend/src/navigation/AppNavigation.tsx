@@ -9,6 +9,10 @@ import EvaluationAccountDetail from "@pages/EvaluationAccounts/EvaluationAccount
 import EvaluationAccounts from "@pages/EvaluationAccounts/EvaluationAccounts";
 import FundedAccountDetail from "@pages/FundedAccounts/FundedAccountDetail/FundedAccountDetail";
 import FundedAccounts from "@pages/FundedAccounts/FundedAccounts";
+import ContactUs from "@pages/Info/ContactUs/ContactUs";
+import FAQ from "@pages/Info/FAQ";
+import PrivacyPolicy from "@pages/Info/PrivacyPolicy";
+import TermsOfService from "@pages/Info/TermsOfService";
 import Journal from "@pages/Journal/Journal";
 import JournalEntry from "@pages/Journal/JournalEntry/JournalEntry";
 import useLoginCheckApiCall from "@pages/Login/hooks/useLoginCheckApiCall";
@@ -74,6 +78,10 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
           path={PageEnum.ResetPasswordConfirmation}
           element={<ConfirmPassword />}
         />
+        <Route path={PageEnum.PrivacyPolicy} element={<PrivacyPolicy />} />
+        <Route path={PageEnum.TermsOfService} element={<TermsOfService />} />
+        <Route path={PageEnum.FrequentlyAskedQuestions} element={<FAQ />} />
+        <Route path={PageEnum.ContactUs} element={<ContactUs />} />
 
         {/* Protected routes */}
         <Route element={<RequireAuth />}>
