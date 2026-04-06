@@ -63,3 +63,9 @@ export interface Trade {
   accountName: string;
   accountId: number;
 }
+
+export interface Tag {
+  id: number;
+  name: string;
+  uses: number;
+}

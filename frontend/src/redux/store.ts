@@ -1,5 +1,6 @@
 import { journalReducer } from "@pages/Journal/JournalState";
 import { loginReducer } from "@pages/Login/LoginState";
+import { settingsReducer } from "@pages/Settings/SettingsState";
 import { configureStore } from "@reduxjs/toolkit";
 
 const defaultMiddlewareConfig = {
@@ -13,6 +14,7 @@ export default configureStore({
   reducer: {
     login: loginReducer,
     journal: journalReducer,
+    settings: settingsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware(defaultMiddlewareConfig),
