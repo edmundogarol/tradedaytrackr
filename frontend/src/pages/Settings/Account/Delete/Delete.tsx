@@ -1,4 +1,5 @@
 import Button from "@components/Button/Button";
+import Gap from "@components/Gap/Gap";
 import GlassTile from "@components/GlassTile/GlassTile";
 import ModalWrapper from "@components/Modal/Modal";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
@@ -54,11 +55,13 @@ const Delete: React.FunctionComponent = () => {
           <AccountSettingsContainer>
             <AccountDetailsSection>
               <SectionText>Would you like to delete your account?</SectionText>
+              <Gap level={1} />
               <SectionText>
                 This account contains 140 journal entries, 1500 individual
                 trades and 20 account connections. Deleting your account will
                 permanently remove all of this data and cannot be undone.
               </SectionText>
+              <Gap level={2} />
               <Button
                 onClick={() => setShowDeleteModal(true)}
                 text={"Delete Account"}
