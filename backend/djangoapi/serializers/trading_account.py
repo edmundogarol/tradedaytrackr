@@ -1,12 +1,17 @@
 from rest_framework import serializers
 
-from backend.djangoapi.models import TradingAccount
+from backend.djangoapi.models import TradingAccount, TradingAccountTemplate
 from backend.djangoapi.serializers.trading_day import TradingDaySerializer
 
 
 class TradingAccountSerializer(serializers.ModelSerializer):
+    template_id = serializers.PrimaryKeyRelatedField(
+        queryset=TradingAccountTemplate.objects.all(),
+        source="template",
+        write_only=True,
+    )
     accountSize = serializers.IntegerField(
-        source="template.account_size", read_only=True
+        source="template.account_size", read_only=True, default=0
     )
     firm = serializers.CharField(source="template.firm", read_only=True)
     accountType = serializers.SerializerMethodField()
@@ -49,6 +54,7 @@ class TradingAccountSerializer(serializers.ModelSerializer):
         model = TradingAccount
         fields = [
             "id",
+            "template_id",
             "account_name",
             "account_balance",
             "accountSize",
@@ -67,3 +73,13 @@ class TradingAccountSerializer(serializers.ModelSerializer):
             "id": obj.template.id,
             "name": obj.template.name,
         }
+
+    def validate_account_balance(self, value):
+        if value < 0:
+            raise serializers.ValidationError("Balance cannot be negative")
+        return value
+
+    def validate_account_name(self, value):
+        if not value.strip():
+            raise serializers.ValidationError("Account name cannot be empty")
+        return value

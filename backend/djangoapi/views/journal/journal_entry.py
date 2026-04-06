@@ -16,9 +16,10 @@ class JournalEntryViewSet(ModelViewSet):
             JournalEntry.objects.filter(user=self.request.user)
             .prefetch_related("trades__account", "trades__account__template")
             .annotate(
-                total_pnl=Coalesce(Sum("trades__pnl", distinct=True), Value(0)),
+                total_pnl=Coalesce(Sum("trades__pnl"), Value(0)),
                 trade_count=Count("trades", distinct=True),
             )
+            .order_by("-date_time")
         )
 
     def get_serializer_class(self):

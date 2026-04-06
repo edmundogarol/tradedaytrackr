@@ -12,8 +12,15 @@ class TradingDay(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ["account", "day_number"]
-
+        constraints = [
+            models.UniqueConstraint(
+                fields=["account", "day_number"], name="unique_day_number_per_account"
+            ),
+            models.UniqueConstraint(
+                fields=["account", "date"], name="unique_date_per_account"
+            ),
+        ]
         indexes = [
             models.Index(fields=["account", "date"]),
         ]
+        ordering = ["day_number"]

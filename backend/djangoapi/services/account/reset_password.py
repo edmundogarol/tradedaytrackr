@@ -1,5 +1,5 @@
+import hashlib
 import logging
-from datetime import datetime
 from secrets import token_urlsafe
 
 from django.conf import settings
@@ -15,8 +15,8 @@ logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
-def is_expired(created_date, minutes):
-    return (timezone.now() - created_date).total_seconds() > minutes * 60
+def hash_token(token: str) -> str:
+    return hashlib.sha256(token.encode()).hexdigest()
 
 
 def delete_all_unexpired_sessions_for_user(user):
@@ -26,41 +26,37 @@ def delete_all_unexpired_sessions_for_user(user):
         session_data = session.get_decoded()
         auth_user_id = session_data.get("_auth_user_id")
 
-        if auth_user_id is None:
-            logger.warning(
-                "Session without auth user ID found. Skipping session deletion.",
-                extra={"session_key": session.session_key},
-            )
+        if not auth_user_id:
             continue
 
         if str(user.pk) == auth_user_id:
             session.delete()
 
-    logger.info(
-        "Deleted active sessions for user.",
-        extra={"user_id": user.id},
-    )
+    logger.info("Deleted active sessions for user.", extra={"user_id": user.id})
 
 
 def create_password_reset(email):
-    try:
-        user = User.objects.get(email=email)
-    except User.DoesNotExist:
-        logger.warning(
-            "Password reset requested for non-existent email.",
-            extra={"email": email},
+    user = User.objects.filter(email=email).first()
+
+    # Prevent email enumeration
+    if not user:
+        logger.info(
+            "Password reset requested for non-existent email.", extra={"email": email}
         )
         return
 
-    token = token_urlsafe(20)
+    raw_token = token_urlsafe(32)
+    token_hash = hash_token(raw_token)
 
-    reset_session, _ = ResetPasswordSession.objects.get_or_create(user=user)
-    reset_session.token = token
-    reset_session.verified_token = None
-    reset_session.created_date = datetime.now()
-    reset_session.save()
+    # Delete old sessions (optional but clean)
+    ResetPasswordSession.objects.filter(user=user).delete()
 
-    reset_url = f"{settings.WEB_APP_URL}/confirmResetPassword?token={token}"
+    reset_session = ResetPasswordSession.objects.create(
+        user=user,
+        token_hash=token_hash,
+    )
+
+    reset_url = f"{settings.WEB_APP_URL}/confirmResetPassword?token={raw_token}"
 
     try:
         send_reset_password_email(user.email, reset_url)
@@ -73,47 +69,57 @@ def create_password_reset(email):
 
 
 def verify_password_reset_token(token):
+    token_hash = hash_token(token)
+
     try:
-        session = ResetPasswordSession.objects.get(token=token)
+        session = ResetPasswordSession.objects.get(token_hash=token_hash)
     except ResetPasswordSession.DoesNotExist:
-        logger.warning("Invalid password reset token provided.")
-        raise exceptions.AuthenticationFailed("Invalid reset link")
+        logger.warning("Invalid password reset token.")
+        raise exceptions.AuthenticationFailed("Invalid or expired token")
 
-    if is_expired(session.created_date, 20):
+    if session.is_used or session.is_expired():
         session.delete()
-        logger.warning("Password reset token expired.")
-        raise exceptions.AuthenticationFailed("Reset link expired")
+        logger.warning("Expired or already used token.")
+        raise exceptions.AuthenticationFailed("Invalid or expired token")
 
-    session.verified_token = token_urlsafe(20)
-    session.save()
+    # No token rotation anymore — just validation
+    return True
 
-    return session.verified_token
+
+# =========================
+# Submit Reset
+# =========================
 
 
 def submit_password_reset(token, password):
-    try:
-        session = ResetPasswordSession.objects.get(token=token)
-    except ResetPasswordSession.DoesNotExist:
-        logger.warning("Invalid password reset token provided.")
-        raise exceptions.AuthenticationFailed("Invalid token")
+    token_hash = hash_token(token)
 
-    if is_expired(session.created_date, 5):
+    try:
+        session = ResetPasswordSession.objects.get(token_hash=token_hash)
+    except ResetPasswordSession.DoesNotExist:
+        logger.warning("Invalid password reset token.")
+        raise exceptions.AuthenticationFailed("Invalid or expired token")
+
+    if session.is_used or session.is_expired():
         session.delete()
-        logger.warning("Password reset token expired.")
-        raise exceptions.AuthenticationFailed("Token expired")
+        logger.warning("Expired or already used token.")
+        raise exceptions.AuthenticationFailed("Invalid or expired token")
 
     user = session.user
 
+    # Invalidate all active sessions (force logout everywhere)
     delete_all_unexpired_sessions_for_user(user)
-    session.delete()
+
+    # Update password
+    user.set_password(password)
 
     if not user.is_verified:
         user.is_verified = True
 
-    user.set_password(password)
     user.save()
 
-    logger.info(
-        "Password reset completed.",
-        extra={"user_id": user.id},
-    )
+    # Mark token as used (instead of delete for audit/debugging)
+    session.is_used = True
+    session.save()
+
+    logger.info("Password reset completed.", extra={"user_id": user.id})

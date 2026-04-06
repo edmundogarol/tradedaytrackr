@@ -19,9 +19,3 @@ class JournalEntryListSerializer(serializers.ModelSerializer):
             "totalPnL",
             "accountCount",
         ]
-
-    def get_totalPnL(self, obj):
-        return obj.total_pnl or 0
-
-    def get_accountCount(self, obj):
-        return obj.trade_count or 0

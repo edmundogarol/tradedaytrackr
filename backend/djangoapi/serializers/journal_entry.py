@@ -32,8 +32,16 @@ class JournalEntrySerializer(serializers.ModelSerializer):
             "accountCount",
         ]
 
-    def get_totalPnL(self, obj):
-        return obj.total_pnl or 0
+    def validate_tags(self, value):
+        if not isinstance(value, list):
+            raise serializers.ValidationError("Tags must be a list")
+        return [str(tag).lower() for tag in value]
 
-    def get_accountCount(self, obj):
-        return obj.trade_count or 0
+    def validate(self, data):
+        if "contracts" in data and data["contracts"] <= 0:
+            raise serializers.ValidationError("Contracts must be positive")
+
+        if "risk" in data and data["risk"] < 0:
+            raise serializers.ValidationError("Risk cannot be negative")
+
+        return data

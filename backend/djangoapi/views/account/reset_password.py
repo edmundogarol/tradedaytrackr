@@ -1,6 +1,7 @@
 import logging
 
 from django.contrib.auth import password_validation
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.validators import validate_email
 from rest_framework import exceptions, viewsets
 from rest_framework.response import Response
@@ -32,6 +33,7 @@ class RequestPasswordResetViewSet(viewsets.ViewSet):
             raise exceptions.ValidationError({"error": "Invalid email address."})
 
         try:
+            # IMPORTANT: service must silently pass if user does not exist
             create_password_reset(email.lower())
         except Exception:
             logger.error(
@@ -44,19 +46,29 @@ class RequestPasswordResetViewSet(viewsets.ViewSet):
             )
 
         logger.info(
-            "Password reset process initiated.",
+            "Password reset requested.",
             extra={"email": email},
         )
-        return Response(status=200)
+
+        # Prevent email enumeration
+        return Response(
+            {"message": "If an account exists, a reset link has been sent."}
+        )
 
 
 class VerifyPasswordResetViewSet(viewsets.ViewSet):
     def create(self, request):
         token = request.data.get("token")
 
-        verified_token = verify_password_reset_token(token)
+        if not token:
+            raise exceptions.ValidationError({"error": "Missing token."})
 
-        return Response({"verified_token": verified_token})
+        try:
+            verify_password_reset_token(token)
+        except Exception:
+            raise exceptions.ValidationError({"error": "Invalid or expired token."})
+
+        return Response({"valid": True})
 
 
 class SubmitPasswordResetViewSet(viewsets.ViewSet):
@@ -65,11 +77,17 @@ class SubmitPasswordResetViewSet(viewsets.ViewSet):
         confirm = request.data.get("confirm_password")
         token = request.data.get("token")
 
+        if not password or not confirm or not token:
+            raise exceptions.ValidationError({"error": "Missing required fields."})
+
         if password != confirm:
             logger.warning("Password reset submission with mismatched passwords.")
-            raise exceptions.ValidationError("Passwords must match")
+            raise exceptions.ValidationError({"error": "Passwords must match."})
 
-        password_validation.validate_password(password)
+        try:
+            password_validation.validate_password(password)
+        except DjangoValidationError as e:
+            raise exceptions.ValidationError({"password": list(e.messages)})
 
         try:
             submit_password_reset(token, password)
@@ -78,9 +96,8 @@ class SubmitPasswordResetViewSet(viewsets.ViewSet):
                 "Error during password reset submission.",
                 exc_info=True,
             )
-            raise exceptions.APIException(
-                "An error occurred while resetting the password."
-            )
+            raise exceptions.ValidationError({"error": "Invalid or expired token."})
 
-        logger.info("Password reset submitted successfully.")
-        return Response(status=200)
+        logger.info("Password reset successful.")
+
+        return Response({"success": True})

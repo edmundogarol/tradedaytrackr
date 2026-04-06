@@ -16,3 +16,6 @@ class TradingAccount(models.Model):
     account_name = models.CharField(max_length=150)
     account_balance = models.DecimalField(max_digits=12, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]

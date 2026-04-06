@@ -18,3 +18,4 @@ class JournalEntry(models.Model):
 
     class Meta:
         indexes = [models.Index(fields=["user", "date_time"])]
+        ordering = ["-date_time"]
