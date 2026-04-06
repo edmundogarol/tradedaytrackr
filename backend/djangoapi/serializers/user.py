@@ -35,7 +35,6 @@ class UserSerializer(serializers.ModelSerializer):
             "last_login",
             "is_verified",
             "verification_sent_at",
-            "verification_token",
             "last_ip",
             "membership_active",
             "email_preferences",
@@ -110,6 +109,9 @@ class RegisterSerializer(UserValidationSerializer):
     def create(self, validated_data):
         request = self.context.get("request")
         ip = request.META.get("REMOTE_ADDR") if request else None
+
+        if not validated_data.get("username"):
+            validated_data["username"] = f"user_{token_urlsafe(6)}"
 
         user = User.objects.create_user(**validated_data)
         user.last_ip = ip

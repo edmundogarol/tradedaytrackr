@@ -1,3 +1,4 @@
+import hashlib
 import logging
 from datetime import timedelta
 from secrets import token_urlsafe
@@ -17,6 +18,10 @@ logger = logging.getLogger(__name__)
 User = get_user_model()
 
 
+def hash_token(token: str) -> str:
+    return hashlib.sha256(token.encode()).hexdigest()
+
+
 class VerifyAccountViewSet(viewsets.ViewSet):
     permission_classes = (PostOnly,)
 
@@ -30,13 +35,15 @@ class VerifyAccountViewSet(viewsets.ViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        token_hash = hash_token(token)
+
         try:
             user = User.objects.get(
-                verification_token=token,
+                verification_token_hash=token_hash,
                 is_verified=False,
             )
 
-            # 🔐 Expiry check (24h)
+            # Expiry check (24h)
             if user.verification_sent_at and (
                 timezone.now() - user.verification_sent_at > timedelta(hours=24)
             ):
@@ -50,7 +57,7 @@ class VerifyAccountViewSet(viewsets.ViewSet):
                 )
 
             user.is_verified = True
-            user.verification_token = None
+            user.verification_token_hash = None
             user.verification_sent_at = None
             user.save()
 
@@ -79,9 +86,17 @@ class RequestVerificationViewSet(viewsets.ViewSet):
     def create(self, request):
         user = request.user
 
+        if user.verification_sent_at and (
+            timezone.now() - user.verification_sent_at < timedelta(minutes=1)
+        ):
+            return Response(
+                {"error": "Please wait before requesting another email."},
+                status=400,
+            )
+
         if user.is_verified:
             logger.info(
-                "User already verified. No new verification email sent.",
+                "User already verified.",
                 extra={"user_id": user.id},
             )
             return Response(
@@ -89,12 +104,16 @@ class RequestVerificationViewSet(viewsets.ViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # generate new token
-        user.verification_token = token_urlsafe(32)
+        raw_token = token_urlsafe(32)
+        token_hash = hash_token(raw_token)
+
+        user.verification_token_hash = token_hash
         user.verification_sent_at = timezone.now()
         user.save()
 
-        verification_url = f"{settings.WEB_APP_URL}/dashboard?verification_token={user.verification_token}"
+        verification_url = (
+            f"{settings.WEB_APP_URL}/dashboard?verification_token={raw_token}"
+        )
 
         try:
             send_verification_email(user.email, verification_url)
