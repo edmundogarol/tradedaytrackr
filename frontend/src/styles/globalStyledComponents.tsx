@@ -41,7 +41,7 @@ export const Section = styled.div`
   width: 100%;
 `;
 
-export const SectionText = styled.p`
+export const SectionText = styled.span`
   color: #b5b5b5;
   font-weight: 200;
   font-size: 14px;
