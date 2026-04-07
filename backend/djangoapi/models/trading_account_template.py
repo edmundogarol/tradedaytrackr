@@ -11,9 +11,17 @@ class TradingAccountTemplate(models.Model):
     firm = models.CharField(max_length=100)
     account_size = models.IntegerField()
     is_evaluation = models.BooleanField()
-    image = models.URLField(blank=True, null=True)
+    image = models.ImageField(
+        upload_to="trading_account_templates/", blank=True, null=True
+    )
     profit_target = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    profit_split = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        null=True,
+        blank=True,
     )
     min_buffer = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True
@@ -21,6 +29,26 @@ class TradingAccountTemplate(models.Model):
     min_trading_days = models.IntegerField(default=0)
     min_day_pnl = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True
+    )
+    max_drawdown = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+    )
+    consistency = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="Percentage (e.g. 50 for 50%)",
+    )
+    allowable_payout_request = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="Max % or amount allowed for payout request",
     )
 
     class Meta:

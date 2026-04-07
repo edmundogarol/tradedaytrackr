@@ -94,3 +94,27 @@ export const CarouselLeftChevron = styled.div`
   }
   z-index: 1;
 `;
+
+export const AddImageContainer = styled.div`
+  width: 70px;
+  height: 70px;
+  position: absolute;
+  transform: translateX(-50%);
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+export const ImagePreviewContainer = styled.div<{ $src: string }>`
+  background-image: url(${(props): string => props.$src});
+  background-size: cover;
+  background-position: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+`;

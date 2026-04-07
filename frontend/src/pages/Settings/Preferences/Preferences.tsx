@@ -102,7 +102,7 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                     <TableField $flexSize={0.5}>Manage</TableField>
                   </TableItem>
                   {accountTemplates
-                    .filter((acc) => !acc.evalTemplate)
+                    .filter((acc) => !acc.isEval)
                     .map((template, idx) => (
                       <TableItem key={template.name} $idx={idx}>
                         <TableField $flexSize={0.5}>
@@ -117,8 +117,8 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                           {formatter.format(template?.accountSize as number)}
                         </TableField>
                         <TableField>
-                          {template.minDaysToPayout}{" "}
-                          {`day${(template?.minDaysToPayout as number) > 1 ? "s" : ""}`}
+                          {template.minTradingDays}{" "}
+                          {`day${(template?.minTradingDays as number) > 1 ? "s" : ""}`}
                         </TableField>
                         <TableField>
                           {formatter.format(template.minBufferTarget as number)}
@@ -172,7 +172,7 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                     <TableField $flexSize={0.5}>Manage</TableField>
                   </TableItem>
                   {accountTemplates
-                    .filter((acc) => acc.evalTemplate)
+                    .filter((acc) => acc.isEval)
                     .map((template, idx) => (
                       <TableItem key={template.name} $idx={idx}>
                         <TableField $flexSize={0.5}>

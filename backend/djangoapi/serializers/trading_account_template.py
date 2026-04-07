@@ -14,9 +14,13 @@ class TradingAccountTemplateSerializer(serializers.ModelSerializer):
             "is_evaluation",
             "image",
             "profit_target",
+            "profit_split",
             "min_buffer",
             "min_trading_days",
             "min_day_pnl",
+            "max_drawdown",
+            "consistency",
+            "allowable_payout_request",
         ]
 
         read_only_fields = ["id"]
@@ -29,6 +33,36 @@ class TradingAccountTemplateSerializer(serializers.ModelSerializer):
     def validate_min_trading_days(self, value):
         if value < 0:
             raise serializers.ValidationError("Minimum trading days cannot be negative")
+        return value
+
+    def validate_profit_split(self, value):
+        if value is None:
+            return value
+
+        if value < 0 or value > 100:
+            raise serializers.ValidationError("Profit split must be between 0 and 100")
+
+        return value
+
+    def validate_consistency(self, value):
+        if value is None:
+            return value
+        if value < 0 or value > 100:
+            raise serializers.ValidationError("Consistency must be between 0 and 100")
+        return value
+
+    def validate_allowable_payout_request(self, value):
+        if value is None:
+            return value
+        if value < 0:
+            raise serializers.ValidationError("Allowable payout must be positive")
+        return value
+
+    def validate_max_drawdown(self, value):
+        if value is None:
+            return value
+        if value <= 0:
+            raise serializers.ValidationError("Max drawdown must be positive")
         return value
 
     def validate(self, data):

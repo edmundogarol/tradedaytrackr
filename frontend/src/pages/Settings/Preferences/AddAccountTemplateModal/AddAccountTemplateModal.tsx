@@ -1,7 +1,7 @@
 import Button from "@components/Button/Button";
 import Carousel from "@components/Carousel/Carousel";
 import Gap from "@components/Gap/Gap";
-import { If } from "@components/If/If";
+import { Else, If } from "@components/If/If";
 import InfoPopout from "@components/InfoPopout/InfoPopout";
 import Input from "@components/Input/Input";
 import ModalWrapper from "@components/Modal/Modal";
@@ -11,14 +11,16 @@ import { color } from "@styles/colors";
 import { BUTTON_WIDTH } from "@styles/constants";
 import { SectionText } from "@styles/globalStyledComponents";
 import { firmLogoSrc, imageSrc } from "@utils/utils";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { initialState } from "../../SettingsState";
 import useSettingsDispatch from "../../hooks/useSettingsDispatch";
 import useSettingsState from "../../hooks/useSettingsState";
 import {
   AccountImageSliderContainer,
+  AddImageContainer,
   AddTemplateSection,
   AddTemplateSectionHalf,
+  ImagePreviewContainer,
 } from "../PreferencesStyledComponents";
 
 interface AddAccountTemplateModalProps {}
@@ -29,6 +31,10 @@ const AddAccountTemplateModal: React.FunctionComponent<
   const { updateSelectedAccountTemplate, updateAddAccountModalOpen } =
     useSettingsDispatch();
   const { selectedAccountTemplate, addAccountModalOpen } = useSettingsState();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [accountTemplateImage, setAccountTemplateImage] = useState<File | null>(
+    null,
+  );
 
   const [carouselImages, setCarouselImages] = React.useState<string[]>([
     "add",
@@ -43,6 +49,8 @@ const AddAccountTemplateModal: React.FunctionComponent<
       setCarouselImages([selectedAccountTemplate.image, ...carouselImages]);
     }
   }, [selectedAccountTemplate]);
+
+  console.log("accountTemplateImage", accountTemplateImage);
   return (
     <ModalWrapper
       contentContainerStyle={{
@@ -80,13 +88,39 @@ const AddAccountTemplateModal: React.FunctionComponent<
               );
             }
             return item === "add" ? (
-              <AddPhotoAlternateIcon
-                style={{
-                  color: color("SystemLabel1"),
-                  height: 50,
-                  width: 50,
-                }}
-              />
+              <AddImageContainer>
+                <If condition={!!accountTemplateImage}>
+                  <ImagePreviewContainer
+                    $src={
+                      accountTemplateImage instanceof File
+                        ? URL.createObjectURL(accountTemplateImage)
+                        : ""
+                    }
+                    onClick={() => fileInputRef?.current?.click()}
+                  />
+                  <Else>
+                    <AddPhotoAlternateIcon
+                      style={{
+                        color: color("SystemLabel1"),
+                        height: 50,
+                        width: 50,
+                      }}
+                      onClick={() => fileInputRef?.current?.click()}
+                    />
+                  </Else>
+                </If>
+                <input
+                  type="file"
+                  style={{ display: "none" }}
+                  ref={fileInputRef}
+                  onChange={(e) => {
+                    const selected = e.target.files?.[0];
+                    if (selected) {
+                      setAccountTemplateImage(selected);
+                    }
+                  }}
+                />
+              </AddImageContainer>
             ) : (
               <img
                 style={{ height: 50, width: 50 }}
@@ -116,7 +150,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
             onSelect={(val) => {
               updateSelectedAccountTemplate({
                 ...selectedAccountTemplate,
-                evalTemplate: val === "Evaluation Account",
+                isEval: val === "Evaluation Account",
               });
             }}
           />
@@ -181,7 +215,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
               },
             ]}
           />
-          <If condition={!selectedAccountTemplate.evalTemplate}>
+          <If condition={!selectedAccountTemplate.isEval}>
             <Input
               positiveOnly
               value={selectedAccountTemplate.minBufferTarget}
@@ -225,7 +259,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
           </If>
         </AddTemplateSectionHalf>
         <AddTemplateSectionHalf>
-          <If condition={!selectedAccountTemplate.evalTemplate}>
+          <If condition={!selectedAccountTemplate.isEval}>
             <Input
               positiveOnly
               value={selectedAccountTemplate.consistency}
@@ -260,22 +294,22 @@ const AddAccountTemplateModal: React.FunctionComponent<
             />
             <Input
               positiveOnly
-              value={selectedAccountTemplate.minDaysToPayout}
+              value={selectedAccountTemplate.minTradingDays}
               onChange={(e) => {
                 updateSelectedAccountTemplate({
                   ...selectedAccountTemplate,
-                  minDaysToPayout: Number(e.target.value),
+                  minTradingDays: Number(e.target.value),
                 });
               }}
               onSuggestionClick={(value) => {
                 updateSelectedAccountTemplate({
                   ...selectedAccountTemplate,
-                  minDaysToPayout: Number(value),
+                  minTradingDays: Number(value),
                 });
               }}
               type="number"
-              placeholder="Min Days to Payout (e.g. 10)"
-              label="Min Days to Payout"
+              placeholder={"Min Days to Payout (e.g. 10)"}
+              label={"Min Days to Payout"}
             />
             <Input
               positiveOnly
@@ -342,7 +376,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
               }
             />
           </If>
-          <If condition={selectedAccountTemplate.evalTemplate}>
+          <If condition={selectedAccountTemplate.isEval}>
             <Input
               value={selectedAccountTemplate.profitTarget}
               onChange={(e) =>
@@ -413,6 +447,25 @@ const AddAccountTemplateModal: React.FunctionComponent<
                   />
                 </div>
               }
+            />
+            <Input
+              positiveOnly
+              value={selectedAccountTemplate.minTradingDays}
+              onChange={(e) => {
+                updateSelectedAccountTemplate({
+                  ...selectedAccountTemplate,
+                  minTradingDays: Number(e.target.value),
+                });
+              }}
+              onSuggestionClick={(value) => {
+                updateSelectedAccountTemplate({
+                  ...selectedAccountTemplate,
+                  minTradingDays: Number(value),
+                });
+              }}
+              type="number"
+              placeholder={"Min Trading Days (e.g. 5)"}
+              label={"Min Trading Days"}
             />
           </If>
           <Input

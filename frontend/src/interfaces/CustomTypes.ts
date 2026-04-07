@@ -41,19 +41,19 @@ export interface UserPasswordUpdateData {
 
 export interface AccountTemplate {
   id: number;
-  image?: string;
   name?: string;
   firm?: string;
   accountSize?: number;
-  minDaysToPayout?: number;
-  minBufferTarget?: number;
-  allowablePayoutRequest?: number;
+  isEval: boolean;
+  image?: string;
+  profitTarget?: number;
   profitSplit?: number;
+  minBufferTarget?: number;
+  minTradingDays?: number;
   minDayProfit?: number;
   maxDrawdown?: number;
-  evalTemplate: boolean;
-  profitTarget?: number;
   consistency?: number;
+  allowablePayoutRequest?: number;
 }
 
 export interface Trade {

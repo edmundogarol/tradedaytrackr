@@ -66,3 +66,13 @@ export const sanitizeTag = (input: string): string => {
     .replace(/-+/g, "") // collapse multiple dashes
     .replace(/^-|-$/g, ""); // trim dashes from ends
 };
+
+export const appendIfDefined = (
+  formData: FormData,
+  key: string,
+  value: any,
+): void => {
+  if (value !== undefined && value !== null) {
+    formData.append(key, String(value));
+  }
+};
