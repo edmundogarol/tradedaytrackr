@@ -14,7 +14,7 @@ class JournalEntryViewSet(ModelViewSet):
     def get_queryset(self):
         return (
             JournalEntry.objects.filter(user=self.request.user)
-            .prefetch_related("trades__account", "trades__account__template")
+            .prefetch_related("trades__account", "trades__account__template", "tags")
             .annotate(
                 total_pnl=Coalesce(Sum("trades__pnl"), Value(0)),
                 trade_count=Count("trades", distinct=True),

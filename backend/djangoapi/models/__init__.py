@@ -2,6 +2,7 @@ from .account.email_preferences import EmailPreferences
 from .account.membership import Membership
 from .account.reset_password import ResetPasswordSession
 from .journal_entry import JournalEntry
+from .tag import Tag
 from .trade import Trade
 from .trading_account import TradingAccount
 from .trading_account_template import TradingAccountTemplate

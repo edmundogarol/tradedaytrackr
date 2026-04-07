@@ -3,6 +3,7 @@ import logging
 from rest_framework import serializers
 
 from backend.djangoapi.models import JournalEntry
+from backend.djangoapi.serializers.tag import TagSerializer
 from backend.djangoapi.serializers.trade import TradeSerializer
 
 logger = logging.getLogger(__name__)
@@ -14,6 +15,10 @@ class JournalEntrySerializer(serializers.ModelSerializer):
         max_digits=10, decimal_places=2, source="total_pnl", read_only=True
     )
     accountCount = serializers.IntegerField(source="trade_count", read_only=True)
+    tags = serializers.ListField(
+        child=serializers.CharField(), write_only=True, required=False
+    )
+    tag_objects = TagSerializer(source="tags", many=True, read_only=True)
 
     class Meta:
         model = JournalEntry
@@ -27,6 +32,7 @@ class JournalEntrySerializer(serializers.ModelSerializer):
             "description",
             "image",
             "tags",
+            "tag_objects",
             "trades",
             "totalPnL",
             "accountCount",

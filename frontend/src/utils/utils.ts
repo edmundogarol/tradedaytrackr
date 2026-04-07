@@ -156,8 +156,10 @@ export function resizeImage(file: File, maxSize = 250): Promise<File> {
   });
 }
 
-export const decimalStringToInt = (value?: string | number | null): number => {
-  if (value === null || value === undefined) return 0;
+export const decimalStringToInt = (
+  value?: string | number | null,
+): number | undefined => {
+  if (value === null || value === undefined) return undefined;
 
   const num = Number(value);
 
