@@ -1,14 +1,18 @@
 import AlertPopout from "@components/Alert/AlertPopout";
 import Button from "@components/Button/Button";
+import FormError from "@components/Error/FormError/FormError";
 import Gap from "@components/Gap/Gap";
 import GlassTile from "@components/GlassTile/GlassTile";
 import { GlassTileChildrenWrapper } from "@components/GlassTile/GlassTileStyledComponents";
 import InfoPopout from "@components/InfoPopout/InfoPopout";
+import Loading from "@components/Loading/Loading";
+import ModalWrapper from "@components/Modal/Modal";
 import Page from "@components/Page/Page";
 import ArticleIcon from "@mui/icons-material/Article";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import { color } from "@styles/colors";
 import { BUTTON_WIDTH } from "@styles/constants";
 import {
   PageContainer as Container,
@@ -19,7 +23,7 @@ import {
   TableItem,
 } from "@styles/globalStyledComponents";
 import { formatter } from "@utils/utils";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { initialState } from "../SettingsState";
 import useSettingsDispatch from "../hooks/useSettingsDispatch";
 import useSettingsState from "../hooks/useSettingsState";
@@ -31,6 +35,7 @@ import {
   SubsectionHeaderWrapper,
   TagsSection,
 } from "./PreferencesStyledComponents";
+import useDeleteAccountTemplatesHandler from "./hooks/useDeleteAccountTemplatesHandler";
 import useGetAccountTemplatesHandler from "./hooks/useGetAccountTemplatesHandler";
 
 interface PreferencesProps {}
@@ -42,13 +47,26 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
     updateAddTagModalOpen,
     updateAccountTemplatesErrors,
   } = useSettingsDispatch();
-  const { accountTemplates, tags, addAccountTemplateErrors } =
-    useSettingsState();
+  const {
+    selectedAccountTemplate,
+    accountTemplates,
+    tags,
+    addAccountTemplateErrors,
+  } = useSettingsState();
   const { getAccountTemplates } = useGetAccountTemplatesHandler();
+  const [deleteTemplateModalOpen, setDeleteTemplateModalOpen] = useState(false);
+  const { deleteAccountTemplate, loading: deleteLoading } =
+    useDeleteAccountTemplatesHandler();
 
   useEffect(() => {
     getAccountTemplates();
   }, []);
+
+  useEffect(() => {
+    if (addAccountTemplateErrors?.detail) {
+      setDeleteTemplateModalOpen(false);
+    }
+  }, [addAccountTemplateErrors]);
 
   return (
     <Page topBarShowMenu={true}>
@@ -58,6 +76,45 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
         message={addAccountTemplateErrors?.detail}
         setPopoutOpen={() => updateAccountTemplatesErrors({})}
       />
+      <ModalWrapper
+        setOpen={setDeleteTemplateModalOpen}
+        open={deleteTemplateModalOpen}
+        onClose={() => setDeleteTemplateModalOpen(false)}
+        title="Delete Account Template"
+      >
+        <TableItem key={selectedAccountTemplate.name}>
+          <TableField
+            $flexSize={0.5}
+            $src={selectedAccountTemplate.displayImage}
+          ></TableField>
+          <TableField $flexSize={1.5}>
+            {selectedAccountTemplate.name}
+          </TableField>
+          <TableField>
+            {formatter.format(selectedAccountTemplate?.accountSize as number)}
+          </TableField>
+          <TableField>
+            {selectedAccountTemplate.isEval
+              ? "Evaluation Template"
+              : "Funded Template"}
+          </TableField>
+        </TableItem>
+        <Gap level={2} />
+        <FormError error={addAccountTemplateErrors?.error} />
+        <Gap level={2} />
+        <SectionText>
+          Are you sure you want to delete this account template? This action
+          cannot be undone.
+        </SectionText>
+        <Gap level={2} />
+        <Button
+          text={deleteLoading ? <Loading size={15} /> : "Delete"}
+          style={{ backgroundColor: color("SystemRed"), color: "white" }}
+          onClick={() => {
+            deleteAccountTemplate(selectedAccountTemplate?.id.toString());
+          }}
+        />
+      </ModalWrapper>
       <AddTagModal />
       <AddAccountTemplateModal />
       <Container>
@@ -123,7 +180,6 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                             <EditIcon
                               onClick={() => {
                                 updateSelectedAccountTemplate(template);
-
                                 updateAddAccountModalOpen(true);
                               }}
                               style={{
@@ -143,6 +199,10 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                                 cursor: "pointer",
                                 pointerEvents: "auto",
                                 marginLeft: 5,
+                              }}
+                              onClick={() => {
+                                updateSelectedAccountTemplate(template);
+                                setDeleteTemplateModalOpen(true);
                               }}
                             />
                           </InfoPopout>
@@ -206,6 +266,10 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                                 cursor: "pointer",
                                 pointerEvents: "auto",
                                 marginLeft: 5,
+                              }}
+                              onClick={() => {
+                                updateSelectedAccountTemplate(template);
+                                setDeleteTemplateModalOpen(true);
                               }}
                             />
                           </InfoPopout>
