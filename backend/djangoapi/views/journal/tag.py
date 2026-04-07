@@ -2,7 +2,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
 from backend.djangoapi.models import Tag
-from backend.djangoapi.serializers import TagSerializer
+from backend.djangoapi.serializers.tag import TagSerializer
 
 
 class TagViewSet(ModelViewSet):
