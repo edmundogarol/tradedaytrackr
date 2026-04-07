@@ -1,4 +1,5 @@
 import json
+import uuid
 
 
 class RequestPayload:
@@ -14,3 +15,8 @@ class RequestPayload:
             if data is None:
                 return default
         return data
+
+
+def upload_to(instance, filename):
+    ext = filename.split(".")[-1]
+    return f"trading_account_templates/{uuid.uuid4()}.{ext}"
