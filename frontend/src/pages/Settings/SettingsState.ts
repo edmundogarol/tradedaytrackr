@@ -5,11 +5,13 @@ import { tagsMock } from "./mocks/tags";
 
 export interface SettingsState {
   readonly selectedAccountTemplate: AccountTemplate;
+  readonly selectedTag: Tag;
   readonly accountTemplates: AccountTemplate[];
   readonly tags: Tag[];
   readonly addAccountTemplateModalOpen?: boolean;
   readonly addAccountTemplateErrors?: { [key: string]: any };
   readonly addTagModalOpen?: boolean;
+  readonly addTagErrors?: { [key: string]: any };
 }
 
 export const initialState: SettingsState = {
@@ -29,14 +31,21 @@ export const initialState: SettingsState = {
     profitTarget: undefined,
     consistency: undefined,
   },
+  selectedTag: {
+    id: 0,
+    name: "",
+    uses: 0,
+  },
   accountTemplates: [],
   tags: tagsMock,
   addAccountTemplateModalOpen: false,
   addAccountTemplateErrors: {},
   addTagModalOpen: false,
+  addTagErrors: {},
 };
 
 type UpdateAccountTemplatesAction = PayloadAction<AccountTemplate[]>;
+type UpdateSelectedTagAction = PayloadAction<Tag>;
 type UpdateTagsAction = PayloadAction<Tag[]>;
 type UpdateSelectedAccountTemplateAction = PayloadAction<AccountTemplate>;
 type UpdateAddAccountModalOpenAction = PayloadAction<boolean>;
@@ -44,14 +53,17 @@ type UpdateAddTagModalOpenAction = PayloadAction<boolean>;
 type UpdateAddAccountTemplateErrorsAction = PayloadAction<{
   [key: string]: any;
 }>;
+type UpdateAddTagErrorsAction = PayloadAction<{ [key: string]: any }>;
 
 export type SettingsAction =
   | UpdateAccountTemplatesAction
   | UpdateTagsAction
   | UpdateSelectedAccountTemplateAction
+  | UpdateSelectedTagAction
   | UpdateAddAccountModalOpenAction
   | UpdateAddTagModalOpenAction
-  | UpdateAddAccountTemplateErrorsAction;
+  | UpdateAddAccountTemplateErrorsAction
+  | UpdateAddTagErrorsAction;
 
 export const settingsSlice = createSlice({
   name: "settings",
@@ -69,6 +81,9 @@ export const settingsSlice = createSlice({
     ) => {
       state.selectedAccountTemplate = action.payload;
     },
+    updateSelectedTag: (state, action: UpdateSelectedTagAction) => {
+      state.selectedTag = action.payload;
+    },
     updateAddAccountModalOpen: (
       state,
       action: UpdateAddAccountModalOpenAction,
@@ -84,6 +99,9 @@ export const settingsSlice = createSlice({
     ) => {
       state.addAccountTemplateErrors = action.payload;
     },
+    updateAddTagErrors: (state, action: UpdateAddTagErrorsAction) => {
+      state.addTagErrors = action.payload;
+    },
   },
 });
 
@@ -91,9 +109,11 @@ export const {
   updateAccountTemplates,
   updateTags,
   updateSelectedAccountTemplate,
+  updateSelectedTag,
   updateAddAccountModalOpen,
   updateAddTagModalOpen,
   updateAccountTemplatesErrors,
+  updateAddTagErrors,
 } = settingsSlice.actions;
 export const settingsReducer = settingsSlice.reducer;
 

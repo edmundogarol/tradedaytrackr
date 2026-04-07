@@ -6,6 +6,7 @@ import {
   updateAccountTemplates,
   updateAccountTemplatesErrors,
   updateAddAccountModalOpen,
+  updateAddTagErrors,
   updateAddTagModalOpen,
   updateSelectedAccountTemplate,
   updateTags,
@@ -18,6 +19,7 @@ interface SettingsDispatch {
   updateAddAccountModalOpen(isOpen: boolean): void;
   updateAddTagModalOpen(isOpen: boolean): void;
   updateAccountTemplatesErrors(errors: { [key: string]: any }): void;
+  updateAddTagErrors(errors: { [key: string]: any }): void;
 }
 
 export const useSettingsDispatch = (): SettingsDispatch => {
@@ -40,6 +42,9 @@ export const useSettingsDispatch = (): SettingsDispatch => {
     },
     updateAccountTemplatesErrors(errors: { [key: string]: any }): void {
       dispatch(updateAccountTemplatesErrors(errors));
+    },
+    updateAddTagErrors(errors: { [key: string]: any }): void {
+      dispatch(updateAddTagErrors(errors));
     },
   };
 };

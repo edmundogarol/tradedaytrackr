@@ -121,6 +121,7 @@ INSTALLED_APPS = [
     "rest_framework_swagger",
     "corsheaders",
     "backend.djangoapi",
+    "storages",
 ]
 
 MIDDLEWARE = [
