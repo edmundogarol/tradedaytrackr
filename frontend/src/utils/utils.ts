@@ -155,3 +155,13 @@ export function resizeImage(file: File, maxSize = 250): Promise<File> {
     img.src = URL.createObjectURL(file);
   });
 }
+
+export const decimalStringToInt = (value?: string | number | null): number => {
+  if (value === null || value === undefined) return 0;
+
+  const num = Number(value);
+
+  if (isNaN(num)) return 0;
+
+  return Math.round(num);
+};

@@ -11,7 +11,7 @@ import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { color } from "@styles/colors";
 import { BUTTON_WIDTH } from "@styles/constants";
 import { SectionText } from "@styles/globalStyledComponents";
-import { firmLogoSrc, imageSrc } from "@utils/utils";
+import { decimalStringToInt, firmLogoSrc, imageSrc } from "@utils/utils";
 import React, { useEffect, useRef, useState } from "react";
 import { initialState } from "../../SettingsState";
 import useSettingsDispatch from "../../hooks/useSettingsDispatch";
@@ -256,7 +256,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
             <Input
               positiveOnly
               error={addAccountTemplateErrors?.min_buffer}
-              value={selectedAccountTemplate.minBuffer}
+              value={decimalStringToInt(selectedAccountTemplate.minBuffer)}
               onChange={(e) =>
                 updateSelectedAccountTemplate({
                   ...selectedAccountTemplate,
@@ -297,7 +297,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
             <Input
               positiveOnly
               error={addAccountTemplateErrors?.consistency}
-              value={selectedAccountTemplate.consistency}
+              value={decimalStringToInt(selectedAccountTemplate.consistency)}
               onChange={(e) =>
                 updateSelectedAccountTemplate({
                   ...selectedAccountTemplate,
@@ -334,7 +334,9 @@ const AddAccountTemplateModal: React.FunctionComponent<
             <Input
               positiveOnly
               error={addAccountTemplateErrors?.allowable_payout_request}
-              value={selectedAccountTemplate.allowablePayoutRequest}
+              value={decimalStringToInt(
+                selectedAccountTemplate.allowablePayoutRequest,
+              )}
               onChange={(e) =>
                 updateSelectedAccountTemplate({
                   ...selectedAccountTemplate,
@@ -387,7 +389,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
             <Input
               positiveOnly
               error={addAccountTemplateErrors?.profit_split}
-              value={selectedAccountTemplate.profitSplit}
+              value={decimalStringToInt(selectedAccountTemplate.profitSplit)}
               onChange={(e) => {
                 updateSelectedAccountTemplate({
                   ...selectedAccountTemplate,
@@ -420,7 +422,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
             <Input
               positiveOnly
               error={addAccountTemplateErrors?.min_day_pnl}
-              value={selectedAccountTemplate.minDayPnl}
+              value={decimalStringToInt(selectedAccountTemplate.minDayPnl)}
               onChange={(e) => {
                 updateSelectedAccountTemplate({
                   ...selectedAccountTemplate,
@@ -453,7 +455,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
           </If>
           <If condition={selectedAccountTemplate.isEval}>
             <Input
-              value={selectedAccountTemplate.profitTarget}
+              value={decimalStringToInt(selectedAccountTemplate.profitTarget)}
               error={addAccountTemplateErrors?.profit_target}
               onChange={(e) =>
                 updateSelectedAccountTemplate({
@@ -495,7 +497,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
             <Input
               positiveOnly
               error={addAccountTemplateErrors?.consistency}
-              value={selectedAccountTemplate.consistency}
+              value={decimalStringToInt(selectedAccountTemplate.consistency)}
               onChange={(e) =>
                 updateSelectedAccountTemplate({
                   ...selectedAccountTemplate,
@@ -549,7 +551,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
           <Input
             positiveOnly
             error={addAccountTemplateErrors?.max_drawdown}
-            value={selectedAccountTemplate.maxDrawdown}
+            value={decimalStringToInt(selectedAccountTemplate.maxDrawdown)}
             onChange={(e) =>
               updateSelectedAccountTemplate({
                 ...selectedAccountTemplate,
