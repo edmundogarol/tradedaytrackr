@@ -1,7 +1,6 @@
 import type { AccountTemplate, Tag } from "@interfaces/CustomTypes";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { accountTemplatesMock } from "./mocks/accountTemplates";
 import { tagsMock } from "./mocks/tags";
 
 export interface SettingsState {
@@ -21,7 +20,7 @@ export const initialState: SettingsState = {
     image: undefined,
     accountSize: undefined,
     minTradingDays: undefined,
-    minBufferTarget: undefined,
+    minBuffer: undefined,
     allowablePayoutRequest: undefined,
     profitSplit: undefined,
     minDayPnl: undefined,
@@ -30,7 +29,7 @@ export const initialState: SettingsState = {
     profitTarget: undefined,
     consistency: undefined,
   },
-  accountTemplates: accountTemplatesMock,
+  accountTemplates: [],
   tags: tagsMock,
   addAccountTemplateModalOpen: false,
   addAccountTemplateErrors: {},

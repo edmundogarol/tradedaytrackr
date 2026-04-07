@@ -4,6 +4,7 @@ import Gap from "@components/Gap/Gap";
 import { Else, If } from "@components/If/If";
 import InfoPopout from "@components/InfoPopout/InfoPopout";
 import Input from "@components/Input/Input";
+import Loading from "@components/Loading/Loading";
 import ModalWrapper from "@components/Modal/Modal";
 import SelectWrapper from "@components/Select/SelectWrapper";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
@@ -11,7 +12,7 @@ import { color } from "@styles/colors";
 import { BUTTON_WIDTH } from "@styles/constants";
 import { SectionText } from "@styles/globalStyledComponents";
 import { firmLogoSrc, imageSrc } from "@utils/utils";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { initialState } from "../../SettingsState";
 import useSettingsDispatch from "../../hooks/useSettingsDispatch";
 import useSettingsState from "../../hooks/useSettingsState";
@@ -46,7 +47,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
   const [selectedCarouselImage, setSelectedCarouselImage] = useState<
     string | null
   >(null);
-  const { createAccountTemplate } = useCreateAccountTemplateHandler();
+  const { createAccountTemplate, loading } = useCreateAccountTemplateHandler();
 
   const [carouselImages, setCarouselImages] = React.useState<string[]>([
     "add",
@@ -58,7 +59,10 @@ const AddAccountTemplateModal: React.FunctionComponent<
     "alpha",
   ]);
 
-  console.log({ accountTemplateImage, selectedCarouselImage });
+  useEffect(() => {
+    setAccountTemplateImage(null);
+  }, [addAccountTemplateModalOpen]);
+
   return (
     <ModalWrapper
       contentContainerStyle={{
@@ -103,14 +107,27 @@ const AddAccountTemplateModal: React.FunctionComponent<
                     onClick={() => fileInputRef?.current?.click()}
                   />
                   <Else>
-                    <AddPhotoAlternateIcon
-                      style={{
-                        color: color("SystemLabel1"),
-                        height: 50,
-                        width: 50,
-                      }}
-                      onClick={() => fileInputRef?.current?.click()}
-                    />
+                    <If
+                      condition={
+                        !!selectedAccountTemplate.displayImage &&
+                        !selectedAccountTemplate.icon
+                      }
+                    >
+                      <ImagePreviewContainer
+                        $src={selectedAccountTemplate.displayImage || ""}
+                        onClick={() => fileInputRef?.current?.click()}
+                      />
+                      <Else>
+                        <AddPhotoAlternateIcon
+                          style={{
+                            color: color("SystemLabel1"),
+                            height: 50,
+                            width: 50,
+                          }}
+                          onClick={() => fileInputRef?.current?.click()}
+                        />
+                      </Else>
+                    </If>
                   </Else>
                 </If>
                 <input
@@ -151,6 +168,11 @@ const AddAccountTemplateModal: React.FunctionComponent<
           <Gap level={0} />
           <SelectWrapper
             label="Account Type"
+            defaultValue={
+              selectedAccountTemplate.isEval
+                ? "Evaluation Account"
+                : "Funded Account"
+            }
             items={["Funded Account", "Evaluation Account"]}
             onSelect={(val) => {
               updateSelectedAccountTemplate({
@@ -227,17 +249,17 @@ const AddAccountTemplateModal: React.FunctionComponent<
             <Input
               positiveOnly
               error={addAccountTemplateErrors?.min_buffer}
-              value={selectedAccountTemplate.minBufferTarget}
+              value={selectedAccountTemplate.minBuffer}
               onChange={(e) =>
                 updateSelectedAccountTemplate({
                   ...selectedAccountTemplate,
-                  minBufferTarget: Number(e.target.value),
+                  minBuffer: Number(e.target.value),
                 })
               }
               onSuggestionClick={(value) => {
                 updateSelectedAccountTemplate({
                   ...selectedAccountTemplate,
-                  minBufferTarget: Number(value),
+                  minBuffer: Number(value),
                 });
               }}
               type="number"
@@ -544,7 +566,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
           />
           <Gap level={1} />
           <Button
-            text="Create"
+            text={loading ? <Loading size={15} /> : "Create"}
             style={{ marginLeft: "auto", width: BUTTON_WIDTH }}
             onClick={() => {
               createAccountTemplate(

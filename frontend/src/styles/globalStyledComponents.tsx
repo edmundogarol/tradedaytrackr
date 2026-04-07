@@ -73,9 +73,25 @@ export const TableItem = styled.div<{
     $idx !== undefined && $idx % 2 === 0 ? "#5161821f" : "transparent"};
 `;
 
-export const TableField = styled.div<{ $flexSize?: number }>`
+export const TableField = styled.div<{ $flexSize?: number; $src?: string }>`
   flex: ${({ $flexSize }): string => ($flexSize ? $flexSize.toString() : "1")};
   display: flex;
   gap: 10px;
   align-items: center;
+
+  ${({ $src }): string =>
+    $src
+      ? `
+    &::before {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 40px;
+      background-image: url(${$src});
+      background-size: cover;
+      background-position: center;
+      border-radius: 4px;
+    }
+  `
+      : ""}
 `;

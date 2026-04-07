@@ -85,6 +85,19 @@ class TradingAccountTemplateSerializer(serializers.ModelSerializer):
         def get_value(field):
             return data.get(field, getattr(self.instance, field, None))
 
+        user = self.context["request"].user
+        name = get_value("name")
+
+        if name:
+            qs = TradingAccountTemplate.objects.filter(user=user, name=name)
+
+            # exclude self if updating
+            if self.instance:
+                qs = qs.exclude(id=self.instance.id)
+
+            if qs.exists():
+                errors["name"] = "You already have a template with this name."
+
         base_required = ["name", "firm", "account_size", "max_drawdown"]
 
         for field in base_required:

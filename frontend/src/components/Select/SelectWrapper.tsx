@@ -1,6 +1,6 @@
-import React from "react";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { If } from "@components/If/If";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import React from "react";
 import {
   Label,
   Select,
@@ -13,6 +13,7 @@ interface SelectWrapperProps {
   label?: string;
   style?: React.CSSProperties;
   onSelect?: (selected: string) => void;
+  defaultValue?: string;
 }
 
 const SelectWrapper: React.FunctionComponent<SelectWrapperProps> = ({
@@ -20,6 +21,7 @@ const SelectWrapper: React.FunctionComponent<SelectWrapperProps> = ({
   label,
   style,
   onSelect,
+  defaultValue,
 }) => {
   return (
     <>
@@ -27,7 +29,10 @@ const SelectWrapper: React.FunctionComponent<SelectWrapperProps> = ({
         <Label>{label}</Label>
       </If>
       <SelectContainer style={style}>
-        <Select onChange={(e) => onSelect && onSelect(e.target.value)}>
+        <Select
+          onChange={(e) => onSelect && onSelect(e.target.value)}
+          defaultValue={defaultValue}
+        >
           {items?.map((item, index) => (
             <option key={index} value={item}>
               {item}

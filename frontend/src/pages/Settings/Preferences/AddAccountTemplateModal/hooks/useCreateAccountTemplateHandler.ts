@@ -1,8 +1,14 @@
 import type { AccountTemplate } from "@interfaces/CustomTypes";
 import useSettingsDispatch from "@pages/Settings/hooks/useSettingsDispatch";
-import { appendIfDefined } from "@utils/utils";
+import {
+  initialState,
+  updateSelectedAccountTemplate,
+} from "@pages/Settings/SettingsState";
+import { appendIfDefined, resizeImage } from "@utils/utils";
 import { useCallback } from "react";
+import useGetAccountTemplatesHandler from "../../hooks/useGetAccountTemplatesHandler";
 import useCreateAccountTemplateApiCall from "./useCreateAccountTemplateApiCall";
+import useMapApiToAccountTemplate from "./useMapApiCallToAccountTemplate";
 
 interface CreateAccountTemplateHandler {
   createAccountTemplate: (
@@ -14,8 +20,10 @@ interface CreateAccountTemplateHandler {
 
 const useCreateAccountTemplateHandler = (): CreateAccountTemplateHandler => {
   const { fetch, loading } = useCreateAccountTemplateApiCall();
-  const { updateAccountTemplatesErrors } = useSettingsDispatch();
-
+  const { updateAccountTemplatesErrors, updateAddAccountModalOpen } =
+    useSettingsDispatch();
+  const mapApiToAccountTemplate = useMapApiToAccountTemplate();
+  const { getAccountTemplates } = useGetAccountTemplatesHandler();
   return {
     createAccountTemplate: useCallback(
       async (
@@ -25,8 +33,12 @@ const useCreateAccountTemplateHandler = (): CreateAccountTemplateHandler => {
         const formData = new FormData();
 
         if (display_image instanceof File) {
-          formData.append("image", display_image);
-        } else if (typeof display_image === "string") {
+          const resizedImage = await resizeImage(display_image);
+          formData.append("image", resizedImage);
+        } else if (
+          typeof display_image === "string" &&
+          display_image !== "add"
+        ) {
           formData.append("icon", display_image);
         }
         appendIfDefined(formData, "name", accountTemplate.name);
@@ -43,11 +55,7 @@ const useCreateAccountTemplateHandler = (): CreateAccountTemplateHandler => {
           accountTemplate.profitTarget,
         );
         appendIfDefined(formData, "profit_split", accountTemplate.profitSplit);
-        appendIfDefined(
-          formData,
-          "min_buffer",
-          accountTemplate.minBufferTarget,
-        );
+        appendIfDefined(formData, "min_buffer", accountTemplate.minBuffer);
         appendIfDefined(
           formData,
           "min_trading_days",
@@ -66,8 +74,15 @@ const useCreateAccountTemplateHandler = (): CreateAccountTemplateHandler => {
           data: formData,
         });
 
-        if (!!data) {
-          console.log({ data });
+        if (!!data && data.id) {
+          const accountTemplateMapped = mapApiToAccountTemplate(data);
+          console.log({ data, accountTemplateMapped });
+          getAccountTemplates();
+          updateSelectedAccountTemplate(initialState.selectedAccountTemplate);
+          updateAddAccountModalOpen(false);
+          updateAccountTemplatesErrors({
+            detail: "Account template created successfully!",
+          });
         } else if (error) {
           updateAccountTemplatesErrors(error);
         }

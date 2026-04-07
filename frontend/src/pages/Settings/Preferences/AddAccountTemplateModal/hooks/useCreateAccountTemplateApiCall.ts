@@ -1,12 +1,6 @@
 import type { AxiosFetchWrapperResponse } from "@hooks/useAxiosFetch";
 import useAxiosFetch from "@hooks/useAxiosFetch";
-
-interface CreateAccountTemplateSubmitApiCallData {
-  email: string;
-  first_name: string;
-  last_name: string;
-  username: string;
-}
+import type { AccountTemplate } from "@interfaces/CustomTypes";
 
 interface CreateAccountTemplateSubmitApiCallErrors {
   errors: {
@@ -15,11 +9,11 @@ interface CreateAccountTemplateSubmitApiCallErrors {
 }
 
 const useCreateAccountTemplateApiCall = (): AxiosFetchWrapperResponse<
-  CreateAccountTemplateSubmitApiCallData,
+  AccountTemplate,
   CreateAccountTemplateSubmitApiCallErrors
 > => {
   const { fetch, data, loading, error } = useAxiosFetch<
-    CreateAccountTemplateSubmitApiCallData,
+    AccountTemplate,
     CreateAccountTemplateSubmitApiCallErrors
   >(`trading-account-templates/`, {
     method: "POST",

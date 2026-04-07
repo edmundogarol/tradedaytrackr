@@ -1,3 +1,4 @@
+import AlertPopout from "@components/Alert/AlertPopout";
 import Button from "@components/Button/Button";
 import Gap from "@components/Gap/Gap";
 import GlassTile from "@components/GlassTile/GlassTile";
@@ -18,7 +19,7 @@ import {
   TableItem,
 } from "@styles/globalStyledComponents";
 import { formatter } from "@utils/utils";
-import React from "react";
+import React, { useEffect } from "react";
 import useSettingsDispatch from "../hooks/useSettingsDispatch";
 import useSettingsState from "../hooks/useSettingsState";
 import AddTagModal from "./ AddTagModal/AddTagModal";
@@ -29,6 +30,7 @@ import {
   SubsectionHeaderWrapper,
   TagsSection,
 } from "./PreferencesStyledComponents";
+import useGetAccountTemplatesHandler from "./hooks/useGetAccountTemplatesHandler";
 
 interface PreferencesProps {}
 
@@ -37,11 +39,24 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
     updateSelectedAccountTemplate,
     updateAddAccountModalOpen,
     updateAddTagModalOpen,
+    updateAccountTemplatesErrors,
   } = useSettingsDispatch();
-  const { accountTemplates, tags } = useSettingsState();
+  const { accountTemplates, tags, addAccountTemplateErrors } =
+    useSettingsState();
+  const { getAccountTemplates } = useGetAccountTemplatesHandler();
+
+  useEffect(() => {
+    getAccountTemplates();
+  }, []);
 
   return (
     <Page topBarShowMenu={true}>
+      <AlertPopout
+        hideDuration={3000}
+        open={addAccountTemplateErrors?.detail}
+        message={addAccountTemplateErrors?.detail}
+        setPopoutOpen={() => updateAccountTemplatesErrors({})}
+      />
       <AddTagModal />
       <AddAccountTemplateModal />
       <Container>
@@ -84,13 +99,10 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                     .filter((acc) => !acc.isEval)
                     .map((template, idx) => (
                       <TableItem key={template.name} $idx={idx}>
-                        <TableField $flexSize={0.5}>
-                          <img
-                            style={{ height: 50, width: 50 }}
-                            src={template.displayImage}
-                            alt={template.displayImage}
-                          />
-                        </TableField>
+                        <TableField
+                          $flexSize={0.5}
+                          $src={template.displayImage}
+                        ></TableField>
                         <TableField $flexSize={1.5}>{template.name}</TableField>
                         <TableField>
                           {formatter.format(template?.accountSize as number)}
@@ -100,7 +112,7 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                           {`day${(template?.minTradingDays as number) > 1 ? "s" : ""}`}
                         </TableField>
                         <TableField>
-                          {formatter.format(template.minBufferTarget as number)}
+                          {formatter.format(template.minBuffer as number)}
                         </TableField>
                         <TableField $flexSize={0.5}>
                           <InfoPopout infoDescription="Edit Template">
@@ -148,13 +160,10 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                     .filter((acc) => acc.isEval)
                     .map((template, idx) => (
                       <TableItem key={template.name} $idx={idx}>
-                        <TableField $flexSize={0.5}>
-                          <img
-                            style={{ height: 50, width: 50 }}
-                            src={template.displayImage}
-                            alt={template.name}
-                          />
-                        </TableField>
+                        <TableField
+                          $flexSize={0.5}
+                          $src={template.displayImage}
+                        ></TableField>
                         <TableField $flexSize={1.5}>{template.name}</TableField>
                         <TableField>
                           {formatter.format(template.accountSize as number)}
@@ -165,7 +174,7 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                             : "N/A"}
                         </TableField>
                         <TableField>
-                          {template?.consistency
+                          {template?.consistency && template.consistency > 0
                             ? `${template.consistency}%`
                             : "None"}
                         </TableField>

@@ -176,5 +176,8 @@ backend/static/main*
 # Django static files
 staticfiles/
 
+# Media files
+media/
+
 # Redis + background workers
 dump.rdb

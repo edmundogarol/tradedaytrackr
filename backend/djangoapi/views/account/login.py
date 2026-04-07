@@ -1,9 +1,8 @@
-import datetime
 import logging
 
 from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.hashers import check_password
-from django.db import transaction
+from django.utils import timezone
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.permissions import AllowAny
@@ -11,26 +10,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from backend.djangoapi.serializers import UserSerializer
+from backend.djangoapi.services.demo.reset_demo_user import reset_demo_user
 from backend.djangoapi.utils import visitor_ip_address
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
-
-
-def reset_demo_user(user):
-    logger.info(
-        "Resetting demo user data.",
-        extra={"user_id": user.id},
-    )
-    with transaction.atomic():
-        user.journal_entries.all().delete()
-        user.trading_accounts.all().delete()
-
-    logger.info(
-        "Demo user data reset successfully.",
-        extra={"user_id": user.id},
-    )
-    # create_demo_data(user)
 
 
 class LogoutViewSet(APIView):
@@ -84,13 +68,6 @@ class LoginViewSet(APIView):
 
         user = request.user
 
-        if user.is_authenticated and user.is_demo:
-            logger.info(
-                "Resetting demo user before login.",
-                extra={"user_id": user.id},
-            )
-            reset_demo_user(user)
-
         if not email or not password:
             logger.warning(
                 "Login attempt with missing credentials.",
@@ -123,8 +100,15 @@ class LoginViewSet(APIView):
         else:
             login(request, user)
 
-        user = User.objects.get(email=self.request.user)
-        user.last_login = datetime.datetime.now()
+        if user.is_demo:
+            logger.info(
+                "Resetting demo user after login.",
+                extra={"user_id": user.id},
+            )
+            reset_demo_user(user)
+
+        user = request.user
+        user.last_login = timezone.now()
         user.last_ip = ip_data["ip"] if ip_data["valid"] else None
         user.save()
 

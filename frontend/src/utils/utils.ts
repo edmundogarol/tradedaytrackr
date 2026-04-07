@@ -76,3 +76,82 @@ export const appendIfDefined = (
     formData.append(key, String(value));
   }
 };
+
+function toCamel(s: string): string {
+  return s.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+}
+
+export function keysToCamel(obj: any): any {
+  if (Array.isArray(obj)) {
+    return obj.map(keysToCamel);
+  }
+
+  if (obj !== null && obj.constructor === Object) {
+    return Object.keys(obj).reduce((acc, key) => {
+      acc[toCamel(key)] = keysToCamel(obj[key]);
+      return acc;
+    }, {} as any);
+  }
+
+  return obj;
+}
+
+function toSnake(s: string): string {
+  return s.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+}
+
+export function keysToSnake(obj: any): any {
+  if (Array.isArray(obj)) {
+    return obj.map(keysToSnake);
+  }
+
+  if (obj !== null && obj.constructor === Object) {
+    return Object.keys(obj).reduce((acc, key) => {
+      acc[toSnake(key)] = keysToSnake(obj[key]);
+      return acc;
+    }, {} as any);
+  }
+
+  return obj;
+}
+
+export function resizeImage(file: File, maxSize = 250): Promise<File> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    img.onload = (): void => {
+      let { width, height } = img;
+
+      if (width > height) {
+        if (width > maxSize) {
+          height *= maxSize / width;
+          width = maxSize;
+        }
+      } else {
+        if (height > maxSize) {
+          width *= maxSize / height;
+          height = maxSize;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+
+      ctx?.drawImage(img, 0, 0, width, height);
+
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(new File([blob], file.name, { type: "image/jpeg" }));
+          }
+        },
+        "image/jpeg",
+        0.7,
+      );
+    };
+
+    img.src = URL.createObjectURL(file);
+  });
+}

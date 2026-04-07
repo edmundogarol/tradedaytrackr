@@ -50,7 +50,7 @@ export interface AccountTemplate {
   displayImage?: string;
   profitTarget?: number;
   profitSplit?: number;
-  minBufferTarget?: number;
+  minBuffer?: number;
   minTradingDays?: number;
   minDayPnl?: number;
   maxDrawdown?: number;

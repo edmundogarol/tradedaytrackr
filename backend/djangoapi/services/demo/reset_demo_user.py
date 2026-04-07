@@ -1,0 +1,22 @@
+import logging
+
+from django.db import transaction
+
+from backend.djangoapi.services.demo.seed_account_templates import (
+    seed_demo_account_templates,
+)
+
+logger = logging.getLogger(__name__)
+
+
+def reset_demo_user(user):
+    logger.info("Resetting demo user data.", extra={"user_id": user.id})
+
+    with transaction.atomic():
+        user.journal_entries.all().delete()
+        user.trading_accounts.all().delete()
+        user.trading_account_templates.all().delete()
+
+        seed_demo_account_templates(user)
+
+    logger.info("Demo user reset + seeded.", extra={"user_id": user.id})
