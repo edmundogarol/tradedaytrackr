@@ -1,6 +1,7 @@
 import Button from "@components/Button/Button";
 import FormError from "@components/Error/FormError/FormError";
 import Gap from "@components/Gap/Gap";
+import { If } from "@components/If/If";
 import Loading from "@components/Loading/Loading";
 import ModalWrapper from "@components/Modal/Modal";
 import { color } from "@styles/colors";
@@ -55,8 +56,10 @@ const DeleteAccountTemplateModal: React.FunctionComponent<
             : "Funded Template"}
         </TableField>
       </TableItem>
-      <Gap level={2} />
-      <FormError error={addAccountTemplateErrors?.error} />
+      <If condition={!!addAccountTemplateErrors?.error}>
+        <Gap level={2} />
+        <FormError error={addAccountTemplateErrors?.error} />
+      </If>
       <Gap level={2} />
       <SectionText>
         Are you sure you want to delete this account template? This action

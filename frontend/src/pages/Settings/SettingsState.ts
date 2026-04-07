@@ -1,7 +1,6 @@
 import type { AccountTemplate, Tag } from "@interfaces/CustomTypes";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { tagsMock } from "./mocks/tags";
 
 export interface SettingsState {
   readonly selectedAccountTemplate: AccountTemplate;
@@ -37,7 +36,7 @@ export const initialState: SettingsState = {
     uses: 0,
   },
   accountTemplates: [],
-  tags: tagsMock,
+  tags: [],
   addAccountTemplateModalOpen: false,
   addAccountTemplateErrors: {},
   addTagModalOpen: false,

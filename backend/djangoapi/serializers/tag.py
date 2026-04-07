@@ -4,6 +4,8 @@ from backend.djangoapi.models import Tag
 
 
 class TagSerializer(serializers.ModelSerializer):
+    uses = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = Tag
         fields = ["id", "name", "uses"]

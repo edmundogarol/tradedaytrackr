@@ -1,33 +1,28 @@
 import useSettingsDispatch from "@pages/Settings/hooks/useSettingsDispatch";
 import { useCallback } from "react";
-import useMapApiToAccountTemplate from "../AddAccountTemplateModal/hooks/useMapApiCallToAccountTemplate";
-import useGetAccountTemplatesApiCall from "./useGetAccountTemplatesApiCall";
+import useGetTagsApiCall from "./useGetTagsApiCall";
 
-interface CreateAccountTemplateHandler {
-  getAccountTemplates: () => Promise<void>;
+interface GetTagsHandler {
+  getTags: () => Promise<void>;
   loading: boolean;
 }
 
-const useGetAccountTemplatesHandler = (): CreateAccountTemplateHandler => {
-  const { fetch, loading } = useGetAccountTemplatesApiCall();
-  const { updateAccountTemplatesErrors, updateAccountTemplates } =
-    useSettingsDispatch();
-  const mapApiToAccountTemplate = useMapApiToAccountTemplate();
+const useGetTagsHandler = (): GetTagsHandler => {
+  const { fetch, loading } = useGetTagsApiCall();
+  const { updateAddTagErrors, updateTags } = useSettingsDispatch();
+  useSettingsDispatch();
   return {
-    getAccountTemplates: useCallback(async () => {
+    getTags: useCallback(async () => {
       const { error, data } = await fetch();
 
       if (!!data) {
-        const accountTemplatesMapped = data.results.map((accountTemplate) =>
-          mapApiToAccountTemplate(accountTemplate),
-        );
-        updateAccountTemplates(accountTemplatesMapped);
+        updateTags(data.results);
       } else if (error) {
-        updateAccountTemplatesErrors(error);
+        updateAddTagErrors(error);
       }
     }, [loading]),
     loading,
   };
 };
 
-export default useGetAccountTemplatesHandler;
+export default useGetTagsHandler;

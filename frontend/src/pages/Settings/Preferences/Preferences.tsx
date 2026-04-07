@@ -26,6 +26,7 @@ import useSettingsState from "../hooks/useSettingsState";
 import AddTagModal from "./ AddTagModal/AddTagModal";
 import AddAccountTemplateModal from "./AddAccountTemplateModal/AddAccountTemplateModal";
 import DeleteAccountTemplateModal from "./DeleteAccountTemplateModal/DeleteAccountTemplateModal";
+import DeleteTagModal from "./DeleteTagModal/DeleteTagModal";
 import {
   AccountTemplatesSection,
   SectionContainer,
@@ -33,6 +34,7 @@ import {
   TagsSection,
 } from "./PreferencesStyledComponents";
 import useGetAccountTemplatesHandler from "./hooks/useGetAccountTemplatesHandler";
+import useGetTagsHandler from "./hooks/useGetTagsHandler";
 
 const Preferences: React.FunctionComponent = () => {
   const {
@@ -40,21 +42,29 @@ const Preferences: React.FunctionComponent = () => {
     updateAddAccountModalOpen,
     updateAddTagModalOpen,
     updateAccountTemplatesErrors,
+    updateAddTagErrors,
+    updateSelectedTag,
   } = useSettingsDispatch();
-  const { accountTemplates, tags, addAccountTemplateErrors } =
+  const { accountTemplates, tags, addAccountTemplateErrors, addTagErrors } =
     useSettingsState();
   const { getAccountTemplates } = useGetAccountTemplatesHandler();
   const [deleteTemplateModalOpen, setDeleteTemplateModalOpen] = useState(false);
+  const [deleteTagModalOpen, setDeleteTagModalOpen] = useState(false);
+  const { getTags } = useGetTagsHandler();
 
   useEffect(() => {
     getAccountTemplates();
+    getTags();
   }, []);
 
   useEffect(() => {
     if (addAccountTemplateErrors?.detail) {
       setDeleteTemplateModalOpen(false);
     }
-  }, [addAccountTemplateErrors]);
+    if (addTagErrors?.detail) {
+      setDeleteTagModalOpen(false);
+    }
+  }, [addAccountTemplateErrors, addTagErrors]);
 
   return (
     <Page topBarShowMenu={true}>
@@ -64,9 +74,19 @@ const Preferences: React.FunctionComponent = () => {
         message={addAccountTemplateErrors?.detail}
         setPopoutOpen={() => updateAccountTemplatesErrors({})}
       />
+      <AlertPopout
+        hideDuration={3000}
+        open={addTagErrors?.detail}
+        message={addTagErrors?.detail}
+        setPopoutOpen={() => updateAddTagErrors({})}
+      />
       <DeleteAccountTemplateModal
         deleteTemplateModalOpen={deleteTemplateModalOpen}
         setDeleteTemplateModalOpen={setDeleteTemplateModalOpen}
+      />
+      <DeleteTagModal
+        deleteTagModalOpen={deleteTagModalOpen}
+        setDeleteTagModalOpen={setDeleteTagModalOpen}
       />
       <AddTagModal />
       <AddAccountTemplateModal />
@@ -91,6 +111,7 @@ const Preferences: React.FunctionComponent = () => {
                     updateSelectedAccountTemplate(
                       initialState.selectedAccountTemplate,
                     );
+                    updateAccountTemplatesErrors({});
                   }}
                   style={{ marginLeft: "auto", width: BUTTON_WIDTH }}
                 />
@@ -250,7 +271,11 @@ const Preferences: React.FunctionComponent = () => {
                 Tag Management
                 <Button
                   text="Add Tag"
-                  onClick={() => updateAddTagModalOpen(true)}
+                  onClick={() => {
+                    updateSelectedTag(initialState.selectedTag);
+                    updateAddTagModalOpen(true);
+                    updateAddTagErrors({});
+                  }}
                   style={{ marginLeft: "auto", width: BUTTON_WIDTH }}
                 />
               </SubsectionHeaderWrapper>
@@ -281,6 +306,11 @@ const Preferences: React.FunctionComponent = () => {
                               pointerEvents: "auto",
                               marginLeft: 5,
                             }}
+                            onClick={() => {
+                              updateSelectedTag(tag);
+                              updateAddTagModalOpen(true);
+                              updateAddTagErrors({});
+                            }}
                           />
                         </InfoPopout>
                         <InfoPopout infoDescription="Delete Tag">
@@ -291,6 +321,11 @@ const Preferences: React.FunctionComponent = () => {
                               cursor: "pointer",
                               pointerEvents: "auto",
                               marginLeft: 5,
+                            }}
+                            onClick={() => {
+                              updateSelectedTag(tag);
+                              setDeleteTagModalOpen(true);
+                              updateAddTagErrors({});
                             }}
                           />
                         </InfoPopout>

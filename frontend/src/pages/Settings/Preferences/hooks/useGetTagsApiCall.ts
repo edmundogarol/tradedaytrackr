@@ -1,19 +1,16 @@
 import type { AxiosFetchWrapperResponse } from "@hooks/useAxiosFetch";
 import useAxiosFetch from "@hooks/useAxiosFetch";
-import type { AccountTemplate } from "@interfaces/CustomTypes";
+import type { Tag } from "@interfaces/CustomTypes";
 
-export interface GetAccountTemplatesApiCallData {
-  results: AccountTemplate[];
+export interface GetTagsApiCallData {
+  results: Tag[];
 }
 
-const useGetAccountTemplatesApiCall =
-  (): AxiosFetchWrapperResponse<GetAccountTemplatesApiCallData> => {
-    const { fetch, data, loading, error } =
-      useAxiosFetch<GetAccountTemplatesApiCallData>(
-        `trading-account-templates/`,
-      );
+const useGetTagsApiCall = (): AxiosFetchWrapperResponse<GetTagsApiCallData> => {
+  const { fetch, data, loading, error } =
+    useAxiosFetch<GetTagsApiCallData>(`tags/`);
 
-    return { fetch, data, loading, error };
-  };
+  return { fetch, data, loading, error };
+};
 
-export default useGetAccountTemplatesApiCall;
+export default useGetTagsApiCall;

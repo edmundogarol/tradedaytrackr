@@ -78,6 +78,7 @@ export const TableField = styled.div<{ $flexSize?: number; $src?: string }>`
   display: flex;
   gap: 10px;
   align-items: center;
+  text-transform: capitalize;
 
   ${({ $src }): string =>
     $src

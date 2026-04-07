@@ -3,6 +3,7 @@ import logging
 from rest_framework import serializers
 
 from backend.djangoapi.models import JournalEntry
+from backend.djangoapi.models.tag import Tag
 from backend.djangoapi.serializers.tag import TagSerializer
 from backend.djangoapi.serializers.trade import TradeSerializer
 
@@ -41,7 +42,8 @@ class JournalEntrySerializer(serializers.ModelSerializer):
     def validate_tags(self, value):
         if not isinstance(value, list):
             raise serializers.ValidationError("Tags must be a list")
-        return [str(tag).lower() for tag in value]
+
+        return [str(tag).strip().lower() for tag in value if tag]
 
     def validate(self, data):
         if "contracts" in data and data["contracts"] <= 0:
@@ -51,3 +53,42 @@ class JournalEntrySerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Risk cannot be negative")
 
         return data
+
+    def create(self, validated_data):
+        tags_data = validated_data.pop("tags", [])
+
+        journal_entry = JournalEntry.objects.create(**validated_data)
+
+        user = self.context["request"].user
+        tag_instances = []
+
+        for tag_name in tags_data:
+            tag, _ = Tag.objects.get_or_create(
+                user=user,
+                name=tag_name,
+            )
+            tag_instances.append(tag)
+
+        journal_entry.tags.set(tag_instances)
+
+        return journal_entry
+
+    def update(self, instance, validated_data):
+        tags_data = validated_data.pop("tags", None)
+
+        instance = super().update(instance, validated_data)
+
+        if tags_data is not None:
+            user = self.context["request"].user
+            tag_instances = []
+
+            for tag_name in tags_data:
+                tag, _ = Tag.objects.get_or_create(
+                    user=user,
+                    name=tag_name,
+                )
+                tag_instances.append(tag)
+
+            instance.tags.set(tag_instances)
+
+        return instance

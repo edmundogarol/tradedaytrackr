@@ -9,6 +9,7 @@ import {
   updateAddTagErrors,
   updateAddTagModalOpen,
   updateSelectedAccountTemplate,
+  updateSelectedTag,
   updateTags,
 } from "../SettingsState";
 
@@ -16,6 +17,7 @@ interface SettingsDispatch {
   updateAccountTemplates(accountTemplates: AccountTemplate[]): void;
   updateTags(tags: Tag[]): void;
   updateSelectedAccountTemplate(accountTemplate: AccountTemplate | null): void;
+  updateSelectedTag(tag: Tag | null): void;
   updateAddAccountModalOpen(isOpen: boolean): void;
   updateAddTagModalOpen(isOpen: boolean): void;
   updateAccountTemplatesErrors(errors: { [key: string]: any }): void;
@@ -33,6 +35,9 @@ export const useSettingsDispatch = (): SettingsDispatch => {
     },
     updateSelectedAccountTemplate(accountTemplate: AccountTemplate): void {
       dispatch(updateSelectedAccountTemplate(accountTemplate));
+    },
+    updateSelectedTag(tag: Tag): void {
+      dispatch(updateSelectedTag(tag));
     },
     updateAddAccountModalOpen(isOpen: boolean): void {
       dispatch(updateAddAccountModalOpen(isOpen));
