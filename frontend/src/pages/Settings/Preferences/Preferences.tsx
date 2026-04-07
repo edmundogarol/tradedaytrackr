@@ -20,6 +20,7 @@ import {
 } from "@styles/globalStyledComponents";
 import { formatter } from "@utils/utils";
 import React, { useEffect } from "react";
+import { initialState } from "../SettingsState";
 import useSettingsDispatch from "../hooks/useSettingsDispatch";
 import useSettingsState from "../hooks/useSettingsState";
 import AddTagModal from "./ AddTagModal/AddTagModal";
@@ -77,6 +78,9 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                   text="Add Template"
                   onClick={() => {
                     updateAddAccountModalOpen(true);
+                    updateSelectedAccountTemplate(
+                      initialState.selectedAccountTemplate,
+                    );
                   }}
                   style={{ marginLeft: "auto", width: BUTTON_WIDTH }}
                 />
