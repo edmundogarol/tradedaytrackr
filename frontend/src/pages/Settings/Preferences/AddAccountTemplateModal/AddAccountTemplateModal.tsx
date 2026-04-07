@@ -24,6 +24,7 @@ import {
   ImagePreviewContainer,
 } from "../PreferencesStyledComponents";
 import useCreateAccountTemplateHandler from "./hooks/useCreateAccountTemplateHandler";
+import useUpdateAccountTemplateHandler from "./hooks/useUpdateAccountTemplateHandler";
 
 interface AddAccountTemplateModalProps {}
 
@@ -48,7 +49,8 @@ const AddAccountTemplateModal: React.FunctionComponent<
     string | null
   >(null);
   const { createAccountTemplate, loading } = useCreateAccountTemplateHandler();
-
+  const { updateAccountTemplate, loading: updateLoading } =
+    useUpdateAccountTemplateHandler();
   const [carouselImages, setCarouselImages] = React.useState<string[]>([
     "add",
     "myfundedfutures",
@@ -58,6 +60,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
     "bulenox",
     "alpha",
   ]);
+  const editingExistingTemplate = !!selectedAccountTemplate.id;
 
   useEffect(() => {
     setAccountTemplateImage(null);
@@ -71,7 +74,11 @@ const AddAccountTemplateModal: React.FunctionComponent<
         alignItems: "center",
       }}
       open={addAccountTemplateModalOpen}
-      title="Create New Account Template"
+      title={
+        editingExistingTemplate
+          ? "Edit Account Template"
+          : "Create New Account Template"
+      }
       onClose={() => {
         updateSelectedAccountTemplate(initialState.selectedAccountTemplate);
         setCarouselImages([
@@ -566,9 +573,24 @@ const AddAccountTemplateModal: React.FunctionComponent<
           />
           <Gap level={1} />
           <Button
-            text={loading ? <Loading size={15} /> : "Create"}
+            text={
+              loading || updateLoading ? (
+                <Loading size={15} />
+              ) : editingExistingTemplate ? (
+                "Save"
+              ) : (
+                "Create"
+              )
+            }
             style={{ marginLeft: "auto", width: BUTTON_WIDTH }}
             onClick={() => {
+              if (editingExistingTemplate) {
+                updateAccountTemplate(
+                  selectedAccountTemplate,
+                  accountTemplateImage || selectedCarouselImage,
+                );
+                return;
+              }
               createAccountTemplate(
                 selectedAccountTemplate,
                 accountTemplateImage || selectedCarouselImage,

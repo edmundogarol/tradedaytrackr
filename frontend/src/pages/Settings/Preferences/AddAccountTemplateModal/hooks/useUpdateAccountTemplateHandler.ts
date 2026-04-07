@@ -4,26 +4,27 @@ import {
   initialState,
   updateSelectedAccountTemplate,
 } from "@pages/Settings/SettingsState";
+import environmentConfig from "@utils/environmentConfig";
 import { appendIfDefined, resizeImage } from "@utils/utils";
 import { useCallback } from "react";
 import useGetAccountTemplatesHandler from "../../hooks/useGetAccountTemplatesHandler";
-import useCreateAccountTemplateApiCall from "./useCreateAccountTemplateApiCall";
+import useUpdateAccountTemplateApiCall from "./useUpdateAccountTemplateApiCall";
 
-interface CreateAccountTemplateHandler {
-  createAccountTemplate: (
+interface UpdateAccountTemplateHandler {
+  updateAccountTemplate: (
     accountTemplate: AccountTemplate,
     display_image: File | string | null,
   ) => Promise<void>;
   loading: boolean;
 }
 
-const useCreateAccountTemplateHandler = (): CreateAccountTemplateHandler => {
-  const { fetch, loading } = useCreateAccountTemplateApiCall();
+const useUpdateAccountTemplateHandler = (): UpdateAccountTemplateHandler => {
+  const { fetch, loading } = useUpdateAccountTemplateApiCall();
   const { updateAccountTemplatesErrors, updateAddAccountModalOpen } =
     useSettingsDispatch();
   const { getAccountTemplates } = useGetAccountTemplatesHandler();
   return {
-    createAccountTemplate: useCallback(
+    updateAccountTemplate: useCallback(
       async (
         accountTemplate: AccountTemplate,
         display_image: File | string | null,
@@ -70,6 +71,7 @@ const useCreateAccountTemplateHandler = (): CreateAccountTemplateHandler => {
 
         const { error, data } = await fetch({
           data: formData,
+          url: `${environmentConfig.HOST}/api/trading-account-templates/${accountTemplate.id}/`,
         });
 
         if (!!data && data.id) {
@@ -77,7 +79,7 @@ const useCreateAccountTemplateHandler = (): CreateAccountTemplateHandler => {
           updateSelectedAccountTemplate(initialState.selectedAccountTemplate);
           updateAddAccountModalOpen(false);
           updateAccountTemplatesErrors({
-            detail: "Account template created successfully!",
+            detail: "Account template updated successfully!",
           });
         } else if (error) {
           updateAccountTemplatesErrors(error);
@@ -89,4 +91,4 @@ const useCreateAccountTemplateHandler = (): CreateAccountTemplateHandler => {
   };
 };
 
-export default useCreateAccountTemplateHandler;
+export default useUpdateAccountTemplateHandler;
