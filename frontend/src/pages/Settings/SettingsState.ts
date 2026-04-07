@@ -8,7 +8,8 @@ export interface SettingsState {
   readonly selectedAccountTemplate: AccountTemplate;
   readonly accountTemplates: AccountTemplate[];
   readonly tags: Tag[];
-  readonly addAccountModalOpen?: boolean;
+  readonly addAccountTemplateModalOpen?: boolean;
+  readonly addAccountTemplateErrors?: { [key: string]: any };
   readonly addTagModalOpen?: boolean;
 }
 
@@ -31,7 +32,8 @@ export const initialState: SettingsState = {
   },
   accountTemplates: accountTemplatesMock,
   tags: tagsMock,
-  addAccountModalOpen: false,
+  addAccountTemplateModalOpen: false,
+  addAccountTemplateErrors: {},
   addTagModalOpen: false,
 };
 
@@ -40,13 +42,17 @@ type UpdateTagsAction = PayloadAction<Tag[]>;
 type UpdateSelectedAccountTemplateAction = PayloadAction<AccountTemplate>;
 type UpdateAddAccountModalOpenAction = PayloadAction<boolean>;
 type UpdateAddTagModalOpenAction = PayloadAction<boolean>;
+type UpdateAddAccountTemplateErrorsAction = PayloadAction<{
+  [key: string]: any;
+}>;
 
 export type SettingsAction =
   | UpdateAccountTemplatesAction
   | UpdateTagsAction
   | UpdateSelectedAccountTemplateAction
   | UpdateAddAccountModalOpenAction
-  | UpdateAddTagModalOpenAction;
+  | UpdateAddTagModalOpenAction
+  | UpdateAddAccountTemplateErrorsAction;
 
 export const settingsSlice = createSlice({
   name: "settings",
@@ -68,10 +74,16 @@ export const settingsSlice = createSlice({
       state,
       action: UpdateAddAccountModalOpenAction,
     ) => {
-      state.addAccountModalOpen = action.payload;
+      state.addAccountTemplateModalOpen = action.payload;
     },
     updateAddTagModalOpen: (state, action: UpdateAddTagModalOpenAction) => {
       state.addTagModalOpen = action.payload;
+    },
+    updateAccountTemplatesErrors: (
+      state,
+      action: UpdateAddAccountTemplateErrorsAction,
+    ) => {
+      state.addAccountTemplateErrors = action.payload;
     },
   },
 });
@@ -82,6 +94,7 @@ export const {
   updateSelectedAccountTemplate,
   updateAddAccountModalOpen,
   updateAddTagModalOpen,
+  updateAccountTemplatesErrors,
 } = settingsSlice.actions;
 export const settingsReducer = settingsSlice.reducer;
 

@@ -26,15 +26,13 @@ class TradingAccountTemplate(models.Model):
     min_buffer = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True
     )
-    min_trading_days = models.IntegerField(default=0)
+    min_trading_days = models.IntegerField(null=True, blank=True)
     min_day_pnl = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True
     )
     max_drawdown = models.DecimalField(
         max_digits=10,
         decimal_places=2,
-        null=True,
-        blank=True,
     )
     consistency = models.DecimalField(
         max_digits=5,

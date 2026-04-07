@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import type { SettingsAction } from "../SettingsState";
 import {
   updateAccountTemplates,
+  updateAccountTemplatesErrors,
   updateAddAccountModalOpen,
   updateAddTagModalOpen,
   updateSelectedAccountTemplate,
@@ -16,6 +17,7 @@ interface SettingsDispatch {
   updateSelectedAccountTemplate(accountTemplate: AccountTemplate | null): void;
   updateAddAccountModalOpen(isOpen: boolean): void;
   updateAddTagModalOpen(isOpen: boolean): void;
+  updateAccountTemplatesErrors(errors: { [key: string]: any }): void;
 }
 
 export const useSettingsDispatch = (): SettingsDispatch => {
@@ -35,6 +37,9 @@ export const useSettingsDispatch = (): SettingsDispatch => {
     },
     updateAddTagModalOpen(isOpen: boolean): void {
       dispatch(updateAddTagModalOpen(isOpen));
+    },
+    updateAccountTemplatesErrors(errors: { [key: string]: any }): void {
+      dispatch(updateAccountTemplatesErrors(errors));
     },
   };
 };

@@ -22,8 +22,14 @@ class TradingAccountTemplateSerializer(serializers.ModelSerializer):
             "consistency",
             "allowable_payout_request",
         ]
-
         read_only_fields = ["id"]
+        extra_kwargs = {
+            "name": {"required": False},
+            "firm": {"required": False},
+            "account_size": {"required": False},
+            "max_drawdown": {"required": False},
+            "is_evaluation": {"required": False},
+        }
 
     def validate_account_size(self, value):
         if value <= 0:
@@ -31,56 +37,68 @@ class TradingAccountTemplateSerializer(serializers.ModelSerializer):
         return value
 
     def validate_min_trading_days(self, value):
-        if value < 0:
+        if value is not None and value < 0:
             raise serializers.ValidationError("Minimum trading days cannot be negative")
         return value
 
     def validate_profit_split(self, value):
-        if value is None:
-            return value
-
-        if value < 0 or value > 100:
+        if value is not None and (value < 0 or value > 100):
             raise serializers.ValidationError("Profit split must be between 0 and 100")
-
         return value
 
     def validate_consistency(self, value):
-        if value is None:
-            return value
-        if value < 0 or value > 100:
+        if value is not None and (value < 0 or value > 100):
             raise serializers.ValidationError("Consistency must be between 0 and 100")
         return value
 
     def validate_allowable_payout_request(self, value):
-        if value is None:
-            return value
-        if value < 0:
+        if value is not None and value < 0:
             raise serializers.ValidationError("Allowable payout must be positive")
         return value
 
     def validate_max_drawdown(self, value):
-        if value is None:
-            return value
         if value <= 0:
             raise serializers.ValidationError("Max drawdown must be positive")
         return value
 
     def validate(self, data):
-        is_eval = data.get("is_evaluation")
+        errors = {}
 
-        profit_target = data.get("profit_target")
-        min_buffer = data.get("min_buffer")
+        def get_value(field):
+            return data.get(field, getattr(self.instance, field, None))
 
-        if is_eval:
-            if profit_target is None:
-                raise serializers.ValidationError(
-                    "Evaluation accounts require a profit target"
-                )
+        base_required = ["name", "firm", "account_size", "max_drawdown"]
 
-        if not is_eval:
-            if min_buffer is None:
-                raise serializers.ValidationError(
-                    "Non-evaluation accounts require a minimum buffer"
-                )
+        for field in base_required:
+            if get_value(field) in [None, ""]:
+                errors[field] = "This field is required."
+
+        is_eval = get_value("is_evaluation")
+
+        if get_value("max_drawdown") in [None, ""]:
+            errors["max_drawdown"] = "This field is required."
+
+        if is_eval is True:
+            required_fields = [
+                "profit_target",
+                "consistency",
+            ]
+        else:
+            required_fields = [
+                "profit_split",
+                "min_buffer",
+                "min_trading_days",
+                "min_day_pnl",
+                "allowable_payout_request",
+            ]
+
+        for field in required_fields:
+            value = get_value(field)
+
+            if value in [None, ""]:
+                errors[field] = "This field is required."
+
+        if errors:
+            raise serializers.ValidationError(errors)
 
         return data

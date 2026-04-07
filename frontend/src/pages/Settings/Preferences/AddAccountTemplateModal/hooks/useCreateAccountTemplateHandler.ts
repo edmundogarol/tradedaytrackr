@@ -1,7 +1,5 @@
-import type { AccountTemplate, User } from "@interfaces/CustomTypes";
-import useLoginDispatch from "@pages/Login/hooks/useLoginDispatch";
-import useLoginState from "@pages/Login/hooks/useLoginState";
-import { initialState } from "@pages/Login/LoginState";
+import type { AccountTemplate } from "@interfaces/CustomTypes";
+import useSettingsDispatch from "@pages/Settings/hooks/useSettingsDispatch";
 import { appendIfDefined } from "@utils/utils";
 import { useCallback } from "react";
 import useCreateAccountTemplateApiCall from "./useCreateAccountTemplateApiCall";
@@ -15,15 +13,8 @@ interface CreateAccountTemplateHandler {
 }
 
 const useCreateAccountTemplateHandler = (): CreateAccountTemplateHandler => {
-  const {
-    updateUser,
-    updateUserUpdateSuccess,
-    updateUserDetailsErrors,
-    updatePasswordFormErrors,
-  } = useLoginDispatch();
-  const { user: userState } = useLoginState();
   const { fetch, loading } = useCreateAccountTemplateApiCall();
-  const { updatePasswordForm } = useLoginDispatch();
+  const { updateAccountTemplatesErrors } = useSettingsDispatch();
 
   return {
     createAccountTemplate: useCallback(
@@ -56,32 +47,13 @@ const useCreateAccountTemplateHandler = (): CreateAccountTemplateHandler => {
         );
 
         const { error, data } = await fetch({
-          data,
+          data: formData,
         });
 
         if (!!data) {
-          updateUser({
-            ...userState,
-            ...data,
-          });
-          if (
-            (user as User).email ||
-            (user as User).first_name ||
-            (user as User).last_name ||
-            (user as User).username
-          ) {
-            updateUserUpdateSuccess(true);
-            updateUserDetailsErrors({});
-          } else {
-            updatePasswordFormErrors(data);
-            updateUserDetailsErrors({});
-            updatePasswordForm(initialState.passwordForm);
-          }
+          console.log({ data });
         } else if (error) {
-          console.log("Update User Post fetch error", error);
-          updateUserUpdateSuccess(false);
-          updateUserDetailsErrors(error);
-          updatePasswordFormErrors(error);
+          updateAccountTemplatesErrors(error);
         }
       },
       [loading],

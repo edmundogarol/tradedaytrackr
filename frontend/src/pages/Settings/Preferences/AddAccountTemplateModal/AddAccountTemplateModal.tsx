@@ -22,19 +22,28 @@ import {
   AddTemplateSectionHalf,
   ImagePreviewContainer,
 } from "../PreferencesStyledComponents";
+import useCreateAccountTemplateHandler from "./hooks/useCreateAccountTemplateHandler";
 
 interface AddAccountTemplateModalProps {}
 
 const AddAccountTemplateModal: React.FunctionComponent<
   AddAccountTemplateModalProps
 > = () => {
-  const { updateSelectedAccountTemplate, updateAddAccountModalOpen } =
-    useSettingsDispatch();
-  const { selectedAccountTemplate, addAccountModalOpen } = useSettingsState();
+  const {
+    updateSelectedAccountTemplate,
+    updateAddAccountModalOpen,
+    updateAccountTemplatesErrors,
+  } = useSettingsDispatch();
+  const {
+    selectedAccountTemplate,
+    addAccountTemplateModalOpen,
+    addAccountTemplateErrors,
+  } = useSettingsState();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [accountTemplateImage, setAccountTemplateImage] = useState<File | null>(
     null,
   );
+  const { createAccountTemplate } = useCreateAccountTemplateHandler();
 
   const [carouselImages, setCarouselImages] = React.useState<string[]>([
     "add",
@@ -58,7 +67,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
         flexDirection: "column",
         alignItems: "center",
       }}
-      open={addAccountModalOpen}
+      open={addAccountTemplateModalOpen}
       title="Create New Account Template"
       onClose={() => {
         updateSelectedAccountTemplate(initialState.selectedAccountTemplate);
@@ -77,7 +86,6 @@ const AddAccountTemplateModal: React.FunctionComponent<
       <AccountImageSliderContainer>
         <Carousel
           items={carouselImages}
-          onItemShown={(item) => console.log(item)}
           renderItem={(item) => {
             if (item.includes("/firms")) {
               return (
@@ -133,6 +141,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
       <AddTemplateSection>
         <AddTemplateSectionHalf>
           <Input
+            error={addAccountTemplateErrors?.name}
             value={selectedAccountTemplate.name}
             onChange={(e) =>
               updateSelectedAccountTemplate({
@@ -152,9 +161,11 @@ const AddAccountTemplateModal: React.FunctionComponent<
                 ...selectedAccountTemplate,
                 isEval: val === "Evaluation Account",
               });
+              updateAccountTemplatesErrors({});
             }}
           />
           <Input
+            error={addAccountTemplateErrors?.firm}
             value={selectedAccountTemplate.firm}
             onChange={(e) => {
               updateSelectedAccountTemplate({
@@ -187,6 +198,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
           />
           <Input
             positiveOnly
+            error={addAccountTemplateErrors?.account_size}
             value={selectedAccountTemplate.accountSize}
             onChange={(e) =>
               updateSelectedAccountTemplate({
@@ -218,6 +230,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
           <If condition={!selectedAccountTemplate.isEval}>
             <Input
               positiveOnly
+              error={addAccountTemplateErrors?.min_buffer}
               value={selectedAccountTemplate.minBufferTarget}
               onChange={(e) =>
                 updateSelectedAccountTemplate({
@@ -256,12 +269,9 @@ const AddAccountTemplateModal: React.FunctionComponent<
                 },
               ]}
             />
-          </If>
-        </AddTemplateSectionHalf>
-        <AddTemplateSectionHalf>
-          <If condition={!selectedAccountTemplate.isEval}>
             <Input
               positiveOnly
+              error={addAccountTemplateErrors?.consistency}
               value={selectedAccountTemplate.consistency}
               onChange={(e) =>
                 updateSelectedAccountTemplate({
@@ -292,8 +302,46 @@ const AddAccountTemplateModal: React.FunctionComponent<
                 </div>
               }
             />
+          </If>
+        </AddTemplateSectionHalf>
+        <AddTemplateSectionHalf>
+          <If condition={!selectedAccountTemplate.isEval}>
             <Input
               positiveOnly
+              error={addAccountTemplateErrors?.allowable_payout_request}
+              value={selectedAccountTemplate.allowablePayoutRequest}
+              onChange={(e) =>
+                updateSelectedAccountTemplate({
+                  ...selectedAccountTemplate,
+                  allowablePayoutRequest: Number(e.target.value),
+                })
+              }
+              onSuggestionClick={(value) => {
+                updateSelectedAccountTemplate({
+                  ...selectedAccountTemplate,
+                  allowablePayoutRequest: Number(value),
+                });
+              }}
+              type="number"
+              placeholder="Allowable Minimum Payout Request (e.g. $500)"
+              label={
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  Allowable Minimum Payout Request
+                  <InfoPopout
+                    containerStyle={{ textTransform: "none" }}
+                    infoDescription="Minimum payout request allowed"
+                  />
+                </div>
+              }
+            />
+            <Input
+              positiveOnly
+              error={addAccountTemplateErrors?.min_trading_days}
               value={selectedAccountTemplate.minTradingDays}
               onChange={(e) => {
                 updateSelectedAccountTemplate({
@@ -313,6 +361,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
             />
             <Input
               positiveOnly
+              error={addAccountTemplateErrors?.profit_split}
               value={selectedAccountTemplate.profitSplit}
               onChange={(e) => {
                 updateSelectedAccountTemplate({
@@ -345,6 +394,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
             />
             <Input
               positiveOnly
+              error={addAccountTemplateErrors?.min_day_pnl}
               value={selectedAccountTemplate.minDayProfit}
               onChange={(e) => {
                 updateSelectedAccountTemplate({
@@ -379,6 +429,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
           <If condition={selectedAccountTemplate.isEval}>
             <Input
               value={selectedAccountTemplate.profitTarget}
+              error={addAccountTemplateErrors?.profit_target}
               onChange={(e) =>
                 updateSelectedAccountTemplate({
                   ...selectedAccountTemplate,
@@ -418,6 +469,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
             />
             <Input
               positiveOnly
+              error={addAccountTemplateErrors?.consistency}
               value={selectedAccountTemplate.consistency}
               onChange={(e) =>
                 updateSelectedAccountTemplate({
@@ -451,6 +503,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
             <Input
               positiveOnly
               value={selectedAccountTemplate.minTradingDays}
+              error={addAccountTemplateErrors?.min_trading_days}
               onChange={(e) => {
                 updateSelectedAccountTemplate({
                   ...selectedAccountTemplate,
@@ -470,6 +523,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
           </If>
           <Input
             positiveOnly
+            error={addAccountTemplateErrors?.max_drawdown}
             value={selectedAccountTemplate.maxDrawdown}
             onChange={(e) =>
               updateSelectedAccountTemplate({
@@ -496,6 +550,12 @@ const AddAccountTemplateModal: React.FunctionComponent<
           <Button
             text="Create"
             style={{ marginLeft: "auto", width: BUTTON_WIDTH }}
+            onClick={() => {
+              createAccountTemplate(
+                selectedAccountTemplate,
+                accountTemplateImage,
+              );
+            }}
           />
         </AddTemplateSectionHalf>
       </AddTemplateSection>

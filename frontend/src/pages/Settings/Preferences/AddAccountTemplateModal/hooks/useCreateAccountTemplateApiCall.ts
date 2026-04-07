@@ -8,17 +8,24 @@ interface CreateAccountTemplateSubmitApiCallData {
   username: string;
 }
 
-const useCreateAccountTemplateApiCall =
-  (): AxiosFetchWrapperResponse<CreateAccountTemplateSubmitApiCallData> => {
-    const { fetch, data, loading, error } =
-      useAxiosFetch<CreateAccountTemplateSubmitApiCallData>(
-        `trading-account-templates/`,
-        {
-          method: "POST",
-        },
-      );
-
-    return { fetch, data, loading, error };
+interface CreateAccountTemplateSubmitApiCallErrors {
+  errors: {
+    [key: string]: string;
   };
+}
+
+const useCreateAccountTemplateApiCall = (): AxiosFetchWrapperResponse<
+  CreateAccountTemplateSubmitApiCallData,
+  CreateAccountTemplateSubmitApiCallErrors
+> => {
+  const { fetch, data, loading, error } = useAxiosFetch<
+    CreateAccountTemplateSubmitApiCallData,
+    CreateAccountTemplateSubmitApiCallErrors
+  >(`trading-account-templates/`, {
+    method: "POST",
+  });
+
+  return { fetch, data, loading, error };
+};
 
 export default useCreateAccountTemplateApiCall;
