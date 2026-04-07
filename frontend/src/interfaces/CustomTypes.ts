@@ -45,12 +45,14 @@ export interface AccountTemplate {
   firm?: string;
   accountSize?: number;
   isEval: boolean;
+  icon?: string;
   image?: string;
+  displayImage?: string;
   profitTarget?: number;
   profitSplit?: number;
   minBufferTarget?: number;
   minTradingDays?: number;
-  minDayProfit?: number;
+  minDayPnl?: number;
   maxDrawdown?: number;
   consistency?: number;
   allowablePayoutRequest?: number;

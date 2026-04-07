@@ -24,7 +24,7 @@ export const initialState: SettingsState = {
     minBufferTarget: undefined,
     allowablePayoutRequest: undefined,
     profitSplit: undefined,
-    minDayProfit: undefined,
+    minDayPnl: undefined,
     maxDrawdown: undefined,
     isEval: false,
     profitTarget: undefined,

@@ -11,7 +11,7 @@ import { color } from "@styles/colors";
 import { BUTTON_WIDTH } from "@styles/constants";
 import { SectionText } from "@styles/globalStyledComponents";
 import { firmLogoSrc, imageSrc } from "@utils/utils";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { initialState } from "../../SettingsState";
 import useSettingsDispatch from "../../hooks/useSettingsDispatch";
 import useSettingsState from "../../hooks/useSettingsState";
@@ -43,23 +43,22 @@ const AddAccountTemplateModal: React.FunctionComponent<
   const [accountTemplateImage, setAccountTemplateImage] = useState<File | null>(
     null,
   );
+  const [selectedCarouselImage, setSelectedCarouselImage] = useState<
+    string | null
+  >(null);
   const { createAccountTemplate } = useCreateAccountTemplateHandler();
 
   const [carouselImages, setCarouselImages] = React.useState<string[]>([
     "add",
     "myfundedfutures",
     "apex",
+    "topstep",
+    "ftmo",
     "bulenox",
     "alpha",
   ]);
 
-  useEffect(() => {
-    if (!!selectedAccountTemplate?.image) {
-      setCarouselImages([selectedAccountTemplate.image, ...carouselImages]);
-    }
-  }, [selectedAccountTemplate]);
-
-  console.log("accountTemplateImage", accountTemplateImage);
+  console.log({ accountTemplateImage, selectedCarouselImage });
   return (
     <ModalWrapper
       contentContainerStyle={{
@@ -75,26 +74,23 @@ const AddAccountTemplateModal: React.FunctionComponent<
           "add",
           "myfundedfutures",
           "apex",
+          "topstep",
+          "ftmo",
           "bulenox",
           "alpha",
         ]);
         updateAddAccountModalOpen(false);
+        updateAccountTemplatesErrors({});
       }}
       setOpen={updateAddAccountModalOpen}
     >
       <SectionText>Add / Choose Account Image</SectionText>
       <AccountImageSliderContainer>
         <Carousel
+          selectedCarouselImage={selectedAccountTemplate.displayImage}
+          onItemShown={(item) => setSelectedCarouselImage(item)}
           items={carouselImages}
           renderItem={(item) => {
-            if (item.includes("/firms")) {
-              return (
-                <img
-                  style={{ height: 50, width: 50 }}
-                  src={selectedAccountTemplate.image}
-                />
-              );
-            }
             return item === "add" ? (
               <AddImageContainer>
                 <If condition={!!accountTemplateImage}>
@@ -395,17 +391,17 @@ const AddAccountTemplateModal: React.FunctionComponent<
             <Input
               positiveOnly
               error={addAccountTemplateErrors?.min_day_pnl}
-              value={selectedAccountTemplate.minDayProfit}
+              value={selectedAccountTemplate.minDayPnl}
               onChange={(e) => {
                 updateSelectedAccountTemplate({
                   ...selectedAccountTemplate,
-                  minDayProfit: Number(e.target.value),
+                  minDayPnl: Number(e.target.value),
                 });
               }}
               onSuggestionClick={(value) => {
                 updateSelectedAccountTemplate({
                   ...selectedAccountTemplate,
-                  minDayProfit: Number(value),
+                  minDayPnl: Number(value),
                 });
               }}
               type="number"
@@ -553,7 +549,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
             onClick={() => {
               createAccountTemplate(
                 selectedAccountTemplate,
-                accountTemplateImage,
+                accountTemplateImage || selectedCarouselImage,
               );
             }}
           />

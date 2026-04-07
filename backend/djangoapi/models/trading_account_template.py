@@ -1,5 +1,14 @@
 from django.db import models
 
+ICON_CHOICES = [
+    ("apex", "Apex"),
+    ("myfundedfutures", "MyFundedFutures"),
+    ("topstep", "Topstep"),
+    ("ftmo", "FTMO"),
+    ("bulenox", "Bulenox"),
+    ("alpha", "alpha"),
+]
+
 
 class TradingAccountTemplate(models.Model):
     user = models.ForeignKey(
@@ -11,6 +20,7 @@ class TradingAccountTemplate(models.Model):
     firm = models.CharField(max_length=100)
     account_size = models.IntegerField()
     is_evaluation = models.BooleanField()
+    icon = models.CharField(max_length=50, choices=ICON_CHOICES, null=True, blank=True)
     image = models.ImageField(
         upload_to="trading_account_templates/", blank=True, null=True
     )

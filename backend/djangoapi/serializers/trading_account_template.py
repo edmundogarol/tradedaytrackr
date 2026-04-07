@@ -4,6 +4,8 @@ from backend.djangoapi.models import TradingAccountTemplate
 
 
 class TradingAccountTemplateSerializer(serializers.ModelSerializer):
+    display_image = serializers.SerializerMethodField()
+
     class Meta:
         model = TradingAccountTemplate
         fields = [
@@ -12,7 +14,9 @@ class TradingAccountTemplateSerializer(serializers.ModelSerializer):
             "firm",
             "account_size",
             "is_evaluation",
+            "icon",
             "image",
+            "display_image",
             "profit_target",
             "profit_split",
             "min_buffer",
@@ -30,6 +34,20 @@ class TradingAccountTemplateSerializer(serializers.ModelSerializer):
             "max_drawdown": {"required": False},
             "is_evaluation": {"required": False},
         }
+
+    def get_display_image(self, obj):
+        # priority: uploaded image > icon > fallback
+        request = self.context.get("request")
+
+        if obj.image:
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+            return obj.image.url
+
+        if obj.icon:
+            return f"/images/firms/{obj.icon}.png"
+
+        return "/static/icons/default.png"
 
     def validate_account_size(self, value):
         if value <= 0:

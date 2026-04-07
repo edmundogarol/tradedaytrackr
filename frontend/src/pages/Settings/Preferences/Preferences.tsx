@@ -18,7 +18,7 @@ import {
   TableItem,
 } from "@styles/globalStyledComponents";
 import { formatter } from "@utils/utils";
-import React, { useEffect } from "react";
+import React from "react";
 import useSettingsDispatch from "../hooks/useSettingsDispatch";
 import useSettingsState from "../hooks/useSettingsState";
 import AddTagModal from "./ AddTagModal/AddTagModal";
@@ -38,22 +38,8 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
     updateAddAccountModalOpen,
     updateAddTagModalOpen,
   } = useSettingsDispatch();
-  const { accountTemplates, tags, selectedAccountTemplate } =
-    useSettingsState();
+  const { accountTemplates, tags } = useSettingsState();
 
-  const [carouselImages, setCarouselImages] = React.useState<string[]>([
-    "add",
-    "myfundedfutures",
-    "apex",
-    "bulenox",
-    "alpha",
-  ]);
-
-  useEffect(() => {
-    if (!!selectedAccountTemplate?.image) {
-      setCarouselImages([selectedAccountTemplate.image, ...carouselImages]);
-    }
-  }, [selectedAccountTemplate]);
   return (
     <Page topBarShowMenu={true}>
       <AddTagModal />
@@ -76,13 +62,6 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                   text="Add Template"
                   onClick={() => {
                     updateAddAccountModalOpen(true);
-                    setCarouselImages([
-                      "add",
-                      "myfundedfutures",
-                      "apex",
-                      "bulenox",
-                      "alpha",
-                    ]);
                   }}
                   style={{ marginLeft: "auto", width: BUTTON_WIDTH }}
                 />
@@ -108,8 +87,8 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                         <TableField $flexSize={0.5}>
                           <img
                             style={{ height: 50, width: 50 }}
-                            src={template.image}
-                            alt={template.name}
+                            src={template.displayImage}
+                            alt={template.displayImage}
                           />
                         </TableField>
                         <TableField $flexSize={1.5}>{template.name}</TableField>
@@ -128,13 +107,7 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                             <EditIcon
                               onClick={() => {
                                 updateSelectedAccountTemplate(template);
-                                setCarouselImages([
-                                  "add",
-                                  "myfundedfutures",
-                                  "apex",
-                                  "bulenox",
-                                  "alpha",
-                                ]);
+
                                 updateAddAccountModalOpen(true);
                               }}
                               style={{
@@ -178,7 +151,7 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                         <TableField $flexSize={0.5}>
                           <img
                             style={{ height: 50, width: 50 }}
-                            src={template.image}
+                            src={template.displayImage}
                             alt={template.name}
                           />
                         </TableField>
@@ -201,13 +174,6 @@ const Preferences: React.FunctionComponent<PreferencesProps> = () => {
                             <EditIcon
                               onClick={() => {
                                 updateSelectedAccountTemplate(template);
-                                setCarouselImages([
-                                  "add",
-                                  "myfundedfutures",
-                                  "apex",
-                                  "bulenox",
-                                  "alpha",
-                                ]);
                                 updateAddAccountModalOpen(true);
                               }}
                               style={{

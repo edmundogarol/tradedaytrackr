@@ -7,7 +7,7 @@ import useCreateAccountTemplateApiCall from "./useCreateAccountTemplateApiCall";
 interface CreateAccountTemplateHandler {
   createAccountTemplate: (
     accountTemplate: AccountTemplate,
-    image: File | null,
+    display_image: File | string | null,
   ) => Promise<void>;
   loading: boolean;
 }
@@ -18,9 +18,17 @@ const useCreateAccountTemplateHandler = (): CreateAccountTemplateHandler => {
 
   return {
     createAccountTemplate: useCallback(
-      async (accountTemplate: AccountTemplate, image: File | null) => {
+      async (
+        accountTemplate: AccountTemplate,
+        display_image: File | string | null,
+      ) => {
         const formData = new FormData();
-        appendIfDefined(formData, "image", image);
+
+        if (display_image instanceof File) {
+          formData.append("image", display_image);
+        } else if (typeof display_image === "string") {
+          formData.append("icon", display_image);
+        }
         appendIfDefined(formData, "name", accountTemplate.name);
         appendIfDefined(formData, "firm", accountTemplate.firm);
         appendIfDefined(formData, "account_size", accountTemplate.accountSize);
@@ -44,6 +52,14 @@ const useCreateAccountTemplateHandler = (): CreateAccountTemplateHandler => {
           formData,
           "min_trading_days",
           accountTemplate.minTradingDays,
+        );
+        appendIfDefined(formData, "min_day_pnl", accountTemplate.minDayPnl);
+        appendIfDefined(formData, "max_drawdown", accountTemplate.maxDrawdown);
+        appendIfDefined(formData, "consistency", accountTemplate.consistency);
+        appendIfDefined(
+          formData,
+          "allowable_payout_request",
+          accountTemplate.allowablePayoutRequest,
         );
 
         const { error, data } = await fetch({

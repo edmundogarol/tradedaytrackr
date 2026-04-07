@@ -16,12 +16,14 @@ interface CarouselProps<T> {
   items: T[];
   renderItem?: (item: T) => React.ReactNode;
   onItemShown?: (item: T) => void;
+  selectedCarouselImage?: string;
 }
 
 const Carousel = <T,>({
   items,
   renderItem,
   onItemShown,
+  selectedCarouselImage,
 }: CarouselProps<T>): React.ReactElement => {
   const [emblaRef, emblaApi] = useEmblaCarousel();
   const [selectedCarouselIdx, setSelectedCarouselIdx] = React.useState(0);
@@ -46,6 +48,23 @@ const Carousel = <T,>({
       emblaApi.off("select", onSelect);
     };
   }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    if (selectedCarouselImage) {
+      const idx = items.findIndex((item) => {
+        if (typeof item === "string") {
+          return selectedCarouselImage === `/images/firms/${item}.png`;
+        }
+        return false;
+      });
+      if (idx !== -1) {
+        emblaApi.scrollTo(idx);
+      }
+    } else {
+      emblaApi.scrollTo(0);
+    }
+  }, [selectedCarouselImage, emblaApi]);
 
   const scrollNext = (): void => emblaApi?.scrollNext();
   const scrollPrev = (): void => emblaApi?.scrollPrev();
