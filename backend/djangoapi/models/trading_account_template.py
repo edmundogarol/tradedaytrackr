@@ -1,6 +1,10 @@
+import logging
+
 from django.db import models
 
 from backend.djangoapi.utils.helpers import upload_to
+
+logger = logging.getLogger(__name__)
 
 ICON_CHOICES = [
     ("apex", "Apex"),
@@ -69,3 +73,21 @@ class TradingAccountTemplate(models.Model):
                 fields=["user", "name"], name="unique_template_per_user"
             )
         ]
+
+    def delete(self, *args, **kwargs):
+        if self.image:
+            logger.info(
+                "Deleting S3 image for TradingAccountTemplate",
+                extra={
+                    "template_id": self.id,
+                    "image": self.image.name,
+                },
+            )
+            try:
+                self.image.delete(save=False)
+            except Exception as e:
+                logger.error(
+                    "Failed to delete S3 image",
+                    extra={"template_id": self.id, "error": str(e)},
+                )
+        super().delete(*args, **kwargs)
