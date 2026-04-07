@@ -187,9 +187,9 @@ Built by Edmundo Garol
 
 ---
 
-## 📌 Notes
+## 🔒 Note
 
-This repository is private for security reasons.
+Full source code is private due to production usage.
 Access can be granted upon request.
 
 ---
