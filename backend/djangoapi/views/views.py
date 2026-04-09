@@ -10,3 +10,7 @@ class ReactAppView(TemplateView):
 @ensure_csrf_cookie
 def csrf(request):
     return JsonResponse({"detail": "CSRF set"})
+
+
+def health_check(request):
+    return JsonResponse({"status": "ok"})

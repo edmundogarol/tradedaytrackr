@@ -28,6 +28,7 @@ from backend.djangoapi.views.tradingAccount.trading_account import TradingAccoun
 from backend.djangoapi.views.tradingAccount.trading_account_template import (
     TradingAccountTemplateViewSet,
 )
+from backend.djangoapi.views.views import health_check
 from backend.djangoapi.views.webhooks.whop import (
     WhopMembershipActivatedWebhookView,
     WhopMembershipDeactivatedWebhookView,
@@ -66,6 +67,7 @@ router.register(r"rules", RuleViewSet, basename="rules")
 
 urlpatterns = [
     path("docs/", schema_view),
+    path("health/", health_check),
     path("api/", include(router.urls)),
     path("api/csrf/", csrf),
     path("api/ai/tags/", AutoTagView.as_view()),
