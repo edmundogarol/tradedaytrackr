@@ -102,10 +102,7 @@ class TradingAccountSerializer(serializers.ModelSerializer):
         elif obj.template and obj.template.icon:
             url = f"/images/firms/{obj.template.icon}.png"
 
-        else:
-            url = "/static/icons/default.png"
-
-        if request and url.startswith("/"):
+        if "firms" not in url:
             absolute_url = request.build_absolute_uri(url)
 
             if "DEVENV" in os.environ:
