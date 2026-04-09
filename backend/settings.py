@@ -64,7 +64,13 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 if "DEVENV" in os.environ:
     ALLOWED_HOSTS = ["*"]
 else:
-    ALLOWED_HOSTS = ["*"]
+    ALLOWED_HOSTS = [
+        "api.tradedaytrackr.com",
+        "tradedaytrackr.com",
+        ".tradedaytrackr.com",
+        "localhost",
+        "127.0.0.1",
+    ]
 
 if "DEVENV" in os.environ:
     SESSION_COOKIE_SECURE = False
