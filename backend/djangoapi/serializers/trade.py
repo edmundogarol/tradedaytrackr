@@ -2,6 +2,7 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from backend.djangoapi.models import Trade, TradingAccount
+from backend.djangoapi.services.trades.trade_day import get_or_create_trading_day
 
 
 class TradeSerializer(serializers.ModelSerializer):
@@ -38,3 +39,13 @@ class TradeSerializer(serializers.ModelSerializer):
         if "date_time" in data and data["date_time"] > timezone.now():
             raise serializers.ValidationError("Trade date cannot be in the future")
         return data
+
+    def create(self, validated_data):
+        account = validated_data["account"]
+        date = validated_data["date_time"].date()
+
+        trading_day = get_or_create_trading_day(account, date)
+
+        validated_data["trading_day"] = trading_day
+
+        return super().create(validated_data)

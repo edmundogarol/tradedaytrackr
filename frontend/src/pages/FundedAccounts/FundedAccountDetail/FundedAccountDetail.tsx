@@ -572,7 +572,7 @@ const FundedAccountDetail: React.FunctionComponent<
         </TradingDaysHeaderContainer>
         <GlassTile featureTile minHeight={70} noGlow={true} noShine={false}>
           <TradingDaysContainer>
-            {currentTradingAccount?.dayValues
+            {[...currentTradingAccount?.dayValues]
               .reverse()
               .map((dayValue, index) => (
                 <GlassTile

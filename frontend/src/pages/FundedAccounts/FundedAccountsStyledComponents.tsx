@@ -178,7 +178,7 @@ export const DaysItemValue = styled.span<{
 }>`
   z-index: 10;
   pointer-events: auto;
-  min-width: 25px;
+  min-width: 40px;
   text-align: center;
   cursor: pointer;
   color: ${({ $positive }): string =>

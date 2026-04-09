@@ -7,12 +7,12 @@ from backend.djangoapi.services.trades.trade_day import compute_trading_day_fiel
 
 
 class TradingDaySerializer(serializers.ModelSerializer):
-    day = serializers.IntegerField(source="day_number")
     account_id = serializers.PrimaryKeyRelatedField(
         queryset=TradingAccount.objects.all(),
         source="account",
         write_only=True,
     )
+    pnl = serializers.SerializerMethodField()
 
     class Meta:
         model = TradingDay
@@ -20,13 +20,13 @@ class TradingDaySerializer(serializers.ModelSerializer):
             "id",
             "account",
             "account_id",
-            "day",
+            "day_number",
             "date",
             "pnl",
             "is_valid_day",
             "created_at",
         ]
-        read_only_fields = ["day", "is_valid_day"]
+        read_only_fields = ["is_valid_day"]
 
     def get_account(self, obj):
         return {
@@ -34,7 +34,10 @@ class TradingDaySerializer(serializers.ModelSerializer):
             "name": obj.account.account_name,
         }
 
-    def validate_day(self, value):
+    def get_pnl(self, obj):
+        return obj.pnl
+
+    def validate_day_number(self, value):
         if value <= 0:
             raise serializers.ValidationError("Day number must be positive")
         return value

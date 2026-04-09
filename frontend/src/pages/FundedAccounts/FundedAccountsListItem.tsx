@@ -1,8 +1,9 @@
 import GlassTile from "@components/GlassTile/GlassTile";
-import { formatter } from "@utils/utils";
+import { decimalStringToInt, formatter } from "@utils/utils";
 import React from "react";
 
 import AlertPopout from "@components/Alert/AlertPopout";
+import { Else, If } from "@components/If/If";
 import InfoPopout from "@components/InfoPopout/InfoPopout";
 import type { TradingAccount } from "@interfaces/CustomTypes";
 import { PageEnum } from "@interfaces/NavigationTypes";
@@ -103,10 +104,15 @@ const FundedAccountsListItem: React.FunctionComponent<
                 padding={7}
               >
                 <DaysItemValue $positive={dayValue.pnl > 0}>
-                  {`${dayValue.pnl > 0 ? "+" : ""}${dayValue.pnl}`}
+                  {`${dayValue.pnl > 0 ? "+" : ""}${decimalStringToInt(dayValue.pnl)}`}
                 </DaysItemValue>
               </GlassTile>
-              <DaysItemSubtitle>{dayValue.dayNumber}</DaysItemSubtitle>
+              <If condition={!!dayValue.dayNumber}>
+                <DaysItemSubtitle>{dayValue.dayNumber}</DaysItemSubtitle>
+                <Else>
+                  <DaysItemSubtitle>-</DaysItemSubtitle>
+                </Else>
+              </If>
             </DaysItem>
           ))}
           <DaysItem>

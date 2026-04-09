@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Sum
 
 
 class TradingDay(models.Model):
@@ -8,9 +9,8 @@ class TradingDay(models.Model):
         related_name="trading_days",
     )
     date = models.DateField()
-    pnl = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
-    day_number = models.IntegerField()  # derived
+    day_number = models.IntegerField(null=True, blank=True)
     is_valid_day = models.BooleanField(default=False)  # derived
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -25,3 +25,16 @@ class TradingDay(models.Model):
             models.Index(fields=["account", "date"]),
         ]
         ordering = ["day_number"]
+
+    @property
+    def pnl(self):
+        return self.trades.aggregate(total=Sum("pnl"))["total"] or 0
+
+    @property
+    def journal_pnl(self):
+        return (
+            self.trades.filter(journal_entry__isnull=False).aggregate(total=Sum("pnl"))[
+                "total"
+            ]
+            or 0
+        )

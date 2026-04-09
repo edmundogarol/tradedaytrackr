@@ -133,9 +133,11 @@ class TradingAccountSerializer(serializers.ModelSerializer):
         return min(round(progress, 2), 100)
 
     def get_current_day_count(self, obj):
-        day_numbers = [day.day_number for day in obj.trading_days.all()]
+        day_numbers = obj.trading_days.filter(is_valid_day=True).values_list(
+            "day_number", flat=True
+        )
 
-        return max(day_numbers, default=0)
+        return max((d for d in day_numbers if d is not None), default=0)
 
     def validate_account_balance(self, value):
         if value < 0:
