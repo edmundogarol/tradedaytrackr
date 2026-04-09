@@ -155,7 +155,7 @@ class TradingAccountSerializer(serializers.ModelSerializer):
 
             if value < min_allowed_balance:
                 raise serializers.ValidationError(
-                    "Balance cannot be below template's the maximum drawdown limit"
+                    "Balance cannot be below template's maximum drawdown limit"
                 )
 
         return value

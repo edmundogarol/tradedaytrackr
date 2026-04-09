@@ -50,6 +50,12 @@ export const SectionText = styled.span`
   font-size: 14px;
 `;
 
+export const HorizontalSection = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+`;
+
 export const DropdownsSection = styled.div`
   display: flex;
   gap: 10px;

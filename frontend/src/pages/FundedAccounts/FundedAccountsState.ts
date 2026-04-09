@@ -12,6 +12,11 @@ export interface FundedAccountsState {
   readonly selectedTradingDay: TradingDay | null;
   readonly addTradingDayModalOpen: boolean;
   readonly addTradingDayErrors: { [key: string]: any };
+  readonly editingAccountBalance: boolean;
+  readonly editingAccountName: boolean;
+  readonly editingAccountTemplate: boolean;
+  readonly deletingTradingAccountModalOpen: boolean;
+  readonly deleteTradingAccountErrors: { [key: string]: any };
 }
 
 export const initialState: FundedAccountsState = {
@@ -71,8 +76,13 @@ export const initialState: FundedAccountsState = {
   createTradingAccountErrors: {},
   updateTradingAccountsErrors: {},
   currentTradingAccountErrors: {},
+  editingAccountBalance: false,
+  editingAccountName: false,
+  editingAccountTemplate: false,
   addTradingDayModalOpen: false,
   addTradingDayErrors: {},
+  deletingTradingAccountModalOpen: false,
+  deleteTradingAccountErrors: {},
 };
 
 type UpdateTradingAccountsAction = PayloadAction<TradingAccount[]>;
@@ -89,6 +99,15 @@ type UpdateCurrentTradingAccountErrorsAction = PayloadAction<{
   [key: string]: any;
 }>;
 type UpdateCurrentTradingAccountAction = PayloadAction<TradingAccount>;
+type UpdateEditingFieldsAction = PayloadAction<{
+  editingAccountBalance?: boolean;
+  editingAccountName?: boolean;
+  editingAccountTemplate?: boolean;
+}>;
+type UpdateDeletingTradingAccountModalOpenAction = PayloadAction<boolean>;
+type UpdateDeleteTradingAccountErrorsAction = PayloadAction<{
+  [key: string]: any;
+}>;
 
 export type FundedAccountsAction =
   | UpdateTradingAccountsAction
@@ -100,7 +119,10 @@ export type FundedAccountsAction =
   | UpdateAddTradingDayModalOpenAction
   | UpdateAddTradingDayErrorsAction
   | UpdateCurrentTradingAccountAction
-  | UpdateCurrentTradingAccountErrorsAction;
+  | UpdateCurrentTradingAccountErrorsAction
+  | UpdateEditingFieldsAction
+  | UpdateDeletingTradingAccountModalOpenAction
+  | UpdateDeleteTradingAccountErrorsAction;
 
 export const fundedAccountsSlice = createSlice({
   name: "fundedAccounts",
@@ -163,6 +185,26 @@ export const fundedAccountsSlice = createSlice({
     ) => {
       state.currentTradingAccountErrors = action.payload;
     },
+    updateEditingFields: (state, action: UpdateEditingFieldsAction) => {
+      state.editingAccountBalance =
+        action.payload.editingAccountBalance ?? state.editingAccountBalance;
+      state.editingAccountName =
+        action.payload.editingAccountName ?? state.editingAccountName;
+      state.editingAccountTemplate =
+        action.payload.editingAccountTemplate ?? state.editingAccountTemplate;
+    },
+    updateDeletingTradingAccountModalOpen: (
+      state,
+      action: UpdateDeletingTradingAccountModalOpenAction,
+    ) => {
+      state.deletingTradingAccountModalOpen = action.payload;
+    },
+    updateDeleteTradingAccountErrors: (
+      state,
+      action: UpdateDeleteTradingAccountErrorsAction,
+    ) => {
+      state.deleteTradingAccountErrors = action.payload;
+    },
   },
 });
 
@@ -177,6 +219,9 @@ export const {
   updateAddTradingDayErrors,
   updateCurrentTradingAccount,
   updateCurrentTradingAccountErrors,
+  updateEditingFields,
+  updateDeletingTradingAccountModalOpen,
+  updateDeleteTradingAccountErrors,
 } = fundedAccountsSlice.actions;
 
 export const fundedAccountsReducer = fundedAccountsSlice.reducer;

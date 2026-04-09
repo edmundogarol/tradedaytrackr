@@ -44,12 +44,14 @@ const FundedAccounts: React.FunctionComponent = () => {
     React.useState<boolean>(false);
   const {
     tradingAccounts,
+    deleteTradingAccountErrors,
     createTradingAccountModalOpen,
     createTradingAccountErrors,
   } = useFundedAccountsState();
   const {
     updateCreateTradingAccountModalOpen,
     updateCreateTradingAccountErrors,
+    updateDeleteTradingAccountErrors,
   } = useFundedAccountsDispatch();
   const { getAccountTemplates } = useGetAccountTemplatesHandler();
   const { getTradingAccounts } = useGetTradingAccountsHandler();
@@ -61,6 +63,12 @@ const FundedAccounts: React.FunctionComponent = () => {
 
   return (
     <Page topBarShowMenu={true}>
+      <AlertPopout
+        message={deleteTradingAccountErrors.detail}
+        hideDuration={3000}
+        open={!!deleteTradingAccountErrors.detail}
+        setPopoutOpen={() => updateDeleteTradingAccountErrors({})}
+      />
       <AlertPopout
         message={createTradingAccountErrors.detail}
         hideDuration={3000}

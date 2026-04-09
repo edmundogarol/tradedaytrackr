@@ -1,5 +1,6 @@
 import AlertPopout from "@components/Alert/AlertPopout";
 import Button from "@components/Button/Button";
+import FormError from "@components/Error/FormError/FormError";
 import Gap from "@components/Gap/Gap";
 import GlassTile from "@components/GlassTile/GlassTile";
 import Icon from "@components/Icon/Icon";
@@ -7,6 +8,7 @@ import { IconTypeEnum } from "@components/Icon/IconInterfaces";
 import { Else, If } from "@components/If/If";
 import InfoPopout from "@components/InfoPopout/InfoPopout";
 import Input from "@components/Input/Input";
+import ModalWrapper from "@components/Modal/Modal";
 import Page from "@components/Page/Page";
 import SelectWrapper from "@components/Select/SelectWrapper";
 import type { TradingAccount } from "@interfaces/CustomTypes";
@@ -19,30 +21,43 @@ import { AccountTradingDaysComplete } from "@pages/EvaluationAccounts/Evaluation
 import useGetFundedAccountTemplates from "@pages/Settings/hooks/useGetFundedAccountTemplates";
 import useGetAccountTemplatesHandler from "@pages/Settings/Preferences/hooks/useGetAccountTemplatesHandler";
 import { color } from "@styles/colors";
-import { BorderLinearProgress } from "@styles/globalStyledComponents";
+import {
+  BorderLinearProgress,
+  HorizontalSection,
+  SectionText,
+} from "@styles/globalStyledComponents";
 import { decimalStringToInt, formatter } from "@utils/utils";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
 import AddTradingDayModal from "../AddTradingDayModal/AddTradingDayModal";
 import {
   AccountImage,
   AccountSubtitle,
   AccountSubtitleHighlighted,
+  AccountTitle,
+  AccountTitleContainer,
   BufferAmount,
   BufferAmountHighlighted,
   BufferContainer,
   BufferText,
   Container,
+  DaysContainer,
+  DaysItem,
+  DaysItemSubtitle,
+  DaysItemValue,
+  ListItemContainer,
   PnLContainer,
   PnLValue,
   PnLWithdrawable,
   PnLWithdrawableText,
   Title,
 } from "../FundedAccountsStyledComponents";
+import useDeleteTradingAccountHandler from "../hooks/useDeleteTradingAccountHandler";
 import useFundedAccountsDispatch from "../hooks/useFundedAccountsDispatch";
 import useFundedAccountsState from "../hooks/useFundedAccountsState";
 import useGetTradingAccountsHandler from "../hooks/useGetTradingAccountsHandler";
+import useUpdateTradingAccountHandler from "../hooks/useUpdateTradingAccountHandler";
 import {
   AccountDetailContainer,
   AccountName,
@@ -78,33 +93,49 @@ interface FundedAccountDetailProps {}
 const FundedAccountDetail: React.FunctionComponent<
   FundedAccountDetailProps
 > = () => {
-  const { currentTradingAccount, tradingAccounts, createTradingAccountErrors } =
-    useFundedAccountsState();
-  const { updateCurrentTradingAccount } = useFundedAccountsDispatch();
+  const {
+    currentTradingAccount,
+    tradingAccounts,
+    currentTradingAccountErrors,
+    editingAccountBalance,
+    editingAccountName,
+    editingAccountTemplate,
+    deletingTradingAccountModalOpen,
+    deleteTradingAccountErrors,
+  } = useFundedAccountsState();
+  const {
+    updateCurrentTradingAccount,
+    updateCurrentTradingAccountErrors,
+    updateEditingFields,
+    updateDeletingTradingAccountModalOpen,
+    updateDeleteTradingAccountErrors,
+  } = useFundedAccountsDispatch();
   let [searchParams] = useSearchParams();
   const accountId = searchParams.get("id");
   const [originalTradingAccountDetails, setOriginalTradingAccountDetails] =
     useState<TradingAccount | null>(null);
-  const [editingAccountName, setEditingAccountName] = useState<boolean>(false);
-  const [editingAccountType, setEditingAccountType] = useState<boolean>(false);
-  const [editingAccountBalance, setEditingAccountBalance] =
-    useState<boolean>(false);
   const [addTradingDayOpen, setAddTradingDayOpen] = useState<boolean>(false);
   const [payoutRecord, setPayoutRecord] = useState<boolean>(false);
   const navigation = useReactNavigation();
   const accountTemplateList = useGetFundedAccountTemplates();
   const { getTradingAccounts } = useGetTradingAccountsHandler();
   const { getAccountTemplates } = useGetAccountTemplatesHandler();
+  const { updateTradingAccount } = useUpdateTradingAccountHandler();
+  const { deleteTradingAccount } = useDeleteTradingAccountHandler();
+  const hasFetched = useRef(false);
 
   useEffect(() => {
+    if (hasFetched.current) return;
+
     if (tradingAccounts.length === 0) {
       getTradingAccounts();
-      return;
     }
+
     if (accountTemplateList.length === 0) {
       getAccountTemplates();
-      return;
     }
+
+    hasFetched.current = true;
   }, []);
 
   useEffect(() => {
@@ -117,25 +148,101 @@ const FundedAccountDetail: React.FunctionComponent<
     }
   }, [tradingAccounts, accountId]);
 
+  const withdrawable =
+    currentTradingAccount?.accountBalance -
+    currentTradingAccount?.accountSize -
+    currentTradingAccount?.minBuffer;
+
   return (
     <Page topBarShowMenu={true}>
       <AlertPopout
         hideDuration={4000}
-        message={createTradingAccountErrors?.error}
-        open={!!createTradingAccountErrors?.error}
+        message={currentTradingAccountErrors?.error}
+        open={!!currentTradingAccountErrors?.error}
         setPopoutOpen={() => {}}
       />
       <AlertPopout
-        hideDuration={4000}
-        message={createTradingAccountErrors?.detail}
-        open={!!createTradingAccountErrors?.detail}
-        setPopoutOpen={() => {}}
+        hideDuration={2000}
+        message={currentTradingAccountErrors?.detail}
+        open={!!currentTradingAccountErrors?.detail}
+        setPopoutOpen={() => updateCurrentTradingAccountErrors({})}
       />
       <AddTradingDayModal
         modalOpen={addTradingDayOpen}
         setModalOpen={setAddTradingDayOpen}
         payoutRecord={payoutRecord}
       />
+      <ModalWrapper
+        onClose={() => updateDeleteTradingAccountErrors({})}
+        open={deletingTradingAccountModalOpen}
+        setOpen={updateDeletingTradingAccountModalOpen}
+        title="Delete Trading Account"
+      >
+        <SectionText>
+          Are you sure you want to delete this trading account? All associated
+          data will be permanently removed.
+        </SectionText>
+        <Gap level={2} />
+        <ListItemContainer>
+          <AccountImage $image={currentTradingAccount.image || ""} />
+          <AccountTitleContainer>
+            <AccountTitle>{currentTradingAccount.name}</AccountTitle>
+            <AccountSubtitle>
+              Balance:
+              <AccountSubtitleHighlighted>
+                {formatter.format(currentTradingAccount.accountBalance)}
+              </AccountSubtitleHighlighted>
+            </AccountSubtitle>
+            <AccountTradingDaysComplete>
+              {`Eligible Days: ${currentTradingAccount?.currentDayCount ?? "N/A"}/${
+                currentTradingAccount?.minTradingDays ?? "N/A"
+              }`}
+              <InfoPopout
+                infoDescription={`This account requires a minimum of ${currentTradingAccount?.minTradingDays} eligible trading days.`}
+              />
+            </AccountTradingDaysComplete>
+          </AccountTitleContainer>
+          <DaysContainer>
+            {currentTradingAccount.dayValues.map((dayValue, idx) => (
+              <DaysItem key={idx}>
+                <GlassTile
+                  positive={dayValue.pnl > 0}
+                  featureTile
+                  minHeight={10}
+                  minWidth={10}
+                  padding={7}
+                >
+                  <DaysItemValue $positive={dayValue.pnl > 0}>
+                    {`${dayValue.pnl > 0 ? "+" : ""}${dayValue.pnl}`}
+                  </DaysItemValue>
+                </GlassTile>
+                <DaysItemSubtitle>{dayValue.dayNumber}</DaysItemSubtitle>
+              </DaysItem>
+            ))}
+          </DaysContainer>
+        </ListItemContainer>
+        <Gap level={2} />
+        <If condition={!!deleteTradingAccountErrors.error}>
+          <FormError error={deleteTradingAccountErrors?.error} />
+          <Gap level={2} />
+        </If>
+        <HorizontalSection>
+          <Button
+            text={"Permanently Delete"}
+            style={{ backgroundColor: color("SystemRed") }}
+            onClick={() =>
+              deleteTradingAccount(currentTradingAccount.id.toString())
+            }
+          />
+          <Button
+            text={"Cancel"}
+            onClick={() => {
+              updateDeletingTradingAccountModalOpen(false);
+              updateDeleteTradingAccountErrors({});
+            }}
+          />
+        </HorizontalSection>
+      </ModalWrapper>
       <Container>
         <ListHeaders>
           <Title>Funded Account Details</Title>
@@ -154,7 +261,9 @@ const FundedAccountDetail: React.FunctionComponent<
                       {currentTradingAccount?.name}
                       <EditIcon
                         style={styles.editIcon}
-                        onClick={() => setEditingAccountName(true)}
+                        onClick={() =>
+                          updateEditingFields({ editingAccountName: true })
+                        }
                       />
                     </AccountName>
                     <DeleteOutlineIcon
@@ -163,22 +272,25 @@ const FundedAccountDetail: React.FunctionComponent<
                         display: "flex",
                         alignContent: "center",
                       }}
-                      onClick={() => alert("delete account")}
+                      onClick={() =>
+                        updateDeletingTradingAccountModalOpen(true)
+                      }
                     />
                   </AccountNameDeleteContainer>
                   <Else>
                     <AccountName>
                       <Input
                         autoFocus
+                        error={currentTradingAccountErrors?.account_name}
                         containerStyle={styles.containerStyle}
                         inputContainerStyle={styles.inputContainerStyle}
                         style={styles.inputStyle}
                         onKeyDown={(ev) => {
                           if (ev.key === "Enter") {
-                            setEditingAccountName(false);
+                            updateEditingFields({ editingAccountName: false });
                           }
                           if (ev.key === "Escape") {
-                            setEditingAccountName(false);
+                            updateEditingFields({ editingAccountName: false });
                           }
                         }}
                         value={currentTradingAccount?.name || ""}
@@ -202,28 +314,50 @@ const FundedAccountDetail: React.FunctionComponent<
                           currentTradingAccount?.name ===
                             originalTradingAccountDetails?.name
                         }
-                        onClick={() => setEditingAccountName(false)}
+                        onClick={() => {
+                          updateEditingFields({ editingAccountName: false });
+                          updateTradingAccount(
+                            {
+                              ...currentTradingAccount,
+                            } as TradingAccount,
+                            currentTradingAccount.accountType.id,
+                          );
+                        }}
                       />
                       <Button
                         style={styles.saveButton}
                         text={"Cancel"}
-                        onClick={() => setEditingAccountName(false)}
+                        onClick={() => {
+                          updateEditingFields({ editingAccountName: false });
+                          updateCurrentTradingAccount(
+                            originalTradingAccountDetails as TradingAccount,
+                          );
+                        }}
                       />
                     </AccountName>
                   </Else>
                 </If>
                 <AccountType>
-                  {`Account Type: ${editingAccountType ? "" : currentTradingAccount?.accountType?.name}`}
-                  <If condition={!editingAccountType}>
+                  {`Account Type: ${editingAccountTemplate ? "" : currentTradingAccount?.accountType?.name}`}
+                  <If condition={!editingAccountTemplate}>
                     <EditIcon
                       style={styles.subtitleEditIcon}
-                      onClick={() => setEditingAccountType(true)}
+                      onClick={() =>
+                        updateEditingFields({ editingAccountTemplate: true })
+                      }
                     />
                     <Else>
                       <SelectButtonWrapper>
                         <SelectWrapper
+                          selectedValue={currentTradingAccount.accountType.id}
                           onSelect={(selected) => {
-                            setEditingAccountType(false);
+                            updateEditingFields({
+                              editingAccountTemplate: false,
+                            });
+                            updateTradingAccount(
+                              currentTradingAccount,
+                              Number(selected),
+                            );
                           }}
                           style={styles.selectStyle}
                           items={accountTemplateList.map((template) => {
@@ -236,7 +370,11 @@ const FundedAccountDetail: React.FunctionComponent<
                             height: 40,
                           }}
                           text={"Cancel"}
-                          onClick={() => setEditingAccountType(false)}
+                          onClick={() =>
+                            updateEditingFields({
+                              editingAccountTemplate: false,
+                            })
+                          }
                         />
                       </SelectButtonWrapper>
                     </Else>
@@ -250,7 +388,9 @@ const FundedAccountDetail: React.FunctionComponent<
                     </AccountSubtitleHighlighted>
                     <EditIcon
                       style={styles.subtitleEditIcon}
-                      onClick={() => setEditingAccountBalance(true)}
+                      onClick={() =>
+                        updateEditingFields({ editingAccountBalance: true })
+                      }
                     />
                     <Else>
                       <AccountName>
@@ -258,15 +398,20 @@ const FundedAccountDetail: React.FunctionComponent<
                           positiveOnly
                           type="number"
                           autoFocus
+                          error={currentTradingAccountErrors?.account_balance}
                           containerStyle={styles.containerStyle}
                           inputContainerStyle={styles.inputContainerStyle}
                           style={styles.inputStyle}
                           onKeyDown={(ev) => {
                             if (ev.key === "Enter") {
-                              setEditingAccountBalance(false);
+                              updateEditingFields({
+                                editingAccountBalance: false,
+                              });
                             }
                             if (ev.key === "Escape") {
-                              setEditingAccountBalance(false);
+                              updateEditingFields({
+                                editingAccountBalance: false,
+                              });
                             }
                           }}
                           value={
@@ -294,12 +439,26 @@ const FundedAccountDetail: React.FunctionComponent<
                             currentTradingAccount?.accountBalance ===
                               originalTradingAccountDetails?.accountBalance
                           }
-                          onClick={() => setEditingAccountBalance(false)}
+                          onClick={() => {
+                            updateTradingAccount(
+                              {
+                                ...currentTradingAccount,
+                              } as TradingAccount,
+                              currentTradingAccount.accountType.id,
+                            );
+                          }}
                         />
                         <Button
                           style={styles.saveButton}
                           text={"Cancel"}
-                          onClick={() => setEditingAccountBalance(false)}
+                          onClick={() => {
+                            updateEditingFields({
+                              editingAccountBalance: false,
+                            });
+                            updateCurrentTradingAccount(
+                              originalTradingAccountDetails as TradingAccount,
+                            );
+                          }}
                         />
                       </AccountName>
                     </Else>
@@ -350,13 +509,10 @@ const FundedAccountDetail: React.FunctionComponent<
                   <ConsistencyLabel>{"Consistency"}</ConsistencyLabel>
                 </ConsistencyContainer>
                 <PnLContainer>
-                  <PnLValue
-                    $bufferPercent={currentTradingAccount?.bufferPercent}
-                  >
-                    {formatter.format(
-                      currentTradingAccount?.accountBalance -
-                        currentTradingAccount?.accountSize,
-                    )}
+                  <PnLValue $withdrawable={withdrawable > 0}>
+                    {withdrawable > 0
+                      ? formatter.format(withdrawable)
+                      : formatter.format(0)}
                   </PnLValue>
                   <PnLWithdrawable
                     $positive={

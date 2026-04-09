@@ -235,7 +235,6 @@ export const PnLContainer = styled.div`
 `;
 
 export const PnLValue = styled.span<{
-  $bufferPercent: number;
   $withdrawable?: boolean;
 }>`
   color: ${(props): string =>

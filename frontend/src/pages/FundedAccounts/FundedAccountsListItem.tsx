@@ -149,10 +149,7 @@ const FundedAccountsListItem: React.FunctionComponent<
           />
         </BufferContainer>
         <PnLContainer>
-          <PnLValue
-            $bufferPercent={bufferPercent}
-            $withdrawable={withdrawable > allowablePayoutRequest}
-          >
+          <PnLValue $withdrawable={withdrawable > allowablePayoutRequest}>
             {withdrawable > 0
               ? formatter.format(withdrawable)
               : formatter.format(0)}

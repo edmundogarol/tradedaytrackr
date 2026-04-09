@@ -9,6 +9,9 @@ import {
   updateCreateTradingAccountModalOpen,
   updateCurrentTradingAccount,
   updateCurrentTradingAccountErrors,
+  updateDeleteTradingAccountErrors,
+  updateDeletingTradingAccountModalOpen,
+  updateEditingFields,
   updateSelectedTradingAccount,
   updateSelectedTradingDay,
   updateTradingAccounts,
@@ -26,6 +29,13 @@ interface FundedAccountsDispatch {
   updateAddTradingDayErrors: (errors: { [key: string]: any }) => void;
   updateCurrentTradingAccount: (tradingAccount: TradingAccount) => void;
   updateCurrentTradingAccountErrors: (errors: { [key: string]: any }) => void;
+  updateEditingFields: (fields: {
+    editingAccountBalance?: boolean;
+    editingAccountName?: boolean;
+    editingAccountTemplate?: boolean;
+  }) => void;
+  updateDeletingTradingAccountModalOpen: (open: boolean) => void;
+  updateDeleteTradingAccountErrors: (errors: { [key: string]: any }) => void;
 }
 
 const useFundedAccountsDispatch = (): FundedAccountsDispatch => {
@@ -60,6 +70,19 @@ const useFundedAccountsDispatch = (): FundedAccountsDispatch => {
     },
     updateCurrentTradingAccountErrors(errors: { [key: string]: any }): void {
       dispatch(updateCurrentTradingAccountErrors(errors));
+    },
+    updateEditingFields(fields: {
+      editingAccountBalance?: boolean;
+      editingAccountName?: boolean;
+      editingAccountTemplate?: boolean;
+    }): void {
+      dispatch(updateEditingFields(fields));
+    },
+    updateDeletingTradingAccountModalOpen(open: boolean): void {
+      dispatch(updateDeletingTradingAccountModalOpen(open));
+    },
+    updateDeleteTradingAccountErrors(errors: { [key: string]: any }): void {
+      dispatch(updateDeleteTradingAccountErrors(errors));
     },
   };
 };

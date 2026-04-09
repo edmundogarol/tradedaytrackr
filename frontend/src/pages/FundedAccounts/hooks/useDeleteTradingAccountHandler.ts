@@ -1,3 +1,5 @@
+import { PageEnum } from "@interfaces/NavigationTypes";
+import useReactNavigation from "@navigation/hooks/useReactNavigation";
 import environmentConfig from "@utils/environmentConfig";
 import { useCallback } from "react";
 import { initialState } from "../FundedAccountsState";
@@ -12,26 +14,32 @@ interface DeleteTradingAccountHandler {
 
 const useDeleteTradingAccountHandler = (): DeleteTradingAccountHandler => {
   const { fetch, loading } = useDeleteTradingAccountApiCall();
-  const { updateTradingAccountsErrors, updateSelectedTradingAccount } =
-    useFundedAccountsDispatch();
+  const {
+    updateSelectedTradingAccount,
+    updateDeletingTradingAccountModalOpen,
+    updateDeleteTradingAccountErrors,
+  } = useFundedAccountsDispatch();
   const { getTradingAccounts } = useGetTradingAccountsHandler();
+  const navigation = useReactNavigation();
   return {
     deleteTradingAccount: useCallback(
       async (id: string) => {
         const { error } = await fetch({
-          url: `${environmentConfig.HOST}/api/trading-account-templates/${id}/`,
+          url: `${environmentConfig.HOST}/api/trading-accounts/${id}/`,
         });
 
         if (error) {
-          updateTradingAccountsErrors({
+          updateDeleteTradingAccountErrors({
             error: (error as any)?.message || "Something went wrong",
           });
         } else {
           getTradingAccounts();
-          updateTradingAccountsErrors({
+          updateDeleteTradingAccountErrors({
             detail: "Trading account deleted successfully",
           });
+          updateDeletingTradingAccountModalOpen(false);
           updateSelectedTradingAccount(initialState.selectedTradingAccount);
+          navigation.navigate(PageEnum.FundedAccounts);
         }
       },
       [loading],
