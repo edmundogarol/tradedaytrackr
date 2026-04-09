@@ -13,6 +13,10 @@ from rest_framework.viewsets import ModelViewSet
 
 from backend.djangoapi.serializers import UserSerializer
 from backend.djangoapi.serializers.user import RegisterSerializer, UpdateUserSerializer
+from backend.djangoapi.services.demo.seed_account_templates import (
+    seed_demo_account_templates,
+)
+from backend.djangoapi.services.demo.seed_tags import seed_demo_tags
 from backend.djangoapi.tasks.user import (
     send_account_deleted_email,
     send_verification_email,
@@ -72,6 +76,8 @@ class UserViewSet(ModelViewSet):
             raise
 
         user = serializer.save()
+        seed_demo_account_templates(user)
+        seed_demo_tags(user)
 
         login(request, user)
         return Response(

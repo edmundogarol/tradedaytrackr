@@ -18,7 +18,7 @@ import {
   TableField,
   TableItem,
 } from "@styles/globalStyledComponents";
-import { formatter } from "@utils/utils";
+import { decimalStringToInt, formatter } from "@utils/utils";
 import React, { useEffect, useState } from "react";
 import { initialState } from "../SettingsState";
 import useSettingsDispatch from "../hooks/useSettingsDispatch";
@@ -213,7 +213,7 @@ const Preferences: React.FunctionComponent = () => {
                         </TableField>
                         <TableField>
                           {template?.consistency && template.consistency > 0
-                            ? `${template.consistency}%`
+                            ? `${decimalStringToInt(template.consistency)}%`
                             : "None"}
                         </TableField>
                         <TableField $flexSize={0.5}>
