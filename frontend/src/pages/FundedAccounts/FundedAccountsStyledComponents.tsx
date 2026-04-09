@@ -229,13 +229,10 @@ export const PnLContainer = styled.div`
 
 export const PnLValue = styled.span<{
   $bufferPercent: number;
+  $withdrawable?: boolean;
 }>`
   color: ${(props): string =>
-    props.$bufferPercent > 70
-      ? color("SystemGreen")
-      : props.$bufferPercent > 40
-        ? "#cf943b"
-        : "#d56060"};
+    props.$withdrawable ? color("SystemGreen") : color("SystemLabel1")};
   font-size: 21px;
   font-weight: 100;
 `;

@@ -54,9 +54,11 @@ const AddFundedAccountsModal: React.FunctionComponent<
       <AddFundedAccountContainer>
         <SelectWrapper
           selectedValue={selectedTemplateId}
-          items={accountTemplates.map((template) => {
-            return { name: template.name, value: template.id };
-          })}
+          items={accountTemplates
+            .filter((template) => !template.isEval)
+            .map((template) => {
+              return { name: template.name, value: template.id };
+            })}
           label="Select Account Template"
           onSelect={(selected) => {
             setSelectedTemplateId(Number(selected));

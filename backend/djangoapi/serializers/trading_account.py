@@ -53,6 +53,13 @@ class TradingAccountSerializer(serializers.ModelSerializer):
         read_only=True,
     )
 
+    allowable_payout_request = serializers.DecimalField(
+        source="template.allowable_payout_request",
+        max_digits=10,
+        decimal_places=2,
+        read_only=True,
+    )
+
     day_values = TradingDaySerializer(
         source="trading_days",
         many=True,
@@ -81,6 +88,7 @@ class TradingAccountSerializer(serializers.ModelSerializer):
             "min_day_pnl",
             "day_values",
             "current_day_count",
+            "allowable_payout_request",
         ]
 
     def get_image(self, obj):

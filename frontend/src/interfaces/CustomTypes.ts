@@ -68,6 +68,7 @@ export interface TradingAccount extends AccountTemplate {
   minBuffer: number;
   dayValues: TradingDay[];
   currentDayCount: number;
+  allowablePayoutRequest: number;
 }
 
 export interface Trade {

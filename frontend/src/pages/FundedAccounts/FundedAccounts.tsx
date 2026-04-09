@@ -73,8 +73,6 @@ const FundedAccounts: React.FunctionComponent = () => {
       />
       <AddFundedAccountsModal
         accountTemplates={accountTemplateList}
-        modalOpen={createTradingAccountModalOpen}
-        setModalOpen={updateCreateTradingAccountModalOpen}
         setAddTradingDayOpen={setAddTradingDayOpen}
       />
       <Container>
@@ -108,7 +106,7 @@ const FundedAccounts: React.FunctionComponent = () => {
           <AccountHeader>Account</AccountHeader>
           <DaysHeader>Trading Days</DaysHeader>
           <BufferHeader>Min Buffer</BufferHeader>
-          <PnLHeader>PnL</PnLHeader>
+          <PnLHeader>Withdrawable</PnLHeader>
         </ListHeaders>
         <ListContainer>
           {tradingAccounts.map((account, index) => (

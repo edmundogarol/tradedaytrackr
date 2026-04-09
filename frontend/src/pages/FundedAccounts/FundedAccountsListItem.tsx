@@ -48,6 +48,7 @@ const FundedAccountsListItem: React.FunctionComponent<
     image,
     minTradingDays,
     minBuffer,
+    allowablePayoutRequest,
     dayValues,
     currentDayCount,
   },
@@ -55,7 +56,7 @@ const FundedAccountsListItem: React.FunctionComponent<
 }) => {
   const navigation = useReactNavigation();
   const [alertNoRecord, setAlertNoRecord] = React.useState(false);
-
+  const withdrawable = accountBalance - accountSize - minBuffer;
   return (
     <GlassTile positive featureTile minHeight={70} noGlow noShine>
       <AlertPopout
@@ -148,16 +149,19 @@ const FundedAccountsListItem: React.FunctionComponent<
           />
         </BufferContainer>
         <PnLContainer>
-          <PnLValue $bufferPercent={bufferPercent}>
-            {formatter.format(accountBalance - accountSize)}
-          </PnLValue>
-          <PnLWithdrawable
-            $positive={accountBalance - accountSize - minBuffer > 0}
+          <PnLValue
+            $bufferPercent={bufferPercent}
+            $withdrawable={withdrawable > allowablePayoutRequest}
           >
-            <PnLWithdrawableText>Withdrawable:</PnLWithdrawableText>
-            {accountBalance - accountSize - minBuffer < 0
-              ? formatter.format(0)
-              : formatter.format(accountBalance - accountSize - minBuffer)}
+            {withdrawable > 0
+              ? formatter.format(withdrawable)
+              : formatter.format(0)}
+          </PnLValue>
+          <PnLWithdrawable $positive={withdrawable > 0}>
+            <PnLWithdrawableText>Post-Payout Buffer:</PnLWithdrawableText>
+            {withdrawable > 0
+              ? formatter.format(accountBalance - accountSize - withdrawable)
+              : formatter.format(0)}
           </PnLWithdrawable>
         </PnLContainer>
       </ListItemContainer>
