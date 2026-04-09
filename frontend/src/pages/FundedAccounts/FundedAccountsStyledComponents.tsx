@@ -140,9 +140,12 @@ export const AccountTitle = styled.span`
   }
 `;
 
-export const AccountSubtitle = styled.span`
+export const AccountSubtitle = styled.div`
+  display: flex;
+  gap: 10px;
   font-size: 14px;
   color: #989898;
+  align-items: center;
 `;
 
 export const AccountTradingDaysComplete = styled.span`

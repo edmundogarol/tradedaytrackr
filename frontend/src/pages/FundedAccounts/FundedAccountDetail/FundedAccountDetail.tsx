@@ -20,13 +20,15 @@ import useGetFundedAccountTemplates from "@pages/Settings/hooks/useGetFundedAcco
 import useGetAccountTemplatesHandler from "@pages/Settings/Preferences/hooks/useGetAccountTemplatesHandler";
 import { color } from "@styles/colors";
 import { BorderLinearProgress } from "@styles/globalStyledComponents";
-import { formatter } from "@utils/utils";
+import { decimalStringToInt, formatter } from "@utils/utils";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import AddTradingDayModal from "../AddTradingDayModal/AddTradingDayModal";
 import {
   AccountImage,
+  AccountSubtitle,
+  AccountSubtitleHighlighted,
   BufferAmount,
   BufferAmountHighlighted,
   BufferContainer,
@@ -85,6 +87,8 @@ const FundedAccountDetail: React.FunctionComponent<
     useState<TradingAccount | null>(null);
   const [editingAccountName, setEditingAccountName] = useState<boolean>(false);
   const [editingAccountType, setEditingAccountType] = useState<boolean>(false);
+  const [editingAccountBalance, setEditingAccountBalance] =
+    useState<boolean>(false);
   const [addTradingDayOpen, setAddTradingDayOpen] = useState<boolean>(false);
   const [payoutRecord, setPayoutRecord] = useState<boolean>(false);
   const navigation = useReactNavigation();
@@ -137,7 +141,7 @@ const FundedAccountDetail: React.FunctionComponent<
           <Title>Funded Account Details</Title>
           <BufferHeader>Min Buffer</BufferHeader>
           <BufferHeader>Consistency</BufferHeader>
-          <PnLHeader>PnL</PnLHeader>
+          <PnLHeader>Withdrawable</PnLHeader>
         </ListHeaders>
         <GlassTile featureTile minHeight={70} noGlow={true} noShine={false}>
           <HeaderContainer>
@@ -238,6 +242,69 @@ const FundedAccountDetail: React.FunctionComponent<
                     </Else>
                   </If>
                 </AccountType>
+                <AccountSubtitle>
+                  Balance:
+                  <If condition={!editingAccountBalance}>
+                    <AccountSubtitleHighlighted>
+                      {formatter.format(currentTradingAccount.accountBalance)}
+                    </AccountSubtitleHighlighted>
+                    <EditIcon
+                      style={styles.subtitleEditIcon}
+                      onClick={() => setEditingAccountBalance(true)}
+                    />
+                    <Else>
+                      <AccountName>
+                        <Input
+                          positiveOnly
+                          type="number"
+                          autoFocus
+                          containerStyle={styles.containerStyle}
+                          inputContainerStyle={styles.inputContainerStyle}
+                          style={styles.inputStyle}
+                          onKeyDown={(ev) => {
+                            if (ev.key === "Enter") {
+                              setEditingAccountBalance(false);
+                            }
+                            if (ev.key === "Escape") {
+                              setEditingAccountBalance(false);
+                            }
+                          }}
+                          value={
+                            decimalStringToInt(
+                              currentTradingAccount?.accountBalance,
+                            ) || ""
+                          }
+                          onChange={(e) => {
+                            updateCurrentTradingAccount({
+                              ...currentTradingAccount,
+                              accountBalance: Number(e.target.value),
+                            });
+                          }}
+                        />
+                        <Button
+                          style={styles.saveButton}
+                          text={"Save"}
+                          disabled={
+                            !currentTradingAccount?.accountBalance ||
+                            currentTradingAccount?.accountBalance ===
+                              originalTradingAccountDetails?.accountBalance
+                          }
+                          disabledBlock={
+                            !currentTradingAccount?.accountBalance ||
+                            currentTradingAccount?.accountBalance ===
+                              originalTradingAccountDetails?.accountBalance
+                          }
+                          onClick={() => setEditingAccountBalance(false)}
+                        />
+                        <Button
+                          style={styles.saveButton}
+                          text={"Cancel"}
+                          onClick={() => setEditingAccountBalance(false)}
+                        />
+                      </AccountName>
+                    </Else>
+                  </If>
+                </AccountSubtitle>
                 <AccountTradingDaysComplete>
                   {`Eligible Days: ${currentTradingAccount?.currentDayCount ?? "N/A"}/${
                     currentTradingAccount?.minTradingDays ?? "N/A"
@@ -299,7 +366,9 @@ const FundedAccountDetail: React.FunctionComponent<
                       0
                     }
                   >
-                    <PnLWithdrawableText>Withdrawable:</PnLWithdrawableText>
+                    <PnLWithdrawableText>
+                      Post-Payout Buffer:
+                    </PnLWithdrawableText>
                     {currentTradingAccount?.accountBalance -
                       currentTradingAccount?.accountSize -
                       currentTradingAccount?.minBuffer <
