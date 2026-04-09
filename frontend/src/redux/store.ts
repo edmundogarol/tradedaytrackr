@@ -1,3 +1,4 @@
+import { fundedAccountsReducer } from "@pages/FundedAccounts/FundedAccountsState";
 import { journalReducer } from "@pages/Journal/JournalState";
 import { loginReducer } from "@pages/Login/LoginState";
 import { settingsReducer } from "@pages/Settings/SettingsState";
@@ -15,6 +16,7 @@ export default configureStore({
     login: loginReducer,
     journal: journalReducer,
     settings: settingsReducer,
+    fundedAccounts: fundedAccountsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware(defaultMiddlewareConfig),

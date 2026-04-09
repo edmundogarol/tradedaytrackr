@@ -6,7 +6,6 @@ import GlassTile from "@components/GlassTile/GlassTile";
 import { GlassTileChildrenWrapper } from "@components/GlassTile/GlassTileStyledComponents";
 import { If } from "@components/If/If";
 import Input from "@components/Input/Input";
-import Loading from "@components/Loading/Loading";
 import LockIcon from "@mui/icons-material/Lock";
 import useLoginDispatch from "@pages/Login/hooks/useLoginDispatch";
 import useLoginState from "@pages/Login/hooks/useLoginState";
@@ -138,8 +137,9 @@ const Password: React.FunctionComponent = () => {
                 <FormError error={userDetailsErrors.password_error} />
               </If>
               <Button
+                loading={loading}
                 disabledBlock={!passwordFieldsAreDirty}
-                text={loading ? <Loading size={20} /> : "Update Password"}
+                text={"Update Password"}
                 onClick={() => {
                   if (!passwordFieldsAreDirty) {
                     return;

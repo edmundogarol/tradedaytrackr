@@ -16,7 +16,7 @@ export interface SettingsState {
 export const initialState: SettingsState = {
   selectedAccountTemplate: {
     id: 0,
-    name: undefined,
+    name: "",
     firm: undefined,
     image: undefined,
     accountSize: undefined,
@@ -114,6 +114,7 @@ export const {
   updateAccountTemplatesErrors,
   updateAddTagErrors,
 } = settingsSlice.actions;
+
 export const settingsReducer = settingsSlice.reducer;
 
 export default settingsSlice.reducer;

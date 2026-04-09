@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from backend.djangoapi.models import TradingDay
 from backend.djangoapi.models.trading_account import TradingAccount
+from backend.djangoapi.services.trades.trade_day import compute_trading_day_fields
 
 
 class TradingDaySerializer(serializers.ModelSerializer):
@@ -21,8 +22,11 @@ class TradingDaySerializer(serializers.ModelSerializer):
             "account_id",
             "day",
             "date",
+            "pnl",
+            "is_valid_day",
             "created_at",
         ]
+        read_only_fields = ["day", "is_valid_day"]
 
     def get_account(self, obj):
         return {
@@ -55,3 +59,15 @@ class TradingDaySerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(f"Next day must be {expected_day}")
 
         return data
+
+    def create(self, validated_data):
+        account = validated_data["account"]
+        pnl = validated_data.get("pnl", 0)
+        date = validated_data["date"]
+
+        computed = compute_trading_day_fields(account, date, pnl)
+
+        validated_data["is_valid_day"] = computed["is_valid_day"]
+        validated_data["day_number"] = computed["day_number"]
+
+        return super().create(validated_data)

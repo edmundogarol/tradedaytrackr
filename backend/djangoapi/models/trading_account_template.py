@@ -74,6 +74,16 @@ class TradingAccountTemplate(models.Model):
             )
         ]
 
+    @property
+    def display_image(self):
+        if self.image:
+            return self.image.url
+
+        if self.icon:
+            return f"/images/firms/{self.icon}.png"
+
+        return "/static/icons/default.png"
+
     def delete(self, *args, **kwargs):
         if self.image:
             logger.info(

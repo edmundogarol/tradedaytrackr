@@ -1,24 +1,26 @@
-import React from "react";
-import Page from "@components/Page/Page";
-import { useSearchParams } from "react-router";
-import GlassTile from "@components/GlassTile/GlassTile";
-import { firmLogoSrc, imageSrc } from "@utils/utils";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import { AccountTradingDaysComplete } from "@pages/EvaluationAccounts/EvaluationAccountsStyledComponents";
-import InfoPopout from "@components/InfoPopout/InfoPopout";
-import WifiProtectedSetupIcon from "@mui/icons-material/WifiProtectedSetup";
-import Input from "@components/Input/Input";
-import { Else, If } from "@components/If/If";
 import Button from "@components/Button/Button";
-import SelectWrapper from "@components/Select/SelectWrapper";
 import Gap from "@components/Gap/Gap";
-import moment from "moment";
+import GlassTile from "@components/GlassTile/GlassTile";
 import Icon from "@components/Icon/Icon";
 import { IconTypeEnum } from "@components/Icon/IconInterfaces";
-import { color } from "@styles/colors";
-import useReactNavigation from "@navigation/hooks/useReactNavigation";
+import { Else, If } from "@components/If/If";
+import InfoPopout from "@components/InfoPopout/InfoPopout";
+import Input from "@components/Input/Input";
+import Page from "@components/Page/Page";
+import SelectWrapper from "@components/Select/SelectWrapper";
 import { PageEnum } from "@interfaces/NavigationTypes";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import EditIcon from "@mui/icons-material/Edit";
+import WifiProtectedSetupIcon from "@mui/icons-material/WifiProtectedSetup";
+import useReactNavigation from "@navigation/hooks/useReactNavigation";
+import { AccountTradingDaysComplete } from "@pages/EvaluationAccounts/EvaluationAccountsStyledComponents";
+import { color } from "@styles/colors";
+import { BorderLinearProgress } from "@styles/globalStyledComponents";
+import { firmLogoSrc, imageSrc } from "@utils/utils";
+import moment from "moment";
+import React from "react";
+import { useSearchParams } from "react-router";
+import AddTradingDayModal from "../AddTradingDayModal/AddTradingDayModal";
 import {
   AccountImage,
   BufferAmount,
@@ -32,7 +34,7 @@ import {
   PnLWithdrawableText,
   Title,
 } from "../FundedAccountsStyledComponents";
-import useGetFundedAccountsList from "../hooks/useGetFundedAccountsList";
+import useGetFundedAccountsList from "../hooks/useGetFundedAccountsListMock";
 import {
   AccountDetailContainer,
   AccountName,
@@ -61,8 +63,6 @@ import {
   TradingDaysHeaderContainer,
 } from "./FundedAccountDetailStyledComponents";
 import styles from "./FundedAccountDetailStyles";
-import { BorderLinearProgress } from "../FundedAccountsListItem";
-import AddTradingDayModal from "../AddTradingDayModal/AddTradingDayModal";
 interface FundedAccountDetailProps {}
 
 const FundedAccountDetail: React.FunctionComponent<
@@ -178,7 +178,9 @@ const FundedAccountDetail: React.FunctionComponent<
                           setEditingAccountType(false);
                         }}
                         style={styles.selectStyle}
-                        items={accountTemplateList}
+                        items={accountTemplateList.map((template) => {
+                          return { name: template, value: template };
+                        })}
                       />
                     </Else>
                   </If>

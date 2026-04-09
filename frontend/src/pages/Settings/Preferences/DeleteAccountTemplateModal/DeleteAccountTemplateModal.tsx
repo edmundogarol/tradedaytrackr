@@ -2,7 +2,6 @@ import Button from "@components/Button/Button";
 import FormError from "@components/Error/FormError/FormError";
 import Gap from "@components/Gap/Gap";
 import { If } from "@components/If/If";
-import Loading from "@components/Loading/Loading";
 import ModalWrapper from "@components/Modal/Modal";
 import { color } from "@styles/colors";
 import {
@@ -67,7 +66,8 @@ const DeleteAccountTemplateModal: React.FunctionComponent<
       </SectionText>
       <Gap level={2} />
       <Button
-        text={deleteLoading ? <Loading size={15} /> : "Delete"}
+        loading={deleteLoading}
+        text={"Delete"}
         style={{ backgroundColor: color("SystemRed"), color: "white" }}
         onClick={() => {
           deleteAccountTemplate(selectedAccountTemplate?.id.toString());

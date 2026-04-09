@@ -180,7 +180,16 @@ const AddAccountTemplateModal: React.FunctionComponent<
                 ? "Evaluation Account"
                 : "Funded Account"
             }
-            items={["Funded Account", "Evaluation Account"]}
+            items={[
+              {
+                name: "Evaluation Account",
+                value: "Evaluation Account",
+              },
+              {
+                name: "Funded Account",
+                value: "Funded Account",
+              },
+            ]}
             onSelect={(val) => {
               updateSelectedAccountTemplate({
                 ...selectedAccountTemplate,

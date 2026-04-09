@@ -98,7 +98,6 @@ const Input: React.FC<InputWrapperProps> = ({
         break;
 
       case "Enter":
-        console.log({ arrowIndex });
         if (arrowIndex >= 0) {
           e.preventDefault();
           selectSuggestion(filteredSuggestions[arrowIndex].description);

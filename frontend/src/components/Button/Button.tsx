@@ -1,16 +1,16 @@
-import React from "react";
-import { type IconGlyph, IconTypeEnum } from "@components/Icon/IconInterfaces";
 import Icon from "@components/Icon/Icon";
+import { type IconGlyph, IconTypeEnum } from "@components/Icon/IconInterfaces";
+import Loading from "@components/Loading/Loading";
+import React from "react";
+import { ButtonType } from "./ButtonInterfaces";
 import {
   ButtonText,
   HuggingOutlinedPressableWrapper,
   OutlinedPressableWrapper,
   PressableWrapper,
 } from "./ButtonStyledComponents";
-import { ButtonType } from "./ButtonInterfaces";
 
-export interface ButtonWrapperProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonWrapperProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   tdtrButtonType?: ButtonType;
   text?: string | React.ReactElement;
   loading?: boolean;
@@ -70,7 +70,7 @@ const Button: React.FunctionComponent<ButtonWrapperProps> = ({
           Array.isArray(textStyle) ? Object.assign({}, ...textStyle) : textStyle
         }
       >
-        {text}
+        {loading ? <Loading size={20} /> : text}
       </ButtonText>
       {iconRight ? (
         <Icon style={iconStyle} name={iconRight} type={iconType} />

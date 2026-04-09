@@ -9,6 +9,7 @@ from backend.djangoapi.serializers.trading_account import TradingAccountSerializ
 class TradingAccountViewSet(ModelViewSet):
     serializer_class = TradingAccountSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = None
 
     def get_queryset(self):
         return (

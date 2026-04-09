@@ -10,7 +10,6 @@ import GlassTile from "@components/GlassTile/GlassTile";
 import { GlassTileChildrenWrapper } from "@components/GlassTile/GlassTileStyledComponents";
 import { If } from "@components/If/If";
 import Input from "@components/Input/Input";
-import Loading from "@components/Loading/Loading";
 import type { User } from "@interfaces/CustomTypes";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import DoneOutlineIcon from "@mui/icons-material/Done";
@@ -177,8 +176,9 @@ const UserDetails: React.FunctionComponent = () => {
               <FormSuccess detail={"User details updated successfully!"} />
             </If>
             <Button
+              loading={loading}
               disabledBlock={!userFieldsAreDirty}
-              text={loading ? <Loading size={20} /> : "Save Changes"}
+              text={"Save Changes"}
               onClick={() => {
                 if (!userFieldsAreDirty) {
                   return;

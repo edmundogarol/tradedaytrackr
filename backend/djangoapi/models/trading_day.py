@@ -7,15 +7,16 @@ class TradingDay(models.Model):
         on_delete=models.CASCADE,
         related_name="trading_days",
     )
-    day_number = models.IntegerField()
     date = models.DateField()
+    pnl = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    day_number = models.IntegerField()  # derived
+    is_valid_day = models.BooleanField(default=False)  # derived
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(
-                fields=["account", "day_number"], name="unique_day_number_per_account"
-            ),
             models.UniqueConstraint(
                 fields=["account", "date"], name="unique_date_per_account"
             ),

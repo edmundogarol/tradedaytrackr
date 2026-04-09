@@ -1,15 +1,13 @@
 import GlassTile from "@components/GlassTile/GlassTile";
-import LinearProgress, {
-  linearProgressClasses,
-} from "@mui/material/LinearProgress";
-import { firmLogoSrc, imageSrc } from "@utils/utils";
+import { formatter } from "@utils/utils";
 import React from "react";
-import styled from "styled-components";
 
 import AlertPopout from "@components/Alert/AlertPopout";
 import InfoPopout from "@components/InfoPopout/InfoPopout";
+import type { TradingAccount } from "@interfaces/CustomTypes";
 import { PageEnum } from "@interfaces/NavigationTypes";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
+import { BorderLinearProgress } from "@styles/globalStyledComponents";
 import {
   AccountImage,
   AccountSubtitle,
@@ -34,85 +32,32 @@ import {
 import styles from "./FundedAccountsStyles";
 
 export interface FundedAccountsListItemDetails {
-  id: number;
-  accountName: string;
-  accountSize: number;
-  accountBalance: number;
-  accountType: {
-    id: number;
-    name: string;
-  };
-  firm: string;
-  firmMinDays?: number;
-  firmMinDayPnL?: number;
-  currentDayCount: number;
-  dayValues: {
-    value: number;
-    day: string;
-    image?: string;
-    id?: number;
-    time?: string;
-    date?: string;
-  }[];
-  noGlow: boolean;
-  noShine: boolean;
-  minBuffer: number;
-  bufferPercent: number;
+  account: TradingAccount;
   openAddTradingDayModal?: (open: boolean) => void;
 }
-
-export const BorderLinearProgress = styled(LinearProgress)<{
-  $bufferPercent: number;
-}>(({ $bufferPercent }) => ({
-  height: 10,
-  borderRadius: 5,
-  [`&.${linearProgressClasses.colorPrimary}`]: {
-    backgroundColor: "#404f5e",
-  },
-  [`& .${linearProgressClasses.bar}`]: {
-    borderRadius: 5,
-    backgroundColor:
-      $bufferPercent > 70
-        ? "#86c169"
-        : $bufferPercent > 40
-          ? "#cf943b"
-          : "#d56060",
-  },
-}));
 
 const FundedAccountsListItem: React.FunctionComponent<
   FundedAccountsListItemDetails
 > = ({
-  id,
-  accountName,
-  accountSize,
-  accountBalance,
-  firm,
-  firmMinDays,
-  currentDayCount,
-  dayValues,
-  noGlow,
-  noShine,
-  minBuffer,
-  bufferPercent,
+  account: {
+    id,
+    name,
+    accountBalance,
+    bufferPercent,
+    accountSize,
+    image,
+    minTradingDays,
+    minBuffer,
+    dayValues,
+    currentDayCount,
+  },
   openAddTradingDayModal,
 }) => {
   const navigation = useReactNavigation();
   const [alertNoRecord, setAlertNoRecord] = React.useState(false);
-  const formatter = Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  });
 
   return (
-    <GlassTile
-      positive
-      featureTile
-      minHeight={70}
-      noGlow={noGlow}
-      noShine={noShine}
-    >
+    <GlassTile positive featureTile minHeight={70} noGlow noShine>
       <AlertPopout
         open={alertNoRecord}
         message="This trade has no journal entry. Please add or link it to a journal entry to view details."
@@ -120,7 +65,7 @@ const FundedAccountsListItem: React.FunctionComponent<
         hideDuration={5000}
       />
       <ListItemContainer>
-        <AccountImage src={imageSrc(firmLogoSrc(firm))} />
+        <AccountImage src={image} />
         <AccountTitleContainer>
           <AccountTitle
             onClick={() =>
@@ -129,7 +74,7 @@ const FundedAccountsListItem: React.FunctionComponent<
               })
             }
           >
-            {accountName}
+            {name}
           </AccountTitle>
           <AccountSubtitle>
             Balance:
@@ -139,10 +84,10 @@ const FundedAccountsListItem: React.FunctionComponent<
           </AccountSubtitle>
           <AccountTradingDaysComplete>
             {`Eligible Days: ${currentDayCount ?? "N/A"}/${
-              firmMinDays ?? "N/A"
+              minTradingDays ?? "N/A"
             }`}
             <InfoPopout
-              infoDescription={`This account requires a minimum of ${firmMinDays} eligible trading days.`}
+              infoDescription={`This account requires a minimum of ${minTradingDays} eligible trading days.`}
             />
           </AccountTradingDaysComplete>
         </AccountTitleContainer>
@@ -150,17 +95,17 @@ const FundedAccountsListItem: React.FunctionComponent<
           {dayValues.map((dayValue, idx) => (
             <DaysItem key={idx} onClick={() => setAlertNoRecord(true)}>
               <GlassTile
-                positive={dayValue.value > 0}
+                positive={dayValue.pnl > 0}
                 featureTile
                 minHeight={10}
                 minWidth={10}
                 padding={7}
               >
-                <DaysItemValue $positive={dayValue.value > 0}>
-                  {`${dayValue.value > 0 ? "+" : ""}${dayValue.value}`}
+                <DaysItemValue $positive={dayValue.pnl > 0}>
+                  {`${dayValue.pnl > 0 ? "+" : ""}${dayValue.pnl}`}
                 </DaysItemValue>
               </GlassTile>
-              <DaysItemSubtitle>{dayValue.day}</DaysItemSubtitle>
+              <DaysItemSubtitle>{dayValue.dayNumber}</DaysItemSubtitle>
             </DaysItem>
           ))}
           <DaysItem>
@@ -190,9 +135,9 @@ const FundedAccountsListItem: React.FunctionComponent<
             <BufferAmountHighlighted $bufferPercent={bufferPercent}>
               {formatter.format(accountBalance - accountSize)}
             </BufferAmountHighlighted>
-            /<BufferAmount>{formatter.format(minBuffer)}</BufferAmount>
+            /<BufferAmount>{formatter.format(Number(minBuffer))}</BufferAmount>
             <InfoPopout
-              infoDescription={`This account requires a minimum buffer of $${minBuffer} before a payout can be requested.`}
+              infoDescription={`This account requires a minimum buffer of $${Number(minBuffer).toFixed(0)} before a payout can be requested.`}
             />
           </BufferText>
           <BorderLinearProgress

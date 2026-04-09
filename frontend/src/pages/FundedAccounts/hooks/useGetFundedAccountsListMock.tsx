@@ -1,6 +1,4 @@
-import type { FundedAccountsListItemDetails } from "../FundedAccountsListItem";
-
-export const useGetFundedAccountsList = (): FundedAccountsListItemDetails[] => {
+export const useGetFundedAccountsList = (): any => {
   return [
     {
       id: 1,
@@ -36,8 +34,6 @@ export const useGetFundedAccountsList = (): FundedAccountsListItemDetails[] => {
           day: "D5",
         },
       ],
-      noGlow: true,
-      noShine: true,
       minBuffer: 250,
       bufferPercent: 100,
     },
@@ -76,8 +72,6 @@ export const useGetFundedAccountsList = (): FundedAccountsListItemDetails[] => {
           day: "D5",
         },
       ],
-      noGlow: true,
-      noShine: true,
       minBuffer: 250,
       bufferPercent: 100,
     },
@@ -115,8 +109,6 @@ export const useGetFundedAccountsList = (): FundedAccountsListItemDetails[] => {
           day: "D5",
         },
       ],
-      noGlow: true,
-      noShine: true,
       minBuffer: 2600,
       bufferPercent: 55,
     },
@@ -154,8 +146,6 @@ export const useGetFundedAccountsList = (): FundedAccountsListItemDetails[] => {
           day: "D5",
         },
       ],
-      noGlow: true,
-      noShine: true,
       minBuffer: 2500,
       bufferPercent: 75,
     },
@@ -193,8 +183,6 @@ export const useGetFundedAccountsList = (): FundedAccountsListItemDetails[] => {
           day: "D5",
         },
       ],
-      noGlow: true,
-      noShine: true,
       minBuffer: 2000,
       bufferPercent: 5,
     },

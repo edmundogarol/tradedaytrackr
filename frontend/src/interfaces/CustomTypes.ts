@@ -41,9 +41,9 @@ export interface UserPasswordUpdateData {
 
 export interface AccountTemplate {
   id: number;
-  name?: string;
+  name: string;
   firm?: string;
-  accountSize?: number;
+  accountSize: number;
   isEval: boolean;
   icon?: string;
   image?: string;
@@ -58,12 +58,32 @@ export interface AccountTemplate {
   allowablePayoutRequest?: number;
 }
 
+export interface TradingAccount extends AccountTemplate {
+  accountBalance: number;
+  template: {
+    id: number;
+    name: string;
+  };
+  bufferPercent: number;
+  minBuffer: number;
+  dayValues: TradingDay[];
+  currentDayCount: number;
+}
+
 export interface Trade {
   id: number;
   date: string;
   pnl: number;
   accountName: string;
   accountId: number;
+}
+
+export interface TradingDay {
+  id: number;
+  date: string;
+  account: number;
+  pnl: number;
+  dayNumber?: number;
 }
 
 export interface Tag {

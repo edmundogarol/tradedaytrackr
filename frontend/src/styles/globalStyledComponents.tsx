@@ -1,4 +1,7 @@
-import styled from "styled-components";
+import LinearProgress, {
+  linearProgressClasses,
+} from "@mui/material/LinearProgress";
+import styled, { css } from "styled-components";
 
 export const Label = styled.label`
   font-family: "Arial", sans-serif;
@@ -80,19 +83,38 @@ export const TableField = styled.div<{ $flexSize?: number; $src?: string }>`
   align-items: center;
   text-transform: capitalize;
 
-  ${({ $src }): string =>
+  ${({ $src }): any =>
     $src
-      ? `
-    &::before {
-      content: '';
-      display: block;
-      width: 40px;
-      height: 40px;
-      background-image: url(${$src});
-      background-size: cover;
-      background-position: center;
-      border-radius: 4px;
-    }
-  `
-      : ""}
+      ? css`
+          &::before {
+            content: "";
+            display: block;
+            width: 40px;
+            height: 40px;
+            background-image: url(${$src});
+            background-size: cover;
+            background-position: center;
+            border-radius: 4px;
+          }
+        `
+      : css``}
 `;
+
+export const BorderLinearProgress = styled(LinearProgress)<{
+  $bufferPercent: number;
+}>(({ $bufferPercent }) => ({
+  height: 10,
+  borderRadius: 5,
+  [`&.${linearProgressClasses.colorPrimary}`]: {
+    backgroundColor: "#404f5e",
+  },
+  [`& .${linearProgressClasses.bar}`]: {
+    borderRadius: 5,
+    backgroundColor:
+      $bufferPercent > 70
+        ? "#86c169"
+        : $bufferPercent > 40
+          ? "#cf943b"
+          : "#d56060",
+  },
+}));

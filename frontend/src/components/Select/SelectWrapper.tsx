@@ -9,11 +9,12 @@ import {
 import styles from "./SelectWrapperStyles";
 
 interface SelectWrapperProps {
-  items?: string[];
+  items: { name: string; value: string | number }[];
   label?: string;
   style?: React.CSSProperties;
   onSelect?: (selected: string) => void;
   defaultValue?: string;
+  selectedValue?: string | number;
 }
 
 const SelectWrapper: React.FunctionComponent<SelectWrapperProps> = ({
@@ -22,6 +23,7 @@ const SelectWrapper: React.FunctionComponent<SelectWrapperProps> = ({
   style,
   onSelect,
   defaultValue,
+  selectedValue,
 }) => {
   return (
     <>
@@ -30,12 +32,13 @@ const SelectWrapper: React.FunctionComponent<SelectWrapperProps> = ({
       </If>
       <SelectContainer style={style}>
         <Select
+          value={selectedValue}
           onChange={(e) => onSelect && onSelect(e.target.value)}
           defaultValue={defaultValue}
         >
           {items?.map((item, index) => (
-            <option key={index} value={item}>
-              {item}
+            <option key={index} value={item.value}>
+              {item.name}
             </option>
           ))}
         </Select>
