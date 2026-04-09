@@ -28,7 +28,7 @@ const useCreateTradingAccountHandler = (): CreateTradingAccountHandler => {
           data: {
             template_id: templateId,
             account_name: tradingAccount.name,
-            account_balance: tradingAccount.accountBalance,
+            baseline_balance: tradingAccount.accountBalance,
           },
         });
 

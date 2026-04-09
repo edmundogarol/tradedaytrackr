@@ -1,4 +1,4 @@
-import type { AccountTemplate, Tag } from "@interfaces/CustomTypes";
+import type { AccountTemplate, Rule, Tag } from "@interfaces/CustomTypes";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
 
@@ -11,6 +11,7 @@ export interface SettingsState {
   readonly addAccountTemplateErrors?: { [key: string]: any };
   readonly addTagModalOpen?: boolean;
   readonly addTagErrors?: { [key: string]: any };
+  readonly templateRules: Rule[];
 }
 
 export const initialState: SettingsState = {
@@ -19,7 +20,7 @@ export const initialState: SettingsState = {
     name: "",
     firm: undefined,
     image: undefined,
-    accountSize: undefined,
+    accountSize: 0,
     minTradingDays: undefined,
     minBuffer: undefined,
     allowablePayoutRequest: undefined,
@@ -29,6 +30,7 @@ export const initialState: SettingsState = {
     isEval: false,
     profitTarget: undefined,
     consistency: undefined,
+    rules: [],
   },
   selectedTag: {
     id: 0,
@@ -41,6 +43,7 @@ export const initialState: SettingsState = {
   addAccountTemplateErrors: {},
   addTagModalOpen: false,
   addTagErrors: {},
+  templateRules: [],
 };
 
 type UpdateAccountTemplatesAction = PayloadAction<AccountTemplate[]>;
@@ -53,6 +56,7 @@ type UpdateAddAccountTemplateErrorsAction = PayloadAction<{
   [key: string]: any;
 }>;
 type UpdateAddTagErrorsAction = PayloadAction<{ [key: string]: any }>;
+type UpdateTemplateRulesAction = PayloadAction<Rule[]>;
 
 export type SettingsAction =
   | UpdateAccountTemplatesAction
@@ -62,7 +66,8 @@ export type SettingsAction =
   | UpdateAddAccountModalOpenAction
   | UpdateAddTagModalOpenAction
   | UpdateAddAccountTemplateErrorsAction
-  | UpdateAddTagErrorsAction;
+  | UpdateAddTagErrorsAction
+  | UpdateTemplateRulesAction;
 
 export const settingsSlice = createSlice({
   name: "settings",
@@ -101,6 +106,9 @@ export const settingsSlice = createSlice({
     updateAddTagErrors: (state, action: UpdateAddTagErrorsAction) => {
       state.addTagErrors = action.payload;
     },
+    updateTemplateRules: (state, action: UpdateTemplateRulesAction) => {
+      state.templateRules = action.payload;
+    },
   },
 });
 
@@ -113,6 +121,7 @@ export const {
   updateAddTagModalOpen,
   updateAccountTemplatesErrors,
   updateAddTagErrors,
+  updateTemplateRules,
 } = settingsSlice.actions;
 
 export const settingsReducer = settingsSlice.reducer;

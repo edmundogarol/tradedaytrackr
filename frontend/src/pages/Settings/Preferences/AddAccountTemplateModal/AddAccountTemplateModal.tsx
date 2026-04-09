@@ -1,5 +1,6 @@
 import Button from "@components/Button/Button";
 import Carousel from "@components/Carousel/Carousel";
+import DropdownMultiselect from "@components/DropdownMultiselect/DropdownMultiselect";
 import Gap from "@components/Gap/Gap";
 import { Else, If } from "@components/If/If";
 import InfoPopout from "@components/InfoPopout/InfoPopout";
@@ -7,10 +8,11 @@ import Input from "@components/Input/Input";
 import Loading from "@components/Loading/Loading";
 import ModalWrapper from "@components/Modal/Modal";
 import SelectWrapper from "@components/Select/SelectWrapper";
+import type { Rule } from "@interfaces/CustomTypes";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import { color } from "@styles/colors";
 import { BUTTON_WIDTH } from "@styles/constants";
-import { SectionText } from "@styles/globalStyledComponents";
+import { HorizontalSection, SectionText } from "@styles/globalStyledComponents";
 import { decimalStringToInt, firmLogoSrc, imageSrc } from "@utils/utils";
 import React, { useEffect, useRef, useState } from "react";
 import { initialState } from "../../SettingsState";
@@ -24,6 +26,7 @@ import {
   ImagePreviewContainer,
 } from "../PreferencesStyledComponents";
 import useCreateAccountTemplateHandler from "./hooks/useCreateAccountTemplateHandler";
+import useGetTemplateRulesHandler from "./hooks/useGetTemplateRulesHandler";
 import useUpdateAccountTemplateHandler from "./hooks/useUpdateAccountTemplateHandler";
 
 interface AddAccountTemplateModalProps {}
@@ -37,6 +40,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
     updateAccountTemplatesErrors,
   } = useSettingsDispatch();
   const {
+    templateRules,
     selectedAccountTemplate,
     addAccountTemplateModalOpen,
     addAccountTemplateErrors,
@@ -48,6 +52,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
   const [selectedCarouselImage, setSelectedCarouselImage] = useState<
     string | null
   >(null);
+  const { getTemplateRules } = useGetTemplateRulesHandler();
   const { createAccountTemplate, loading } = useCreateAccountTemplateHandler();
   const { updateAccountTemplate, loading: updateLoading } =
     useUpdateAccountTemplateHandler();
@@ -61,10 +66,21 @@ const AddAccountTemplateModal: React.FunctionComponent<
     "alpha",
   ]);
   const editingExistingTemplate = !!selectedAccountTemplate.id;
+  const hasFetched = useRef(false);
 
   useEffect(() => {
     setAccountTemplateImage(null);
   }, [addAccountTemplateModalOpen]);
+
+  useEffect(() => {
+    if (hasFetched.current) return;
+
+    if (templateRules.length === 0) {
+      getTemplateRules();
+    }
+
+    hasFetched.current = true;
+  }, []);
 
   return (
     <ModalWrapper
@@ -233,7 +249,11 @@ const AddAccountTemplateModal: React.FunctionComponent<
           <Input
             positiveOnly
             error={addAccountTemplateErrors?.account_size}
-            value={selectedAccountTemplate.accountSize}
+            value={
+              selectedAccountTemplate.accountSize <= 0
+                ? undefined
+                : selectedAccountTemplate.accountSize
+            }
             onChange={(e) =>
               updateSelectedAccountTemplate({
                 ...selectedAccountTemplate,
@@ -582,6 +602,26 @@ const AddAccountTemplateModal: React.FunctionComponent<
               },
             ]}
           />
+          <Gap level={1} />
+          <HorizontalSection>
+            <DropdownMultiselect
+              selected={selectedAccountTemplate.rules?.map((rule) =>
+                (rule as Rule)?.id?.toString(),
+              )}
+              onSelect={(selected) => {
+                updateSelectedAccountTemplate({
+                  ...selectedAccountTemplate,
+                  rules: selected,
+                });
+              }}
+              items={templateRules.map((rule) => ({
+                name: rule.name,
+                value: rule.id.toString(),
+              }))}
+              title="Propfirm Template Rules"
+            />
+            <InfoPopout infoDescription="Assign any special rules applicable to this propfirm template." />
+          </HorizontalSection>
           <Gap level={1} />
           <Button
             text={

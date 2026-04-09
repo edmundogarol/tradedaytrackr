@@ -1,15 +1,15 @@
-import React, { useEffect } from "react";
+import GlassTile from "@components/GlassTile/GlassTile";
+import { Else, If } from "@components/If/If";
+import { ExpandMore } from "@mui/icons-material";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import Checkbox from "@mui/material/Checkbox";
 import ListItemText from "@mui/material/ListItemText";
-import Button from "@mui/material/Button";
-import GlassTile from "@components/GlassTile/GlassTile";
-import { ExpandMore } from "@mui/icons-material";
-import ClickAwayListener from "@mui/material/ClickAwayListener";
-import { Else, If } from "@components/If/If";
+import React, { useEffect } from "react";
 import {
   BoxContainer,
   CollapseStyled,
@@ -21,11 +21,13 @@ import {
 import styles from "./DropdownMultiselectStyles";
 
 export interface DropdownProps {
-  items: string[];
+  items: { name: string; value: string }[];
   title: string;
   singleSelect?: boolean;
   leftAligned?: boolean;
   icon?: React.ReactNode;
+  onSelect?: (selected: string[]) => void;
+  selected?: string[];
 }
 
 const DropdownMultiselect: React.FunctionComponent<DropdownProps> = ({
@@ -34,10 +36,12 @@ const DropdownMultiselect: React.FunctionComponent<DropdownProps> = ({
   leftAligned = true,
   singleSelect = false,
   icon,
+  onSelect,
+  selected,
 }) => {
   const [collapsed, setCollapsed] = React.useState(true);
 
-  const [checked, setChecked] = React.useState<string[]>([]);
+  const [checked, setChecked] = React.useState<string[]>(selected || []);
 
   const handleToggle = (value: string) => (): void => {
     if (singleSelect) {
@@ -57,6 +61,10 @@ const DropdownMultiselect: React.FunctionComponent<DropdownProps> = ({
     document.addEventListener("keydown", onKeyDown);
     return (): void => document.removeEventListener("keydown", onKeyDown);
   }, []);
+
+  useEffect(() => {
+    onSelect?.(checked);
+  }, [checked]);
 
   return (
     <ClickAwayListener onClickAway={() => setCollapsed(true)}>
@@ -83,23 +91,23 @@ const DropdownMultiselect: React.FunctionComponent<DropdownProps> = ({
           <ListContainer>
             <BoxContainer>
               <List sx={styles.list}>
-                {items.map((value, idx) => {
+                {items.map((item, idx) => {
                   return (
                     <ListItem key={idx} disablePadding>
                       <ListItemButton
                         role={undefined}
-                        onClick={handleToggle(value)}
+                        onClick={handleToggle(item.value)}
                         dense
                       >
                         <ListItemIcon>
                           <Checkbox
                             style={styles.checkbox}
-                            checked={checked.includes(value)}
+                            checked={checked.includes(item.value)}
                             tabIndex={-1}
                             disableRipple
                           />
                         </ListItemIcon>
-                        <ListItemText id={value} primary={value} />
+                        <ListItemText id={item.value} primary={item.name} />
                       </ListItemButton>
                     </ListItem>
                   );

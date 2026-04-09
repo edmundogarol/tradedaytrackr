@@ -40,6 +40,7 @@ const useUpdateAccountTemplateHandler = (): UpdateAccountTemplateHandler => {
         ) {
           formData.append("icon", display_image);
         }
+        appendIfDefined(formData, "rule_ids", accountTemplate.rules);
         appendIfDefined(formData, "name", accountTemplate.name);
         appendIfDefined(formData, "firm", accountTemplate.firm);
         appendIfDefined(formData, "account_size", accountTemplate.accountSize);

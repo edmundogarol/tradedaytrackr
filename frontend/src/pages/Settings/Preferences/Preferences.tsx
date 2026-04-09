@@ -23,8 +23,8 @@ import React, { useEffect, useState } from "react";
 import { initialState } from "../SettingsState";
 import useSettingsDispatch from "../hooks/useSettingsDispatch";
 import useSettingsState from "../hooks/useSettingsState";
-import AddTagModal from "./ AddTagModal/AddTagModal";
 import AddAccountTemplateModal from "./AddAccountTemplateModal/AddAccountTemplateModal";
+import AddTagModal from "./AddTagModal/AddTagModal";
 import DeleteAccountTemplateModal from "./DeleteAccountTemplateModal/DeleteAccountTemplateModal";
 import DeleteTagModal from "./DeleteTagModal/DeleteTagModal";
 import {

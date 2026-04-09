@@ -21,6 +21,13 @@ class TradingAccountSerializer(serializers.ModelSerializer):
         default=0,
     )
 
+    baseline_balance = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        write_only=True,
+        required=False,
+    )
+
     firm = serializers.CharField(source="template.firm", read_only=True)
 
     account_type = serializers.SerializerMethodField()
@@ -68,6 +75,8 @@ class TradingAccountSerializer(serializers.ModelSerializer):
 
     buffer_percent = serializers.SerializerMethodField()
     current_day_count = serializers.SerializerMethodField()
+    post_payout_buffer = serializers.SerializerMethodField()
+    withdrawable_amount = serializers.SerializerMethodField()
 
     class Meta:
         model = TradingAccount
@@ -75,6 +84,7 @@ class TradingAccountSerializer(serializers.ModelSerializer):
             "id",
             "account_name",
             "account_balance",
+            "baseline_balance",
             "buffer_percent",
             "template_id",
             "account_size",
@@ -89,6 +99,8 @@ class TradingAccountSerializer(serializers.ModelSerializer):
             "day_values",
             "current_day_count",
             "allowable_payout_request",
+            "post_payout_buffer",
+            "withdrawable_amount",
         ]
 
     def get_image(self, obj):
@@ -139,6 +151,67 @@ class TradingAccountSerializer(serializers.ModelSerializer):
 
         return max((d for d in day_numbers if d is not None), default=0)
 
+    def get_withdrawable_amount(self, obj):
+        template = obj.template
+        balance = obj.account_balance
+
+        has_static_rule = template.rules.filter(
+            name="MFFU $100 MLL after Payout #1"
+        ).exists()
+
+        # 🔥 STATIC RULE (FIXED)
+        if has_static_rule:
+            floor = 50100
+            cushion = 100
+
+            max_safe = balance - (floor + cushion)
+
+            if max_safe <= 0:
+                return 0
+
+            cap = template.allowable_payout_request or max_safe
+
+            return round(min(max_safe, cap), 2)
+
+        # 🔥 NORMAL LOGIC (unchanged)
+        account_size = template.account_size
+        min_buffer = template.min_buffer or 0
+        cap = template.allowable_payout_request or 0
+
+        profit = balance - account_size
+        available = profit - min_buffer
+
+        if available <= 0:
+            return 0
+
+        return round(min(available, cap), 2)
+
+    def get_post_payout_buffer(self, obj):
+        template = obj.template
+        balance = obj.account_balance
+
+        withdrawable = self.get_withdrawable_amount(obj)
+
+        has_static_rule = template.rules.filter(
+            name="MFFU $100 MLL after Payout #1"
+        ).exists()
+
+        if has_static_rule:
+            floor = 50100
+            post_balance = balance - withdrawable
+
+            buffer_after = post_balance - floor
+
+            return round(max(buffer_after, 0), 2)
+
+        # 🔥 NORMAL
+        account_size = template.account_size
+
+        profit = balance - account_size
+        remaining_profit = profit - withdrawable
+
+        return round(max(remaining_profit, 0), 2)
+
     def validate_account_balance(self, value):
         if value < 0:
             raise serializers.ValidationError("Balance cannot be negative")
@@ -166,3 +239,16 @@ class TradingAccountSerializer(serializers.ModelSerializer):
         if not value.strip():
             raise serializers.ValidationError("Account name cannot be empty")
         return value
+
+    def create(self, validated_data):
+        template = validated_data["template"]
+
+        baseline = validated_data.pop("baseline_balance", template.account_size)
+
+        account = TradingAccount.objects.create(
+            baseline_balance=baseline,
+            account_balance=baseline,
+            **validated_data,
+        )
+
+        return account

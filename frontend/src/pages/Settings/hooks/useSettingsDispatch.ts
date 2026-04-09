@@ -11,6 +11,7 @@ import {
   updateSelectedAccountTemplate,
   updateSelectedTag,
   updateTags,
+  updateTemplateRules,
 } from "../SettingsState";
 
 interface SettingsDispatch {
@@ -22,6 +23,7 @@ interface SettingsDispatch {
   updateAddTagModalOpen(isOpen: boolean): void;
   updateAccountTemplatesErrors(errors: { [key: string]: any }): void;
   updateAddTagErrors(errors: { [key: string]: any }): void;
+  updateTemplateRules(templateRules: any[]): void;
 }
 
 export const useSettingsDispatch = (): SettingsDispatch => {
@@ -50,6 +52,9 @@ export const useSettingsDispatch = (): SettingsDispatch => {
     },
     updateAddTagErrors(errors: { [key: string]: any }): void {
       dispatch(updateAddTagErrors(errors));
+    },
+    updateTemplateRules(templateRules: any[]): void {
+      dispatch(updateTemplateRules(templateRules));
     },
   };
 };

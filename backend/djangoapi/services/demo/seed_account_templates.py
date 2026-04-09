@@ -46,7 +46,7 @@ def seed_demo_account_templates(user):
             "min_day_pnl": "150.00",
             "max_drawdown": "2000.00",
             "consistency": "0.00",
-            "allowable_payout_request": "500",
+            "allowable_payout_request": "250",
         },
     ]
 

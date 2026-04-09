@@ -56,10 +56,12 @@ export interface AccountTemplate {
   maxDrawdown?: number;
   consistency?: number;
   allowablePayoutRequest?: number;
+  rules?: Rule[] | string[];
 }
 
 export interface TradingAccount extends AccountTemplate {
   accountBalance: number;
+  baseline_balance: number;
   accountType: {
     id: number;
     name: string;
@@ -70,6 +72,8 @@ export interface TradingAccount extends AccountTemplate {
   dayValues: TradingDay[];
   currentDayCount: number;
   allowablePayoutRequest: number;
+  postPayoutBuffer: number;
+  withdrawableAmount: number;
 }
 
 export interface Trade {
@@ -92,4 +96,11 @@ export interface Tag {
   id: number;
   name: string;
   uses: number;
+}
+
+export interface Rule {
+  name: string;
+  id: number;
+  rule_type: string;
+  description: string;
 }
