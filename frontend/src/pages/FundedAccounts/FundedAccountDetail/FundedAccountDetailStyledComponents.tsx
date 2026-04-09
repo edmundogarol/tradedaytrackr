@@ -18,11 +18,12 @@ export const AccountNameContainer = styled.div`
   flex-wrap: wrap;
 `;
 
-export const AccountName = styled.p`
+export const AccountName = styled.div`
   margin: unset;
   font-weight: 400;
   align-items: center;
   display: flex;
+  flex: 3;
 `;
 
 export const AccountDetailContainer = styled.div`
@@ -56,7 +57,7 @@ export const ListHeaders = styled.div`
 `;
 
 export const BufferHeader = styled.div`
-  flex: 1.6;
+  flex: 1.3;
   display: flex;
   justify-content: center;
   @media (max-width: 799px) {
@@ -65,7 +66,7 @@ export const BufferHeader = styled.div`
 `;
 
 export const PnLHeader = styled.div`
-  flex: 1;
+  flex: 1.2;
   display: flex;
   justify-content: center;
   @media (max-width: 799px) {
@@ -206,4 +207,23 @@ export const TradingDaysHeaderContainer = styled.div`
 export const EditDeleteContainer = styled.div`
   display: flex;
   padding: 10px;
+`;
+
+export const SelectButtonWrapper = styled.div`
+  display: flex;
+  gap: 10px;
+  align-items: center;
+`;
+
+export const AccountNameDeleteContainer = styled.div`
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+
+  svg {
+    &:hover {
+      cursor: pointer;
+      opacity: 0.8;
+    }
+  }
 `;

@@ -60,9 +60,10 @@ export interface AccountTemplate {
 
 export interface TradingAccount extends AccountTemplate {
   accountBalance: number;
-  template: {
+  accountType: {
     id: number;
     name: string;
+    isEval: boolean;
   };
   bufferPercent: number;
   minBuffer: number;

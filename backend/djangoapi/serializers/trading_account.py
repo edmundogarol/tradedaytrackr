@@ -93,17 +93,29 @@ class TradingAccountSerializer(serializers.ModelSerializer):
 
     def get_image(self, obj):
         request = self.context.get("request")
-        display_image = obj.template.display_image
 
-        if request and display_image.startswith("/"):
+        url = None
+
+        if obj.template and obj.template.image:
+            url = obj.template.image.url
+
+        elif obj.template and obj.template.icon:
+            url = f"/images/firms/{obj.template.icon}.png"
+
+        else:
+            url = "/static/icons/default.png"
+
+        if request and url.startswith("/"):
+            absolute_url = request.build_absolute_uri(url)
+
             if "DEVENV" in os.environ:
-                return request.build_absolute_uri(display_image).replace(
+                return absolute_url.replace(
                     "http://localhost:8000", "http://localhost:3000"
                 )
 
-            return request.build_absolute_uri(display_image)
+            return absolute_url
 
-        return display_image
+        return url
 
     def get_account_type(self, obj):
         return {

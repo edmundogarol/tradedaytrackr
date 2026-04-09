@@ -115,9 +115,13 @@ export const ListItemContainer = styled.div`
   gap: 10px;
 `;
 
-export const AccountImage = styled.img`
+export const AccountImage = styled.div<{ $image: string }>`
   height: 40px;
   width: 40px;
+  background-image: url(${(props): string => props.$image});
+  background-size: cover;
+  background-position: center;
+  border-radius: 50%;
 `;
 
 export const AccountTitleContainer = styled.div`

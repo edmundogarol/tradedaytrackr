@@ -28,7 +28,7 @@ const useUpdateTradingAccountHandler = (): UpdateTradingAccountHandler => {
             name: tradingAccount.name,
             account_balance: tradingAccount.accountBalance,
           },
-          url: `${environmentConfig.HOST}/api/trading-account-templates/${tradingAccount.id}/`,
+          url: `${environmentConfig.HOST}/api/trading-accounts/${tradingAccount.id}/`,
         });
 
         if (!!data && data.id) {

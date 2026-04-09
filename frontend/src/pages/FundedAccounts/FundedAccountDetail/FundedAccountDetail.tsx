@@ -1,3 +1,4 @@
+import AlertPopout from "@components/Alert/AlertPopout";
 import Button from "@components/Button/Button";
 import Gap from "@components/Gap/Gap";
 import GlassTile from "@components/GlassTile/GlassTile";
@@ -8,17 +9,20 @@ import InfoPopout from "@components/InfoPopout/InfoPopout";
 import Input from "@components/Input/Input";
 import Page from "@components/Page/Page";
 import SelectWrapper from "@components/Select/SelectWrapper";
+import type { TradingAccount } from "@interfaces/CustomTypes";
 import { PageEnum } from "@interfaces/NavigationTypes";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
 import WifiProtectedSetupIcon from "@mui/icons-material/WifiProtectedSetup";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
 import { AccountTradingDaysComplete } from "@pages/EvaluationAccounts/EvaluationAccountsStyledComponents";
+import useGetFundedAccountTemplates from "@pages/Settings/hooks/useGetFundedAccountTemplates";
+import useGetAccountTemplatesHandler from "@pages/Settings/Preferences/hooks/useGetAccountTemplatesHandler";
 import { color } from "@styles/colors";
 import { BorderLinearProgress } from "@styles/globalStyledComponents";
-import { firmLogoSrc, imageSrc } from "@utils/utils";
+import { formatter } from "@utils/utils";
 import moment from "moment";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import AddTradingDayModal from "../AddTradingDayModal/AddTradingDayModal";
 import {
@@ -34,11 +38,14 @@ import {
   PnLWithdrawableText,
   Title,
 } from "../FundedAccountsStyledComponents";
-import useGetFundedAccountsList from "../hooks/useGetFundedAccountsListMock";
+import useFundedAccountsDispatch from "../hooks/useFundedAccountsDispatch";
+import useFundedAccountsState from "../hooks/useFundedAccountsState";
+import useGetTradingAccountsHandler from "../hooks/useGetTradingAccountsHandler";
 import {
   AccountDetailContainer,
   AccountName,
   AccountNameContainer,
+  AccountNameDeleteContainer,
   AccountPerformanceContainer,
   AccountType,
   BufferHeader,
@@ -54,6 +61,7 @@ import {
   PnL,
   PnLHeader,
   PreviewDayValueContainer,
+  SelectButtonWrapper,
   Time,
   TradeDay,
   TradeJournalPnL,
@@ -68,50 +76,57 @@ interface FundedAccountDetailProps {}
 const FundedAccountDetail: React.FunctionComponent<
   FundedAccountDetailProps
 > = () => {
-  const [accountNameTemp, setAccountNameTemp] = React.useState<string>(
-    "MFFUSFCR72334300-232323231",
-  );
-  const [editingAccountName, setEditingAccountName] =
-    React.useState<boolean>(false);
-  const [editingAccountType, setEditingAccountType] =
-    React.useState<boolean>(false);
+  const { currentTradingAccount, tradingAccounts, createTradingAccountErrors } =
+    useFundedAccountsState();
+  const { updateCurrentTradingAccount } = useFundedAccountsDispatch();
   let [searchParams] = useSearchParams();
-  const [addTradingDayOpen, setAddTradingDayOpen] =
-    React.useState<boolean>(false);
-  const [payoutRecord, setPayoutRecord] = React.useState<boolean>(false);
+  const accountId = searchParams.get("id");
+  const [originalTradingAccountDetails, setOriginalTradingAccountDetails] =
+    useState<TradingAccount | null>(null);
+  const [editingAccountName, setEditingAccountName] = useState<boolean>(false);
+  const [editingAccountType, setEditingAccountType] = useState<boolean>(false);
+  const [addTradingDayOpen, setAddTradingDayOpen] = useState<boolean>(false);
+  const [payoutRecord, setPayoutRecord] = useState<boolean>(false);
   const navigation = useReactNavigation();
+  const accountTemplateList = useGetFundedAccountTemplates();
+  const { getTradingAccounts } = useGetTradingAccountsHandler();
+  const { getAccountTemplates } = useGetAccountTemplatesHandler();
 
-  const {
-    id,
-    accountName,
-    accountSize,
-    accountBalance,
-    accountType: { name: accountTypeName },
-    firm,
-    firmMinDays,
-    firmMinDayPnL,
-    currentDayCount,
-    dayValues,
-    noGlow,
-    noShine,
-    minBuffer,
-    bufferPercent,
-  } = useGetFundedAccountsList()[0];
-  const accountTemplateList = [
-    "MFFU 50k Flex",
-    "MFFU 50k Rapid",
-    "Apex 50k",
-    "Bulenox 50k",
-    "Alpha Futures Zero 50k",
-  ];
-  const formatter = Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  });
+  useEffect(() => {
+    if (tradingAccounts.length === 0) {
+      getTradingAccounts();
+      return;
+    }
+    if (accountTemplateList.length === 0) {
+      getAccountTemplates();
+      return;
+    }
+  }, []);
+
+  useEffect(() => {
+    const selectedAccount = tradingAccounts.find(
+      (account) => account.id === Number(accountId),
+    );
+    if (accountId && selectedAccount) {
+      updateCurrentTradingAccount(selectedAccount);
+      setOriginalTradingAccountDetails(selectedAccount);
+    }
+  }, [tradingAccounts, accountId]);
 
   return (
     <Page topBarShowMenu={true}>
+      <AlertPopout
+        hideDuration={4000}
+        message={createTradingAccountErrors?.error}
+        open={!!createTradingAccountErrors?.error}
+        setPopoutOpen={() => {}}
+      />
+      <AlertPopout
+        hideDuration={4000}
+        message={createTradingAccountErrors?.detail}
+        open={!!createTradingAccountErrors?.detail}
+        setPopoutOpen={() => {}}
+      />
       <AddTradingDayModal
         modalOpen={addTradingDayOpen}
         setModalOpen={setAddTradingDayOpen}
@@ -127,16 +142,26 @@ const FundedAccountDetail: React.FunctionComponent<
         <GlassTile featureTile minHeight={70} noGlow={true} noShine={false}>
           <HeaderContainer>
             <AccountNameContainer>
-              <AccountImage src={imageSrc(firmLogoSrc(firm))} />
+              <AccountImage $image={currentTradingAccount?.image || ""} />
               <AccountDetailContainer>
                 <If condition={!editingAccountName}>
-                  <AccountName>
-                    {accountNameTemp}
-                    <EditIcon
-                      style={styles.editIcon}
-                      onClick={() => setEditingAccountName(true)}
+                  <AccountNameDeleteContainer>
+                    <AccountName>
+                      {currentTradingAccount?.name}
+                      <EditIcon
+                        style={styles.editIcon}
+                        onClick={() => setEditingAccountName(true)}
+                      />
+                    </AccountName>
+                    <DeleteOutlineIcon
+                      style={{
+                        height: 20,
+                        display: "flex",
+                        alignContent: "center",
+                      }}
+                      onClick={() => alert("delete account")}
                     />
-                  </AccountName>
+                  </AccountNameDeleteContainer>
                   <Else>
                     <AccountName>
                       <Input
@@ -149,48 +174,76 @@ const FundedAccountDetail: React.FunctionComponent<
                             setEditingAccountName(false);
                           }
                           if (ev.key === "Escape") {
-                            setAccountNameTemp(accountName);
                             setEditingAccountName(false);
                           }
                         }}
-                        value={accountNameTemp}
-                        onChange={(e) => setAccountNameTemp(e.target.value)}
+                        value={currentTradingAccount?.name || ""}
+                        onChange={(e) => {
+                          updateCurrentTradingAccount({
+                            ...currentTradingAccount,
+                            name: e.target.value,
+                          });
+                        }}
                       />
                       <Button
                         style={styles.saveButton}
                         text={"Save"}
+                        disabled={
+                          !currentTradingAccount?.name ||
+                          currentTradingAccount?.name ===
+                            originalTradingAccountDetails?.name
+                        }
+                        disabledBlock={
+                          !currentTradingAccount?.name ||
+                          currentTradingAccount?.name ===
+                            originalTradingAccountDetails?.name
+                        }
+                        onClick={() => setEditingAccountName(false)}
+                      />
+                      <Button
+                        style={styles.saveButton}
+                        text={"Cancel"}
                         onClick={() => setEditingAccountName(false)}
                       />
                     </AccountName>
                   </Else>
                 </If>
                 <AccountType>
-                  {`Account Type: ${editingAccountType ? "" : accountTypeName}`}
+                  {`Account Type: ${editingAccountType ? "" : currentTradingAccount?.accountType?.name}`}
                   <If condition={!editingAccountType}>
                     <EditIcon
                       style={styles.subtitleEditIcon}
                       onClick={() => setEditingAccountType(true)}
                     />
                     <Else>
-                      <SelectWrapper
-                        onSelect={(selected) => {
-                          console.log(selected);
-                          setEditingAccountType(false);
-                        }}
-                        style={styles.selectStyle}
-                        items={accountTemplateList.map((template) => {
-                          return { name: template, value: template };
-                        })}
-                      />
+                      <SelectButtonWrapper>
+                        <SelectWrapper
+                          onSelect={(selected) => {
+                            setEditingAccountType(false);
+                          }}
+                          style={styles.selectStyle}
+                          items={accountTemplateList.map((template) => {
+                            return { name: template.name, value: template.id };
+                          })}
+                        />
+                        <Button
+                          style={{
+                            flex: 1,
+                            height: 40,
+                          }}
+                          text={"Cancel"}
+                          onClick={() => setEditingAccountType(false)}
+                        />
+                      </SelectButtonWrapper>
                     </Else>
                   </If>
                 </AccountType>
                 <AccountTradingDaysComplete>
-                  {`Eligible Days: ${currentDayCount ?? "N/A"}/${
-                    firmMinDays ?? "N/A"
+                  {`Eligible Days: ${currentTradingAccount?.currentDayCount ?? "N/A"}/${
+                    currentTradingAccount?.minTradingDays ?? "N/A"
                   }`}
                   <InfoPopout
-                    infoDescription={`This account requires a minimum of ${firmMinDays} eligible trading days.`}
+                    infoDescription={`This account requires a minimum of ${currentTradingAccount?.minTradingDays} eligible trading days.`}
                   />
                 </AccountTradingDaysComplete>
               </AccountDetailContainer>
@@ -198,37 +251,64 @@ const FundedAccountDetail: React.FunctionComponent<
                 <BufferContainer>
                   <BufferText>
                     Min Buffer:
-                    <BufferAmountHighlighted $bufferPercent={bufferPercent}>
-                      {formatter.format(accountBalance - accountSize)}
+                    <BufferAmountHighlighted
+                      $bufferPercent={currentTradingAccount?.bufferPercent}
+                    >
+                      {formatter.format(
+                        currentTradingAccount?.accountBalance -
+                          currentTradingAccount?.accountSize,
+                      )}
                     </BufferAmountHighlighted>
-                    /<BufferAmount>{formatter.format(minBuffer)}</BufferAmount>
+                    /
+                    <BufferAmount>
+                      {formatter.format(currentTradingAccount?.minBuffer)}
+                    </BufferAmount>
                     <InfoPopout
-                      infoDescription={`This account requires a minimum buffer of $${minBuffer} before a payout can be requested.`}
+                      infoDescription={`This account requires a minimum buffer of ${formatter.format(currentTradingAccount?.minBuffer)} before a payout can be requested.`}
                     />
                   </BufferText>
                   <BorderLinearProgress
-                    $bufferPercent={bufferPercent}
+                    $bufferPercent={currentTradingAccount?.bufferPercent}
                     variant="determinate"
-                    value={bufferPercent}
+                    value={currentTradingAccount?.bufferPercent}
                     style={styles.progressBar}
                   />
                 </BufferContainer>
                 <ConsistencyContainer>
-                  <ConsistencyScore>{"50%"}</ConsistencyScore>
+                  <ConsistencyScore>
+                    {currentTradingAccount?.consistency
+                      ? `${currentTradingAccount?.consistency}%`
+                      : "None"}
+                  </ConsistencyScore>
                   <ConsistencyLabel>{"Consistency"}</ConsistencyLabel>
                 </ConsistencyContainer>
                 <PnLContainer>
-                  <PnLValue $bufferPercent={bufferPercent}>
-                    {formatter.format(accountBalance - accountSize)}
+                  <PnLValue
+                    $bufferPercent={currentTradingAccount?.bufferPercent}
+                  >
+                    {formatter.format(
+                      currentTradingAccount?.accountBalance -
+                        currentTradingAccount?.accountSize,
+                    )}
                   </PnLValue>
                   <PnLWithdrawable
-                    $positive={accountBalance - accountSize - minBuffer > 0}
+                    $positive={
+                      currentTradingAccount?.accountBalance -
+                        currentTradingAccount?.accountSize -
+                        currentTradingAccount?.minBuffer >
+                      0
+                    }
                   >
                     <PnLWithdrawableText>Withdrawable:</PnLWithdrawableText>
-                    {accountBalance - accountSize - minBuffer < 0
+                    {currentTradingAccount?.accountBalance -
+                      currentTradingAccount?.accountSize -
+                      currentTradingAccount?.minBuffer <
+                    0
                       ? formatter.format(0)
                       : formatter.format(
-                          accountBalance - accountSize - minBuffer,
+                          currentTradingAccount?.accountBalance -
+                            currentTradingAccount?.accountSize -
+                            currentTradingAccount?.minBuffer,
                         )}
                   </PnLWithdrawable>
                 </PnLContainer>
@@ -267,89 +347,91 @@ const FundedAccountDetail: React.FunctionComponent<
         </TradingDaysHeaderContainer>
         <GlassTile featureTile minHeight={70} noGlow={true} noShine={false}>
           <TradingDaysContainer>
-            {dayValues.reverse().map((dayValue, index) => (
-              <GlassTile
-                key={index}
-                featureTile
-                minHeight={10}
-                minWidth={10}
-                padding={7}
-                noGlow={true}
-              >
-                <TradeDay>
-                  <PreviewDayValueContainer>
-                    <TradePreviewContainer>
-                      {index % 2 === 0 ? (
-                        <>
-                          <TradePreview
-                            $idx={index}
-                            onClick={() =>
-                              navigation.navigate(PageEnum.JournalEntry, {
-                                id: index,
-                              })
-                            }
-                          />
-                          <TradeJournalPnL $positive={index !== 2}>
-                            ${1800}
-                          </TradeJournalPnL>
-                        </>
-                      ) : (
-                        <InfoPopout
-                          infoDescription={`Link or convert to journal entry`}
-                        >
-                          <div>
-                            <Icon
-                              type={IconTypeEnum.FontAwesome5}
-                              name="link"
-                              size={30}
-                              color={color("SystemLabel1")}
-                              style={{ transform: "rotate(135deg)" }}
+            {currentTradingAccount?.dayValues
+              .reverse()
+              .map((dayValue, index) => (
+                <GlassTile
+                  key={index}
+                  featureTile
+                  minHeight={10}
+                  minWidth={10}
+                  padding={7}
+                  noGlow={true}
+                >
+                  <TradeDay>
+                    <PreviewDayValueContainer>
+                      <TradePreviewContainer>
+                        {index % 2 === 0 ? (
+                          <>
+                            <TradePreview
+                              $idx={index}
+                              onClick={() =>
+                                navigation.navigate(PageEnum.JournalEntry, {
+                                  id: index,
+                                })
+                              }
                             />
-                            <WifiProtectedSetupIcon
-                              style={{
-                                height: 30,
-                                width: 30,
-                                color: color("SystemLabel1"),
-                              }}
-                            />
-                          </div>
-                        </InfoPopout>
-                      )}
-                    </TradePreviewContainer>
-                    <DayValue>{dayValue.day}</DayValue>
-                  </PreviewDayValueContainer>
-                  <DateContainer>
-                    {index % 2 === 0 ? "3x Accs" : "-"}
-                  </DateContainer>
-                  <DateContainer>
-                    {moment().add(index, "days").format("MMM D, YYYY")}
-                    <Time>{`10:${index}0 AM`}</Time>
-                  </DateContainer>
-                  <PnL $positive={dayValue.value >= 0}>
-                    {formatter.format(dayValue.value)}
-                  </PnL>
+                            <TradeJournalPnL $positive={index !== 2}>
+                              ${1800}
+                            </TradeJournalPnL>
+                          </>
+                        ) : (
+                          <InfoPopout
+                            infoDescription={`Link or convert to journal entry`}
+                          >
+                            <div>
+                              <Icon
+                                type={IconTypeEnum.FontAwesome5}
+                                name="link"
+                                size={30}
+                                color={color("SystemLabel1")}
+                                style={{ transform: "rotate(135deg)" }}
+                              />
+                              <WifiProtectedSetupIcon
+                                style={{
+                                  height: 30,
+                                  width: 30,
+                                  color: color("SystemLabel1"),
+                                }}
+                              />
+                            </div>
+                          </InfoPopout>
+                        )}
+                      </TradePreviewContainer>
+                      <DayValue>{dayValue.dayNumber}</DayValue>
+                    </PreviewDayValueContainer>
+                    <DateContainer>
+                      {index % 2 === 0 ? "3x Accs" : "-"}
+                    </DateContainer>
+                    <DateContainer>
+                      {moment().add(index, "days").format("MMM D, YYYY")}
+                      <Time>{`10:${index}0 AM`}</Time>
+                    </DateContainer>
+                    <PnL $positive={dayValue.pnl >= 0}>
+                      {formatter.format(dayValue.pnl)}
+                    </PnL>
 
-                  <EditDeleteContainer>
-                    <InfoPopout infoDescription="Edit Details">
-                      <EditContainer>
-                        <EditIcon
-                          style={styles.editIcon}
-                          onClick={() => setAddTradingDayOpen(true)}
-                        />
-                      </EditContainer>
-                    </InfoPopout>
-                    <InfoPopout infoDescription="Delete Trade">
-                      <EditContainer>
-                        <DeleteOutlineIcon
-                          style={styles.editIcon}
-                          onClick={() => alert("Delete Trade")}
-                        />
-                      </EditContainer>
-                    </InfoPopout>
-                  </EditDeleteContainer>
-                </TradeDay>
-              </GlassTile>
-            ))}
+                    <EditDeleteContainer>
+                      <InfoPopout infoDescription="Edit Details">
+                        <EditContainer>
+                          <EditIcon
+                            style={styles.editIcon}
+                            onClick={() => setAddTradingDayOpen(true)}
+                          />
+                        </EditContainer>
+                      </InfoPopout>
+                      <InfoPopout infoDescription="Delete Trade">
+                        <EditContainer>
+                          <DeleteOutlineIcon
+                            style={styles.editIcon}
+                            onClick={() => alert("Delete Trade")}
+                          />
+                        </EditContainer>
+                      </InfoPopout>
+                    </EditDeleteContainer>
+                  </TradeDay>
+                </GlassTile>
+              ))}
           </TradingDaysContainer>
         </GlassTile>
       </Container>

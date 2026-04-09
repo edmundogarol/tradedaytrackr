@@ -42,6 +42,7 @@ const styles = {
     pointerEvents: "auto",
     marginBottom: 5,
     marginTop: 5,
+    flex: 3,
   } as React.CSSProperties,
   progressBar: {
     height: 8,

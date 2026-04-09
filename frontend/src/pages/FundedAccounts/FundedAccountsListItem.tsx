@@ -66,7 +66,7 @@ const FundedAccountsListItem: React.FunctionComponent<
         hideDuration={5000}
       />
       <ListItemContainer>
-        <AccountImage src={image} />
+        <AccountImage $image={image || ""} />
         <AccountTitleContainer>
           <AccountTitle
             onClick={() =>

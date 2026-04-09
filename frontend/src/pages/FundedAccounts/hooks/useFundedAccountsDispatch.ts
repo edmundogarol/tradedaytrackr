@@ -7,6 +7,8 @@ import {
   updateAddTradingDayModalOpen,
   updateCreateTradingAccountErrors,
   updateCreateTradingAccountModalOpen,
+  updateCurrentTradingAccount,
+  updateCurrentTradingAccountErrors,
   updateSelectedTradingAccount,
   updateSelectedTradingDay,
   updateTradingAccounts,
@@ -22,6 +24,8 @@ interface FundedAccountsDispatch {
   updateSelectedTradingDay: (tradingDay: TradingDay | null) => void;
   updateAddTradingDayModalOpen: (open: boolean) => void;
   updateAddTradingDayErrors: (errors: { [key: string]: any }) => void;
+  updateCurrentTradingAccount: (tradingAccount: TradingAccount) => void;
+  updateCurrentTradingAccountErrors: (errors: { [key: string]: any }) => void;
 }
 
 const useFundedAccountsDispatch = (): FundedAccountsDispatch => {
@@ -50,6 +54,12 @@ const useFundedAccountsDispatch = (): FundedAccountsDispatch => {
     },
     updateAddTradingDayErrors(errors: { [key: string]: any }): void {
       dispatch(updateAddTradingDayErrors(errors));
+    },
+    updateCurrentTradingAccount(tradingAccount: TradingAccount): void {
+      dispatch(updateCurrentTradingAccount(tradingAccount));
+    },
+    updateCurrentTradingAccountErrors(errors: { [key: string]: any }): void {
+      dispatch(updateCurrentTradingAccountErrors(errors));
     },
   };
 };

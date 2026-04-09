@@ -4,7 +4,9 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 export interface FundedAccountsState {
   readonly tradingAccounts: TradingAccount[];
   readonly selectedTradingAccount: TradingAccount;
+  readonly currentTradingAccount: TradingAccount;
   readonly createTradingAccountModalOpen: boolean;
+  readonly currentTradingAccountErrors: { [key: string]: any };
   readonly createTradingAccountErrors: { [key: string]: any };
   readonly updateTradingAccountsErrors?: { [key: string]: any };
   readonly selectedTradingDay: TradingDay | null;
@@ -22,7 +24,7 @@ export const initialState: FundedAccountsState = {
     accountSize: 0,
     minTradingDays: undefined,
     minBuffer: 0,
-    allowablePayoutRequest: undefined,
+    allowablePayoutRequest: 0,
     profitSplit: undefined,
     minDayPnl: undefined,
     maxDrawdown: undefined,
@@ -31,15 +33,44 @@ export const initialState: FundedAccountsState = {
     consistency: undefined,
     accountBalance: 0,
     bufferPercent: 0,
-    template: {
+    dayValues: [],
+    currentDayCount: 0,
+    accountType: {
       id: 0,
       name: "",
+      isEval: false,
+    },
+  },
+  currentTradingAccount: {
+    id: 0,
+    name: "",
+    firm: undefined,
+    image: undefined,
+    accountSize: 0,
+    minTradingDays: undefined,
+    minBuffer: 0,
+    allowablePayoutRequest: 0,
+    profitSplit: undefined,
+    minDayPnl: undefined,
+    maxDrawdown: undefined,
+    isEval: false,
+    profitTarget: undefined,
+    consistency: undefined,
+    accountBalance: 0,
+    bufferPercent: 0,
+    dayValues: [],
+    currentDayCount: 0,
+    accountType: {
+      id: 0,
+      name: "",
+      isEval: false,
     },
   },
   selectedTradingDay: null,
   createTradingAccountModalOpen: false,
   createTradingAccountErrors: {},
   updateTradingAccountsErrors: {},
+  currentTradingAccountErrors: {},
   addTradingDayModalOpen: false,
   addTradingDayErrors: {},
 };
@@ -54,6 +85,10 @@ type UpdateTradingAccountsErrorsAction = PayloadAction<{ [key: string]: any }>;
 type UpdateSelectedTradingDayAction = PayloadAction<TradingDay | null>;
 type UpdateAddTradingDayModalOpenAction = PayloadAction<boolean>;
 type UpdateAddTradingDayErrorsAction = PayloadAction<{ [key: string]: any }>;
+type UpdateCurrentTradingAccountErrorsAction = PayloadAction<{
+  [key: string]: any;
+}>;
+type UpdateCurrentTradingAccountAction = PayloadAction<TradingAccount>;
 
 export type FundedAccountsAction =
   | UpdateTradingAccountsAction
@@ -63,7 +98,9 @@ export type FundedAccountsAction =
   | UpdateTradingAccountsErrorsAction
   | UpdateSelectedTradingDayAction
   | UpdateAddTradingDayModalOpenAction
-  | UpdateAddTradingDayErrorsAction;
+  | UpdateAddTradingDayErrorsAction
+  | UpdateCurrentTradingAccountAction
+  | UpdateCurrentTradingAccountErrorsAction;
 
 export const fundedAccountsSlice = createSlice({
   name: "fundedAccounts",
@@ -114,6 +151,18 @@ export const fundedAccountsSlice = createSlice({
     ) => {
       state.addTradingDayErrors = action.payload;
     },
+    updateCurrentTradingAccount: (
+      state,
+      action: UpdateCurrentTradingAccountAction,
+    ) => {
+      state.currentTradingAccount = action.payload;
+    },
+    updateCurrentTradingAccountErrors: (
+      state,
+      action: UpdateCurrentTradingAccountErrorsAction,
+    ) => {
+      state.currentTradingAccountErrors = action.payload;
+    },
   },
 });
 
@@ -126,6 +175,8 @@ export const {
   updateSelectedTradingDay,
   updateAddTradingDayModalOpen,
   updateAddTradingDayErrors,
+  updateCurrentTradingAccount,
+  updateCurrentTradingAccountErrors,
 } = fundedAccountsSlice.actions;
 
 export const fundedAccountsReducer = fundedAccountsSlice.reducer;
