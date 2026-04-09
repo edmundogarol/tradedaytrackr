@@ -23,6 +23,7 @@ from backend.djangoapi.views.ai.strategy import DetectStrategyView
 from backend.djangoapi.views.ai.tagging import AutoTagView
 from backend.djangoapi.views.journal.journal_entry import JournalEntryViewSet
 from backend.djangoapi.views.journal.tag import TagViewSet
+from backend.djangoapi.views.tradingAccount.rule import RuleViewSet
 from backend.djangoapi.views.tradingAccount.trading_account import TradingAccountViewSet
 from backend.djangoapi.views.tradingAccount.trading_account_template import (
     TradingAccountTemplateViewSet,
@@ -61,6 +62,7 @@ router.register(
     basename="trading-account-templates",
 )
 router.register(r"tags", TagViewSet, basename="tags")
+router.register(r"rules", RuleViewSet, basename="rules")
 
 urlpatterns = [
     path("docs/", schema_view),

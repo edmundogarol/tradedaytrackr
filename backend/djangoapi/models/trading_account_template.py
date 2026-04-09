@@ -62,6 +62,11 @@ class TradingAccountTemplate(models.Model):
         blank=True,
         help_text="Max % or amount allowed for payout request",
     )
+    rules = models.ManyToManyField(
+        "djangoapi.Rule",
+        blank=True,
+        related_name="templates",
+    )
 
     class Meta:
         ordering = ["-id"]

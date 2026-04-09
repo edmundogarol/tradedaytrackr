@@ -1,10 +1,19 @@
 from rest_framework import serializers
 
 from backend.djangoapi.models import TradingAccountTemplate
+from backend.djangoapi.models.rule import Rule
+from backend.djangoapi.serializers.rule import RuleSerializer
 
 
 class TradingAccountTemplateSerializer(serializers.ModelSerializer):
     display_image = serializers.SerializerMethodField()
+    rule_ids = serializers.PrimaryKeyRelatedField(
+        queryset=Rule.objects.all(),
+        many=True,
+        write_only=True,
+        source="rules",
+    )
+    rules = RuleSerializer(many=True, read_only=True)
 
     class Meta:
         model = TradingAccountTemplate
@@ -25,6 +34,8 @@ class TradingAccountTemplateSerializer(serializers.ModelSerializer):
             "max_drawdown",
             "consistency",
             "allowable_payout_request",
+            "rules",
+            "rule_ids",
         ]
         read_only_fields = ["id"]
         extra_kwargs = {
@@ -133,3 +144,18 @@ class TradingAccountTemplateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(errors)
 
         return data
+
+    def create(self, validated_data):
+        rules = validated_data.pop("rules", [])
+        template = super().create(validated_data)
+        template.rules.set(rules)
+        return template
+
+    def update(self, instance, validated_data):
+        rules = validated_data.pop("rules", None)
+        template = super().update(instance, validated_data)
+
+        if rules is not None:
+            template.rules.set(rules)
+
+        return template
