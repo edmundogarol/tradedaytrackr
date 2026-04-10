@@ -24,11 +24,7 @@ class TradingDay(models.Model):
         indexes = [
             models.Index(fields=["account", "date"]),
         ]
-        ordering = ["day_number"]
-
-    @property
-    def pnl(self):
-        return self.trades.aggregate(total=Sum("pnl"))["total"] or 0
+        ordering = ["-id"]
 
     @property
     def journal_pnl(self):

@@ -5,13 +5,14 @@ from rest_framework import serializers
 from backend.djangoapi.models import JournalEntry
 from backend.djangoapi.models.tag import Tag
 from backend.djangoapi.serializers.tag import TagSerializer
-from backend.djangoapi.serializers.trade import TradeSerializer
 
 logger = logging.getLogger(__name__)
 
 
 class JournalEntrySerializer(serializers.ModelSerializer):
-    trades = TradeSerializer(many=True, read_only=True)
+    trade_ids = serializers.PrimaryKeyRelatedField(
+        source="trades", many=True, read_only=True
+    )
     totalPnL = serializers.DecimalField(
         max_digits=10, decimal_places=2, source="total_pnl", read_only=True
     )
@@ -46,6 +47,11 @@ class JournalEntrySerializer(serializers.ModelSerializer):
         return [str(tag).strip().lower() for tag in value if tag]
 
     def validate(self, data):
+        trades = data.get("trades")
+
+        if trades is not None and len(trades) == 0:
+            raise serializers.ValidationError("Journal must have at least one trade")
+
         if "contracts" in data and data["contracts"] <= 0:
             raise serializers.ValidationError("Contracts must be positive")
 

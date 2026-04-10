@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from backend.djangoapi.models import TradingDay
 from backend.djangoapi.models.trading_account import TradingAccount
+from backend.djangoapi.serializers.trade import TradeSerializer
 from backend.djangoapi.services.trades.trade_day import compute_trading_day_fields
 
 
@@ -13,6 +14,7 @@ class TradingDaySerializer(serializers.ModelSerializer):
         write_only=True,
     )
     pnl = serializers.SerializerMethodField()
+    trades = TradeSerializer(many=True, read_only=True)
 
     class Meta:
         model = TradingDay
@@ -25,6 +27,7 @@ class TradingDaySerializer(serializers.ModelSerializer):
             "pnl",
             "is_valid_day",
             "created_at",
+            "trades",
         ]
         read_only_fields = ["is_valid_day"]
 
@@ -35,7 +38,7 @@ class TradingDaySerializer(serializers.ModelSerializer):
         }
 
     def get_pnl(self, obj):
-        return obj.pnl
+        return getattr(obj, "pnl", 0) or 0
 
     def validate_day_number(self, value):
         if value <= 0:

@@ -2,6 +2,7 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from backend.djangoapi.models import Trade, TradingAccount
+from backend.djangoapi.serializers.journal_entry import JournalEntrySerializer
 from backend.djangoapi.services.trades.trade_day import get_or_create_trading_day
 
 
@@ -12,6 +13,7 @@ class TradeSerializer(serializers.ModelSerializer):
     account_id = serializers.PrimaryKeyRelatedField(
         queryset=TradingAccount.objects.all(), source="account", write_only=True
     )
+    journal_entry = JournalEntrySerializer(read_only=True)
 
     class Meta:
         model = Trade
@@ -21,6 +23,7 @@ class TradeSerializer(serializers.ModelSerializer):
             "account_id",
             "date",
             "pnl",
+            "journal_entry",
         ]
 
     def get_account(self, obj):

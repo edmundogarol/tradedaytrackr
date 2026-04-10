@@ -1,5 +1,6 @@
 import os
 
+from django.db.models import Sum
 from rest_framework import serializers
 
 from backend.djangoapi.models import TradingAccount, TradingAccountTemplate
@@ -195,21 +196,21 @@ class TradingAccountSerializer(serializers.ModelSerializer):
         if has_static_rule:
             floor = 50100
 
-            # 🔥 HARD CONSTRAINT
+            # HARD CONSTRAINT
             max_safe = balance - floor
 
             if max_safe <= 0:
                 return 0
 
-            # 🔥 APPLY SPLIT (ON SAFE AMOUNT)
+            # APPLY SPLIT (ON SAFE AMOUNT)
             if template.withdrawal_split:
                 max_safe = (max_safe * template.withdrawal_split) / 100
 
-            # 🔥 APPLY MAX CAP
+            # APPLY MAX CAP
             if template.max_payout_request:
                 max_safe = min(max_safe, template.max_payout_request)
 
-            # 🔥 APPLY MIN REQUIREMENT
+            # APPLY MIN REQUIREMENT
             if max_safe < (template.min_payout_request or 0):
                 return 0
 
@@ -228,16 +229,13 @@ class TradingAccountSerializer(serializers.ModelSerializer):
         if available <= 0:
             return 0
 
-        # 🔥 APPLY SPLIT LIMIT
         if split:
             split_limit = (profit * split) / 100
             available = min(available, split_limit)
 
-        # 🚫 enforce minimum payout
         if available < min_req:
             return 0
 
-        # 🎯 enforce max payout
         if max_req:
             return round(min(available, max_req), 2)
 
@@ -270,7 +268,9 @@ class TradingAccountSerializer(serializers.ModelSerializer):
         return round(max(remaining_profit, 0), 2)
 
     def get_consistency_score(self, obj):
-        days = obj.trading_days.filter(is_valid_day=True)
+        days = obj.trading_days.annotate(pnl=Sum("trades__pnl")).filter(
+            is_valid_day=True
+        )
 
         pnls = [day.pnl for day in days if day.pnl is not None]
 

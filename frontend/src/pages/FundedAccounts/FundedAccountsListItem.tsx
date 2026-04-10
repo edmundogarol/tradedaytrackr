@@ -96,7 +96,7 @@ const FundedAccountsListItem: React.FunctionComponent<
           </AccountTradingDaysComplete>
         </AccountTitleContainer>
         <DaysContainer>
-          {dayValues.map((dayValue, idx) => (
+          {[...dayValues].reverse().map((dayValue, idx) => (
             <DaysItem key={idx} onClick={() => setAlertNoRecord(true)}>
               <GlassTile
                 positive={dayValue.pnl > 0}

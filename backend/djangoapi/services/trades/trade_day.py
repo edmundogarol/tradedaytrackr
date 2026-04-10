@@ -43,7 +43,11 @@ def get_or_create_trading_day(account, date):
 
 
 def recompute_all_trading_days(account):
-    trading_days = TradingDay.objects.filter(account=account).order_by("date")
+    trading_days = (
+        TradingDay.objects.annotate(pnl=Sum("trades__pnl"))
+        .filter(account=account)
+        .order_by("date")
+    )
 
     current_day_number = 1
 

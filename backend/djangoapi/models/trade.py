@@ -4,7 +4,7 @@ from django.db import models
 class Trade(models.Model):
     journal_entry = models.ForeignKey(
         "JournalEntry",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
         related_name="trades",
         null=True,
         blank=True,

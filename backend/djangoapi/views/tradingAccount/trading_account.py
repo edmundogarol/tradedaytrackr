@@ -1,8 +1,10 @@
+from django.db.models import Prefetch, Sum
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
 from backend.djangoapi.models import TradingAccount
+from backend.djangoapi.models.trading_day import TradingDay
 from backend.djangoapi.serializers.trading_account import TradingAccountSerializer
 
 
@@ -13,9 +15,18 @@ class TradingAccountViewSet(ModelViewSet):
 
     def get_queryset(self):
         return (
-            TradingAccount.objects.filter(user=self.request.user)
+            TradingAccount.objects.annotate(pnl=Sum("trades__pnl"))
+            .filter(user=self.request.user)
             .select_related("template")
-            .prefetch_related("trading_days")
+            .prefetch_related(
+                Prefetch(
+                    "trading_days",
+                    queryset=TradingDay.objects.annotate(
+                        pnl=Sum("trades__pnl")
+                    ).order_by("-id"),
+                )
+            )
+            .order_by("-id")
         )
 
     def perform_create(self, serializer):

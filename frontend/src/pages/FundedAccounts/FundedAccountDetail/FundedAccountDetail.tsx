@@ -79,7 +79,6 @@ import {
   PnLHeader,
   PreviewDayValueContainer,
   SelectButtonWrapper,
-  Time,
   TradeDay,
   TradeJournalPnL,
   TradePreview,
@@ -256,9 +255,16 @@ const FundedAccountDetail: React.FunctionComponent<
                       {currentTradingAccount?.name}
                       <EditIcon
                         style={styles.editIcon}
-                        onClick={() =>
-                          updateEditingFields({ editingAccountName: true })
-                        }
+                        onClick={() => {
+                          updateEditingFields({
+                            editingAccountName: true,
+                            editingAccountBalance: false,
+                            editingAccountTemplate: false,
+                          });
+                          updateCurrentTradingAccount({
+                            ...originalTradingAccountDetails,
+                          } as TradingAccount);
+                        }}
                       />
                     </AccountName>
                     <DeleteOutlineIcon
@@ -337,9 +343,16 @@ const FundedAccountDetail: React.FunctionComponent<
                   <If condition={!editingAccountTemplate}>
                     <EditIcon
                       style={styles.subtitleEditIcon}
-                      onClick={() =>
-                        updateEditingFields({ editingAccountTemplate: true })
-                      }
+                      onClick={() => {
+                        updateEditingFields({
+                          editingAccountName: false,
+                          editingAccountBalance: false,
+                          editingAccountTemplate: true,
+                        });
+                        updateCurrentTradingAccount({
+                          ...originalTradingAccountDetails,
+                        } as TradingAccount);
+                      }}
                     />
                     <Else>
                       <SelectButtonWrapper>
@@ -383,9 +396,16 @@ const FundedAccountDetail: React.FunctionComponent<
                     </AccountSubtitleHighlighted>
                     <EditIcon
                       style={styles.subtitleEditIcon}
-                      onClick={() =>
-                        updateEditingFields({ editingAccountBalance: true })
-                      }
+                      onClick={() => {
+                        updateEditingFields({
+                          editingAccountName: false,
+                          editingAccountBalance: true,
+                          editingAccountTemplate: false,
+                        });
+                        updateCurrentTradingAccount({
+                          ...originalTradingAccountDetails,
+                        } as TradingAccount);
+                      }}
                     />
                     <Else>
                       <AccountName>
@@ -565,91 +585,88 @@ const FundedAccountDetail: React.FunctionComponent<
         </TradingDaysHeaderContainer>
         <GlassTile featureTile minHeight={70} noGlow={true} noShine={false}>
           <TradingDaysContainer>
-            {[...currentTradingAccount?.dayValues]
-              .reverse()
-              .map((dayValue, index) => (
-                <GlassTile
-                  key={index}
-                  featureTile
-                  minHeight={10}
-                  minWidth={10}
-                  padding={7}
-                  noGlow={true}
-                >
-                  <TradeDay>
-                    <PreviewDayValueContainer>
-                      <TradePreviewContainer>
-                        {index % 2 === 0 ? (
-                          <>
-                            <TradePreview
-                              $idx={index}
-                              onClick={() =>
-                                navigation.navigate(PageEnum.JournalEntry, {
-                                  id: index,
-                                })
-                              }
+            {[...currentTradingAccount?.dayValues].map((dayValue, index) => (
+              <GlassTile
+                key={index}
+                featureTile
+                minHeight={10}
+                minWidth={10}
+                padding={7}
+                noGlow={true}
+              >
+                <TradeDay>
+                  <PreviewDayValueContainer>
+                    <TradePreviewContainer>
+                      {index % 2 === 0 ? (
+                        <>
+                          <TradePreview
+                            $idx={index}
+                            onClick={() =>
+                              navigation.navigate(PageEnum.JournalEntry, {
+                                id: index,
+                              })
+                            }
+                          />
+                          <TradeJournalPnL $positive={index !== 2}>
+                            ${1800}
+                          </TradeJournalPnL>
+                        </>
+                      ) : (
+                        <InfoPopout
+                          infoDescription={`Link or convert to journal entry`}
+                        >
+                          <div>
+                            <Icon
+                              type={IconTypeEnum.FontAwesome5}
+                              name="link"
+                              size={30}
+                              color={color("SystemLabel1")}
+                              style={{ transform: "rotate(135deg)" }}
                             />
-                            <TradeJournalPnL $positive={index !== 2}>
-                              ${1800}
-                            </TradeJournalPnL>
-                          </>
-                        ) : (
-                          <InfoPopout
-                            infoDescription={`Link or convert to journal entry`}
-                          >
-                            <div>
-                              <Icon
-                                type={IconTypeEnum.FontAwesome5}
-                                name="link"
-                                size={30}
-                                color={color("SystemLabel1")}
-                                style={{ transform: "rotate(135deg)" }}
-                              />
-                              <WifiProtectedSetupIcon
-                                style={{
-                                  height: 30,
-                                  width: 30,
-                                  color: color("SystemLabel1"),
-                                }}
-                              />
-                            </div>
-                          </InfoPopout>
-                        )}
-                      </TradePreviewContainer>
-                      <DayValue>{dayValue.dayNumber}</DayValue>
-                    </PreviewDayValueContainer>
-                    <DateContainer>
-                      {index % 2 === 0 ? "3x Accs" : "-"}
-                    </DateContainer>
-                    <DateContainer>
-                      {moment().add(index, "days").format("MMM D, YYYY")}
-                      <Time>{`10:${index}0 AM`}</Time>
-                    </DateContainer>
-                    <PnL $positive={dayValue.pnl >= 0}>
-                      {formatter.format(dayValue.pnl)}
-                    </PnL>
+                            <WifiProtectedSetupIcon
+                              style={{
+                                height: 30,
+                                width: 30,
+                                color: color("SystemLabel1"),
+                              }}
+                            />
+                          </div>
+                        </InfoPopout>
+                      )}
+                    </TradePreviewContainer>
+                    <DayValue>{dayValue.dayNumber || "-"}</DayValue>
+                  </PreviewDayValueContainer>
+                  <DateContainer>
+                    {index % 2 === 0 ? "3x Accs" : "-"}
+                  </DateContainer>
+                  <DateContainer>
+                    {moment(dayValue.date).format("MMM D, YYYY")}
+                  </DateContainer>
+                  <PnL $positive={dayValue.pnl >= 0}>
+                    {formatter.format(dayValue.pnl)}
+                  </PnL>
 
-                    <EditDeleteContainer>
-                      <InfoPopout infoDescription="Edit Details">
-                        <EditContainer>
-                          <EditIcon
-                            style={styles.editIcon}
-                            onClick={() => setAddTradingDayOpen(true)}
-                          />
-                        </EditContainer>
-                      </InfoPopout>
-                      <InfoPopout infoDescription="Delete Trade">
-                        <EditContainer>
-                          <DeleteOutlineIcon
-                            style={styles.editIcon}
-                            onClick={() => alert("Delete Trade")}
-                          />
-                        </EditContainer>
-                      </InfoPopout>
-                    </EditDeleteContainer>
-                  </TradeDay>
-                </GlassTile>
-              ))}
+                  <EditDeleteContainer>
+                    <InfoPopout infoDescription="Edit Details">
+                      <EditContainer>
+                        <EditIcon
+                          style={styles.editIcon}
+                          onClick={() => setAddTradingDayOpen(true)}
+                        />
+                      </EditContainer>
+                    </InfoPopout>
+                    <InfoPopout infoDescription="Delete Trade">
+                      <EditContainer>
+                        <DeleteOutlineIcon
+                          style={styles.editIcon}
+                          onClick={() => alert("Delete Trade")}
+                        />
+                      </EditContainer>
+                    </InfoPopout>
+                  </EditDeleteContainer>
+                </TradeDay>
+              </GlassTile>
+            ))}
           </TradingDaysContainer>
         </GlassTile>
       </Container>
