@@ -5,6 +5,7 @@ import type { FundedAccountsAction } from "../FundedAccountsState";
 import {
   updateAddTradingDayErrors,
   updateAddTradingDayModalOpen,
+  updateBufferFilter,
   updateCreateTradingAccountErrors,
   updateCreateTradingAccountModalOpen,
   updateCurrentTradingAccount,
@@ -12,6 +13,7 @@ import {
   updateDeleteTradingAccountErrors,
   updateDeletingTradingAccountModalOpen,
   updateEditingFields,
+  updateFirmFilter,
   updateSelectedTradingAccount,
   updateSelectedTradingDay,
   updateTradingAccounts,
@@ -36,6 +38,8 @@ interface FundedAccountsDispatch {
   }) => void;
   updateDeletingTradingAccountModalOpen: (open: boolean) => void;
   updateDeleteTradingAccountErrors: (errors: { [key: string]: any }) => void;
+  updateFirmFilter: (filter: string[]) => void;
+  updateBufferFilter: (filter: string[]) => void;
 }
 
 const useFundedAccountsDispatch = (): FundedAccountsDispatch => {
@@ -83,6 +87,12 @@ const useFundedAccountsDispatch = (): FundedAccountsDispatch => {
     },
     updateDeleteTradingAccountErrors(errors: { [key: string]: any }): void {
       dispatch(updateDeleteTradingAccountErrors(errors));
+    },
+    updateBufferFilter(filter: string[]): void {
+      dispatch(updateBufferFilter(filter));
+    },
+    updateFirmFilter(filter: string[]): void {
+      dispatch(updateFirmFilter(filter));
     },
   };
 };

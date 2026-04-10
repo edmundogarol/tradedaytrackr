@@ -17,6 +17,8 @@ export interface FundedAccountsState {
   readonly editingAccountTemplate: boolean;
   readonly deletingTradingAccountModalOpen: boolean;
   readonly deleteTradingAccountErrors: { [key: string]: any };
+  readonly firmFilter: string[];
+  readonly bufferFilter: string[];
 }
 
 const initialAccount: TradingAccount = {
@@ -66,6 +68,8 @@ export const initialState: FundedAccountsState = {
   addTradingDayErrors: {},
   deletingTradingAccountModalOpen: false,
   deleteTradingAccountErrors: {},
+  firmFilter: [],
+  bufferFilter: [],
 };
 
 type UpdateTradingAccountsAction = PayloadAction<TradingAccount[]>;
@@ -91,6 +95,8 @@ type UpdateDeletingTradingAccountModalOpenAction = PayloadAction<boolean>;
 type UpdateDeleteTradingAccountErrorsAction = PayloadAction<{
   [key: string]: any;
 }>;
+type UpdateFirmFilterAction = PayloadAction<string[]>;
+type UpdateBufferFilterAction = PayloadAction<string[]>;
 
 export type FundedAccountsAction =
   | UpdateTradingAccountsAction
@@ -105,7 +111,9 @@ export type FundedAccountsAction =
   | UpdateCurrentTradingAccountErrorsAction
   | UpdateEditingFieldsAction
   | UpdateDeletingTradingAccountModalOpenAction
-  | UpdateDeleteTradingAccountErrorsAction;
+  | UpdateDeleteTradingAccountErrorsAction
+  | UpdateFirmFilterAction
+  | UpdateBufferFilterAction;
 
 export const fundedAccountsSlice = createSlice({
   name: "fundedAccounts",
@@ -188,6 +196,12 @@ export const fundedAccountsSlice = createSlice({
     ) => {
       state.deleteTradingAccountErrors = action.payload;
     },
+    updateFirmFilter: (state, action: UpdateFirmFilterAction) => {
+      state.firmFilter = action.payload;
+    },
+    updateBufferFilter: (state, action: UpdateBufferFilterAction) => {
+      state.bufferFilter = action.payload;
+    },
   },
 });
 
@@ -205,6 +219,8 @@ export const {
   updateEditingFields,
   updateDeletingTradingAccountModalOpen,
   updateDeleteTradingAccountErrors,
+  updateFirmFilter,
+  updateBufferFilter,
 } = fundedAccountsSlice.actions;
 
 export const fundedAccountsReducer = fundedAccountsSlice.reducer;

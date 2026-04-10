@@ -59,11 +59,15 @@ const FundedAccounts: React.FunctionComponent = () => {
     tradingAccounts,
     deleteTradingAccountErrors,
     createTradingAccountErrors,
+    firmFilter,
+    bufferFilter,
   } = useFundedAccountsState();
   const {
     updateCreateTradingAccountModalOpen,
     updateCreateTradingAccountErrors,
     updateDeleteTradingAccountErrors,
+    updateFirmFilter,
+    updateBufferFilter,
   } = useFundedAccountsDispatch();
   const { getAccountTemplates } = useGetAccountTemplatesHandler();
   const { getTradingAccounts } = useGetTradingAccountsHandler();
@@ -76,8 +80,6 @@ const FundedAccounts: React.FunctionComponent = () => {
     }),
     "value",
   );
-  const [firmFilter, setFirmFilter] = React.useState<string[]>([]);
-  const [bufferFilter, setBufferFilter] = React.useState<string[]>([]);
 
   useEffect(() => {
     getAccountTemplates();
@@ -113,13 +115,13 @@ const FundedAccounts: React.FunctionComponent = () => {
         <DropdownsSection>
           <DropdownMultiselect
             items={firmsList}
-            onSelect={(selected) => setFirmFilter(selected)}
+            onSelect={(selected) => updateFirmFilter(selected)}
             title="All Firms"
             icon={<FilterAltIcon style={{ color: "#c0c0c0" }} />}
           />
           <DropdownMultiselect
             items={bufferState}
-            onSelect={(selected) => setBufferFilter(selected)}
+            onSelect={(selected) => updateBufferFilter(selected)}
             title="Buffer Built"
             icon={<FilterAltIcon style={{ color: "#c0c0c0" }} />}
           />
@@ -163,7 +165,7 @@ const FundedAccounts: React.FunctionComponent = () => {
                   return bufferPercent > 50;
                 }
                 if (filter === ">90") {
-                  return bufferPercent > 90 && bufferPercent < 100;
+                  return bufferPercent > 90;
                 }
                 if (filter === "complete") {
                   return bufferPercent === 100;
