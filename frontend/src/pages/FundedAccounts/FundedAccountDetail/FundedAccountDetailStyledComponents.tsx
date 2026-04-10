@@ -1,5 +1,4 @@
 import { color } from "@styles/colors";
-import { devSrc } from "@utils/utils";
 import styled from "styled-components";
 
 export const HeaderContainer = styled.div`
@@ -104,9 +103,8 @@ export const TradeDay = styled.div`
   }
 `;
 
-export const TradePreview = styled.div<{ $idx: number }>`
-  background-image: ${(props): string =>
-    `url('${devSrc(`trade${props.$idx + 1}.png`)}')`};
+export const TradePreview = styled.div<{ $src: string }>`
+  background-image: ${(props): string => `url('${props.$src}')`};
   height: 100%;
   width: 100%;
   background-size: cover;
@@ -152,7 +150,6 @@ export const PnL = styled.div<{ $positive: boolean }>`
   color: ${(props): string =>
     props.$positive ? color("SystemGreen") : color("SystemRed")};
   font-size: 20px;
-  width: 100px;
 `;
 
 export const PreviewDayValueContainer = styled.div`
@@ -164,7 +161,6 @@ export const PreviewDayValueContainer = styled.div`
 export const DateContainer = styled.div`
   color: ${color("SystemLabel1")};
   font-size: 14px;
-  width: 100px;
 `;
 
 export const ConsistencyContainer = styled.div`
@@ -208,6 +204,7 @@ export const TradingDaysHeaderContainer = styled.div`
 export const EditDeleteContainer = styled.div`
   display: flex;
   padding: 10px;
+  gap: 10px;
 `;
 
 export const SelectButtonWrapper = styled.div`

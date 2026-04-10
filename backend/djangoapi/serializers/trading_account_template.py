@@ -7,11 +7,10 @@ from backend.djangoapi.serializers.rule import RuleSerializer
 
 class TradingAccountTemplateSerializer(serializers.ModelSerializer):
     display_image = serializers.SerializerMethodField()
-    rule_ids = serializers.PrimaryKeyRelatedField(
-        queryset=Rule.objects.all(),
-        many=True,
+    rule_ids = serializers.ListField(
+        child=serializers.IntegerField(),
         write_only=True,
-        source="rules",
+        required=False,
     )
     rules = RuleSerializer(many=True, read_only=True)
 
@@ -61,48 +60,6 @@ class TradingAccountTemplateSerializer(serializers.ModelSerializer):
             return f"/images/firms/{obj.icon}.png"
 
         return "/static/icons/default.png"
-
-    def validate_account_size(self, value):
-        if value <= 0:
-            raise serializers.ValidationError("Account size must be positive")
-        return value
-
-    def validate_min_trading_days(self, value):
-        if value is not None and value < 0:
-            raise serializers.ValidationError("Minimum trading days cannot be negative")
-        return value
-
-    def validate_profit_split(self, value):
-        if value is not None and (value < 0 or value > 100):
-            raise serializers.ValidationError("Profit split must be between 0 and 100")
-        return value
-
-    def validate_consistency(self, value):
-        if value is not None and (value < 0 or value > 100):
-            raise serializers.ValidationError("Consistency must be between 0 and 100")
-        return value
-
-    def validate_min_payout_request(self, value):
-        if value is not None and value < 0:
-            raise serializers.ValidationError("Minimum payout must be positive")
-        return value
-
-    def validate_max_payout_request(self, value):
-        if value is not None and value < 0:
-            raise serializers.ValidationError("Maximum payout must be positive")
-        return value
-
-    def validate_withdrawal_split(self, value):
-        if value is not None and (value < 0 or value > 100):
-            raise serializers.ValidationError(
-                "Withdrawal split must be between 0 and 100"
-            )
-        return value
-
-    def validate_max_drawdown(self, value):
-        if value <= 0:
-            raise serializers.ValidationError("Max drawdown must be positive")
-        return value
 
     def validate(self, data):
         errors = {}
@@ -161,6 +118,48 @@ class TradingAccountTemplateSerializer(serializers.ModelSerializer):
 
         return data
 
+    def validate_account_size(self, value):
+        if value <= 0:
+            raise serializers.ValidationError("Account size must be positive")
+        return value
+
+    def validate_min_trading_days(self, value):
+        if value is not None and value < 0:
+            raise serializers.ValidationError("Minimum trading days cannot be negative")
+        return value
+
+    def validate_profit_split(self, value):
+        if value is not None and (value < 0 or value > 100):
+            raise serializers.ValidationError("Profit split must be between 0 and 100")
+        return value
+
+    def validate_consistency(self, value):
+        if value is not None and (value < 0 or value > 100):
+            raise serializers.ValidationError("Consistency must be between 0 and 100")
+        return value
+
+    def validate_min_payout_request(self, value):
+        if value is not None and value < 0:
+            raise serializers.ValidationError("Minimum payout must be positive")
+        return value
+
+    def validate_max_payout_request(self, value):
+        if value is not None and value < 0:
+            raise serializers.ValidationError("Maximum payout must be positive")
+        return value
+
+    def validate_withdrawal_split(self, value):
+        if value is not None and (value < 0 or value > 100):
+            raise serializers.ValidationError(
+                "Withdrawal split must be between 0 and 100"
+            )
+        return value
+
+    def validate_max_drawdown(self, value):
+        if value <= 0:
+            raise serializers.ValidationError("Max drawdown must be positive")
+        return value
+
     def create(self, validated_data):
         rules = validated_data.pop("rules", [])
         template = super().create(validated_data)
@@ -168,10 +167,14 @@ class TradingAccountTemplateSerializer(serializers.ModelSerializer):
         return template
 
     def update(self, instance, validated_data):
-        rules = validated_data.pop("rules", None)
+        rule_ids = validated_data.pop("rule_ids", serializers.empty)
+
         template = super().update(instance, validated_data)
 
-        if rules is not None:
+        if rule_ids is not serializers.empty:
+            rules = Rule.objects.filter(id__in=rule_ids)
             template.rules.set(rules)
+        else:
+            template.rules.clear()
 
         return template

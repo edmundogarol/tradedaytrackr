@@ -356,30 +356,55 @@ const AddAccountTemplateModal: React.FunctionComponent<
                 </div>
               }
             />
+            <Input
+              positiveOnly
+              error={addAccountTemplateErrors?.max_drawdown}
+              value={decimalStringToInt(selectedAccountTemplate.maxDrawdown)}
+              onChange={(e) =>
+                updateSelectedAccountTemplate({
+                  ...selectedAccountTemplate,
+                  maxDrawdown: Number(e.target.value),
+                })
+              }
+              onSuggestionClick={(value) => {
+                updateSelectedAccountTemplate({
+                  ...selectedAccountTemplate,
+                  maxDrawdown: Number(value),
+                });
+              }}
+              type="number"
+              placeholder="Max Drawdown (e.g. $2,000)"
+              label="Max Drawdown"
+              suggestions={[
+                {
+                  description: "2000",
+                },
+              ]}
+            />
           </If>
         </AddTemplateSectionHalf>
         <AddTemplateSectionHalf>
           <If condition={!selectedAccountTemplate.isEval}>
             <Input
               positiveOnly
-              error={addAccountTemplateErrors?.allowable_payout_request}
+              error={addAccountTemplateErrors?.min_payout_request}
               value={decimalStringToInt(
-                selectedAccountTemplate.allowablePayoutRequest,
+                selectedAccountTemplate.minPayoutRequest,
               )}
               onChange={(e) =>
                 updateSelectedAccountTemplate({
                   ...selectedAccountTemplate,
-                  allowablePayoutRequest: Number(e.target.value),
+                  minPayoutRequest: Number(e.target.value),
                 })
               }
               onSuggestionClick={(value) => {
                 updateSelectedAccountTemplate({
                   ...selectedAccountTemplate,
-                  allowablePayoutRequest: Number(value),
+                  minPayoutRequest: Number(value),
                 });
               }}
               type="number"
-              placeholder="Allowable Minimum Payout Request (e.g. $500)"
+              placeholder="Minimum Payout Request (e.g. $500)"
               label={
                 <div
                   style={{
@@ -387,10 +412,45 @@ const AddAccountTemplateModal: React.FunctionComponent<
                     alignItems: "center",
                   }}
                 >
-                  Allowable Minimum Payout Request
+                  Minimum Payout Request
                   <InfoPopout
                     containerStyle={{ textTransform: "none" }}
                     infoDescription="Minimum payout request allowed"
+                  />
+                </div>
+              }
+            />
+            <Input
+              positiveOnly
+              error={addAccountTemplateErrors?.max_payout_request}
+              value={decimalStringToInt(
+                selectedAccountTemplate.maxPayoutRequest,
+              )}
+              onChange={(e) =>
+                updateSelectedAccountTemplate({
+                  ...selectedAccountTemplate,
+                  maxPayoutRequest: Number(e.target.value),
+                })
+              }
+              onSuggestionClick={(value) => {
+                updateSelectedAccountTemplate({
+                  ...selectedAccountTemplate,
+                  maxPayoutRequest: Number(value),
+                });
+              }}
+              type="number"
+              placeholder="Maximum Payout Request (e.g. $5000)"
+              label={
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  Maximum Payout Request
+                  <InfoPopout
+                    containerStyle={{ textTransform: "none" }}
+                    infoDescription="Maximum payout request allowed"
                   />
                 </div>
               }
@@ -444,6 +504,41 @@ const AddAccountTemplateModal: React.FunctionComponent<
                   <InfoPopout
                     containerStyle={{ textTransform: "none" }}
                     infoDescription="Percentage of profit allocated to the trader"
+                  />
+                </div>
+              }
+            />
+            <Input
+              positiveOnly
+              error={addAccountTemplateErrors?.withdrawal_split}
+              value={decimalStringToInt(
+                selectedAccountTemplate.withdrawalSplit,
+              )}
+              onChange={(e) => {
+                updateSelectedAccountTemplate({
+                  ...selectedAccountTemplate,
+                  withdrawalSplit: Number(e.target.value),
+                });
+              }}
+              onSuggestionClick={(value) => {
+                updateSelectedAccountTemplate({
+                  ...selectedAccountTemplate,
+                  withdrawalSplit: Number(value),
+                });
+              }}
+              type="number"
+              placeholder="Withdrawal Split (e.g. 50% -> input 50)"
+              label={
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  Withdrawal Split %
+                  <InfoPopout
+                    containerStyle={{ textTransform: "none" }}
+                    infoDescription="Percentage of profit to be left in the account after payout"
                   />
                 </div>
               }
@@ -577,31 +672,6 @@ const AddAccountTemplateModal: React.FunctionComponent<
               label={"Min Trading Days"}
             />
           </If>
-          <Input
-            positiveOnly
-            error={addAccountTemplateErrors?.max_drawdown}
-            value={decimalStringToInt(selectedAccountTemplate.maxDrawdown)}
-            onChange={(e) =>
-              updateSelectedAccountTemplate({
-                ...selectedAccountTemplate,
-                maxDrawdown: Number(e.target.value),
-              })
-            }
-            onSuggestionClick={(value) => {
-              updateSelectedAccountTemplate({
-                ...selectedAccountTemplate,
-                maxDrawdown: Number(value),
-              });
-            }}
-            type="number"
-            placeholder="Max Drawdown (e.g. $2,000)"
-            label="Max Drawdown"
-            suggestions={[
-              {
-                description: "2000",
-              },
-            ]}
-          />
           <Gap level={1} />
           <HorizontalSection>
             <DropdownMultiselect

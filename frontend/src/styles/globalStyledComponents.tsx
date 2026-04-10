@@ -31,7 +31,7 @@ export const SubsectionHeader = styled.div`
   display: flex;
   flex-direction: row;
   margin-bottom: 5px;
-  color: #888888;
+  color: #aeaeae;
   font-weight: 200;
   z-index: 11;
   align-self: flex-start;

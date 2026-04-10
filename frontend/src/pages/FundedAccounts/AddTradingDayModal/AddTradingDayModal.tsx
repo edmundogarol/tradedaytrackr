@@ -12,6 +12,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import moment from "moment";
 import React, { useEffect } from "react";
+import useFundedAccountsDispatch from "../hooks/useFundedAccountsDispatch";
 import useFundedAccountsState from "../hooks/useFundedAccountsState";
 import {
   AddTradingDayContainer,
@@ -35,7 +36,13 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
   payoutRecord,
 }) => {
   const { getJournalEntriesByDate } = useGetJournalEntryByDateHandler();
-  const { selectedDateJournalEntries } = useFundedAccountsState();
+  const {
+    selectedDateJournalEntries,
+    selectedTradingDay,
+    addTradingDayErrors,
+  } = useFundedAccountsState();
+  const { updateSelectedTradingDay, updateAddTradingDayErrors } =
+    useFundedAccountsDispatch();
   const [addNewTradePnL, setAddNewTradePnL] = React.useState<boolean>(false);
   const [selectedDate, setSelectedDate] = React.useState<string>(
     moment().format("YYYY-MM-DD"),

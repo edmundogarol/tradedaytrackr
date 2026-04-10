@@ -9,6 +9,7 @@ import Input from "@components/Input/Input";
 import Loading from "@components/Loading/Loading";
 import Modal from "@components/Modal/Modal";
 import Page from "@components/Page/Page";
+import type { Tag } from "@interfaces/CustomTypes";
 import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
@@ -22,7 +23,7 @@ import {
   SectionTitle,
   SubsectionHeader,
 } from "@styles/globalStyledComponents";
-import { devSrc, formatter, isNotEmptyString, sanitizeTag } from "@utils/utils";
+import { formatter, isNotEmptyString, sanitizeTag } from "@utils/utils";
 import moment from "moment";
 import React, { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
@@ -32,7 +33,6 @@ import useJournalDispatch from "../hooks/useJournalDispatch";
 import useJournalState from "../hooks/useJournalState";
 import type { JournalEntry as JournalEntryType } from "../JournalInterfaces";
 import { initialState } from "../JournalState";
-import { mockJournalEntries } from "../mocks/journalEntries";
 import { availableAccountTradesOnDateMock } from "../mocks/tradesOnDate";
 import {
   ButtonContainer,
@@ -53,7 +53,7 @@ import {
   SummaryItemValueSubtext,
   SummarySection,
   SummaryTitleInfoContainer,
-  Tag,
+  TagComponent,
   TagContainer,
   TagInputContainer,
   TagInputWithAIButtonContainer,
@@ -81,7 +81,8 @@ const JournalEntry: React.FunctionComponent = () => {
     useGenerateTagsAIHandler();
   const { generateDraft, loading: generateDraftLoading } =
     useGenerateDraftAIHandler();
-  const { journalEntry, detectedTrades, journalErrors } = useJournalState();
+  const { journalEntry, detectedTrades, journalErrors, journalEntries } =
+    useJournalState();
   const { updateJournalEntry, updateDetectedTrades, updateJournalErrors } =
     useJournalDispatch();
   let [searchParams] = useSearchParams();
@@ -109,7 +110,7 @@ const JournalEntry: React.FunctionComponent = () => {
   }, [journalEntry.trades]);
 
   useEffect(() => {
-    const currentEntry = mockJournalEntries.find(
+    const currentEntry = journalEntries.find(
       (entry) => entry.id === parseInt(searchParams.get("id") || "0"),
     );
     if (searchParams.get("id") === "new") {
@@ -157,7 +158,7 @@ const JournalEntry: React.FunctionComponent = () => {
         }}
       >
         <TradesDetectedContainer>
-          {`${detectedTrades.length} trades detected for ${moment(journalEntry.date_time).format("MMM DD")}`}
+          {`${detectedTrades.length} trades detected for ${moment(journalEntry.dateTime).format("MMM DD")}`}
         </TradesDetectedContainer>
         <TradesDetectedContainer>
           {detectedTrades.map((trade) => {
@@ -223,7 +224,7 @@ const JournalEntry: React.FunctionComponent = () => {
                 <TradeInfo>
                   <If condition={editing}>
                     <TradeSubtitleEditing onClick={() => setEditingDate(true)}>
-                      {moment(journalEntry.date_time).format(
+                      {moment(journalEntry.dateTime).format(
                         "YYYY-MM-DD hh:mm A",
                       )}
                     </TradeSubtitleEditing>
@@ -233,19 +234,19 @@ const JournalEntry: React.FunctionComponent = () => {
                         setEditingDate(pickerOpen);
                       }}
                       showPicker={editingDate}
-                      value={moment(journalEntry.date_time)}
+                      value={moment(journalEntry.dateTime)}
                       onChange={(val) =>
                         updateJournalEntry({
                           ...journalEntry,
-                          date_time: val
+                          dateTime: val
                             ? val.toISOString()
-                            : journalEntry.date_time,
+                            : journalEntry.dateTime,
                         })
                       }
                     />
                     <Else>
                       <TradeSubtitle>
-                        {moment(journalEntry.date_time).format(
+                        {moment(journalEntry.dateTime).format(
                           "YYYY-MM-DD HH:mm A",
                         )}
                       </TradeSubtitle>
@@ -274,7 +275,7 @@ const JournalEntry: React.FunctionComponent = () => {
                             if (
                               journalEntry.tags.some(
                                 (tag) =>
-                                  tag.toLowerCase() === val.toLowerCase(),
+                                  tag.name.toLowerCase() === val.toLowerCase(),
                               )
                             ) {
                               setCurrentTagInput("");
@@ -282,14 +283,20 @@ const JournalEntry: React.FunctionComponent = () => {
                             }
                             updateJournalEntry({
                               ...journalEntry,
-                              tags: [...journalEntry.tags, val],
+                              tags: [
+                                ...journalEntry.tags,
+                                { name: val } as Tag,
+                              ],
                             });
                             setCurrentTagInput("");
                           }}
                           onSuggestionClick={(suggestion) => {
                             updateJournalEntry({
                               ...journalEntry,
-                              tags: [...journalEntry.tags, suggestion],
+                              tags: [
+                                ...journalEntry.tags,
+                                { name: suggestion } as Tag,
+                              ],
                             });
                             setCurrentTagInput("");
                           }}
@@ -325,7 +332,7 @@ const JournalEntry: React.FunctionComponent = () => {
                             (s) =>
                               journalEntry.tags.every(
                                 (tag) =>
-                                  tag.toLowerCase() !==
+                                  tag.name.toLowerCase() !==
                                   s.description.toLowerCase(),
                               ) &&
                               s.description
@@ -365,8 +372,8 @@ const JournalEntry: React.FunctionComponent = () => {
                     <TagsContainer>
                       {journalEntry.tags.map((tag, index) => (
                         <TagContainer key={index}>
-                          <Tag $editing={editing}>
-                            #{sanitizeTag(tag)}
+                          <TagComponent $editing={editing}>
+                            #{sanitizeTag(tag.name)}
                             <If condition={editing}>
                               <CloseIconStyled
                                 style={{
@@ -377,13 +384,14 @@ const JournalEntry: React.FunctionComponent = () => {
                                     ...journalEntry,
                                     tags: journalEntry.tags.filter(
                                       (t) =>
-                                        t.toLowerCase() !== tag.toLowerCase(),
+                                        t.name.toLowerCase() !==
+                                        tag.name.toLowerCase(),
                                     ),
                                   });
                                 }}
                               />
                             </If>
-                          </Tag>
+                          </TagComponent>
                         </TagContainer>
                       ))}
                       <InfoPopout
@@ -430,13 +438,7 @@ const JournalEntry: React.FunctionComponent = () => {
                 </TradeInfo>
                 <TradeCapture>
                   <div>
-                    <TradeImage
-                      $src={
-                        searchParams.get("id") === "new"
-                          ? ""
-                          : devSrc("trade1.png")
-                      }
-                    >
+                    <TradeImage $src={journalEntry.image}>
                       <If condition={editing}>
                         <IconContainer>
                           <WallpaperIcon style={{ fontSize: 60 }} />

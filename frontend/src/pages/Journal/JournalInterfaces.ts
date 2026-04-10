@@ -1,3 +1,5 @@
+import type { Tag } from "@interfaces/CustomTypes";
+
 export interface JournalEntry {
   id: number;
   dateTime: string;
@@ -10,6 +12,6 @@ export interface JournalEntry {
   trades: number[];
   totalPnl: number;
   accountCount: number;
-  tags: string[];
+  tags: Tag[];
   accounts: number[];
 }

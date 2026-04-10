@@ -101,6 +101,7 @@ const FundedAccountDetail: React.FunctionComponent<
     editingAccountTemplate,
     deletingTradingAccountModalOpen,
     deleteTradingAccountErrors,
+    addTradingDayErrors,
   } = useFundedAccountsState();
   const {
     updateCurrentTradingAccount,
@@ -108,6 +109,7 @@ const FundedAccountDetail: React.FunctionComponent<
     updateEditingFields,
     updateDeletingTradingAccountModalOpen,
     updateDeleteTradingAccountErrors,
+    updateAddTradingDayErrors,
   } = useFundedAccountsDispatch();
   let [searchParams] = useSearchParams();
   const accountId = searchParams.get("id");
@@ -149,6 +151,12 @@ const FundedAccountDetail: React.FunctionComponent<
 
   return (
     <Page topBarShowMenu={true}>
+      <AlertPopout
+        open={!!addTradingDayErrors?.detail}
+        hideDuration={3000}
+        message={addTradingDayErrors?.detail}
+        setPopoutOpen={() => updateAddTradingDayErrors({})}
+      />
       <AlertPopout
         hideDuration={4000}
         message={currentTradingAccountErrors?.error}
@@ -566,7 +574,7 @@ const FundedAccountDetail: React.FunctionComponent<
 
       <Container>
         <TradingDaysHeaderContainer>
-          <Title>Trades</Title>
+          <Title>Trade Days</Title>
           <Button
             text={"Record Payout"}
             iconType={IconTypeEnum.MaterialIcons}
@@ -643,7 +651,23 @@ const FundedAccountDetail: React.FunctionComponent<
                     <DayValue>{dayValue.dayNumber || "-"}</DayValue>
                   </PreviewDayValueContainer>
                   <DateContainer>
-                    {dayValue.trades[0]?.journalEntry?.trades.length || "-"}
+                    <DaysContainer>
+                      {[...dayValue.trades].reverse().map((trade, idx) => (
+                        <DaysItem key={idx}>
+                          <GlassTile
+                            positive={trade.pnl > 0}
+                            featureTile
+                            minHeight={10}
+                            minWidth={10}
+                            padding={7}
+                          >
+                            <DaysItemValue $positive={trade.pnl > 0}>
+                              {`${trade.pnl > 0 ? "+" : ""}${decimalStringToInt(trade.pnl)}`}
+                            </DaysItemValue>
+                          </GlassTile>
+                        </DaysItem>
+                      ))}
+                    </DaysContainer>
                   </DateContainer>
                   <DateContainer>
                     {moment(dayValue.date).format("MMM D, YYYY")}

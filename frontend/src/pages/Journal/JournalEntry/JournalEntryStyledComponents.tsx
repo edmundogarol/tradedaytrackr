@@ -116,7 +116,7 @@ export const TagInputContainer = styled.div`
   margin-right: 10px;
 `;
 
-export const Tag = styled.div<{ $editing?: boolean }>`
+export const TagComponent = styled.div<{ $editing?: boolean }>`
   background: #c4ffc41c;
   color: ${color("SystemLightGreen")};
   font-size: 12px;

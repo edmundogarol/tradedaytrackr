@@ -40,10 +40,21 @@ const useUpdateAccountTemplateHandler = (): UpdateAccountTemplateHandler => {
         ) {
           formData.append("icon", display_image);
         }
-        appendIfDefined(formData, "rule_ids", accountTemplate.rules);
+        if (
+          !!accountTemplate.rules?.length &&
+          accountTemplate.rules?.length > 0
+        ) {
+          appendIfDefined(formData, "rule_ids", accountTemplate.rules);
+        }
         appendIfDefined(formData, "name", accountTemplate.name);
         appendIfDefined(formData, "firm", accountTemplate.firm);
-        appendIfDefined(formData, "account_size", accountTemplate.accountSize);
+        if (accountTemplate.accountSize > 0) {
+          appendIfDefined(
+            formData,
+            "account_size",
+            accountTemplate.accountSize,
+          );
+        }
         appendIfDefined(
           formData,
           "is_evaluation",
@@ -66,8 +77,18 @@ const useUpdateAccountTemplateHandler = (): UpdateAccountTemplateHandler => {
         appendIfDefined(formData, "consistency", accountTemplate.consistency);
         appendIfDefined(
           formData,
-          "allowable_payout_request",
-          accountTemplate.allowablePayoutRequest,
+          "min_payout_request",
+          accountTemplate.minPayoutRequest,
+        );
+        appendIfDefined(
+          formData,
+          "max_payout_request",
+          accountTemplate.maxPayoutRequest,
+        );
+        appendIfDefined(
+          formData,
+          "withdrawal_split",
+          accountTemplate.withdrawalSplit,
         );
 
         const { error, data } = await fetch({

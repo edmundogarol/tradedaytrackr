@@ -3,7 +3,6 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
 import moment from "moment";
 import type { JournalEntry } from "./JournalInterfaces";
-import { mockJournalEntries } from "./mocks/journalEntries";
 
 export interface JournalState {
   readonly journalEntry: JournalEntry;
@@ -28,7 +27,7 @@ export const initialState: JournalState = {
     tags: [],
     accounts: [],
   },
-  journalEntries: mockJournalEntries,
+  journalEntries: [],
   journalErrors: {},
   detectedTrades: [],
 };

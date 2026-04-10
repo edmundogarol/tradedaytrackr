@@ -1,4 +1,4 @@
-from django.db.models import Count, Sum, Value
+from django.db.models import Count, DecimalField, Sum, Value
 from django.db.models.functions import Coalesce
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
@@ -10,14 +10,19 @@ from backend.djangoapi.serializers.journal_entry_list import JournalEntryListSer
 
 class JournalEntryViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
+    pagination_class = None
 
     def get_queryset(self):
         qs = JournalEntry.objects.filter(user=self.request.user)
 
         qs = qs.annotate(
-            total_pnl=Coalesce(Sum("trades__pnl"), Value(0)),
+            total_pnl=Coalesce(
+                Sum("trades__pnl"),
+                Value(0),
+                output_field=DecimalField(),
+            ),
             trade_count=Count("trades"),
-        ).distinct()
+        )
 
         qs = qs.prefetch_related(
             "trades",

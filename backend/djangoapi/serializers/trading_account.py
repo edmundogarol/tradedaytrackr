@@ -269,19 +269,11 @@ class TradingAccountSerializer(serializers.ModelSerializer):
         return round(max(remaining_profit, 0), 2)
 
     def get_consistency_score(self, obj):
-        days = obj.trading_days.annotate(pnl=Sum("trades__pnl")).filter(
-            is_valid_day=True
-        )
-
+        days = obj.trading_days.annotate(pnl=Sum("trades__pnl"))
         pnls = [day.pnl for day in days if day.pnl is not None]
 
-        positive_days = [p for p in pnls if p > 0]
-
-        if not positive_days:
-            return 0
-
-        total_profit = sum(positive_days)
-        largest_day = max(positive_days)
+        total_profit = sum(pnls)
+        largest_day = max(pnls)
 
         if total_profit == 0:
             return 0

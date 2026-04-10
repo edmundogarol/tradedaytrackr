@@ -89,7 +89,7 @@ def seed_demo_journal_entries(user):
 
         # attach image
         img_path = random.choice(image_paths)
-        full_path = os.path.join(settings.MEDIA_ROOT, img_path)
+        full_path = os.path.join(settings.WEB_APP_URL, img_path)
         journal.image = full_path
         journal.save(update_fields=["image"])
 
@@ -142,7 +142,7 @@ def seed_demo_journal_entries(user):
 
                 # attach image
                 img_path = random.choice(image_paths)
-                full_path = os.path.join(settings.MEDIA_ROOT, img_path)
+                full_path = os.path.join(settings.WEB_APP_URL, img_path)
                 journal.image = full_path
                 journal.save(update_fields=["image"])
                 journal.trades.set(latest_trades)

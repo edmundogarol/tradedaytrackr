@@ -26,6 +26,8 @@ import {
 } from "@pages/FundedAccounts/FundedAccountDetail/FundedAccountDetailStyledComponents";
 import { formatter } from "@utils/utils";
 import moment from "moment";
+import useJournalEntriesApiCall from "./hooks/useJournalEntriesApiCall";
+import useJournalEntriesHandler from "./hooks/useJournalEntriesHandler";
 import useJournalState from "./hooks/useJournalState";
 import {
   Description,
@@ -39,6 +41,8 @@ import styles from "./JournalStyles";
 const Journal: React.FunctionComponent = () => {
   const navigation = useReactNavigation();
   const { journalEntries } = useJournalState();
+  const journalEntriesApiCall = useJournalEntriesApiCall();
+  useJournalEntriesHandler(journalEntriesApiCall);
 
   const sortByOptions = {
     title: "Sort By",
@@ -95,10 +99,12 @@ const Journal: React.FunctionComponent = () => {
               >
                 <PreviewDayValueContainer>
                   <TradePreviewContainer>
-                    <TradePreview $idx={index} />
+                    <TradePreview $src={entry.image} />
                   </TradePreviewContainer>
                   <DateContainer>
-                    {moment().add(index, "days").format("MMM D, YYYY")}
+                    {moment(entry.dateTime)
+                      .add(index, "days")
+                      .format("MMM D, YYYY")}
                     <Time>{`10:${index}0 AM`}</Time>
                   </DateContainer>
                 </PreviewDayValueContainer>
