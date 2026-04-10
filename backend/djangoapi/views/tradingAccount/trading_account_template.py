@@ -17,5 +17,4 @@ class TradingAccountTemplateViewSet(ModelViewSet):
         return TradingAccountTemplate.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        print(self.request.FILES)
         serializer.save(user=self.request.user)

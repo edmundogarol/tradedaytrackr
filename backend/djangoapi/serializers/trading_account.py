@@ -118,6 +118,9 @@ class TradingAccountSerializer(serializers.ModelSerializer):
             "post_payout_buffer",
             "withdrawable_amount",
         ]
+        extra_kwargs = {
+            "account_balance": {"required": False},
+        }
 
     def get_image(self, obj):
         request = self.context.get("request")

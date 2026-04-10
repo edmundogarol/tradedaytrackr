@@ -40,10 +40,6 @@ const AddFundedAccountsModal: React.FunctionComponent<
     setSelectedTemplateId(accountTemplates[0]?.id || 0);
   }, [accountTemplates]);
 
-  useEffect(() => {
-    updateCreateTradingAccountErrors({});
-  }, [createTradingAccountModalOpen]);
-
   return (
     <Modal
       title="Add Funded Account"
