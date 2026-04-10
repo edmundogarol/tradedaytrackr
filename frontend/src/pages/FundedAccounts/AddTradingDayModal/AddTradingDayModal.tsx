@@ -1,6 +1,6 @@
 import Button from "@components/Button/Button";
 import Gap from "@components/Gap/Gap";
-import { If } from "@components/If/If";
+import { Else, If } from "@components/If/If";
 import Input from "@components/Input/Input";
 import { LabelWrapper as Label } from "@components/Label/LabelStyledComponents";
 import Modal from "@components/Modal/Modal";
@@ -37,27 +37,15 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
   const { getJournalEntriesByDate } = useGetJournalEntryByDateHandler();
   const { selectedDateJournalEntries } = useFundedAccountsState();
   const [addNewTradePnL, setAddNewTradePnL] = React.useState<boolean>(false);
+  const [selectedDate, setSelectedDate] = React.useState<string>(
+    moment().format("YYYY-MM-DD"),
+  );
   const formattedJournalEntries = (selectedDateJournalEntries || []).map(
     (entry) => ({
       name: `${moment(entry.dateTime).format("MMMM Do YYYY h:mm A")} - ${entry.trades.length} Account(s)`,
       value: entry.id,
     }),
   );
-
-  const tradeEntryData = [
-    {
-      name: `61. ${moment().format("MMMM Do YYYY")} - 9:40 EST [x5 accounts]`,
-      value: `61`,
-    },
-    {
-      name: `62. ${moment().format("MMMM Do YYYY")} - 9:53 EST [x5 accounts]`,
-      value: `62`,
-    },
-    {
-      name: `63. ${moment().format("MMMM Do YYYY")} - 10:11 EST [x4 accounts]`,
-      value: `63`,
-    },
-  ];
 
   useEffect(() => {
     if (modalOpen) {
@@ -77,9 +65,12 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
           <DateCalendarContainer>
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <DateCalendar
-                onChange={(date) =>
-                  getJournalEntriesByDate(moment(date).format("YYYY-MM-DD"))
-                }
+                onChange={(date) => {
+                  if (date) {
+                    setSelectedDate(moment(date).format("YYYY-MM-DD"));
+                    getJournalEntriesByDate(moment(date).format("YYYY-MM-DD"));
+                  }
+                }}
               />
             </LocalizationProvider>
           </DateCalendarContainer>
@@ -87,10 +78,10 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
         <AddTradingDayContainerRight>
           <Label>Date</Label>
           <AddTradingDayDate>
-            {moment().format("MMMM Do YYYY")}
+            {moment(selectedDate).format("MMMM Do YYYY")}
           </AddTradingDayDate>
-          <Gap level={1} />
           <If condition={!payoutRecord}>
+            <Gap level={1} />
             <Collapse
               sx={{
                 "& .MuiCollapse-wrapperInner": {
@@ -102,16 +93,34 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
               collapsedSize={0}
               hidden={addNewTradePnL}
             >
-              <SelectWrapper
-                items={formattedJournalEntries}
-                label="Assign to existing Journal Entry"
-              />
-              <Gap level={2} />
-              <Button
-                text={"Add New Trade Entry"}
-                style={{ ...styles.addTradingDayButton }}
-                onClick={(): void => setAddNewTradePnL(!addNewTradePnL)}
-              />
+              <If condition={formattedJournalEntries.length > 0}>
+                <SelectWrapper
+                  items={formattedJournalEntries}
+                  label="Assign to existing Journal Entry"
+                />
+              </If>
+              <Gap level={1} />
+              <If condition={formattedJournalEntries.length > 0}>
+                <Button
+                  text={"Add New Trade Entry"}
+                  style={{ ...styles.addTradingDayButton }}
+                  onClick={(): void => setAddNewTradePnL(!addNewTradePnL)}
+                />
+                <Else>
+                  <Label>Time</Label>
+                  <DateCalendarContainer>
+                    <LocalizationProvider dateAdapter={AdapterMoment}>
+                      <TimePicker
+                        sx={{
+                          "& .MuiPickersSectionList-root": {
+                            fontSize: 15,
+                          },
+                        }}
+                      />
+                    </LocalizationProvider>
+                  </DateCalendarContainer>
+                </Else>
+              </If>
             </Collapse>
             <Collapse
               sx={{
@@ -124,11 +133,13 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
               collapsedSize={0}
               hidden={!addNewTradePnL}
             >
-              <Button
-                text={"Assign To Existing Journal Entry (3)"}
-                style={{ ...styles.addTradingDayButton }}
-                onClick={(): void => setAddNewTradePnL(!addNewTradePnL)}
-              />
+              <If condition={formattedJournalEntries.length > 0}>
+                <Button
+                  text={`Assign To Existing Journal Entry (${formattedJournalEntries.length})`}
+                  style={{ ...styles.addTradingDayButton }}
+                  onClick={(): void => setAddNewTradePnL(!addNewTradePnL)}
+                />
+              </If>
               <Gap level={1} />
               <Label>Time</Label>
               <DateCalendarContainer>
