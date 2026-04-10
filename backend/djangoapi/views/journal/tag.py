@@ -2,7 +2,7 @@ from django.db.models import Count
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
-from backend.djangoapi.models import Tag
+from backend.djangoapi.models.tag import Tag
 from backend.djangoapi.serializers.tag import TagSerializer
 
 

@@ -2,7 +2,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
-from backend.djangoapi.models import Trade
+from backend.djangoapi.models.trade import Trade
 from backend.djangoapi.serializers.trade import TradeSerializer
 
 

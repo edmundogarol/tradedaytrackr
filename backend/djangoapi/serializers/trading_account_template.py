@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from backend.djangoapi.models import TradingAccountTemplate
 from backend.djangoapi.models.rule import Rule
+from backend.djangoapi.models.trading_account_template import TradingAccountTemplate
 from backend.djangoapi.serializers.rule import RuleSerializer
 
 

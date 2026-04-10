@@ -1,4 +1,4 @@
-from backend.djangoapi.models import Tag
+from backend.djangoapi.models.tag import Tag
 
 
 def seed_demo_tags(user):

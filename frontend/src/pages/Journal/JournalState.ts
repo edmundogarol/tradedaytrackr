@@ -15,7 +15,7 @@ export interface JournalState {
 export const initialState: JournalState = {
   journalEntry: {
     id: 0,
-    date_time: moment().toISOString(),
+    dateTime: moment().toISOString(),
     risk: 0,
     contracts: 0,
     outcome: 0,
@@ -23,7 +23,8 @@ export const initialState: JournalState = {
     description: "",
     image: "",
     trades: [],
-    totalPnL: 0,
+    totalPnl: 0,
+    accountCount: 0,
     tags: [],
     accounts: [],
   },

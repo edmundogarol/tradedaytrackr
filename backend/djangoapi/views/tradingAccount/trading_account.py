@@ -3,7 +3,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
-from backend.djangoapi.models import TradingAccount
+from backend.djangoapi.models.trading_account import TradingAccount
 from backend.djangoapi.models.trading_day import TradingDay
 from backend.djangoapi.serializers.trading_account import TradingAccountSerializer
 

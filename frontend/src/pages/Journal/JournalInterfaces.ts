@@ -1,6 +1,6 @@
 export interface JournalEntry {
   id: number;
-  date_time: string;
+  dateTime: string;
   risk: number;
   contracts: number;
   outcome: number;
@@ -8,7 +8,8 @@ export interface JournalEntry {
   description: string;
   image: string;
   trades: number[];
-  totalPnL: number;
+  totalPnl: number;
+  accountCount: number;
   tags: string[];
   accounts: number[];
 }

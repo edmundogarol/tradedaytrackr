@@ -1,7 +1,8 @@
 from django.utils import timezone
 from rest_framework import serializers
 
-from backend.djangoapi.models import Trade, TradingAccount
+from backend.djangoapi.models.trade import Trade
+from backend.djangoapi.models.trading_account import TradingAccount
 from backend.djangoapi.serializers.journal_entry import JournalEntrySerializer
 from backend.djangoapi.services.trades.trade_day import get_or_create_trading_day
 

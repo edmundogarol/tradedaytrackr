@@ -3,7 +3,7 @@ from django.db.models.functions import Coalesce
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
-from backend.djangoapi.models import JournalEntry
+from backend.djangoapi.models.journal_entry import JournalEntry
 from backend.djangoapi.serializers.journal_entry import JournalEntrySerializer
 from backend.djangoapi.serializers.journal_entry_list import JournalEntryListSerializer
 
@@ -12,15 +12,21 @@ class JournalEntryViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return (
-            JournalEntry.objects.filter(user=self.request.user)
-            .prefetch_related("trades__account", "trades__account__template", "tags")
-            .annotate(
-                total_pnl=Coalesce(Sum("trades__pnl"), Value(0)),
-                trade_count=Count("trades", distinct=True),
-            )
-            .order_by("-date_time")
+        qs = JournalEntry.objects.filter(user=self.request.user)
+
+        qs = qs.annotate(
+            total_pnl=Coalesce(Sum("trades__pnl"), Value(0)),
+            trade_count=Count("trades"),
+        ).distinct()
+
+        qs = qs.prefetch_related(
+            "trades",
+            "trades__account",
+            "trades__account__template",
+            "tags",
         )
+
+        return qs.order_by("-date_time")
 
     def get_serializer_class(self):
         if self.action == "list":

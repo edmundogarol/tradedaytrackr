@@ -5,6 +5,9 @@ from django.db import transaction
 from backend.djangoapi.services.demo.seed_account_templates import (
     seed_demo_account_templates,
 )
+from backend.djangoapi.services.demo.seed_journal_entries import (
+    seed_demo_journal_entries,
+)
 from backend.djangoapi.services.demo.seed_tags import seed_demo_tags
 from backend.djangoapi.services.demo.seed_trade_days import seed_demo_trade_days
 from backend.djangoapi.services.demo.seed_trading_accounts import (
@@ -22,10 +25,12 @@ def reset_demo_user(user):
         user.tags.all().delete()
         user.trading_accounts.all().delete()
         user.trading_account_templates.all().delete()
+        user.journal_entries.all().delete()
 
         seed_demo_account_templates(user)
         seed_demo_tags(user)
         seed_demo_trading_accounts(user)
         seed_demo_trade_days(user)
+        seed_demo_journal_entries(user)
 
     logger.info("Demo user reset + seeded.", extra={"user_id": user.id})

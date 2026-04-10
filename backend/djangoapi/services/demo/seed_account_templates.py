@@ -1,4 +1,5 @@
-from backend.djangoapi.models import Rule, TradingAccountTemplate
+from backend.djangoapi.models.rule import Rule
+from backend.djangoapi.models.trading_account_template import TradingAccountTemplate
 
 
 def seed_demo_account_templates(user):

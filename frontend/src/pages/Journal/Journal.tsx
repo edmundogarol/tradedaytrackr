@@ -42,7 +42,11 @@ const Journal: React.FunctionComponent = () => {
 
   const sortByOptions = {
     title: "Sort By",
-    items: ["Date", "PnL", "Accounts Count"],
+    items: [
+      { name: "Date", value: "date" },
+      { name: "PnL", value: "pnl" },
+      { name: "Accounts Count", value: "accounts_count" },
+    ],
   };
 
   return (
@@ -77,7 +81,7 @@ const Journal: React.FunctionComponent = () => {
               overlay={
                 <TileTradeCountContainer>
                   <InfoPopout infoDescription="2x Apex, 4x Mffu">
-                    <TileTradeCount className="trade-count">{`x${entry.accounts.length} acc`}</TileTradeCount>
+                    <TileTradeCount className="trade-count">{`x${entry.accountCount} acc`}</TileTradeCount>
                   </InfoPopout>
                 </TileTradeCountContainer>
               }
@@ -99,8 +103,8 @@ const Journal: React.FunctionComponent = () => {
                   </DateContainer>
                 </PreviewDayValueContainer>
                 <Description>{entry.description}</Description>
-                <PnL $positive={entry.totalPnL >= 0}>
-                  {formatter.format(entry.totalPnL)}
+                <PnL $positive={entry.totalPnl >= 0}>
+                  {formatter.format(entry.totalPnl)}
                 </PnL>
                 <InfoPopout infoDescription="Edit Details">
                   <EditContainer>

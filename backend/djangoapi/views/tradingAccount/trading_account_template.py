@@ -2,7 +2,7 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
-from backend.djangoapi.models import TradingAccountTemplate
+from backend.djangoapi.models.trading_account_template import TradingAccountTemplate
 from backend.djangoapi.serializers.trading_account_template import (
     TradingAccountTemplateSerializer,
 )

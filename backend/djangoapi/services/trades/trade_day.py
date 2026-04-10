@@ -52,7 +52,7 @@ def recompute_all_trading_days(account):
     current_day_number = 1
 
     for td in trading_days:
-        pnl = td.pnl  # computed property
+        pnl = td.pnl or 0
 
         template = account.template
         min_profit = template.min_day_pnl or 0

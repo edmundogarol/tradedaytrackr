@@ -1,8 +1,9 @@
 import logging
 
+from django.db.models import Sum
 from rest_framework import serializers
 
-from backend.djangoapi.models import JournalEntry
+from backend.djangoapi.models.journal_entry import JournalEntry
 from backend.djangoapi.models.tag import Tag
 from backend.djangoapi.serializers.tag import TagSerializer
 
@@ -13,14 +14,13 @@ class JournalEntrySerializer(serializers.ModelSerializer):
     trade_ids = serializers.PrimaryKeyRelatedField(
         source="trades", many=True, read_only=True
     )
-    totalPnL = serializers.DecimalField(
-        max_digits=10, decimal_places=2, source="total_pnl", read_only=True
-    )
-    accountCount = serializers.IntegerField(source="trade_count", read_only=True)
     tags = serializers.ListField(
         child=serializers.CharField(), write_only=True, required=False
     )
     tag_objects = TagSerializer(source="tags", many=True, read_only=True)
+
+    total_pnl = serializers.SerializerMethodField()
+    account_count = serializers.SerializerMethodField()
 
     class Meta:
         model = JournalEntry
@@ -36,9 +36,16 @@ class JournalEntrySerializer(serializers.ModelSerializer):
             "tags",
             "tag_objects",
             "trades",
-            "totalPnL",
-            "accountCount",
+            "trade_ids",
+            "total_pnl",
+            "account_count",
         ]
+
+    def get_total_pnl(self, obj):
+        return obj.trades.aggregate(total=Sum("pnl"))["total"] or 0
+
+    def get_account_count(self, obj):
+        return obj.trades.count()
 
     def validate_tags(self, value):
         if not isinstance(value, list):

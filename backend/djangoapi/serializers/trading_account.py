@@ -3,7 +3,8 @@ import os
 from django.db.models import Sum
 from rest_framework import serializers
 
-from backend.djangoapi.models import TradingAccount, TradingAccountTemplate
+from backend.djangoapi.models.trading_account import TradingAccount
+from backend.djangoapi.models.trading_account_template import TradingAccountTemplate
 from backend.djangoapi.serializers.trading_day import TradingDaySerializer
 
 

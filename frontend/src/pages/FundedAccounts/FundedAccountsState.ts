@@ -1,4 +1,5 @@
 import type { TradingAccount, TradingDay } from "@interfaces/CustomTypes";
+import type { JournalEntry } from "@pages/Journal/JournalInterfaces";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export interface FundedAccountsState {
@@ -19,6 +20,7 @@ export interface FundedAccountsState {
   readonly deleteTradingAccountErrors: { [key: string]: any };
   readonly firmFilter: string[];
   readonly bufferFilter: string[];
+  readonly selectedDateJournalEntries?: JournalEntry[];
 }
 
 const initialAccount: TradingAccount = {
@@ -71,6 +73,7 @@ export const initialState: FundedAccountsState = {
   deleteTradingAccountErrors: {},
   firmFilter: [],
   bufferFilter: [],
+  selectedDateJournalEntries: [],
 };
 
 type UpdateTradingAccountsAction = PayloadAction<TradingAccount[]>;
@@ -98,6 +101,7 @@ type UpdateDeleteTradingAccountErrorsAction = PayloadAction<{
 }>;
 type UpdateFirmFilterAction = PayloadAction<string[]>;
 type UpdateBufferFilterAction = PayloadAction<string[]>;
+type UpdateSelectedDateJournalEntriesAction = PayloadAction<JournalEntry[]>;
 
 export type FundedAccountsAction =
   | UpdateTradingAccountsAction
@@ -114,7 +118,8 @@ export type FundedAccountsAction =
   | UpdateDeletingTradingAccountModalOpenAction
   | UpdateDeleteTradingAccountErrorsAction
   | UpdateFirmFilterAction
-  | UpdateBufferFilterAction;
+  | UpdateBufferFilterAction
+  | UpdateSelectedDateJournalEntriesAction;
 
 export const fundedAccountsSlice = createSlice({
   name: "fundedAccounts",
@@ -203,6 +208,12 @@ export const fundedAccountsSlice = createSlice({
     updateBufferFilter: (state, action: UpdateBufferFilterAction) => {
       state.bufferFilter = action.payload;
     },
+    updateSelectedDateJournalEntries: (
+      state,
+      action: UpdateSelectedDateJournalEntriesAction,
+    ) => {
+      state.selectedDateJournalEntries = action.payload;
+    },
   },
 });
 
@@ -222,6 +233,7 @@ export const {
   updateDeleteTradingAccountErrors,
   updateFirmFilter,
   updateBufferFilter,
+  updateSelectedDateJournalEntries,
 } = fundedAccountsSlice.actions;
 
 export const fundedAccountsReducer = fundedAccountsSlice.reducer;

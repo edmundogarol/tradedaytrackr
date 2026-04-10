@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from backend.djangoapi.models import Tag
+from backend.djangoapi.models.tag import Tag
 
 
 class TagSerializer(serializers.ModelSerializer):

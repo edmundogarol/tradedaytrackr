@@ -614,7 +614,7 @@ const FundedAccountDetail: React.FunctionComponent<
                           }
                         />
                         <TradeJournalPnL $positive={index !== 2}>
-                          ${dayValue.trades[0]?.journalEntry?.totalPnL || 0}
+                          ${dayValue.trades[0]?.journalEntry?.totalPnl || 0}
                         </TradeJournalPnL>
                         <Else>
                           <InfoPopout
@@ -643,7 +643,7 @@ const FundedAccountDetail: React.FunctionComponent<
                     <DayValue>{dayValue.dayNumber || "-"}</DayValue>
                   </PreviewDayValueContainer>
                   <DateContainer>
-                    {dayValue.trades[0]?.journalEntry?.accounts.length || "-"}
+                    {dayValue.trades[0]?.journalEntry?.trades.length || "-"}
                   </DateContainer>
                   <DateContainer>
                     {moment(dayValue.date).format("MMM D, YYYY")}

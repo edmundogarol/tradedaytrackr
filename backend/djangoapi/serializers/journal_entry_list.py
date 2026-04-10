@@ -4,10 +4,11 @@ from backend.djangoapi.models.journal_entry import JournalEntry
 
 
 class JournalEntryListSerializer(serializers.ModelSerializer):
-    totalPnL = serializers.DecimalField(
-        max_digits=10, decimal_places=2, source="total_pnl", read_only=True
+    total_pnl = serializers.DecimalField(
+        max_digits=10, decimal_places=2, read_only=True
     )
-    accountCount = serializers.IntegerField(source="trade_count", read_only=True)
+
+    account_count = serializers.IntegerField(source="trade_count", read_only=True)
 
     class Meta:
         model = JournalEntry
@@ -16,6 +17,6 @@ class JournalEntryListSerializer(serializers.ModelSerializer):
             "date_time",
             "description",
             "instrument",
-            "totalPnL",
-            "accountCount",
+            "total_pnl",
+            "account_count",
         ]

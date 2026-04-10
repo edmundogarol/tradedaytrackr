@@ -22,6 +22,9 @@ from backend.djangoapi.views.ai.drafting import GenerateDraftView
 from backend.djangoapi.views.ai.strategy import DetectStrategyView
 from backend.djangoapi.views.ai.tagging import AutoTagView
 from backend.djangoapi.views.journal.journal_entry import JournalEntryViewSet
+from backend.djangoapi.views.journal.journal_entry_by_date import (
+    JournalEntriesByDateView,
+)
 from backend.djangoapi.views.journal.tag import TagViewSet
 from backend.djangoapi.views.tradingAccount.rule import RuleViewSet
 from backend.djangoapi.views.tradingAccount.trading_account import TradingAccountViewSet
@@ -68,6 +71,11 @@ router.register(r"rules", RuleViewSet, basename="rules")
 urlpatterns = [
     path("docs/", schema_view),
     path("health/", health_check),
+    path(
+        "api/journal-entries/by-date/",
+        JournalEntriesByDateView.as_view(),
+        name="journal-entries-by-date",
+    ),
     path("api/", include(router.urls)),
     path("api/csrf/", csrf),
     path("api/ai/tags/", AutoTagView.as_view()),

@@ -1,7 +1,7 @@
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
-from backend.djangoapi.models import Trade
+from backend.djangoapi.models.trade import Trade
 from backend.djangoapi.services.trades.account_balance import recompute_account_balance
 from backend.djangoapi.services.trades.trade_day import recompute_all_trading_days
 
