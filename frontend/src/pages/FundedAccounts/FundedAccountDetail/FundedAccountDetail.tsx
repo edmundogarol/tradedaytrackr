@@ -148,11 +148,6 @@ const FundedAccountDetail: React.FunctionComponent<
     }
   }, [tradingAccounts, accountId]);
 
-  const withdrawable =
-    currentTradingAccount?.accountBalance -
-    currentTradingAccount?.accountSize -
-    currentTradingAccount?.minBuffer;
-
   return (
     <Page topBarShowMenu={true}>
       <AlertPopout
@@ -509,32 +504,18 @@ const FundedAccountDetail: React.FunctionComponent<
                   <ConsistencyLabel>{"Consistency"}</ConsistencyLabel>
                 </ConsistencyContainer>
                 <PnLContainer>
-                  <PnLValue $withdrawable={withdrawable > 0}>
-                    {withdrawable > 0
-                      ? formatter.format(withdrawable)
-                      : formatter.format(0)}
+                  <PnLValue
+                    $withdrawable={currentTradingAccount.withdrawableAmount > 0}
+                  >
+                    {formatter.format(currentTradingAccount.withdrawableAmount)}
                   </PnLValue>
                   <PnLWithdrawable
-                    $positive={
-                      currentTradingAccount?.accountBalance -
-                        currentTradingAccount?.accountSize -
-                        currentTradingAccount?.minBuffer >
-                      0
-                    }
+                    $positive={currentTradingAccount?.postPayoutBuffer > 0}
                   >
                     <PnLWithdrawableText>
                       Post-Payout Buffer:
                     </PnLWithdrawableText>
-                    {currentTradingAccount?.accountBalance -
-                      currentTradingAccount?.accountSize -
-                      currentTradingAccount?.minBuffer <
-                    0
-                      ? formatter.format(0)
-                      : formatter.format(
-                          currentTradingAccount?.accountBalance -
-                            currentTradingAccount?.accountSize -
-                            currentTradingAccount?.minBuffer,
-                        )}
+                    {formatter.format(currentTradingAccount?.postPayoutBuffer)}
                   </PnLWithdrawable>
                 </PnLContainer>
               </AccountPerformanceContainer>

@@ -55,12 +55,28 @@ class TradingAccountTemplate(models.Model):
         blank=True,
         help_text="Percentage (e.g. 50 for 50%)",
     )
-    allowable_payout_request = models.DecimalField(
+    min_payout_request = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         null=True,
         blank=True,
-        help_text="Max % or amount allowed for payout request",
+        help_text="Minimum payout amount required to request payout",
+    )
+
+    max_payout_request = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="Maximum payout allowed per request",
+    )
+
+    withdrawal_split = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="Percentage of profit that can be withdrawn (e.g. 50 for 50%)",
     )
     rules = models.ManyToManyField(
         "djangoapi.Rule",

@@ -8,6 +8,7 @@ import StatsSummary from "@components/Stats/StatsSummary/StatsSummary";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import useGetAccountTemplatesHandler from "@pages/Settings/Preferences/hooks/useGetAccountTemplatesHandler";
 import { SectionTitle } from "@styles/globalStyledComponents";
+import { uniqBy } from "lodash";
 import React, { useEffect } from "react";
 import AddFundedAccountsModal from "./AddFundedAccountModal/AddFundedAccountsModal";
 import AddTradingDayModal from "./AddTradingDayModal/AddTradingDayModal";
@@ -30,22 +31,33 @@ import useGetTradingAccountsHandler from "./hooks/useGetTradingAccountsHandler";
 
 const FundedAccounts: React.FunctionComponent = () => {
   const fundedStatsSummaryDetails = useGetFundedAccountsStatsSummaryDetails();
-  const firmsList = ["My Funded Futures", "Apex", "Bulenox", "Alpha Futures"];
-  const accountTemplateList = [
-    "MFFU 50k Flex",
-    "MFFU 50k Rapid",
-    "Apex 50k",
-    "Bulenox 50k",
-    "Alpha Futures Zero 50k",
+  const bufferState = [
+    {
+      name: "< 20%",
+      value: "<20",
+    },
+    {
+      name: "< 50%",
+      value: "<50",
+    },
+    {
+      name: "> 50%",
+      value: ">50",
+    },
+    {
+      name: "> 90%",
+      value: ">90",
+    },
+    {
+      name: "Complete",
+      value: "complete",
+    },
   ];
-
-  const bufferState = ["< 20%", "> 50%", "> 90%", "Complete"];
   const [addTradingDayOpen, setAddTradingDayOpen] =
     React.useState<boolean>(false);
   const {
     tradingAccounts,
     deleteTradingAccountErrors,
-    createTradingAccountModalOpen,
     createTradingAccountErrors,
   } = useFundedAccountsState();
   const {
@@ -55,6 +67,17 @@ const FundedAccounts: React.FunctionComponent = () => {
   } = useFundedAccountsDispatch();
   const { getAccountTemplates } = useGetAccountTemplatesHandler();
   const { getTradingAccounts } = useGetTradingAccountsHandler();
+  const firmsList = uniqBy(
+    tradingAccounts.map((account) => {
+      return {
+        name: account.accountType.firm,
+        value: account.accountType.firm,
+      };
+    }),
+    "value",
+  );
+  const [firmFilter, setFirmFilter] = React.useState<string[]>([]);
+  const [bufferFilter, setBufferFilter] = React.useState<string[]>([]);
 
   useEffect(() => {
     getAccountTemplates();
@@ -79,10 +102,7 @@ const FundedAccounts: React.FunctionComponent = () => {
         modalOpen={addTradingDayOpen}
         setModalOpen={setAddTradingDayOpen}
       />
-      <AddFundedAccountsModal
-        accountTemplates={accountTemplateList}
-        setAddTradingDayOpen={setAddTradingDayOpen}
-      />
+      <AddFundedAccountsModal setAddTradingDayOpen={setAddTradingDayOpen} />
       <Container>
         <SectionTitle>Funded Accounts</SectionTitle>
         <StatsSummary
@@ -92,12 +112,14 @@ const FundedAccounts: React.FunctionComponent = () => {
         <Gap level={2} />
         <DropdownsSection>
           <DropdownMultiselect
-            items={firmsList.concat(firmsList)}
+            items={firmsList}
+            onSelect={(selected) => setFirmFilter(selected)}
             title="All Firms"
             icon={<FilterAltIcon style={{ color: "#c0c0c0" }} />}
           />
           <DropdownMultiselect
             items={bufferState}
+            onSelect={(selected) => setBufferFilter(selected)}
             title="Buffer Built"
             icon={<FilterAltIcon style={{ color: "#c0c0c0" }} />}
           />
@@ -117,13 +139,37 @@ const FundedAccounts: React.FunctionComponent = () => {
           <PnLHeader>Withdrawable</PnLHeader>
         </ListHeaders>
         <ListContainer>
-          {tradingAccounts.map((account, index) => (
-            <ListItem
-              key={index}
-              account={account}
-              openAddTradingDayModal={setAddTradingDayOpen}
-            />
-          ))}
+          {tradingAccounts
+            .filter(
+              (account) =>
+                firmFilter.length === 0 ||
+                firmFilter.includes(account.accountType.firm),
+            )
+            .filter((account) => {
+              if (bufferFilter.length === 0) {
+                return true;
+              }
+              const bufferPercent = account.bufferPercent;
+              if (bufferFilter.includes("<20")) {
+                return bufferPercent < 20;
+              } else if (bufferFilter.includes("<50")) {
+                return bufferPercent < 50;
+              } else if (bufferFilter.includes(">50")) {
+                return bufferPercent > 50;
+              } else if (bufferFilter.includes(">90")) {
+                return bufferPercent > 90 && bufferPercent < 100;
+              } else if (bufferFilter.includes("complete")) {
+                return bufferPercent === 100;
+              }
+              return true;
+            })
+            .map((account, index) => (
+              <ListItem
+                key={index}
+                account={account}
+                openAddTradingDayModal={setAddTradingDayOpen}
+              />
+            ))}
         </ListContainer>
       </Container>
     </Page>

@@ -15,7 +15,6 @@ import { AddFundedAccountContainer } from "./AddFundedAccountsModalStyledCompone
 import styles from "./AddFundedAccountsModalStyles";
 
 interface AddFundedAccountsModalProps {
-  accountTemplates: string[];
   setAddTradingDayOpen: (open: boolean) => void;
 }
 

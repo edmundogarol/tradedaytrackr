@@ -28,7 +28,8 @@ const initialAccount: TradingAccount = {
   baseline_balance: 0,
   minTradingDays: undefined,
   minBuffer: 0,
-  allowablePayoutRequest: 0,
+  minPayoutRequest: 0,
+  maxPayoutRequest: 0,
   profitSplit: undefined,
   minDayPnl: undefined,
   maxDrawdown: undefined,
@@ -45,6 +46,7 @@ const initialAccount: TradingAccount = {
     id: 0,
     name: "",
     isEval: false,
+    firm: "",
   },
 };
 

@@ -49,7 +49,8 @@ const FundedAccountsListItem: React.FunctionComponent<
     image,
     minTradingDays,
     minBuffer,
-    allowablePayoutRequest,
+    minPayoutRequest,
+    maxPayoutRequest,
     dayValues,
     currentDayCount,
     withdrawableAmount,
@@ -159,7 +160,7 @@ const FundedAccountsListItem: React.FunctionComponent<
           <PnLValue
             $withdrawable={
               accountBalance - accountSize > minBuffer &&
-              withdrawableAmount >= allowablePayoutRequest
+              withdrawableAmount >= minPayoutRequest
             }
           >
             {withdrawableAmount > 0

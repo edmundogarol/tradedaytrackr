@@ -4,36 +4,64 @@ from backend.djangoapi.models.trading_account_template import TradingAccountTemp
 
 def seed_demo_trading_accounts(user):
 
-    flex_template = TradingAccountTemplate.objects.get(
-        name="MyFundedFutures 50k Flex (Sample)",
-        user=user,
-    )
-    rapid_template = TradingAccountTemplate.objects.get(
-        name="MyFundedFutures 50k Rapid (Sample)",
-        user=user,
-    )
-    apex_template = TradingAccountTemplate.objects.get(
-        name="Apex 50k EOD (Sample)",
-        user=user,
-    )
+    templates = TradingAccountTemplate.objects.filter(user=user)
 
-    accounts = [
-        {
-            "account_name": "MFFUSFFLX001",
-            "account_balance": 50000,
-            "template_id": flex_template.id,
-        },
-        {
-            "account_name": "MFFUSFRPD001",
-            "account_balance": 50000,
-            "template_id": rapid_template.id,
-        },
-        {
-            "account_name": "PAAPEX003",
-            "account_balance": 50000,
-            "template_id": apex_template.id,
-        },
-    ]
+    accounts = []
 
+    for template in templates:
+        name = template.name
+        size = template.account_size
+
+        # how many accounts per template
+        if "Flex" in name:
+            count = 3  # stack flex accounts
+        elif "Rapid" in name:
+            count = 2
+        elif "Apex" in name:
+            count = 2
+        else:
+            count = 1
+
+        for i in range(1, count + 1):
+            # ---------------------------
+            # FLEX
+            # ---------------------------
+            if "Flex" in name:
+                account_name = f"MFFU-FLX-{size}-{i:03d}"
+
+            # ---------------------------
+            # RAPID
+            # ---------------------------
+            elif "Rapid" in name:
+                account_name = f"MFFU-RPD-{size}-{i:03d}"
+
+            # ---------------------------
+            # APEX
+            # ---------------------------
+            elif "Apex" in name:
+                suffix = "EVAL" if template.is_evaluation else "FUNDED"
+                account_name = f"APEX-{suffix}-{size}-{i:03d}"
+
+            # ---------------------------
+            # FALLBACK
+            # ---------------------------
+            else:
+                account_name = f"ACC-{template.id}-{i:03d}"
+
+            accounts.append(
+                {
+                    "account_name": account_name,
+                    "account_balance": size,
+                    "template_id": template.id,
+                }
+            )
+
+    # ---------------------------
+    # CREATE ACCOUNTS
+    # ---------------------------
     for account in accounts:
-        TradingAccount.objects.create(user=user, **account)
+        TradingAccount.objects.get_or_create(
+            user=user,
+            account_name=account["account_name"],
+            defaults=account,
+        )

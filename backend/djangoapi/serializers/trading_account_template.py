@@ -33,7 +33,9 @@ class TradingAccountTemplateSerializer(serializers.ModelSerializer):
             "min_day_pnl",
             "max_drawdown",
             "consistency",
-            "allowable_payout_request",
+            "min_payout_request",
+            "max_payout_request",
+            "withdrawal_split",
             "rules",
             "rule_ids",
         ]
@@ -80,9 +82,21 @@ class TradingAccountTemplateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Consistency must be between 0 and 100")
         return value
 
-    def validate_allowable_payout_request(self, value):
+    def validate_min_payout_request(self, value):
         if value is not None and value < 0:
-            raise serializers.ValidationError("Allowable payout must be positive")
+            raise serializers.ValidationError("Minimum payout must be positive")
+        return value
+
+    def validate_max_payout_request(self, value):
+        if value is not None and value < 0:
+            raise serializers.ValidationError("Maximum payout must be positive")
+        return value
+
+    def validate_withdrawal_split(self, value):
+        if value is not None and (value < 0 or value > 100):
+            raise serializers.ValidationError(
+                "Withdrawal split must be between 0 and 100"
+            )
         return value
 
     def validate_max_drawdown(self, value):
@@ -131,7 +145,9 @@ class TradingAccountTemplateSerializer(serializers.ModelSerializer):
                 "min_buffer",
                 "min_trading_days",
                 "min_day_pnl",
-                "allowable_payout_request",
+                "min_payout_request",
+                "max_payout_request",
+                "withdrawal_split",
             ]
 
         for field in required_fields:

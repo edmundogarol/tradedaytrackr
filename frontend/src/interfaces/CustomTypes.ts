@@ -55,7 +55,8 @@ export interface AccountTemplate {
   minDayPnl?: number;
   maxDrawdown?: number;
   consistency?: number;
-  allowablePayoutRequest?: number;
+  minPayoutRequest?: number;
+  maxPayoutRequest?: number;
   rules?: Rule[] | string[];
 }
 
@@ -66,12 +67,14 @@ export interface TradingAccount extends AccountTemplate {
     id: number;
     name: string;
     isEval: boolean;
+    firm: string;
   };
   bufferPercent: number;
   minBuffer: number;
   dayValues: TradingDay[];
   currentDayCount: number;
-  allowablePayoutRequest: number;
+  minPayoutRequest: number;
+  maxPayoutRequest: number;
   postPayoutBuffer: number;
   withdrawableAmount: number;
 }

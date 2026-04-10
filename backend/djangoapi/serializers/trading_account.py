@@ -60,9 +60,23 @@ class TradingAccountSerializer(serializers.ModelSerializer):
         read_only=True,
     )
 
-    allowable_payout_request = serializers.DecimalField(
-        source="template.allowable_payout_request",
+    min_payout_request = serializers.DecimalField(
+        source="template.min_payout_request",
         max_digits=10,
+        decimal_places=2,
+        read_only=True,
+    )
+
+    max_payout_request = serializers.DecimalField(
+        source="template.max_payout_request",
+        max_digits=10,
+        decimal_places=2,
+        read_only=True,
+    )
+
+    withdrawal_split = serializers.DecimalField(
+        source="template.withdrawal_split",
+        max_digits=5,
         decimal_places=2,
         read_only=True,
     )
@@ -98,7 +112,9 @@ class TradingAccountSerializer(serializers.ModelSerializer):
             "min_day_pnl",
             "day_values",
             "current_day_count",
-            "allowable_payout_request",
+            "min_payout_request",
+            "max_payout_request",
+            "withdrawal_split",
             "post_payout_buffer",
             "withdrawable_amount",
         ]
@@ -131,6 +147,7 @@ class TradingAccountSerializer(serializers.ModelSerializer):
             "id": obj.template.id,
             "name": obj.template.name,
             "is_eval": obj.template.is_evaluation,
+            "firm": obj.template.firm,
         }
 
     def get_buffer_percent(self, obj):
@@ -155,28 +172,43 @@ class TradingAccountSerializer(serializers.ModelSerializer):
         template = obj.template
         balance = obj.account_balance
 
+        min_req = template.min_payout_request or 0
+        max_req = template.max_payout_request
+
         has_static_rule = template.rules.filter(
             name="MFFU $100 MLL after Payout #1"
         ).exists()
 
-        # 🔥 STATIC RULE (FIXED)
+        # STATIC RULE
         if has_static_rule:
             floor = 50100
-            cushion = 100
 
-            max_safe = balance - (floor + cushion)
+            # 🔥 HARD CONSTRAINT
+            max_safe = balance - floor
 
             if max_safe <= 0:
                 return 0
 
-            cap = template.allowable_payout_request or max_safe
+            # 🔥 APPLY SPLIT (ON SAFE AMOUNT)
+            if template.withdrawal_split:
+                max_safe = (max_safe * template.withdrawal_split) / 100
 
-            return round(min(max_safe, cap), 2)
+            # 🔥 APPLY MAX CAP
+            if template.max_payout_request:
+                max_safe = min(max_safe, template.max_payout_request)
 
-        # 🔥 NORMAL LOGIC (unchanged)
+            # 🔥 APPLY MIN REQUIREMENT
+            if max_safe < (template.min_payout_request or 0):
+                return 0
+
+            return round(max_safe, 2)
+
+        # NORMAL LOGIC
         account_size = template.account_size
         min_buffer = template.min_buffer or 0
-        cap = template.allowable_payout_request or 0
+        min_req = template.min_payout_request or 0
+        max_req = template.max_payout_request
+        split = template.withdrawal_split
 
         profit = balance - account_size
         available = profit - min_buffer
@@ -184,7 +216,20 @@ class TradingAccountSerializer(serializers.ModelSerializer):
         if available <= 0:
             return 0
 
-        return round(min(available, cap), 2)
+        # 🔥 APPLY SPLIT LIMIT
+        if split:
+            split_limit = (profit * split) / 100
+            available = min(available, split_limit)
+
+        # 🚫 enforce minimum payout
+        if available < min_req:
+            return 0
+
+        # 🎯 enforce max payout
+        if max_req:
+            return round(min(available, max_req), 2)
+
+        return round(available, 2)
 
     def get_post_payout_buffer(self, obj):
         template = obj.template
@@ -204,7 +249,7 @@ class TradingAccountSerializer(serializers.ModelSerializer):
 
             return round(max(buffer_after, 0), 2)
 
-        # 🔥 NORMAL
+        # NORMAL
         account_size = template.account_size
 
         profit = balance - account_size
