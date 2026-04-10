@@ -1,3 +1,5 @@
+import type { JournalEntry } from "@pages/Journal/JournalInterfaces";
+
 export interface CustomWindow extends Window {
   host: string;
   navigator: any;
@@ -86,6 +88,7 @@ export interface Trade {
   pnl: number;
   accountName: string;
   accountId: number;
+  journalEntry: JournalEntry;
 }
 
 export interface TradingDay {
@@ -94,6 +97,7 @@ export interface TradingDay {
   account: number;
   pnl: number;
   dayNumber?: number;
+  trades: Trade[];
 }
 
 export interface Tag {

@@ -91,7 +91,7 @@ const FundedAccountsListItem: React.FunctionComponent<
               minTradingDays ?? "N/A"
             }`}
             <InfoPopout
-              infoDescription={`This account requires a minimum of ${minTradingDays} eligible trading days.`}
+              infoDescription={`This account requires a minimum of ${minTradingDays} eligible trading days before payout.`}
             />
           </AccountTradingDaysComplete>
         </AccountTitleContainer>

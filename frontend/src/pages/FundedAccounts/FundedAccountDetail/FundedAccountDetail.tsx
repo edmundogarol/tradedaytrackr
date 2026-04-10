@@ -192,27 +192,34 @@ const FundedAccountDetail: React.FunctionComponent<
                 currentTradingAccount?.minTradingDays ?? "N/A"
               }`}
               <InfoPopout
-                infoDescription={`This account requires a minimum of ${currentTradingAccount?.minTradingDays} eligible trading days.`}
+                infoDescription={`This account requires a minimum of ${currentTradingAccount?.minTradingDays} eligible trading days before payout.`}
               />
             </AccountTradingDaysComplete>
           </AccountTitleContainer>
           <DaysContainer>
-            {currentTradingAccount.dayValues.map((dayValue, idx) => (
-              <DaysItem key={idx}>
-                <GlassTile
-                  positive={dayValue.pnl > 0}
-                  featureTile
-                  minHeight={10}
-                  minWidth={10}
-                  padding={7}
-                >
-                  <DaysItemValue $positive={dayValue.pnl > 0}>
-                    {`${dayValue.pnl > 0 ? "+" : ""}${dayValue.pnl}`}
-                  </DaysItemValue>
-                </GlassTile>
-                <DaysItemSubtitle>{dayValue.dayNumber}</DaysItemSubtitle>
-              </DaysItem>
-            ))}
+            {[...currentTradingAccount.dayValues]
+              .reverse()
+              .map((dayValue, idx) => (
+                <DaysItem key={idx}>
+                  <GlassTile
+                    positive={dayValue.pnl > 0}
+                    featureTile
+                    minHeight={10}
+                    minWidth={10}
+                    padding={7}
+                  >
+                    <DaysItemValue $positive={dayValue.pnl > 0}>
+                      {`${dayValue.pnl > 0 ? "+" : ""}${dayValue.pnl}`}
+                    </DaysItemValue>
+                  </GlassTile>
+                  <If condition={!!dayValue.dayNumber}>
+                    <DaysItemSubtitle>{dayValue.dayNumber}</DaysItemSubtitle>
+                    <Else>
+                      <DaysItemSubtitle>-</DaysItemSubtitle>
+                    </Else>
+                  </If>
+                </DaysItem>
+              ))}
           </DaysContainer>
         </ListItemContainer>
         <Gap level={2} />
@@ -484,7 +491,7 @@ const FundedAccountDetail: React.FunctionComponent<
                     currentTradingAccount?.minTradingDays ?? "N/A"
                   }`}
                   <InfoPopout
-                    infoDescription={`This account requires a minimum of ${currentTradingAccount?.minTradingDays} eligible trading days.`}
+                    infoDescription={`This account requires a minimum of ${currentTradingAccount?.minTradingDays} eligible trading days before payout.`}
                   />
                 </AccountTradingDaysComplete>
               </AccountDetailContainer>
@@ -597,47 +604,46 @@ const FundedAccountDetail: React.FunctionComponent<
                 <TradeDay>
                   <PreviewDayValueContainer>
                     <TradePreviewContainer>
-                      {index % 2 === 0 ? (
-                        <>
-                          <TradePreview
-                            $idx={index}
-                            onClick={() =>
-                              navigation.navigate(PageEnum.JournalEntry, {
-                                id: index,
-                              })
-                            }
-                          />
-                          <TradeJournalPnL $positive={index !== 2}>
-                            ${1800}
-                          </TradeJournalPnL>
-                        </>
-                      ) : (
-                        <InfoPopout
-                          infoDescription={`Link or convert to journal entry`}
-                        >
-                          <div>
-                            <Icon
-                              type={IconTypeEnum.FontAwesome5}
-                              name="link"
-                              size={30}
-                              color={color("SystemLabel1")}
-                              style={{ transform: "rotate(135deg)" }}
-                            />
-                            <WifiProtectedSetupIcon
-                              style={{
-                                height: 30,
-                                width: 30,
-                                color: color("SystemLabel1"),
-                              }}
-                            />
-                          </div>
-                        </InfoPopout>
-                      )}
+                      <If condition={!!dayValue.trades[0]?.journalEntry}>
+                        <TradePreview
+                          $idx={index}
+                          onClick={() =>
+                            navigation.navigate(PageEnum.JournalEntry, {
+                              id: index,
+                            })
+                          }
+                        />
+                        <TradeJournalPnL $positive={index !== 2}>
+                          ${dayValue.trades[0]?.journalEntry?.totalPnL || 0}
+                        </TradeJournalPnL>
+                        <Else>
+                          <InfoPopout
+                            infoDescription={`Link or convert to journal entry`}
+                          >
+                            <div>
+                              <Icon
+                                type={IconTypeEnum.FontAwesome5}
+                                name="link"
+                                size={30}
+                                color={color("SystemLabel1")}
+                                style={{ transform: "rotate(135deg)" }}
+                              />
+                              <WifiProtectedSetupIcon
+                                style={{
+                                  height: 30,
+                                  width: 30,
+                                  color: color("SystemLabel1"),
+                                }}
+                              />
+                            </div>
+                          </InfoPopout>
+                        </Else>
+                      </If>
                     </TradePreviewContainer>
                     <DayValue>{dayValue.dayNumber || "-"}</DayValue>
                   </PreviewDayValueContainer>
                   <DateContainer>
-                    {index % 2 === 0 ? "3x Accs" : "-"}
+                    {dayValue.trades[0]?.journalEntry?.accounts.length || "-"}
                   </DateContainer>
                   <DateContainer>
                     {moment(dayValue.date).format("MMM D, YYYY")}
