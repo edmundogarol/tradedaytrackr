@@ -496,12 +496,24 @@ const FundedAccountDetail: React.FunctionComponent<
                   />
                 </BufferContainer>
                 <ConsistencyContainer>
-                  <ConsistencyScore>
-                    {currentTradingAccount?.consistency
-                      ? `${currentTradingAccount?.consistency}%`
-                      : "None"}
+                  <ConsistencyScore
+                    $valid={
+                      Number(currentTradingAccount?.consistency) <= 0
+                        ? true
+                        : !!currentTradingAccount?.consistencyScore &&
+                          Number(currentTradingAccount?.consistency) > 0 &&
+                          currentTradingAccount?.consistencyScore <=
+                            Number(currentTradingAccount?.consistency)
+                    }
+                  >
+                    {currentTradingAccount?.consistencyScore?.toFixed(0)}%
                   </ConsistencyScore>
-                  <ConsistencyLabel>{"Consistency"}</ConsistencyLabel>
+                  <ConsistencyLabel>
+                    {"Consistency"}
+                    <InfoPopout
+                      infoDescription={`% of total profit coming from your largest winning day.`}
+                    />
+                  </ConsistencyLabel>
                 </ConsistencyContainer>
                 <PnLContainer>
                   <PnLValue

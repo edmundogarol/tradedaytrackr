@@ -175,14 +175,15 @@ export const ConsistencyContainer = styled.div`
   gap: 5px;
   flex: 1;
 `;
-export const ConsistencyScore = styled.span`
-  color: ${color("SystemGreen")};
+export const ConsistencyScore = styled.span<{ $valid: boolean }>`
+  color: ${(props): string =>
+    props.$valid ? color("SystemGreen") : color("SystemRed")};
 `;
 export const ConsistencyLabel = styled.span`
   display: flex;
   color: ${color("SystemLabel1")};
   font-size: 12px;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
 `;

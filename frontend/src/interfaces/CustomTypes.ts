@@ -77,6 +77,7 @@ export interface TradingAccount extends AccountTemplate {
   maxPayoutRequest: number;
   postPayoutBuffer: number;
   withdrawableAmount: number;
+  consistencyScore?: number;
 }
 
 export interface Trade {

@@ -91,6 +91,13 @@ class TradingAccountSerializer(serializers.ModelSerializer):
     current_day_count = serializers.SerializerMethodField()
     post_payout_buffer = serializers.SerializerMethodField()
     withdrawable_amount = serializers.SerializerMethodField()
+    consistency_score = serializers.SerializerMethodField()
+    consistency = serializers.DecimalField(
+        source="template.consistency",
+        max_digits=5,
+        decimal_places=2,
+        read_only=True,
+    )
 
     class Meta:
         model = TradingAccount
@@ -117,6 +124,8 @@ class TradingAccountSerializer(serializers.ModelSerializer):
             "withdrawal_split",
             "post_payout_buffer",
             "withdrawable_amount",
+            "consistency_score",
+            "consistency",
         ]
         extra_kwargs = {
             "account_balance": {"required": False},
@@ -259,6 +268,26 @@ class TradingAccountSerializer(serializers.ModelSerializer):
         remaining_profit = profit - withdrawable
 
         return round(max(remaining_profit, 0), 2)
+
+    def get_consistency_score(self, obj):
+        days = obj.trading_days.filter(is_valid_day=True)
+
+        pnls = [day.pnl for day in days if day.pnl is not None]
+
+        positive_days = [p for p in pnls if p > 0]
+
+        if not positive_days:
+            return 0
+
+        total_profit = sum(positive_days)
+        largest_day = max(positive_days)
+
+        if total_profit == 0:
+            return 0
+
+        score = (largest_day / total_profit) * 100
+
+        return round(score, 2)
 
     def validate_account_balance(self, value):
         if value < 0:

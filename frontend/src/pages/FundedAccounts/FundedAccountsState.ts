@@ -44,6 +44,7 @@ const initialAccount: TradingAccount = {
   currentDayCount: 0,
   postPayoutBuffer: 0,
   withdrawableAmount: 0,
+  consistencyScore: 0,
   accountType: {
     id: 0,
     name: "",
