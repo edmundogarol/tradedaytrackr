@@ -149,19 +149,27 @@ const FundedAccounts: React.FunctionComponent = () => {
               if (bufferFilter.length === 0) {
                 return true;
               }
+
               const bufferPercent = account.bufferPercent;
-              if (bufferFilter.includes("<20")) {
-                return bufferPercent < 20;
-              } else if (bufferFilter.includes("<50")) {
-                return bufferPercent < 50;
-              } else if (bufferFilter.includes(">50")) {
-                return bufferPercent > 50;
-              } else if (bufferFilter.includes(">90")) {
-                return bufferPercent > 90 && bufferPercent < 100;
-              } else if (bufferFilter.includes("complete")) {
-                return bufferPercent === 100;
-              }
-              return true;
+
+              return bufferFilter.some((filter) => {
+                if (filter === "<20") {
+                  return bufferPercent < 20;
+                }
+                if (filter === "<50") {
+                  return bufferPercent < 50;
+                }
+                if (filter === ">50") {
+                  return bufferPercent > 50;
+                }
+                if (filter === ">90") {
+                  return bufferPercent > 90 && bufferPercent < 100;
+                }
+                if (filter === "complete") {
+                  return bufferPercent === 100;
+                }
+                return false;
+              });
             })
             .map((account, index) => (
               <ListItem
