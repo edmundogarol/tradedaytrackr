@@ -39,7 +39,7 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
   const [addNewTradePnL, setAddNewTradePnL] = React.useState<boolean>(false);
   const formattedJournalEntries = (selectedDateJournalEntries || []).map(
     (entry) => ({
-      name: `${moment(entry.date_time).format("MMMM Do YYYY h:mm A")} - ${entry.trades.length} Account(s)`,
+      name: `${moment(entry.dateTime).format("MMMM Do YYYY h:mm A")} - ${entry.trades.length} Account(s)`,
       value: entry.id,
     }),
   );
