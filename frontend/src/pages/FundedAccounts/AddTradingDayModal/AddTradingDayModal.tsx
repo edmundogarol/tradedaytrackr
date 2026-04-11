@@ -62,7 +62,7 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
 
   return (
     <Modal
-      title={payoutRecord ? "Record Payout" : "Add Trading Day"}
+      title={payoutRecord ? "Record Payout" : "Add Trade"}
       open={modalOpen}
       setOpen={setModalOpen}
     >
@@ -165,14 +165,14 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
           <Gap level={1} />
           <Input
             type="number"
-            label={payoutRecord ? "Payout Amount" : "Add Trading Day PnL"}
+            label={payoutRecord ? "Payout Amount" : "Add Trade PnL"}
             value={undefined}
             placeholder={
               payoutRecord ? "Enter Payout Amount" : "Enter Trade PnL"
             }
             onChange={(e) => console.log(e.target.value)}
           />
-          <Gap level={1} />
+          {/* <Gap level={1} />
           <If condition={!payoutRecord}>
             <Input
               type="number"
@@ -181,7 +181,7 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
               placeholder="Enter Day Count"
               onChange={(e) => console.log(e.target.value)}
             />
-          </If>
+          </If> */}
           <Gap level={2} />
           <Button
             text={payoutRecord ? "Record Payout" : "Add"}

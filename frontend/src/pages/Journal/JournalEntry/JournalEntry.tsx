@@ -107,7 +107,7 @@ const JournalEntry: React.FunctionComponent = () => {
     journalEntry.instrument === "";
 
   useEffect(() => {
-    if (journalEntry.id === 0) {
+    if (journalEntry.id === 0 && searchParams.get("id") !== "new") {
       getJournalEntry(parseInt(searchParams.get("id") || "0"));
     }
   }, [searchParams, journalEntry]);
