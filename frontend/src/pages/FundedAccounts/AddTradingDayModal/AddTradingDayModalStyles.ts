@@ -6,6 +6,8 @@ const styles = {
     alignItems: "center",
     color: "white",
     border: "none",
+  } as React.CSSProperties,
+  greenButton: {
     backgroundColor: color("SystemGreen"),
   } as React.CSSProperties,
   dontLinkButton: {

@@ -87,7 +87,7 @@ export interface TradingAccount extends AccountTemplate {
 export interface Trade {
   id: number;
   date: string;
-  pnl: number;
+  pnl: number | null;
   account: {
     id: number;
     name: string;

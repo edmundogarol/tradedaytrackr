@@ -63,7 +63,7 @@ export const initialState: FundedAccountsState = {
   selectedTrade: {
     id: 0,
     date: moment().format("YYYY-MM-DD"),
-    pnl: 0,
+    pnl: null,
     account: {
       id: 0,
       name: "",

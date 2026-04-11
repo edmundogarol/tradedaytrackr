@@ -5,6 +5,7 @@ import type { Trade } from "@interfaces/CustomTypes";
 export interface AddTradeApiCallError {
   non_field_errors?: string[];
   account_id?: string[];
+  pnl?: string[];
 }
 
 const useAddTradeApiCall = (): AxiosFetchWrapperResponse<

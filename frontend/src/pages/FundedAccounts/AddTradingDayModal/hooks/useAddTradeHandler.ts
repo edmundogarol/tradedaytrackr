@@ -27,7 +27,9 @@ const useAddTradeHandler = (): AddTradeHandler => {
             date: trade.date,
             account_id: trade.account.id,
             journal_entry_id:
-              trade.journalEntry?.id !== 0 ? trade.journalEntry.id : undefined,
+              trade.journalEntry !== null && trade.journalEntry?.id !== 0
+                ? trade.journalEntry.id
+                : undefined,
           },
         });
 

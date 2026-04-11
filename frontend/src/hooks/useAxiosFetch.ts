@@ -108,7 +108,10 @@ const useAxiosFetch = <T, E = {}>(
           console.error("Server error", err);
           fetchError = { error: "Something went wrong on the server" } as E;
         }
-        console.log("Fetch error: ", fetchError, url);
+        console.error("Fetch error: ", fetchError, url);
+        if (fetchError.toString().includes("<!DOCTYPE html>")) {
+          fetchError = { error: "An unexpected error occurred" } as E;
+        }
       } finally {
         setLoading(false);
       }
