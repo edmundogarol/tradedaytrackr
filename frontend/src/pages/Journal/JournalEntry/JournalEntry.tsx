@@ -100,15 +100,6 @@ const JournalEntry: React.FunctionComponent = () => {
     journalEntry.risk <= 0 ||
     journalEntry.instrument === "";
 
-  const totalPnL = useMemo(() => {
-    return journalEntry.trades
-      .map((tradeId) => {
-        const trade = detectedTrades.find((t) => t.id === tradeId);
-        return trade ? trade.pnl : 0;
-      })
-      .reduce((sum, pnl) => sum + pnl, 0);
-  }, [journalEntry.trades]);
-
   useEffect(() => {
     const currentEntry = journalEntries.find(
       (entry) => entry.id === parseInt(searchParams.get("id") || "0"),
@@ -685,8 +676,8 @@ const JournalEntry: React.FunctionComponent = () => {
                   <SummaryItem>
                     <SummaryItemTitle>Total PnL</SummaryItemTitle>
                     <SummaryItemPnL
-                      $isPositive={totalPnL >= 0}
-                    >{`${formatter.format(totalPnL)}`}</SummaryItemPnL>
+                      $isPositive={journalEntry.totalPnl >= 0}
+                    >{`${formatter.format(journalEntry.totalPnl)}`}</SummaryItemPnL>
                   </SummaryItem>
                 </SummarySection>
               </SummaryTitleInfoContainer>
