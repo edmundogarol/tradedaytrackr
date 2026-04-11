@@ -1,5 +1,3 @@
-import os
-
 from django.db.models import Sum
 from rest_framework import serializers
 
@@ -146,11 +144,6 @@ class TradingAccountSerializer(serializers.ModelSerializer):
 
         if "firms" not in url:
             absolute_url = request.build_absolute_uri(url)
-
-            if "DEVENV" in os.environ:
-                return absolute_url.replace(
-                    "http://localhost:8000", "http://localhost:3000"
-                )
 
             return absolute_url
 

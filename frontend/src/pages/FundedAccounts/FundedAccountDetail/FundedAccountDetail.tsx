@@ -614,14 +614,20 @@ const FundedAccountDetail: React.FunctionComponent<
                     <TradePreviewContainer>
                       <If condition={!!dayValue.trades[0]?.journalEntry}>
                         <TradePreview
-                          $idx={index}
+                          $src={dayValue.trades[0]?.journalEntry?.image}
                           onClick={() =>
                             navigation.navigate(PageEnum.JournalEntry, {
-                              id: index,
+                              id:
+                                dayValue.trades[0]?.journalEntry?.id.toString() ||
+                                "",
                             })
                           }
                         />
-                        <TradeJournalPnL $positive={index !== 2}>
+                        <TradeJournalPnL
+                          $positive={
+                            dayValue.trades[0]?.journalEntry?.totalPnl > 0
+                          }
+                        >
                           ${dayValue.trades[0]?.journalEntry?.totalPnl || 0}
                         </TradeJournalPnL>
                         <Else>

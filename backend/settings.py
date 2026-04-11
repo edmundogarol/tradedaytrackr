@@ -13,8 +13,8 @@ if "DEVENV" in os.environ:
     WEB_API_URL = "http://localhost:8000"
 else:
     DEBUG = False
-    WEB_APP_URL = "http://tradedaytrackr.com"
-    WEB_API_URL = "http://tradedaytrackr.com"
+    WEB_APP_URL = "https://tradedaytrackr.com"
+    WEB_API_URL = "https://tradedaytrackr.com"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
