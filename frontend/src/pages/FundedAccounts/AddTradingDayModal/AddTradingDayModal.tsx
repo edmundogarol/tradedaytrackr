@@ -127,12 +127,10 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
               showPicker
               value={moment(selectedTrade.date)}
               onChange={(date) => {
-                console.log({ date });
                 updateSelectedTrade({
                   ...selectedTrade,
                   date: moment(date).toISOString(),
                 });
-                getJournalEntriesByDate(moment(date).format("YYYY-MM-DD"));
               }}
             />
           </DateCalendarContainer>
