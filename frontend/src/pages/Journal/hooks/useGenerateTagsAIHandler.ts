@@ -1,3 +1,4 @@
+import type { Tag } from "@interfaces/CustomTypes";
 import { uniq } from "lodash";
 import { useCallback } from "react";
 import useGenerateTagsAIApiCall from "./useGenerateTagsAIApiCall";
@@ -37,10 +38,13 @@ const useGenerateTagsAIHandler = (): UseDemoUserLoginHandlerProps => {
         }
 
         if (!!data) {
-          const noDuplicateTags = uniq([...journalEntry.tags, ...data.tags]);
+          const noDuplicateTags = uniq([
+            ...journalEntry.tags.map((tag) => tag.name),
+            ...data.tags,
+          ]);
           updateJournalEntry({
             ...journalEntry,
-            tags: noDuplicateTags,
+            tags: noDuplicateTags.map((tag) => ({ name: tag })) as Tag[],
           });
 
           if (data.tags.length === 0) {

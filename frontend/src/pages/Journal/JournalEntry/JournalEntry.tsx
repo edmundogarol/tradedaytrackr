@@ -581,7 +581,9 @@ const JournalEntry: React.FunctionComponent = () => {
                               <AutoFixHighIcon
                                 style={{ marginLeft: 5 }}
                                 onClick={() => {
-                                  generateDraft(journalEntry.tags);
+                                  generateDraft(
+                                    journalEntry.tags.map((tag) => tag.name),
+                                  );
                                 }}
                               />
                             </Else>
