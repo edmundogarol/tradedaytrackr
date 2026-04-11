@@ -1,10 +1,10 @@
-import type { TradingAccount, TradingDay } from "@interfaces/CustomTypes";
+import type { Trade, TradingAccount } from "@interfaces/CustomTypes";
 import type { Dispatch } from "react";
 import { useDispatch } from "react-redux";
 import type { FundedAccountsAction } from "../FundedAccountsState";
 import {
-  updateAddTradingDayErrors,
-  updateAddTradingDayModalOpen,
+  updateAddTradeErrors,
+  updateAddTradeModalOpen,
   updateBufferFilter,
   updateCreateTradingAccountErrors,
   updateCreateTradingAccountModalOpen,
@@ -15,8 +15,8 @@ import {
   updateEditingFields,
   updateFirmFilter,
   updateSelectedDateJournalEntries,
+  updateSelectedTrade,
   updateSelectedTradingAccount,
-  updateSelectedTradingDay,
   updateTradingAccounts,
   updateTradingAccountsErrors,
 } from "../FundedAccountsState";
@@ -27,9 +27,9 @@ interface FundedAccountsDispatch {
   updateCreateTradingAccountModalOpen: (open: boolean) => void;
   updateCreateTradingAccountErrors: (errors: { [key: string]: any }) => void;
   updateTradingAccountsErrors: (errors: { [key: string]: any }) => void;
-  updateSelectedTradingDay: (tradingDay: TradingDay | null) => void;
-  updateAddTradingDayModalOpen: (open: boolean) => void;
-  updateAddTradingDayErrors: (errors: { [key: string]: any }) => void;
+  updateSelectedTrade: (trade: Trade) => void;
+  updateAddTradeModalOpen: (open: boolean) => void;
+  updateAddTradeErrors: (errors: { [key: string]: any }) => void;
   updateCurrentTradingAccount: (tradingAccount: TradingAccount) => void;
   updateCurrentTradingAccountErrors: (errors: { [key: string]: any }) => void;
   updateEditingFields: (fields: {
@@ -62,14 +62,14 @@ const useFundedAccountsDispatch = (): FundedAccountsDispatch => {
     updateTradingAccountsErrors(errors: { [key: string]: any }): void {
       dispatch(updateTradingAccountsErrors(errors));
     },
-    updateSelectedTradingDay(tradingDay: TradingDay | null): void {
-      dispatch(updateSelectedTradingDay(tradingDay));
+    updateSelectedTrade(trade: Trade): void {
+      dispatch(updateSelectedTrade(trade));
     },
-    updateAddTradingDayModalOpen(open: boolean): void {
-      dispatch(updateAddTradingDayModalOpen(open));
+    updateAddTradeModalOpen(open: boolean): void {
+      dispatch(updateAddTradeModalOpen(open));
     },
-    updateAddTradingDayErrors(errors: { [key: string]: any }): void {
-      dispatch(updateAddTradingDayErrors(errors));
+    updateAddTradeErrors(errors: { [key: string]: any }): void {
+      dispatch(updateAddTradeErrors(errors));
     },
     updateCurrentTradingAccount(tradingAccount: TradingAccount): void {
       dispatch(updateCurrentTradingAccount(tradingAccount));

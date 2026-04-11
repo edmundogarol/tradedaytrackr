@@ -2,7 +2,7 @@ import type { AxiosFetchWrapperResponse } from "@hooks/useAxiosFetch";
 import useAxiosFetch from "@hooks/useAxiosFetch";
 import type { TradingAccount } from "@interfaces/CustomTypes";
 
-const useGetAccountTemplatesApiCall = (): AxiosFetchWrapperResponse<
+const useGetTradingAccountsApiCall = (): AxiosFetchWrapperResponse<
   TradingAccount[]
 > => {
   const { fetch, data, loading, error } =
@@ -11,4 +11,4 @@ const useGetAccountTemplatesApiCall = (): AxiosFetchWrapperResponse<
   return { fetch, data, loading, error };
 };
 
-export default useGetAccountTemplatesApiCall;
+export default useGetTradingAccountsApiCall;

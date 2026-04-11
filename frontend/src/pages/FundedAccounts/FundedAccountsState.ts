@@ -1,6 +1,7 @@
-import type { TradingAccount, TradingDay } from "@interfaces/CustomTypes";
+import type { Trade, TradingAccount } from "@interfaces/CustomTypes";
 import type { JournalEntry } from "@pages/Journal/JournalInterfaces";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import moment from "moment";
 
 export interface FundedAccountsState {
   readonly tradingAccounts: TradingAccount[];
@@ -10,9 +11,9 @@ export interface FundedAccountsState {
   readonly currentTradingAccountErrors: { [key: string]: any };
   readonly createTradingAccountErrors: { [key: string]: any };
   readonly updateTradingAccountsErrors?: { [key: string]: any };
-  readonly selectedTradingDay: TradingDay | null;
-  readonly addTradingDayModalOpen: boolean;
-  readonly addTradingDayErrors: { [key: string]: any };
+  readonly selectedTrade: Trade;
+  readonly addTradeModalOpen: boolean;
+  readonly addTradeErrors: { [key: string]: any };
   readonly editingAccountBalance: boolean;
   readonly editingAccountName: boolean;
   readonly editingAccountTemplate: boolean;
@@ -20,7 +21,7 @@ export interface FundedAccountsState {
   readonly deleteTradingAccountErrors: { [key: string]: any };
   readonly firmFilter: string[];
   readonly bufferFilter: string[];
-  readonly selectedDateJournalEntries?: JournalEntry[];
+  readonly selectedDateJournalEntries: JournalEntry[];
 }
 
 const initialAccount: TradingAccount = {
@@ -59,7 +60,19 @@ export const initialState: FundedAccountsState = {
   tradingAccounts: [],
   selectedTradingAccount: initialAccount,
   currentTradingAccount: initialAccount,
-  selectedTradingDay: null,
+  selectedTrade: {
+    id: 0,
+    date: moment().format("YYYY-MM-DD"),
+    pnl: 0,
+    account: {
+      id: 0,
+      name: "",
+      type: "",
+    },
+    journalEntry: {
+      id: 0,
+    } as JournalEntry,
+  },
   createTradingAccountModalOpen: false,
   createTradingAccountErrors: {},
   updateTradingAccountsErrors: {},
@@ -67,8 +80,8 @@ export const initialState: FundedAccountsState = {
   editingAccountBalance: false,
   editingAccountName: false,
   editingAccountTemplate: false,
-  addTradingDayModalOpen: false,
-  addTradingDayErrors: {},
+  addTradeModalOpen: false,
+  addTradeErrors: {},
   deletingTradingAccountModalOpen: false,
   deleteTradingAccountErrors: {},
   firmFilter: [],
@@ -83,9 +96,9 @@ type UpdateCreateTradingAccountErrorsAction = PayloadAction<{
   [key: string]: any;
 }>;
 type UpdateTradingAccountsErrorsAction = PayloadAction<{ [key: string]: any }>;
-type UpdateSelectedTradingDayAction = PayloadAction<TradingDay | null>;
-type UpdateAddTradingDayModalOpenAction = PayloadAction<boolean>;
-type UpdateAddTradingDayErrorsAction = PayloadAction<{ [key: string]: any }>;
+type UpdateSelectedTradeAction = PayloadAction<Trade>;
+type UpdateAddTradeModalOpenAction = PayloadAction<boolean>;
+type UpdateAddTradeErrorsAction = PayloadAction<{ [key: string]: any }>;
 type UpdateCurrentTradingAccountErrorsAction = PayloadAction<{
   [key: string]: any;
 }>;
@@ -109,9 +122,9 @@ export type FundedAccountsAction =
   | UpdateCreateTradingAccountModalOpenAction
   | UpdateCreateTradingAccountErrorsAction
   | UpdateTradingAccountsErrorsAction
-  | UpdateSelectedTradingDayAction
-  | UpdateAddTradingDayModalOpenAction
-  | UpdateAddTradingDayErrorsAction
+  | UpdateSelectedTradeAction
+  | UpdateAddTradeModalOpenAction
+  | UpdateAddTradeErrorsAction
   | UpdateCurrentTradingAccountAction
   | UpdateCurrentTradingAccountErrorsAction
   | UpdateEditingFieldsAction
@@ -152,23 +165,14 @@ export const fundedAccountsSlice = createSlice({
     ) => {
       state.updateTradingAccountsErrors = action.payload;
     },
-    updateSelectedTradingDay: (
-      state,
-      action: UpdateSelectedTradingDayAction,
-    ) => {
-      state.selectedTradingDay = action.payload;
+    updateSelectedTrade: (state, action: UpdateSelectedTradeAction) => {
+      state.selectedTrade = action.payload;
     },
-    updateAddTradingDayModalOpen: (
-      state,
-      action: UpdateAddTradingDayModalOpenAction,
-    ) => {
-      state.addTradingDayModalOpen = action.payload;
+    updateAddTradeModalOpen: (state, action: UpdateAddTradeModalOpenAction) => {
+      state.addTradeModalOpen = action.payload;
     },
-    updateAddTradingDayErrors: (
-      state,
-      action: UpdateAddTradingDayErrorsAction,
-    ) => {
-      state.addTradingDayErrors = action.payload;
+    updateAddTradeErrors: (state, action: UpdateAddTradeErrorsAction) => {
+      state.addTradeErrors = action.payload;
     },
     updateCurrentTradingAccount: (
       state,
@@ -223,9 +227,9 @@ export const {
   updateCreateTradingAccountModalOpen,
   updateCreateTradingAccountErrors,
   updateTradingAccountsErrors,
-  updateSelectedTradingDay,
-  updateAddTradingDayModalOpen,
-  updateAddTradingDayErrors,
+  updateSelectedTrade,
+  updateAddTradeModalOpen,
+  updateAddTradeErrors,
   updateCurrentTradingAccount,
   updateCurrentTradingAccountErrors,
   updateEditingFields,

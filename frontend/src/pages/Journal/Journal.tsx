@@ -108,9 +108,9 @@ const Journal: React.FunctionComponent = () => {
               noGlow={true}
               overlay={
                 <TileTradeCountContainer>
-                  <InfoPopout infoDescription="2x Apex, 4x Mffu">
-                    <TileTradeCount className="trade-count">{`x${entry.accountCount} acc`}</TileTradeCount>
-                  </InfoPopout>
+                  {/* <InfoPopout infoDescription="2x Apex, 4x Mffu"> */}
+                  <TileTradeCount className="trade-count">{`x${entry.accountCount} acc`}</TileTradeCount>
+                  {/* </InfoPopout> */}
                 </TileTradeCountContainer>
               }
             >

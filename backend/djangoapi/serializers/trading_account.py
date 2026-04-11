@@ -81,12 +81,7 @@ class TradingAccountSerializer(serializers.ModelSerializer):
         read_only=True,
     )
 
-    day_values = TradingDaySerializer(
-        source="trading_days",
-        many=True,
-        read_only=True,
-    )
-
+    day_values = serializers.SerializerMethodField()
     buffer_percent = serializers.SerializerMethodField()
     current_day_count = serializers.SerializerMethodField()
     post_payout_buffer = serializers.SerializerMethodField()
@@ -98,11 +93,13 @@ class TradingAccountSerializer(serializers.ModelSerializer):
         decimal_places=2,
         read_only=True,
     )
+    name = serializers.SerializerMethodField(source="account_name", read_only=True)
 
     class Meta:
         model = TradingAccount
         fields = [
             "id",
+            "name",
             "account_name",
             "account_balance",
             "baseline_balance",
@@ -130,6 +127,15 @@ class TradingAccountSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             "account_balance": {"required": False},
         }
+
+    def get_name(self, obj):
+        return obj.account_name
+
+    def get_day_values(self, obj):
+        latest_days = (
+            obj.trading_days.all().order_by("-date").prefetch_related("trades")[:5]
+        )
+        return TradingDaySerializer(latest_days, many=True).data
 
     def get_image(self, obj):
         request = self.context.get("request")

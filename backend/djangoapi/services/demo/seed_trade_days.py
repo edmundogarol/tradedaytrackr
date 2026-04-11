@@ -75,7 +75,7 @@ def seed_demo_trade_days(user):
 
         for idx, pnl in enumerate(day_pnls):
             if is_mffu and is_flex:
-                date = base_date - timedelta(days=len(day_pnls) - idx - 2)
+                date = base_date - timedelta(days=len(day_pnls) - idx - 1)
             else:
                 date = base_date - timedelta(days=len(day_pnls) - idx)
 

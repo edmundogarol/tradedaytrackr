@@ -125,7 +125,7 @@ def seed_demo_journal_entries(user):
                 base_time = latest_trades[0].date_time
 
                 # shift time so it doesn't match flex entries
-                apex_time = base_time.replace(hour=16, minute=0, second=0)
+                apex_time = base_time.replace(hour=7, minute=23, second=0)
 
                 total_pnl = sum(t.pnl for t in latest_trades)
                 outcome = total_pnl / len(latest_trades)

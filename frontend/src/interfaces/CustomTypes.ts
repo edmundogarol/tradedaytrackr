@@ -64,6 +64,7 @@ export interface AccountTemplate {
 }
 
 export interface TradingAccount extends AccountTemplate {
+  accountName?: string;
   accountBalance: number;
   baseline_balance: number;
   accountType: {

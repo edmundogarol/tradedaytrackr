@@ -1,17 +1,5 @@
-import styled, { css } from "styled-components";
-import {
-  CONTAINER_BORDER_RADIUS_SMALL,
-  CONTAINER_MARGIN_DEFAULT,
-  CONTAINER_MARGIN_SMALL,
-  CONTAINER_PADDING_SMALL,
-  INPUT_SIZE,
-  LABEL_SIZE,
-  LABEL_SIZE_MEDIUM,
-  TEXT_SIZE,
-} from "@styles/constants";
 import { color } from "@styles/colors";
-import { Label } from "@styles/globalStyledComponents";
-import { List } from "@mui/material";
+import styled, { css } from "styled-components";
 
 export const Container = styled.div`
   width: max-content;

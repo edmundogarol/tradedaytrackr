@@ -23,7 +23,7 @@ class TradingAccountViewSet(ModelViewSet):
                     "trading_days",
                     queryset=TradingDay.objects.annotate(
                         pnl=Sum("trades__pnl")
-                    ).order_by("-id"),
+                    ).order_by("-date"),
                 )
             )
             .order_by("-id")

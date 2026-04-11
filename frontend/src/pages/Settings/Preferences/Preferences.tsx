@@ -53,8 +53,12 @@ const Preferences: React.FunctionComponent = () => {
   const { getTags } = useGetTagsHandler();
 
   useEffect(() => {
-    getAccountTemplates();
-    getTags();
+    if (accountTemplates.length === 0) {
+      getAccountTemplates();
+    }
+    if (tags.length === 0) {
+      getTags();
+    }
   }, []);
 
   useEffect(() => {

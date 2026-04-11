@@ -44,7 +44,6 @@ import { availableAccountTradesOnDateMock } from "../mocks/tradesOnDate";
 import {
   ButtonContainer,
   CloseIconStyled,
-  DateTimePickerDate,
   DescriptionButtonsContainer,
   DescriptionSection,
   DescriptionText,
@@ -233,10 +232,9 @@ const JournalEntry: React.FunctionComponent = () => {
                         "YYYY-MM-DD hh:mm A",
                       )}
                     </TradeSubtitleEditing>
-                    <DateTimePickerDate />
                     <CalendarPicker
-                      onSaveCallback={(pickerOpen) => {
-                        setEditingDate(pickerOpen);
+                      onSaveCallback={() => {
+                        setEditingDate(false);
                       }}
                       showPicker={editingDate}
                       value={moment(journalEntry.dateTime)}

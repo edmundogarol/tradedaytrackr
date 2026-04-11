@@ -1,6 +1,7 @@
 from django.utils import timezone
 from rest_framework import serializers
 
+from backend.djangoapi.models.journal_entry import JournalEntry
 from backend.djangoapi.models.trade import Trade
 from backend.djangoapi.models.trading_account import TradingAccount
 from backend.djangoapi.serializers.journal_entry import JournalEntrySerializer
@@ -15,6 +16,13 @@ class TradeSerializer(serializers.ModelSerializer):
         queryset=TradingAccount.objects.all(), source="account", write_only=True
     )
     journal_entry = JournalEntrySerializer(read_only=True)
+    journal_entry_id = serializers.PrimaryKeyRelatedField(
+        queryset=JournalEntry.objects.all(),
+        source="journal_entry",
+        write_only=True,
+        required=False,
+        allow_null=True,
+    )
 
     class Meta:
         model = Trade
@@ -25,6 +33,7 @@ class TradeSerializer(serializers.ModelSerializer):
             "date",
             "pnl",
             "journal_entry",
+            "journal_entry_id",
         ]
 
     def get_account(self, obj):
@@ -37,6 +46,11 @@ class TradeSerializer(serializers.ModelSerializer):
     def validate_pnl(self, value):
         if value is None:
             raise serializers.ValidationError("PnL is required")
+        return value
+
+    def validate_journal_entry(self, value):
+        if value and value.user != self.context["request"].user:
+            raise serializers.ValidationError("Invalid journal entry")
         return value
 
     def validate(self, data):

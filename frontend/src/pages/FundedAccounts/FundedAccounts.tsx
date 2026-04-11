@@ -6,6 +6,7 @@ import { IconTypeEnum } from "@components/Icon/IconInterfaces";
 import Page from "@components/Page/Page";
 import StatsSummary from "@components/Stats/StatsSummary/StatsSummary";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import useSettingsState from "@pages/Settings/hooks/useSettingsState";
 import useGetAccountTemplatesHandler from "@pages/Settings/Preferences/hooks/useGetAccountTemplatesHandler";
 import { SectionTitle } from "@styles/globalStyledComponents";
 import { uniqBy } from "lodash";
@@ -53,8 +54,6 @@ const FundedAccounts: React.FunctionComponent = () => {
       value: "complete",
     },
   ];
-  const [addTradingDayOpen, setAddTradingDayOpen] =
-    React.useState<boolean>(false);
   const {
     tradingAccounts,
     deleteTradingAccountErrors,
@@ -68,7 +67,9 @@ const FundedAccounts: React.FunctionComponent = () => {
     updateDeleteTradingAccountErrors,
     updateFirmFilter,
     updateBufferFilter,
+    updateAddTradeModalOpen,
   } = useFundedAccountsDispatch();
+  const { accountTemplates } = useSettingsState();
   const { getAccountTemplates } = useGetAccountTemplatesHandler();
   const { getTradingAccounts } = useGetTradingAccountsHandler();
   const firmsList = uniqBy(
@@ -82,8 +83,12 @@ const FundedAccounts: React.FunctionComponent = () => {
   );
 
   useEffect(() => {
-    getAccountTemplates();
-    getTradingAccounts();
+    if (tradingAccounts.length === 0) {
+      getTradingAccounts();
+    }
+    if (accountTemplates.length === 0) {
+      getAccountTemplates();
+    }
   }, []);
 
   return (
@@ -100,11 +105,8 @@ const FundedAccounts: React.FunctionComponent = () => {
         open={!!createTradingAccountErrors.detail}
         setPopoutOpen={() => updateCreateTradingAccountErrors({})}
       />
-      <AddTradingDayModal
-        modalOpen={addTradingDayOpen}
-        setModalOpen={setAddTradingDayOpen}
-      />
-      <AddFundedAccountsModal setAddTradingDayOpen={setAddTradingDayOpen} />
+      <AddTradingDayModal />
+      <AddFundedAccountsModal />
       <Container>
         <SectionTitle>Funded Accounts</SectionTitle>
         <StatsSummary
@@ -115,13 +117,13 @@ const FundedAccounts: React.FunctionComponent = () => {
         <DropdownsSection>
           <DropdownMultiselect
             items={firmsList}
-            onSelect={(selected) => updateFirmFilter(selected)}
+            onSelect={(selected) => updateFirmFilter(selected as string[])}
             title="All Firms"
             icon={<FilterAltIcon style={{ color: "#c0c0c0" }} />}
           />
           <DropdownMultiselect
             items={bufferState}
-            onSelect={(selected) => updateBufferFilter(selected)}
+            onSelect={(selected) => updateBufferFilter(selected as string[])}
             title="Buffer Built"
             icon={<FilterAltIcon style={{ color: "#c0c0c0" }} />}
           />
@@ -131,7 +133,9 @@ const FundedAccounts: React.FunctionComponent = () => {
             iconLeft={"add"}
             textStyle={styles.addButton.text}
             style={styles.addButton.button}
-            onClick={(): void => updateCreateTradingAccountModalOpen(true)}
+            onClick={(): void => {
+              updateCreateTradingAccountModalOpen(true);
+            }}
           />
         </DropdownsSection>
         <ListHeaders>
@@ -177,7 +181,7 @@ const FundedAccounts: React.FunctionComponent = () => {
               <ListItem
                 key={index}
                 account={account}
-                openAddTradingDayModal={setAddTradingDayOpen}
+                openAddTradingDayModal={updateAddTradeModalOpen}
               />
             ))}
         </ListContainer>

@@ -22,7 +22,10 @@ const useGetJournalEntryByDateHandler = (): GetJournalEntryByDateHandler => {
         });
 
         if (!!data) {
-          updateSelectedDateJournalEntries(keysToCamel(data));
+          const entries = keysToCamel(data);
+          updateSelectedDateJournalEntries(
+            entries instanceof Array ? entries : [entries],
+          );
         } else if (error) {
           console.warn(error);
         }

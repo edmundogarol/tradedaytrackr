@@ -11,11 +11,10 @@ import Input from "@components/Input/Input";
 import ModalWrapper from "@components/Modal/Modal";
 import Page from "@components/Page/Page";
 import SelectWrapper from "@components/Select/SelectWrapper";
-import type { TradingAccount } from "@interfaces/CustomTypes";
+import type { Trade, TradingAccount } from "@interfaces/CustomTypes";
 import { PageEnum } from "@interfaces/NavigationTypes";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
-import WifiProtectedSetupIcon from "@mui/icons-material/WifiProtectedSetup";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
 import { AccountTradingDaysComplete } from "@pages/EvaluationAccounts/EvaluationAccountsStyledComponents";
 import useGetFundedAccountTemplates from "@pages/Settings/hooks/useGetFundedAccountTemplates";
@@ -31,6 +30,7 @@ import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
 import AddTradingDayModal from "../AddTradingDayModal/AddTradingDayModal";
+import { initialState } from "../FundedAccountsState";
 import {
   AccountImage,
   AccountSubtitle,
@@ -56,7 +56,7 @@ import {
 import useDeleteTradingAccountHandler from "../hooks/useDeleteTradingAccountHandler";
 import useFundedAccountsDispatch from "../hooks/useFundedAccountsDispatch";
 import useFundedAccountsState from "../hooks/useFundedAccountsState";
-import useGetTradingAccountsHandler from "../hooks/useGetTradingAccountsHandler";
+import useGetTradingAccountDetailHandler from "../hooks/useGetTradingAccountDetailHandler";
 import useUpdateTradingAccountHandler from "../hooks/useUpdateTradingAccountHandler";
 import {
   AccountDetailContainer,
@@ -101,7 +101,7 @@ const FundedAccountDetail: React.FunctionComponent<
     editingAccountTemplate,
     deletingTradingAccountModalOpen,
     deleteTradingAccountErrors,
-    addTradingDayErrors,
+    addTradeErrors,
   } = useFundedAccountsState();
   const {
     updateCurrentTradingAccount,
@@ -109,29 +109,29 @@ const FundedAccountDetail: React.FunctionComponent<
     updateEditingFields,
     updateDeletingTradingAccountModalOpen,
     updateDeleteTradingAccountErrors,
-    updateAddTradingDayErrors,
+    updateAddTradeErrors,
+    updateAddTradeModalOpen,
+    updateSelectedTrade,
   } = useFundedAccountsDispatch();
   let [searchParams] = useSearchParams();
   const accountId = searchParams.get("id");
   const [originalTradingAccountDetails, setOriginalTradingAccountDetails] =
     useState<TradingAccount | null>(null);
-  const [addTradingDayOpen, setAddTradingDayOpen] = useState<boolean>(false);
   const [payoutRecord, setPayoutRecord] = useState<boolean>(false);
   const navigation = useReactNavigation();
   const accountTemplateList = useGetFundedAccountTemplates();
-  const { getTradingAccounts } = useGetTradingAccountsHandler();
   const { getAccountTemplates } = useGetAccountTemplatesHandler();
   const { updateTradingAccount } = useUpdateTradingAccountHandler();
   const { deleteTradingAccount } = useDeleteTradingAccountHandler();
+  const { getTradingAccount } = useGetTradingAccountDetailHandler();
   const hasFetched = useRef(false);
 
   useEffect(() => {
     if (hasFetched.current) return;
 
-    if (tradingAccounts.length === 0) {
-      getTradingAccounts();
+    if (accountId && currentTradingAccount.id !== Number(accountId)) {
+      getTradingAccount(accountId);
     }
-
     if (accountTemplateList.length === 0) {
       getAccountTemplates();
     }
@@ -152,10 +152,10 @@ const FundedAccountDetail: React.FunctionComponent<
   return (
     <Page topBarShowMenu={true}>
       <AlertPopout
-        open={!!addTradingDayErrors?.detail}
+        open={!!addTradeErrors?.detail}
         hideDuration={3000}
-        message={addTradingDayErrors?.detail}
-        setPopoutOpen={() => updateAddTradingDayErrors({})}
+        message={addTradeErrors?.detail}
+        setPopoutOpen={() => updateAddTradeErrors({})}
       />
       <AlertPopout
         hideDuration={4000}
@@ -169,11 +169,7 @@ const FundedAccountDetail: React.FunctionComponent<
         open={!!currentTradingAccountErrors?.detail}
         setPopoutOpen={() => updateCurrentTradingAccountErrors({})}
       />
-      <AddTradingDayModal
-        modalOpen={addTradingDayOpen}
-        setModalOpen={setAddTradingDayOpen}
-        payoutRecord={payoutRecord}
-      />
+      <AddTradingDayModal payoutRecord={payoutRecord} />
       <ModalWrapper
         onClose={() => updateDeleteTradingAccountErrors({})}
         open={deletingTradingAccountModalOpen}
@@ -582,7 +578,7 @@ const FundedAccountDetail: React.FunctionComponent<
             textStyle={styles.addButton.text}
             style={styles.payoutButton.button}
             onClick={(): void => {
-              setAddTradingDayOpen(true);
+              updateAddTradeModalOpen(true);
               setPayoutRecord(true);
             }}
           />
@@ -593,8 +589,14 @@ const FundedAccountDetail: React.FunctionComponent<
             textStyle={styles.addButton.text}
             style={styles.addButton.button}
             onClick={(): void => {
-              setAddTradingDayOpen(true);
+              updateAddTradeModalOpen(true);
               setPayoutRecord(false);
+              updateSelectedTrade({
+                ...initialState.selectedTrade,
+                account: {
+                  id: Number(!!accountId ? currentTradingAccount?.id : 0),
+                },
+              } as Trade);
             }}
           />
         </TradingDaysHeaderContainer>
@@ -632,7 +634,7 @@ const FundedAccountDetail: React.FunctionComponent<
                         </TradeJournalPnL>
                         <Else>
                           <InfoPopout
-                            infoDescription={`Link or convert to journal entry`}
+                            infoDescription={`Link or create journal entry`}
                           >
                             <div>
                               <Icon
@@ -641,13 +643,6 @@ const FundedAccountDetail: React.FunctionComponent<
                                 size={30}
                                 color={color("SystemLabel1")}
                                 style={{ transform: "rotate(135deg)" }}
-                              />
-                              <WifiProtectedSetupIcon
-                                style={{
-                                  height: 30,
-                                  width: 30,
-                                  color: color("SystemLabel1"),
-                                }}
                               />
                             </div>
                           </InfoPopout>
@@ -659,7 +654,13 @@ const FundedAccountDetail: React.FunctionComponent<
                   <DateContainer>
                     <DaysContainer>
                       {[...dayValue.trades].reverse().map((trade, idx) => (
-                        <DaysItem key={idx}>
+                        <DaysItem
+                          key={idx}
+                          onClick={() => {
+                            updateAddTradeModalOpen(true);
+                            updateSelectedTrade(trade);
+                          }}
+                        >
                           <GlassTile
                             positive={trade.pnl > 0}
                             featureTile
@@ -671,6 +672,9 @@ const FundedAccountDetail: React.FunctionComponent<
                               {`${trade.pnl > 0 ? "+" : ""}${decimalStringToInt(trade.pnl)}`}
                             </DaysItemValue>
                           </GlassTile>
+                          <DaysItemSubtitle $smaller>
+                            {moment(trade.date).format("hh:mm A")}
+                          </DaysItemSubtitle>
                         </DaysItem>
                       ))}
                     </DaysContainer>
@@ -687,7 +691,10 @@ const FundedAccountDetail: React.FunctionComponent<
                       <EditContainer>
                         <EditIcon
                           style={styles.editIcon}
-                          onClick={() => setAddTradingDayOpen(true)}
+                          onClick={() => {
+                            updateSelectedTrade(dayValue.trades[0]);
+                            updateAddTradeModalOpen(true);
+                          }}
                         />
                       </EditContainer>
                     </InfoPopout>

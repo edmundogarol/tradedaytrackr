@@ -185,8 +185,9 @@ export const DaysItemValue = styled.span<{
     $positive ? color("SystemGreen") : "#d56060"};
 `;
 
-export const DaysItemSubtitle = styled.span`
+export const DaysItemSubtitle = styled.span<{ $smaller?: boolean }>`
   color: #989898;
+  font-size: ${(props): string => (props.$smaller ? "10px" : "")};
 `;
 
 export const BufferContainer = styled.div`

@@ -14,13 +14,7 @@ import useFundedAccountsState from "../hooks/useFundedAccountsState";
 import { AddFundedAccountContainer } from "./AddFundedAccountsModalStyledComponents";
 import styles from "./AddFundedAccountsModalStyles";
 
-interface AddFundedAccountsModalProps {
-  setAddTradingDayOpen: (open: boolean) => void;
-}
-
-const AddFundedAccountsModal: React.FunctionComponent<
-  AddFundedAccountsModalProps
-> = ({ setAddTradingDayOpen }) => {
+const AddFundedAccountsModal: React.FunctionComponent = () => {
   const { accountTemplates } = useSettingsState();
   const {
     selectedTradingAccount,
