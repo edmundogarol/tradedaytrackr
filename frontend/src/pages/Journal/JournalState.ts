@@ -9,6 +9,8 @@ export interface JournalState {
   readonly journalErrors: { [key: string]: any };
   readonly detectedTrades: Trade[];
   readonly journalEntries: JournalEntry[];
+  readonly selectedDateTrades: Trade[];
+  readonly selectedDateTradesErrors: { [key: string]: any };
 }
 
 export const initialState: JournalState = {
@@ -30,18 +32,26 @@ export const initialState: JournalState = {
   journalEntries: [],
   journalErrors: {},
   detectedTrades: [],
+  selectedDateTrades: [],
+  selectedDateTradesErrors: {},
 };
 
 type UpdateJournalEntryAction = PayloadAction<JournalEntry>;
 type UpdateJournalErrorsAction = PayloadAction<{ [key: string]: any }>;
 type UpdateDetectedTradesAction = PayloadAction<Trade[]>;
 type UpdateJournalEntriesAction = PayloadAction<JournalEntry[]>;
+type UpdateSelectedDateTradesAction = PayloadAction<Trade[]>;
+type UpdateSelectedDateTradesErrorsAction = PayloadAction<{
+  [key: string]: any;
+}>;
 
 export type JournalAction =
   | UpdateJournalEntryAction
   | UpdateJournalErrorsAction
   | UpdateDetectedTradesAction
-  | UpdateJournalEntriesAction;
+  | UpdateJournalEntriesAction
+  | UpdateSelectedDateTradesAction
+  | UpdateSelectedDateTradesErrorsAction;
 
 export const journalSlice = createSlice({
   name: "journal",
@@ -59,6 +69,18 @@ export const journalSlice = createSlice({
     updateJournalEntries: (state, action: UpdateJournalEntriesAction) => {
       state.journalEntries = action.payload;
     },
+    updateSelectedDateTrades: (
+      state,
+      action: UpdateSelectedDateTradesAction,
+    ) => {
+      state.selectedDateTrades = action.payload;
+    },
+    updateSelectedDateTradesErrors: (
+      state,
+      action: UpdateSelectedDateTradesErrorsAction,
+    ) => {
+      state.selectedDateTradesErrors = action.payload;
+    },
   },
 });
 
@@ -67,6 +89,8 @@ export const {
   updateJournalErrors,
   updateDetectedTrades,
   updateJournalEntries,
+  updateSelectedDateTrades,
+  updateSelectedDateTradesErrors,
 } = journalSlice.actions;
 
 export const journalReducer = journalSlice.reducer;

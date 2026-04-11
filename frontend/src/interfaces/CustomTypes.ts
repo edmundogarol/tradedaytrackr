@@ -87,8 +87,11 @@ export interface Trade {
   id: number;
   date: string;
   pnl: number;
-  accountName: string;
-  accountId: number;
+  account: {
+    id: number;
+    name: string;
+    type: string;
+  };
   journalEntry: JournalEntry;
 }
 

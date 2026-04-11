@@ -23,13 +23,19 @@ import {
   SectionTitle,
   SubsectionHeader,
 } from "@styles/globalStyledComponents";
-import { formatter, isNotEmptyString, sanitizeTag } from "@utils/utils";
+import {
+  decimalStringToInt,
+  formatter,
+  isNotEmptyString,
+  sanitizeTag,
+} from "@utils/utils";
 import moment from "moment";
 import React, { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 import useGenerateDraftAIHandler from "../hooks/useGenerateDraftAIHandler";
 import useGenerateTagsAIHandler from "../hooks/useGenerateTagsAIHandler";
 import useGetJournalEntryHandler from "../hooks/useGetJournalEntryHandler";
+import useGetTradesByDateHandler from "../hooks/useGetTradesByDateHandler";
 import useJournalDispatch from "../hooks/useJournalDispatch";
 import useJournalState from "../hooks/useJournalState";
 import type { JournalEntry as JournalEntryType } from "../JournalInterfaces";
@@ -82,7 +88,7 @@ const JournalEntry: React.FunctionComponent = () => {
     useGenerateTagsAIHandler();
   const { generateDraft, loading: generateDraftLoading } =
     useGenerateDraftAIHandler();
-  const { journalEntry, detectedTrades, journalErrors, journalEntries } =
+  const { journalEntry, selectedDateTrades, journalErrors, journalEntries } =
     useJournalState();
   const { updateJournalEntry, updateDetectedTrades, updateJournalErrors } =
     useJournalDispatch();
@@ -92,11 +98,9 @@ const JournalEntry: React.FunctionComponent = () => {
   );
   const [editingDate, setEditingDate] = useState(false);
   const [editingAccounts, setEditingAccounts] = useState(false);
-  const [selectedAccountTrades, setSelectedAccountTrades] = useState<number[]>([
-    ...journalEntry.trades,
-  ]);
   const [currentTagInput, setCurrentTagInput] = useState("");
   const { getJournalEntry } = useGetJournalEntryHandler();
+  const { getTradesByDate } = useGetTradesByDateHandler();
   const saveDisabled =
     journalEntry.contracts <= 0 ||
     journalEntry.risk <= 0 ||
@@ -126,15 +130,15 @@ const JournalEntry: React.FunctionComponent = () => {
 
   useEffect(() => {
     if (editingAccounts) {
-      setSelectedAccountTrades(journalEntry.trades);
+      getTradesByDate(moment(journalEntry.dateTime).format("YYYY-MM-DD"));
     }
-  }, [editingAccounts, journalEntry.trades]);
+  }, [editingAccounts]);
 
   const detectedTradesPnL = useMemo(() => {
-    return detectedTrades
-      .filter((trade) => selectedAccountTrades.includes(trade.id))
-      .reduce((total, trade) => total + trade.pnl, 0);
-  }, [detectedTrades, selectedAccountTrades]);
+    return selectedDateTrades
+      .filter((trade) => journalEntry.trades.includes(trade.id))
+      .reduce((total, trade) => total + Number(trade.pnl), 0);
+  }, [selectedDateTrades, journalEntry.trades]);
 
   return (
     <Page topBarShowMenu={true}>
@@ -157,32 +161,38 @@ const JournalEntry: React.FunctionComponent = () => {
         }}
       >
         <TradesDetectedContainer>
-          {`${detectedTrades.length} trades detected for ${moment(journalEntry.dateTime).format("MMM DD")}`}
+          {`${selectedDateTrades.length} trades detected for ${moment(journalEntry.dateTime).format("MMM DD")}`}
         </TradesDetectedContainer>
         <TradesDetectedContainer>
-          {detectedTrades.map((trade) => {
+          {selectedDateTrades.map((trade) => {
             return (
               <TradesDetectedTrade key={trade.id}>
                 <Checkbox
                   sx={{ color: "#a9b1c2" }}
-                  checked={selectedAccountTrades.includes(trade.id)}
+                  checked={journalEntry.trades.includes(trade.id)}
                   onChange={(e) => {
                     if (e.target.checked) {
-                      setSelectedAccountTrades((prev) => [...prev, trade.id]);
+                      updateJournalEntry({
+                        ...journalEntry,
+                        trades: [...journalEntry.trades, trade.id],
+                      });
                     } else {
-                      setSelectedAccountTrades((prev) =>
-                        prev.filter((id) => id !== trade.id),
-                      );
+                      updateJournalEntry({
+                        ...journalEntry,
+                        trades: journalEntry.trades.filter(
+                          (id) => id !== trade.id,
+                        ),
+                      });
                     }
                   }}
                 />
-                <div>{trade.accountName}</div>
+                <div>{trade.account.name}</div>
                 <TradesDetectedTime>
                   {moment(trade.date).format("hh:mm A")}
                 </TradesDetectedTime>
                 <TradesDetectedPnL
                   $positive={trade.pnl >= 0}
-                >{`$${trade.pnl}`}</TradesDetectedPnL>
+                >{`$${decimalStringToInt(trade.pnl)}`}</TradesDetectedPnL>
               </TradesDetectedTrade>
             );
           })}
@@ -197,10 +207,6 @@ const JournalEntry: React.FunctionComponent = () => {
           <Button
             onClick={() => {
               setEditingAccounts(false);
-              updateJournalEntry({
-                ...journalEntry,
-                trades: selectedAccountTrades,
-              });
             }}
             text={"Save"}
             style={{ background: color("SystemGreen"), width: BUTTON_WIDTH }}

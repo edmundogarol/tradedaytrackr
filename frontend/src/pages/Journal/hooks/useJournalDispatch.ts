@@ -8,6 +8,8 @@ import {
   updateJournalEntries,
   updateJournalEntry,
   updateJournalErrors,
+  updateSelectedDateTrades,
+  updateSelectedDateTradesErrors,
 } from "../JournalState";
 
 interface JournalDispatch {
@@ -15,6 +17,10 @@ interface JournalDispatch {
   updateJournalErrors(journalErrors: { [key: string]: any }): void;
   updateDetectedTrades(detectedTrades: Trade[]): void;
   updateJournalEntries(journalEntries: JournalEntry[]): void;
+  updateSelectedDateTrades(selectedDateTrades: Trade[]): void;
+  updateSelectedDateTradesErrors(selectedDateTradesErrors: {
+    [key: string]: any;
+  }): void;
 }
 
 export const useJournalDispatch = (): JournalDispatch => {
@@ -31,6 +37,14 @@ export const useJournalDispatch = (): JournalDispatch => {
     },
     updateJournalEntries(journalEntries: JournalEntry[]): void {
       dispatch(updateJournalEntries(journalEntries));
+    },
+    updateSelectedDateTrades(selectedDateTrades: Trade[]): void {
+      dispatch(updateSelectedDateTrades(selectedDateTrades));
+    },
+    updateSelectedDateTradesErrors(selectedDateTradesErrors: {
+      [key: string]: any;
+    }): void {
+      dispatch(updateSelectedDateTradesErrors(selectedDateTradesErrors));
     },
   };
 };

@@ -26,6 +26,8 @@ from backend.djangoapi.views.journal.journal_entry_by_date import (
     JournalEntriesByDateView,
 )
 from backend.djangoapi.views.journal.tag import TagViewSet
+from backend.djangoapi.views.trades.trade import TradeViewSet
+from backend.djangoapi.views.trades.trade_by_date import TradesByDateView
 from backend.djangoapi.views.tradingAccount.rule import RuleViewSet
 from backend.djangoapi.views.tradingAccount.trading_account import TradingAccountViewSet
 from backend.djangoapi.views.tradingAccount.trading_account_template import (
@@ -67,6 +69,7 @@ router.register(
 )
 router.register(r"tags", TagViewSet, basename="tags")
 router.register(r"rules", RuleViewSet, basename="rules")
+router.register(r"trades", TradeViewSet, basename="trades")
 
 urlpatterns = [
     path("docs/", schema_view),
@@ -76,6 +79,7 @@ urlpatterns = [
         JournalEntriesByDateView.as_view(),
         name="journal-entries-by-date",
     ),
+    path("api/trades/by-date/", TradesByDateView.as_view(), name="trades-by-date"),
     path("api/", include(router.urls)),
     path("api/csrf/", csrf),
     path("api/ai/tags/", AutoTagView.as_view()),
