@@ -29,6 +29,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 import useGenerateDraftAIHandler from "../hooks/useGenerateDraftAIHandler";
 import useGenerateTagsAIHandler from "../hooks/useGenerateTagsAIHandler";
+import useGetJournalEntryHandler from "../hooks/useGetJournalEntryHandler";
 import useJournalDispatch from "../hooks/useJournalDispatch";
 import useJournalState from "../hooks/useJournalState";
 import type { JournalEntry as JournalEntryType } from "../JournalInterfaces";
@@ -95,10 +96,17 @@ const JournalEntry: React.FunctionComponent = () => {
     ...journalEntry.trades,
   ]);
   const [currentTagInput, setCurrentTagInput] = useState("");
+  const { getJournalEntry } = useGetJournalEntryHandler();
   const saveDisabled =
     journalEntry.contracts <= 0 ||
     journalEntry.risk <= 0 ||
     journalEntry.instrument === "";
+
+  useEffect(() => {
+    if (journalEntry.id === 0) {
+      getJournalEntry(parseInt(searchParams.get("id") || "0"));
+    }
+  }, [searchParams, journalEntry]);
 
   useEffect(() => {
     const currentEntry = journalEntries.find(

@@ -26,7 +26,7 @@ export interface DropdownProps {
   singleSelect?: boolean;
   leftAligned?: boolean;
   icon?: React.ReactNode;
-  onSelect?: (selected: string[]) => void;
+  onSelect?: (selected: string[] | string) => void;
   selected?: string[];
 }
 

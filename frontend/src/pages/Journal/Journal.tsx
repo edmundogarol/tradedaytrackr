@@ -6,7 +6,7 @@ import {
   DropdownsSection,
   SectionTitle,
 } from "@styles/globalStyledComponents";
-import React from "react";
+import React, { useMemo } from "react";
 
 import Button from "@components/Button/Button";
 import DropdownMultiselect from "@components/DropdownMultiselect/DropdownMultiselect";
@@ -43,6 +43,7 @@ const Journal: React.FunctionComponent = () => {
   const { journalEntries } = useJournalState();
   const journalEntriesApiCall = useJournalEntriesApiCall();
   useJournalEntriesHandler(journalEntriesApiCall);
+  const [sortByFilter, setSortByFilter] = React.useState("date");
 
   const sortByOptions = {
     title: "Sort By",
@@ -53,13 +54,36 @@ const Journal: React.FunctionComponent = () => {
     ],
   };
 
+  const filteredJournalEntries = useMemo(() => {
+    return [...journalEntries].sort((a, b) => {
+      switch (sortByFilter) {
+        case "date":
+          return (
+            new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime()
+          );
+        case "pnl":
+          return Number(b.totalPnl) - Number(a.totalPnl);
+        case "accounts_count":
+          return b.accountCount - a.accountCount;
+        default:
+          return 0;
+      }
+    });
+  }, [journalEntries, sortByFilter]);
+
   return (
     <Page topBarShowMenu={true}>
       <Container>
         <SectionTitle>Journal</SectionTitle>
         <Gap level={1} />
         <DropdownsSection>
-          <DropdownMultiselect {...sortByOptions} singleSelect />
+          <DropdownMultiselect
+            {...sortByOptions}
+            singleSelect
+            onSelect={(selected) => {
+              setSortByFilter(selected[0] as string);
+            }}
+          />
           <Button
             onClick={() =>
               navigation.navigate(PageEnum.JournalEntry, {
@@ -74,7 +98,7 @@ const Journal: React.FunctionComponent = () => {
           />
         </DropdownsSection>
         <JournalEntries>
-          {[...journalEntries].map((entry, index) => (
+          {filteredJournalEntries.map((entry, index) => (
             <GlassTile
               key={index}
               featureTile
