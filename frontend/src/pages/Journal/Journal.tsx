@@ -74,7 +74,7 @@ const Journal: React.FunctionComponent = () => {
           />
         </DropdownsSection>
         <JournalEntries>
-          {[...journalEntries].reverse().map((entry, index) => (
+          {[...journalEntries].map((entry, index) => (
             <GlassTile
               key={index}
               featureTile
@@ -102,10 +102,8 @@ const Journal: React.FunctionComponent = () => {
                     <TradePreview $src={entry.image} />
                   </TradePreviewContainer>
                   <DateContainer>
-                    {moment(entry.dateTime)
-                      .add(index, "days")
-                      .format("MMM D, YYYY")}
-                    <Time>{`10:${index}0 AM`}</Time>
+                    {moment(entry.dateTime).format("MMM D, YYYY")}
+                    <Time>{moment(entry.dateTime).format("h:mm A")}</Time>
                   </DateContainer>
                 </PreviewDayValueContainer>
                 <Description>{entry.description}</Description>

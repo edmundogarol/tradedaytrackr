@@ -1,14 +1,14 @@
 import type { AxiosFetchWrapperResponse } from "@hooks/useAxiosFetch";
 import { keysToCamel } from "@utils/utils";
 import { useEffect } from "react";
-import type { JournalEntry } from "../JournalInterfaces";
 import useJournalDispatch from "./useJournalDispatch";
+import type { JournalEntriesApiCallResponse } from "./useJournalEntriesApiCall";
 
 const useJournalEntriesHandler = ({
   data,
   loading,
   error,
-}: AxiosFetchWrapperResponse<JournalEntry[]>): void => {
+}: AxiosFetchWrapperResponse<JournalEntriesApiCallResponse>): void => {
   const { updateJournalEntries } = useJournalDispatch();
 
   useEffect(() => {
@@ -20,7 +20,7 @@ const useJournalEntriesHandler = ({
     }
 
     if (data) {
-      updateJournalEntries(keysToCamel(data));
+      updateJournalEntries(keysToCamel(data.results));
     }
   }, [data, error]);
 };

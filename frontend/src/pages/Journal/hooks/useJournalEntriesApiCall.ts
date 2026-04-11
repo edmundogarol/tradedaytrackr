@@ -3,17 +3,20 @@ import useAxiosFetch from "@hooks/useAxiosFetch";
 import { useEffect } from "react";
 import type { JournalEntry } from "../JournalInterfaces";
 
-const useJournalEntriesApiCall = (): AxiosFetchWrapperResponse<
-  JournalEntry[]
-> => {
-  const { fetch, data, loading, error } =
-    useAxiosFetch<JournalEntry[]>("journal-entries/");
+export interface JournalEntriesApiCallResponse {
+  results: JournalEntry[];
+}
 
-  useEffect(() => {
-    fetch();
-  }, [fetch]);
+const useJournalEntriesApiCall =
+  (): AxiosFetchWrapperResponse<JournalEntriesApiCallResponse> => {
+    const { fetch, data, loading, error } =
+      useAxiosFetch<JournalEntriesApiCallResponse>("journal-entries/");
 
-  return { fetch, data, loading, error };
-};
+    useEffect(() => {
+      fetch();
+    }, [fetch]);
+
+    return { fetch, data, loading, error };
+  };
 
 export default useJournalEntriesApiCall;

@@ -10,7 +10,6 @@ from backend.djangoapi.serializers.journal_entry_list import JournalEntryListSer
 
 class JournalEntryViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
-    pagination_class = None
 
     def get_queryset(self):
         qs = JournalEntry.objects.filter(user=self.request.user)
