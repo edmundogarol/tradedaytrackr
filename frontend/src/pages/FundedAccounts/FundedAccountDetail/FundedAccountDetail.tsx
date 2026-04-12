@@ -1,6 +1,5 @@
 import AlertPopout from "@components/Alert/AlertPopout";
 import Button from "@components/Button/Button";
-import FormError from "@components/Error/FormError/FormError";
 import Gap from "@components/Gap/Gap";
 import GlassTile from "@components/GlassTile/GlassTile";
 import Icon from "@components/Icon/Icon";
@@ -8,7 +7,6 @@ import { IconTypeEnum } from "@components/Icon/IconInterfaces";
 import { Else, If } from "@components/If/If";
 import InfoPopout from "@components/InfoPopout/InfoPopout";
 import Input from "@components/Input/Input";
-import ModalWrapper from "@components/Modal/Modal";
 import Page from "@components/Page/Page";
 import SelectWrapper from "@components/Select/SelectWrapper";
 import type { Trade, TradingAccount } from "@interfaces/CustomTypes";
@@ -20,23 +18,18 @@ import { AccountTradingDaysComplete } from "@pages/EvaluationAccounts/Evaluation
 import useGetFundedAccountTemplates from "@pages/Settings/hooks/useGetFundedAccountTemplates";
 import useGetAccountTemplatesHandler from "@pages/Settings/Preferences/hooks/useGetAccountTemplatesHandler";
 import { color } from "@styles/colors";
-import {
-  BorderLinearProgress,
-  HorizontalSection,
-  SectionText,
-} from "@styles/globalStyledComponents";
+import { BorderLinearProgress } from "@styles/globalStyledComponents";
 import { decimalStringToInt, formatter } from "@utils/utils";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
 import AddTradingDayModal from "../AddTradingDayModal/AddTradingDayModal";
+import DeleteTradingAccountModal from "../DeleteTradingAccountModal/DeleteTradingAccountModal";
 import { initialState } from "../FundedAccountsState";
 import {
   AccountImage,
   AccountSubtitle,
   AccountSubtitleHighlighted,
-  AccountTitle,
-  AccountTitleContainer,
   BufferAmount,
   BufferAmountHighlighted,
   BufferContainer,
@@ -46,14 +39,12 @@ import {
   DaysItem,
   DaysItemSubtitle,
   DaysItemValue,
-  ListItemContainer,
   PnLContainer,
   PnLValue,
   PnLWithdrawable,
   PnLWithdrawableText,
   Title,
 } from "../FundedAccountsStyledComponents";
-import useDeleteTradingAccountHandler from "../hooks/useDeleteTradingAccountHandler";
 import useFundedAccountsDispatch from "../hooks/useFundedAccountsDispatch";
 import useFundedAccountsState from "../hooks/useFundedAccountsState";
 import useGetTradingAccountDetailHandler from "../hooks/useGetTradingAccountDetailHandler";
@@ -99,8 +90,6 @@ const FundedAccountDetail: React.FunctionComponent<
     editingAccountBalance,
     editingAccountName,
     editingAccountTemplate,
-    deletingTradingAccountModalOpen,
-    deleteTradingAccountErrors,
     addTradeErrors,
   } = useFundedAccountsState();
   const {
@@ -108,7 +97,6 @@ const FundedAccountDetail: React.FunctionComponent<
     updateCurrentTradingAccountErrors,
     updateEditingFields,
     updateDeletingTradingAccountModalOpen,
-    updateDeleteTradingAccountErrors,
     updateAddTradeErrors,
     updateAddTradeModalOpen,
     updateSelectedTrade,
@@ -122,7 +110,6 @@ const FundedAccountDetail: React.FunctionComponent<
   const accountTemplateList = useGetFundedAccountTemplates();
   const { getAccountTemplates } = useGetAccountTemplatesHandler();
   const { updateTradingAccount } = useUpdateTradingAccountHandler();
-  const { deleteTradingAccount } = useDeleteTradingAccountHandler();
   const { getTradingAccount } = useGetTradingAccountDetailHandler();
   const hasFetched = useRef(false);
 
@@ -170,84 +157,7 @@ const FundedAccountDetail: React.FunctionComponent<
         setPopoutOpen={() => updateCurrentTradingAccountErrors({})}
       />
       <AddTradingDayModal payoutRecord={payoutRecord} />
-      <ModalWrapper
-        onClose={() => updateDeleteTradingAccountErrors({})}
-        open={deletingTradingAccountModalOpen}
-        setOpen={updateDeletingTradingAccountModalOpen}
-        title="Delete Trading Account"
-      >
-        <SectionText>
-          Are you sure you want to delete this trading account? All associated
-          data will be permanently removed.
-        </SectionText>
-        <Gap level={2} />
-        <ListItemContainer>
-          <AccountImage $image={currentTradingAccount.image || ""} />
-          <AccountTitleContainer>
-            <AccountTitle>{currentTradingAccount.name}</AccountTitle>
-            <AccountSubtitle>
-              Balance:
-              <AccountSubtitleHighlighted>
-                {formatter.format(currentTradingAccount.accountBalance)}
-              </AccountSubtitleHighlighted>
-            </AccountSubtitle>
-            <AccountTradingDaysComplete>
-              {`Eligible Days: ${currentTradingAccount?.currentDayCount ?? "N/A"}/${
-                currentTradingAccount?.minTradingDays ?? "N/A"
-              }`}
-              <InfoPopout
-                infoDescription={`This account requires a minimum of ${currentTradingAccount?.minTradingDays} eligible trading days before payout.`}
-              />
-            </AccountTradingDaysComplete>
-          </AccountTitleContainer>
-          <DaysContainer>
-            {[...currentTradingAccount.dayValues]
-              .reverse()
-              .map((dayValue, idx) => (
-                <DaysItem key={idx}>
-                  <GlassTile
-                    positive={dayValue.pnl > 0}
-                    featureTile
-                    minHeight={10}
-                    minWidth={10}
-                    padding={7}
-                  >
-                    <DaysItemValue $positive={dayValue.pnl > 0}>
-                      {`${dayValue.pnl > 0 ? "+" : ""}${dayValue.pnl}`}
-                    </DaysItemValue>
-                  </GlassTile>
-                  <If condition={!!dayValue.dayNumber}>
-                    <DaysItemSubtitle>{dayValue.dayNumber}</DaysItemSubtitle>
-                    <Else>
-                      <DaysItemSubtitle>-</DaysItemSubtitle>
-                    </Else>
-                  </If>
-                </DaysItem>
-              ))}
-          </DaysContainer>
-        </ListItemContainer>
-        <Gap level={2} />
-        <If condition={!!deleteTradingAccountErrors.error}>
-          <FormError error={deleteTradingAccountErrors?.error} />
-          <Gap level={2} />
-        </If>
-        <HorizontalSection>
-          <Button
-            text={"Permanently Delete"}
-            style={{ backgroundColor: color("SystemRed") }}
-            onClick={() =>
-              deleteTradingAccount(currentTradingAccount.id.toString())
-            }
-          />
-          <Button
-            text={"Cancel"}
-            onClick={() => {
-              updateDeletingTradingAccountModalOpen(false);
-              updateDeleteTradingAccountErrors({});
-            }}
-          />
-        </HorizontalSection>
-      </ModalWrapper>
+      <DeleteTradingAccountModal />
       <Container>
         <ListHeaders>
           <Title>Funded Account Details</Title>
