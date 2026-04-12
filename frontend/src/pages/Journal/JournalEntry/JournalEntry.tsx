@@ -27,9 +27,9 @@ import {
   decimalStringToInt,
   formatter,
   isNotEmptyString,
+  m,
   sanitizeTag,
 } from "@utils/utils";
-import moment from "moment";
 import React, { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 import useGenerateDraftAIHandler from "../hooks/useGenerateDraftAIHandler";
@@ -129,7 +129,7 @@ const JournalEntry: React.FunctionComponent = () => {
 
   useEffect(() => {
     if (editingAccounts) {
-      getTradesByDate(moment(journalEntry.dateTime).format("YYYY-MM-DD"));
+      getTradesByDate(m(journalEntry.dateTime).format("YYYY-MM-DD"));
     }
   }, [editingAccounts]);
 
@@ -160,7 +160,7 @@ const JournalEntry: React.FunctionComponent = () => {
         }}
       >
         <TradesDetectedContainer>
-          {`${selectedDateTrades.length} trades detected for ${moment(journalEntry.dateTime).format("MMM DD")}`}
+          {`${selectedDateTrades.length} trades detected for ${m(journalEntry.dateTime).format("MMM DD")}`}
         </TradesDetectedContainer>
         <TradesDetectedContainer>
           {selectedDateTrades.map((trade) => {
@@ -187,11 +187,11 @@ const JournalEntry: React.FunctionComponent = () => {
                 />
                 <div>{trade.account.name}</div>
                 <TradesDetectedTime>
-                  {moment(trade.date).format("hh:mm A")}
+                  {m(trade.date).format("hh:mm A")}
                 </TradesDetectedTime>
                 <TradesDetectedPnL
-                  $positive={trade.pnl >= 0}
-                >{`$${decimalStringToInt(trade.pnl)}`}</TradesDetectedPnL>
+                  $positive={trade.pnl !== null && trade.pnl >= 0}
+                >{`$${decimalStringToInt(trade.pnl || 0)}`}</TradesDetectedPnL>
               </TradesDetectedTrade>
             );
           })}
@@ -228,16 +228,14 @@ const JournalEntry: React.FunctionComponent = () => {
                 <TradeInfo>
                   <If condition={editing}>
                     <TradeSubtitleEditing onClick={() => setEditingDate(true)}>
-                      {moment(journalEntry.dateTime).format(
-                        "YYYY-MM-DD hh:mm A",
-                      )}
+                      {m(journalEntry.dateTime).format("YYYY-MM-DD hh:mm A")}
                     </TradeSubtitleEditing>
                     <CalendarPicker
                       onSaveCallback={() => {
                         setEditingDate(false);
                       }}
                       showPicker={editingDate}
-                      value={moment(journalEntry.dateTime)}
+                      value={m(journalEntry.dateTime)}
                       onChange={(val) =>
                         updateJournalEntry({
                           ...journalEntry,
@@ -249,9 +247,7 @@ const JournalEntry: React.FunctionComponent = () => {
                     />
                     <Else>
                       <TradeSubtitle>
-                        {moment(journalEntry.dateTime).format(
-                          "YYYY-MM-DD HH:mm A",
-                        )}
+                        {m(journalEntry.dateTime).format("YYYY-MM-DD hh:mm A")}
                       </TradeSubtitle>
                     </Else>
                   </If>

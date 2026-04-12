@@ -24,8 +24,8 @@ import {
   TradePreview,
   TradePreviewContainer,
 } from "@pages/FundedAccounts/FundedAccountDetail/FundedAccountDetailStyledComponents";
-import { formatter } from "@utils/utils";
-import moment from "moment";
+import { formatter, m } from "@utils/utils";
+
 import useJournalEntriesApiCall from "./hooks/useJournalEntriesApiCall";
 import useJournalEntriesHandler from "./hooks/useJournalEntriesHandler";
 import useJournalState from "./hooks/useJournalState";
@@ -126,8 +126,8 @@ const Journal: React.FunctionComponent = () => {
                     <TradePreview $src={entry.image} />
                   </TradePreviewContainer>
                   <DateContainer>
-                    {moment(entry.dateTime).format("MMM D, YYYY")}
-                    <Time>{moment(entry.dateTime).format("h:mm A")}</Time>
+                    {m(entry.dateTime).format("MMM D, YYYY")}
+                    <Time>{m(entry.dateTime).format("h:mm A")}</Time>
                   </DateContainer>
                 </PreviewDayValueContainer>
                 <Description>{entry.description}</Description>
