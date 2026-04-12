@@ -24,6 +24,7 @@ import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
 import AddTradingDayModal from "../AddTradingDayModal/AddTradingDayModal";
+import DeleteTradeModal from "../DeleteTradeModal/DeleteTradeModal";
 import DeleteTradingAccountModal from "../DeleteTradingAccountModal/DeleteTradingAccountModal";
 import { initialState } from "../FundedAccountsState";
 import {
@@ -91,6 +92,7 @@ const FundedAccountDetail: React.FunctionComponent<
     editingAccountName,
     editingAccountTemplate,
     addTradeErrors,
+    deleteTradeErrors,
   } = useFundedAccountsState();
   const {
     updateCurrentTradingAccount,
@@ -100,6 +102,8 @@ const FundedAccountDetail: React.FunctionComponent<
     updateAddTradeErrors,
     updateAddTradeModalOpen,
     updateSelectedTrade,
+    updateDeleteTradeModalOpen,
+    updateDeleteTradeErrors,
   } = useFundedAccountsDispatch();
   let [searchParams] = useSearchParams();
   const accountId = searchParams.get("id");
@@ -139,6 +143,12 @@ const FundedAccountDetail: React.FunctionComponent<
   return (
     <Page topBarShowMenu={true}>
       <AlertPopout
+        open={!!deleteTradeErrors?.detail}
+        hideDuration={6000}
+        message={deleteTradeErrors?.detail}
+        setPopoutOpen={() => updateDeleteTradeErrors({})}
+      />
+      <AlertPopout
         open={!!addTradeErrors?.detail}
         hideDuration={3000}
         message={addTradeErrors?.detail}
@@ -158,6 +168,7 @@ const FundedAccountDetail: React.FunctionComponent<
       />
       <AddTradingDayModal payoutRecord={payoutRecord} />
       <DeleteTradingAccountModal />
+      <DeleteTradeModal />
       <Container>
         <ListHeaders>
           <Title>Funded Account Details</Title>
@@ -572,14 +583,14 @@ const FundedAccountDetail: React.FunctionComponent<
                           }}
                         >
                           <GlassTile
-                            positive={trade.pnl > 0}
+                            positive={(trade.pnl ?? 0) > 0}
                             featureTile
                             minHeight={10}
                             minWidth={10}
                             padding={7}
                           >
-                            <DaysItemValue $positive={trade.pnl > 0}>
-                              {`${trade.pnl > 0 ? "+" : ""}${decimalStringToInt(trade.pnl)}`}
+                            <DaysItemValue $positive={(trade.pnl ?? 0) > 0}>
+                              {`${(trade.pnl ?? 0) > 0 ? "+" : ""}${decimalStringToInt(trade.pnl ?? 0)}`}
                             </DaysItemValue>
                           </GlassTile>
                           <DaysItemSubtitle $smaller>
@@ -612,7 +623,17 @@ const FundedAccountDetail: React.FunctionComponent<
                       <EditContainer>
                         <DeleteOutlineIcon
                           style={styles.editIcon}
-                          onClick={() => alert("Delete Trade")}
+                          onClick={() => {
+                            if (dayValue.trades.length > 1) {
+                              updateDeleteTradeErrors({
+                                detail:
+                                  "This trade day has multiple trades. Please delete individual records from trades displayed on this row",
+                              });
+                              return;
+                            }
+                            updateDeleteTradeModalOpen(true);
+                            updateSelectedTrade(dayValue.trades[0]);
+                          }}
                         />
                       </EditContainer>
                     </InfoPopout>

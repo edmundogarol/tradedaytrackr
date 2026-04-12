@@ -22,6 +22,8 @@ export interface FundedAccountsState {
   readonly firmFilter: string[];
   readonly bufferFilter: string[];
   readonly selectedDateJournalEntries: JournalEntry[];
+  readonly deleteTradeModalOpen: boolean;
+  readonly deleteTradeErrors: { [key: string]: any };
 }
 
 const initialAccount: TradingAccount = {
@@ -87,6 +89,8 @@ export const initialState: FundedAccountsState = {
   firmFilter: [],
   bufferFilter: [],
   selectedDateJournalEntries: [],
+  deleteTradeModalOpen: false,
+  deleteTradeErrors: {},
 };
 
 type UpdateTradingAccountsAction = PayloadAction<TradingAccount[]>;
@@ -115,6 +119,8 @@ type UpdateDeleteTradingAccountErrorsAction = PayloadAction<{
 type UpdateFirmFilterAction = PayloadAction<string[]>;
 type UpdateBufferFilterAction = PayloadAction<string[]>;
 type UpdateSelectedDateJournalEntriesAction = PayloadAction<JournalEntry[]>;
+type UpdateDeleteTradeModalOpenAction = PayloadAction<boolean>;
+type UpdateDeleteTradeErrorsAction = PayloadAction<{ [key: string]: any }>;
 
 export type FundedAccountsAction =
   | UpdateTradingAccountsAction
@@ -132,7 +138,9 @@ export type FundedAccountsAction =
   | UpdateDeleteTradingAccountErrorsAction
   | UpdateFirmFilterAction
   | UpdateBufferFilterAction
-  | UpdateSelectedDateJournalEntriesAction;
+  | UpdateSelectedDateJournalEntriesAction
+  | UpdateDeleteTradeModalOpenAction
+  | UpdateDeleteTradeErrorsAction;
 
 export const fundedAccountsSlice = createSlice({
   name: "fundedAccounts",
@@ -218,6 +226,15 @@ export const fundedAccountsSlice = createSlice({
     ) => {
       state.selectedDateJournalEntries = action.payload;
     },
+    updateDeleteTradeModalOpen: (
+      state,
+      action: UpdateDeleteTradeModalOpenAction,
+    ) => {
+      state.deleteTradeModalOpen = action.payload;
+    },
+    updateDeleteTradeErrors: (state, action: UpdateDeleteTradeErrorsAction) => {
+      state.deleteTradeErrors = action.payload;
+    },
   },
 });
 
@@ -238,6 +255,8 @@ export const {
   updateFirmFilter,
   updateBufferFilter,
   updateSelectedDateJournalEntries,
+  updateDeleteTradeModalOpen,
+  updateDeleteTradeErrors,
 } = fundedAccountsSlice.actions;
 
 export const fundedAccountsReducer = fundedAccountsSlice.reducer;

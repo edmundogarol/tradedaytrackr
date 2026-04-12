@@ -25,11 +25,8 @@ import {
 import useDeleteTradingAccountHandler from "../hooks/useDeleteTradingAccountHandler";
 import useFundedAccountsDispatch from "../hooks/useFundedAccountsDispatch";
 import useFundedAccountsState from "../hooks/useFundedAccountsState";
-interface FundedAccountDetailProps {}
 
-const DeleteTradingAccountModal: React.FunctionComponent<
-  FundedAccountDetailProps
-> = () => {
+const DeleteTradingAccountModal: React.FunctionComponent = () => {
   const {
     currentTradingAccount,
     deletingTradingAccountModalOpen,

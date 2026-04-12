@@ -4,6 +4,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from backend.djangoapi.models.trade import Trade
 from backend.djangoapi.serializers.trade import TradeSerializer
+from backend.djangoapi.services.trades.trade_day import recompute_all_trading_days
 
 
 class TradeViewSet(ModelViewSet):
@@ -24,3 +25,14 @@ class TradeViewSet(ModelViewSet):
             raise PermissionDenied("Invalid account")
 
         serializer.save()
+
+    def perform_destroy(self, instance):
+        trading_day = instance.trading_day
+        account = instance.account
+
+        instance.delete()
+
+        if not trading_day.trades.exists():
+            trading_day.delete()
+
+        recompute_all_trading_days(account)

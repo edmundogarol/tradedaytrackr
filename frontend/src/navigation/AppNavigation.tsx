@@ -26,7 +26,7 @@ import Account from "@pages/Settings/Account/Account";
 import Billing from "@pages/Settings/Billing/Billing";
 import Preferences from "@pages/Settings/Preferences/Preferences";
 import SignUp from "@pages/SignUp/SignUp";
-import { isNotEmptyString } from "@utils/utils";
+import { isNotEmptyString, setTimezone } from "@utils/utils";
 import React, { useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router";
 import RequireAuth from "./RequireAuth";
@@ -49,6 +49,12 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
       fetchCSRF();
     }
   }, []);
+
+  useEffect(() => {
+    if (user?.timezone) {
+      setTimezone(user.timezone);
+    }
+  }, [user?.timezone]);
 
   return (
     <>

@@ -1,5 +1,16 @@
 import { css } from "styled-components";
 
+import moment from "moment-timezone";
+
+let CURRENT_TZ = "UTC"; // default fallback
+
+export const setTimezone = (tz: string): void => {
+  CURRENT_TZ = tz;
+};
+
+export const m = (date?: moment.MomentInput): moment.Moment => {
+  return moment.utc(date).tz(CURRENT_TZ);
+};
 export const imageSrc = (imageName: string): string => {
   return `/images/${imageName}`;
 };

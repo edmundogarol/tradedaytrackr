@@ -9,8 +9,9 @@ import Modal from "@components/Modal/Modal";
 import SelectWrapper from "@components/Select/SelectWrapper";
 import type { Trade } from "@interfaces/CustomTypes";
 import Collapse from "@mui/material/Collapse";
-import { decimalStringToInt } from "@utils/utils";
-import moment from "moment";
+import { color } from "@styles/colors";
+import { HorizontalSection } from "@styles/globalStyledComponents";
+import { decimalStringToInt, m } from "@utils/utils";
 import React, { useEffect } from "react";
 import { initialState } from "../FundedAccountsState";
 import useFundedAccountsDispatch from "../hooks/useFundedAccountsDispatch";
@@ -41,36 +42,52 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
     selectedTrade,
     addTradeErrors,
   } = useFundedAccountsState();
+
   const editingExistingTrade = selectedTrade.id !== 0;
-  const { updateSelectedTrade, updateAddTradeErrors, updateAddTradeModalOpen } =
-    useFundedAccountsDispatch();
+
+  const {
+    updateSelectedTrade,
+    updateAddTradeErrors,
+    updateAddTradeModalOpen,
+    updateDeleteTradeModalOpen,
+  } = useFundedAccountsDispatch();
+
   const [addNewTradePnL, setAddNewTradePnL] =
     React.useState<boolean>(editingExistingTrade);
+
   const [originalTrade, setOriginalTrade] = React.useState<Trade>(
     initialState.selectedTrade,
   );
+
   const formattedJournalEntries = (selectedDateJournalEntries || []).map(
     (entry) => ({
-      name: `${moment(entry.dateTime).format("MMMM Do YYYY h:mm A")} - ${entry.trades.length} Account(s)`,
+      name: `${m(entry.dateTime).format("MMMM Do YYYY h:mm A")} - ${entry.trades.length} Account(s)`,
       value: entry.id,
     }),
   );
+
   const { addTrade, loading: addingTrade } = useAddTradeHandler();
   const { updateTrade, loading: updatingTrade } = useUpdateTradeHandler();
+
   useEffect(() => {
-    if (selectedTrade.id === 0) {
-      setOriginalTrade(selectedTrade);
-    }
     if (editingExistingTrade) {
       setAddNewTradePnL(true);
     }
   }, [editingExistingTrade]);
 
+  const selectedDay = m(selectedTrade.date).format("YYYY-MM-DD");
+
   useEffect(() => {
     if (addTradeModalOpen) {
-      getJournalEntriesByDate(moment(selectedTrade.date).format("YYYY-MM-DD"));
+      setOriginalTrade(selectedTrade);
     }
-  }, [addTradeModalOpen, selectedTrade.date]);
+  }, [addTradeModalOpen]);
+
+  useEffect(() => {
+    if (addTradeModalOpen) {
+      getJournalEntriesByDate(selectedDay);
+    }
+  }, [addTradeModalOpen, selectedDay]);
 
   useEffect(() => {
     if (!addNewTradePnL) {
@@ -86,25 +103,30 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
   useEffect(() => {
     if (addNewTradePnL) return;
     if (selectedDateJournalEntries.length === 0) return;
+    if (selectedTrade.journalEntry?.id) return;
 
-    const selected =
-      selectedDateJournalEntries.find(
-        (entry) => entry.id === selectedTrade.journalEntry?.id,
-      ) || selectedDateJournalEntries[0];
+    const first = selectedDateJournalEntries[0];
+
+    const baseDate = m(selectedTrade.date);
+    const entryMoment = m(first.dateTime);
+
+    const merged = baseDate
+      .hour(entryMoment.hour())
+      .minute(entryMoment.minute())
+      .second(entryMoment.second());
 
     updateSelectedTrade({
       ...selectedTrade,
       journalEntry: {
-        id: selected.id,
+        id: first.id,
       },
-      date: selected.dateTime,
+      date: merged.format("YYYY-MM-DDTHH:mm:ss"),
     } as Trade);
   }, [selectedDateJournalEntries, addNewTradePnL]);
 
   const dirtyTrade =
     selectedTrade.pnl !== originalTrade.pnl ||
-    selectedTrade.date !== originalTrade.date ||
-    selectedTrade.journalEntry?.id !== originalTrade.journalEntry?.id;
+    selectedTrade.date !== originalTrade.date;
 
   return (
     <Modal
@@ -130,29 +152,28 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
               showSaveButton={false}
               inline
               showPicker
-              value={moment(selectedTrade.date)}
+              value={m(selectedTrade.date)}
               onChange={(date) => {
                 updateSelectedTrade({
                   ...selectedTrade,
-                  date: moment(date).toISOString(),
+                  date: m(date).format("YYYY-MM-DDTHH:mm:ss"),
                 });
               }}
             />
           </DateCalendarContainer>
         </AddTradingDayContainerLeft>
+
         <AddTradingDayContainerRight>
           <Label>Date</Label>
           <AddTradingDayDate>
-            {moment(selectedTrade.date).format("MMMM Do YYYY")}
+            {m(selectedTrade.date).format("MMMM Do YYYY")}
           </AddTradingDayDate>
+
           <Gap level={1} />
+
           <If condition={!payoutRecord}>
             <Collapse
-              sx={{
-                "& .MuiCollapse-wrapperInner": {
-                  width: "100%",
-                },
-              }}
+              sx={{ "& .MuiCollapse-wrapperInner": { width: "100%" } }}
               orientation="horizontal"
               in={!addNewTradePnL}
               collapsedSize={0}
@@ -160,19 +181,36 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
             >
               <If condition={formattedJournalEntries.length > 0}>
                 <SelectWrapper
-                  onSelect={(selected) => {
+                  onSelect={(selectedId) => {
+                    const selected = selectedDateJournalEntries.find(
+                      (entry) => entry.id === Number(selectedId),
+                    );
+
+                    if (!selected) return;
+
+                    const baseDate = m(selectedTrade.date);
+                    const entryMoment = m(selected.dateTime);
+
+                    const merged = baseDate
+                      .hour(entryMoment.hour())
+                      .minute(entryMoment.minute())
+                      .second(entryMoment.second());
+
                     updateSelectedTrade({
                       ...selectedTrade,
                       journalEntry: {
-                        id: Number(selected),
+                        id: selected.id,
                       },
+                      date: merged.toISOString(),
                     } as Trade);
                   }}
                   items={formattedJournalEntries}
                   label="Journal Entries detected for this date"
                 />
               </If>
+
               <Gap level={1} />
+
               <If condition={formattedJournalEntries.length > 0}>
                 <Button
                   text={"Do not link to existing journal entry"}
@@ -183,8 +221,7 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
                   onClick={(): void => {
                     setAddNewTradePnL(!addNewTradePnL);
                     updateSelectedTrade({
-                      ...originalTrade,
-                      date: moment(selectedTrade.date).toISOString(),
+                      ...selectedTrade,
                       journalEntry: {
                         id: 0,
                       },
@@ -193,12 +230,9 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
                 />
               </If>
             </Collapse>
+
             <Collapse
-              sx={{
-                "& .MuiCollapse-wrapperInner": {
-                  width: "100%",
-                },
-              }}
+              sx={{ "& .MuiCollapse-wrapperInner": { width: "100%" } }}
               orientation="horizontal"
               in={addNewTradePnL}
               collapsedSize={0}
@@ -214,7 +248,9 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
               </If>
             </Collapse>
           </If>
+
           <Gap level={1} />
+
           <Input
             error={addTradeErrors?.pnl}
             type="number"
@@ -230,42 +266,47 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
               })
             }
           />
-          {/* <Gap level={1} />
-          <If condition={!payoutRecord}>
-            <Input
-              type="number"
-              label="Eligible Trading Day Count"
-              value={undefined}
-              placeholder="Enter Day Count"
-              onChange={(e) => console.log(e.target.value)}
-            />
-          </If> */}
+
           <Gap level={1} />
+
           <FormError error={addTradeErrors?.error} />
-          <Button
-            style={{
-              ...styles.addTradingDayButton,
-              ...(payoutRecord ? styles.payoutButton : styles.submitButton),
-              ...(!dirtyTrade ? {} : styles.greenButton),
-            }}
-            disabledBlock={!dirtyTrade}
-            disabled={!dirtyTrade}
-            loading={addingTrade || updatingTrade}
-            text={
-              payoutRecord
-                ? "Record Payout"
-                : editingExistingTrade
-                  ? "Save"
-                  : "Add"
-            }
-            onClick={(): void => {
-              if (editingExistingTrade) {
-                updateTrade(selectedTrade);
-              } else {
-                addTrade(selectedTrade);
+
+          <HorizontalSection>
+            <Button
+              style={{
+                ...styles.addTradingDayButton,
+                ...(payoutRecord ? styles.payoutButton : styles.submitButton),
+                ...(!dirtyTrade ? {} : styles.greenButton),
+              }}
+              disabledBlock={!dirtyTrade}
+              disabled={!dirtyTrade}
+              loading={addingTrade || updatingTrade}
+              text={
+                payoutRecord
+                  ? "Record Payout"
+                  : editingExistingTrade
+                    ? "Save"
+                    : "Add"
               }
-            }}
-          />
+              onClick={(): void => {
+                if (editingExistingTrade) {
+                  updateTrade(selectedTrade);
+                } else {
+                  addTrade(selectedTrade);
+                }
+              }}
+            />
+
+            <If condition={editingExistingTrade && !payoutRecord}>
+              <Button
+                text={"Delete Trade"}
+                style={{ backgroundColor: color("SystemRed") }}
+                onClick={() => {
+                  updateDeleteTradeModalOpen(true);
+                }}
+              />
+            </If>
+          </HorizontalSection>
         </AddTradingDayContainerRight>
       </AddTradingDayContainer>
     </Modal>
