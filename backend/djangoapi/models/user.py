@@ -28,6 +28,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     verification_sent_at = models.DateTimeField(null=True, blank=True)
 
     last_ip = models.GenericIPAddressField(null=True, blank=True)
+    timezone = models.CharField(max_length=50, default="UTC")
 
     USERNAME_FIELD = "email"
 

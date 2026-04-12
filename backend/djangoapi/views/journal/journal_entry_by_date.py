@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from django.utils.timezone import make_aware
+import pytz
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -14,6 +14,7 @@ class JournalEntriesByDateView(APIView):
     pagination_class = None
 
     def get(self, request):
+        user_tz = pytz.timezone(request.user.timezone)
         date_str = request.query_params.get("date")
 
         if not date_str:
@@ -24,8 +25,13 @@ class JournalEntriesByDateView(APIView):
         except ValueError:
             return Response({"error": "Invalid date format"}, status=400)
 
-        start = make_aware(datetime.combine(date, datetime.min.time()))
-        end = start + timedelta(days=1)
+        # create local start of day
+        local_start = user_tz.localize(datetime.combine(date, datetime.min.time()))
+        local_end = local_start + timedelta(days=1)
+
+        # convert to UTC for querying
+        start = local_start.astimezone(pytz.UTC)
+        end = local_end.astimezone(pytz.UTC)
 
         journals = (
             JournalEntry.objects.filter(
@@ -37,6 +43,10 @@ class JournalEntriesByDateView(APIView):
             .order_by("date_time")
         )
 
-        serializer = JournalEntrySerializer(journals, many=True)
+        serializer = JournalEntrySerializer(
+            journals,
+            many=True,
+            context={"request": request},
+        )
 
         return Response(serializer.data)

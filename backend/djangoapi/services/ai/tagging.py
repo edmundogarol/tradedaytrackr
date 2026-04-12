@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 
 from django.conf import settings
 from openai import OpenAI
@@ -10,8 +11,6 @@ from backend.djangoapi.services.ai.strategy import detect_strategy
 logger = logging.getLogger(__name__)
 
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
-
-import re
 
 
 def extract_json_array(text: str):

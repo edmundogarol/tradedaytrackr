@@ -1,3 +1,4 @@
+import pytz
 from django.utils import timezone
 from rest_framework import serializers
 
@@ -5,6 +6,7 @@ from backend.djangoapi.models.trading_account import TradingAccount
 from backend.djangoapi.models.trading_day import TradingDay
 from backend.djangoapi.serializers.trade import TradeSerializer
 from backend.djangoapi.services.trades.trade_day import compute_trading_day_fields
+from backend.djangoapi.utils.account import UserTimezoneDateTimeField
 
 
 class TradingDaySerializer(serializers.ModelSerializer):
@@ -15,6 +17,7 @@ class TradingDaySerializer(serializers.ModelSerializer):
     )
     pnl = serializers.SerializerMethodField()
     trades = TradeSerializer(many=True, read_only=True)
+    created_at = UserTimezoneDateTimeField(read_only=True)
 
     class Meta:
         model = TradingDay
@@ -46,9 +49,16 @@ class TradingDaySerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, data):
-        # Ensure trading day is not in the future
-        if "date" in data and data["date"] > timezone.now().date():
-            raise serializers.ValidationError("Trading day cannot be in the future")
+        request = self.context.get("request")
+        user = request.user if request else None
+
+        if "date" in data and user:
+            user_tz = pytz.timezone(user.timezone)
+
+            local_today = timezone.now().astimezone(user_tz).date()
+
+            if data["date"] > local_today:
+                raise serializers.ValidationError("Trading day cannot be in the future")
 
         # Enforce sequential day numbers per account
         account = data.get("account")

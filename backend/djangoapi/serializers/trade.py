@@ -1,3 +1,4 @@
+import pytz
 from django.utils import timezone
 from rest_framework import serializers
 
@@ -6,11 +7,11 @@ from backend.djangoapi.models.trade import Trade
 from backend.djangoapi.models.trading_account import TradingAccount
 from backend.djangoapi.serializers.journal_entry import JournalEntrySerializer
 from backend.djangoapi.services.trades.trade_day import get_or_create_trading_day
+from backend.djangoapi.utils.account import UserTimezoneDateTimeField
 
 
 class TradeSerializer(serializers.ModelSerializer):
-    date = serializers.DateTimeField(source="date_time")
-
+    date = UserTimezoneDateTimeField(source="date_time")
     account = serializers.SerializerMethodField()
     account_id = serializers.PrimaryKeyRelatedField(
         queryset=TradingAccount.objects.all(), source="account", write_only=True
@@ -60,7 +61,11 @@ class TradeSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         account = validated_data["account"]
-        date = validated_data["date_time"].date()
+        user = account.user
+        user_tz = pytz.timezone(user.timezone)
+
+        local_dt = validated_data["date_time"].astimezone(user_tz)
+        date = local_dt.date()
 
         trading_day = get_or_create_trading_day(account, date)
 

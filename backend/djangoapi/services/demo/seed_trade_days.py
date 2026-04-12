@@ -1,6 +1,7 @@
 import random
 from datetime import timedelta
 
+import pytz
 from django.utils import timezone
 
 from backend.djangoapi.models.trade import Trade
@@ -13,12 +14,13 @@ from backend.djangoapi.services.trades.trade_day import (
 
 def seed_demo_trade_days(user):
     accounts = user.trading_accounts.select_related("template").all()
-    base_date = timezone.now()
+    base_date = timezone.now().astimezone(pytz.UTC)
 
     random.seed(42)
     mffu_base = [400, 340, 580, 300, 310]
 
     for account in accounts:
+        user_tz = pytz.timezone(account.user.timezone)
         template = account.template
 
         # reset
@@ -81,14 +83,17 @@ def seed_demo_trade_days(user):
 
             hour, minute, second = shared_day_times[idx]
 
-            date_time = date.replace(
+            local_date = date.astimezone(user_tz)
+            local_dt = local_date.replace(
                 hour=hour,
                 minute=minute,
                 second=second,
                 microsecond=0,
             )
+            date_time = local_dt.astimezone(pytz.UTC)
 
-            trading_day = get_or_create_trading_day(account, date_time.date())
+            local_dt = date_time.astimezone(user_tz)
+            trading_day = get_or_create_trading_day(account, local_dt.date())
 
             Trade.objects.create(
                 account=account,

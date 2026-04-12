@@ -1,3 +1,4 @@
+import pytz
 from django.db.models import Sum
 
 from backend.djangoapi.models.trading_day import TradingDay
@@ -51,7 +52,20 @@ def recompute_all_trading_days(account):
 
     current_day_number = 1
 
+    user_tz = pytz.timezone(account.user.timezone)
+
     for td in trading_days:
+        fields_to_update = ["day_number", "is_valid_day"]
+
+        if td.trades.exists():
+            first_trade = td.trades.order_by("date_time").first()
+            local_dt = first_trade.date_time.astimezone(user_tz)
+            correct_date = local_dt.date()
+
+            if td.date != correct_date:
+                td.date = correct_date
+                fields_to_update.append("date")
+
         pnl = td.pnl or 0
 
         template = account.template
@@ -66,4 +80,4 @@ def recompute_all_trading_days(account):
 
         td.is_valid_day = is_valid
 
-        td.save(update_fields=["day_number", "is_valid_day"])
+        td.save(update_fields=fields_to_update)

@@ -13,7 +13,9 @@ class ResetPasswordSession(models.Model):
     is_used = models.BooleanField(default=False)
 
     def is_expired(self):
-        return self.created_date < timezone.now() - timezone.timedelta(hours=1)
+        now = timezone.now()
+        expiry_time = self.created_date + timezone.timedelta(hours=1)
+        return now > expiry_time
 
     def set_token(self, raw_token: str):
         self.token_hash = hashlib.sha256(raw_token.encode()).hexdigest()

@@ -2,6 +2,7 @@ import os
 import random
 from collections import defaultdict
 
+import pytz
 from django.conf import settings
 from django.db.models import Q
 
@@ -18,6 +19,7 @@ image_paths = [
 
 
 def seed_demo_journal_entries(user):
+    user_tz = pytz.timezone(user.timezone)
     # ---------------------------------
     # GET FLEX ACCOUNTS ONLY
     # ---------------------------------
@@ -39,7 +41,8 @@ def seed_demo_journal_entries(user):
     trades = Trade.objects.filter(account__in=flex_accounts).order_by("date_time")
 
     for trade in trades:
-        day = trade.date_time.date()
+        local_dt = trade.date_time.astimezone(user_tz)
+        day = local_dt.date()
         trades_by_day[day].append(trade)
 
     # only take last 5 days
@@ -115,7 +118,8 @@ def seed_demo_journal_entries(user):
             apex_trades_by_day = defaultdict(list)
 
             for trade in apex_trades:
-                day = trade.date_time.date()
+                local_dt = trade.date_time.astimezone(user_tz)
+                day = local_dt.date()
                 apex_trades_by_day[day].append(trade)
 
             latest_day = sorted(apex_trades_by_day.keys())[-1]
@@ -125,7 +129,9 @@ def seed_demo_journal_entries(user):
                 base_time = latest_trades[0].date_time
 
                 # shift time so it doesn't match flex entries
-                apex_time = base_time.replace(hour=7, minute=23, second=0)
+                local_base = base_time.astimezone(user_tz)
+                local_apex = local_base.replace(hour=7, minute=23, second=0)
+                apex_time = local_apex.astimezone(pytz.UTC)
 
                 total_pnl = sum(t.pnl for t in latest_trades)
                 outcome = total_pnl / len(latest_trades)
