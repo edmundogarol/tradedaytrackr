@@ -30,6 +30,8 @@ export interface LoginState {
     confirm_new_password: string;
   };
   readonly passwordFormErrors: { [key: string]: any };
+  readonly timezoneErrors: { [key: string]: any };
+  readonly timezoneUpdateModalOpen: boolean;
 }
 
 export const initialState: LoginState = {
@@ -50,6 +52,7 @@ export const initialState: LoginState = {
       promotional_offers: true,
       unsubscribe_all: false,
     },
+    timezone: "UTC",
   },
   isHydrated: false,
   loginForm: {
@@ -81,6 +84,8 @@ export const initialState: LoginState = {
     confirm_new_password: "••••••••••••••••",
   },
   passwordFormErrors: {},
+  timezoneErrors: {},
+  timezoneUpdateModalOpen: false,
 };
 
 type UpdateUserAction = PayloadAction<User>;
@@ -109,6 +114,9 @@ type UpdatePasswordFormAction = PayloadAction<{
   confirm_new_password: string;
 }>;
 type UpdatePasswordFormErrorsAction = PayloadAction<{ [key: string]: any }>;
+type UpdateTimezoneAction = PayloadAction<string>;
+type UpdateTimezoneErrorsAction = PayloadAction<{ [key: string]: any }>;
+type UpdateTimezoneUpdateModalOpenAction = PayloadAction<boolean>;
 
 export type LoginAction =
   | UpdateUserAction
@@ -127,7 +135,10 @@ export type LoginAction =
   | UpdateUserDetailsErrorsAction
   | UpdateDeleteAccountErrorAction
   | UpdatePasswordFormAction
-  | UpdatePasswordFormErrorsAction;
+  | UpdatePasswordFormErrorsAction
+  | UpdateTimezoneAction
+  | UpdateTimezoneErrorsAction
+  | UpdateTimezoneUpdateModalOpenAction;
 
 export const loginSlice = createSlice({
   name: "login",
@@ -202,6 +213,18 @@ export const loginSlice = createSlice({
     ) => {
       state.passwordFormErrors = action.payload;
     },
+    updateTimezone: (state, action: UpdateTimezoneAction) => {
+      state.user = { ...state.user, timezone: action.payload };
+    },
+    updateTimezoneErrors: (state, action: UpdateTimezoneErrorsAction) => {
+      state.timezoneErrors = action.payload;
+    },
+    updateTimezoneUpdateModalOpen: (
+      state,
+      action: UpdateTimezoneUpdateModalOpenAction,
+    ) => {
+      state.timezoneUpdateModalOpen = action.payload;
+    },
   },
 });
 
@@ -223,6 +246,9 @@ export const {
   updateDeleteAccountError,
   updatePasswordForm,
   updatePasswordFormErrors,
+  updateTimezone,
+  updateTimezoneErrors,
+  updateTimezoneUpdateModalOpen,
 } = loginSlice.actions;
 export const loginReducer = loginSlice.reducer;
 

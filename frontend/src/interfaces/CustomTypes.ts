@@ -33,6 +33,7 @@ export interface User {
     promotional_offers?: boolean;
     unsubscribe_all?: boolean;
   };
+  timezone?: string;
 }
 
 export interface UserPasswordUpdateData {

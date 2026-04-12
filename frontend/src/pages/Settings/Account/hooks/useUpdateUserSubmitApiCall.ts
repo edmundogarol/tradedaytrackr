@@ -1,11 +1,13 @@
 import type { AxiosFetchWrapperResponse } from "@hooks/useAxiosFetch";
 import useAxiosFetch from "@hooks/useAxiosFetch";
+import type { User } from "@interfaces/CustomTypes";
 
 interface UpdateUserSubmitApiCallData {
-  email: string;
-  first_name: string;
-  last_name: string;
-  username: string;
+  email?: string;
+  first_name?: string;
+  last_name?: string;
+  username?: string;
+  user?: User;
 }
 
 const useUpdateUserSubmitApiCall =

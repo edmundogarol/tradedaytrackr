@@ -25,7 +25,9 @@ def reset_demo_user(user):
         user.tags.all().delete()
         user.trading_accounts.all().delete()
         user.trading_account_templates.all().delete()
-        user.journal_entries.all().delete()
+
+        user.timezone = "UTC"
+        user.save(update_fields=["timezone"])
 
         seed_demo_account_templates(user)
         seed_demo_tags(user)

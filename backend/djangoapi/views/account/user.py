@@ -17,6 +17,7 @@ from backend.djangoapi.services.demo.seed_account_templates import (
     seed_demo_account_templates,
 )
 from backend.djangoapi.services.demo.seed_tags import seed_demo_tags
+from backend.djangoapi.services.trades.timezone_recompute import recompute_user_timezone
 from backend.djangoapi.tasks.user import (
     send_account_deleted_email,
     send_verification_email,
@@ -159,6 +160,38 @@ class UserViewSet(ModelViewSet):
         user = request.user
         data = request.data.copy()
         old_email = user.email
+
+        if "timezone" in data and len(data.keys()) == 1:
+            new_timezone = data.get("timezone")
+
+            if not new_timezone:
+                return Response(
+                    {"timezone": "Timezone is required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            old_timezone = user.timezone
+
+            if old_timezone == new_timezone:
+                return Response(
+                    {"user": UserSerializer(user, context={"request": request}).data},
+                    status=200,
+                )
+
+            user.timezone = new_timezone
+            user.save(update_fields=["timezone"])
+
+            recompute_user_timezone(user)
+
+            logger.info(
+                "User timezone updated.",
+                extra={"user_id": user.id, "timezone": new_timezone},
+            )
+
+            return Response(
+                {"user": UserSerializer(user, context={"request": request}).data},
+                status=200,
+            )
 
         if user.is_demo:
             logger.warning(

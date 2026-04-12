@@ -15,6 +15,7 @@ interface SelectWrapperProps {
   onSelect?: (selected: string) => void;
   defaultValue?: string;
   selectedValue?: string | number;
+  disabled?: boolean;
 }
 
 const SelectWrapper: React.FunctionComponent<SelectWrapperProps> = ({
@@ -24,6 +25,7 @@ const SelectWrapper: React.FunctionComponent<SelectWrapperProps> = ({
   onSelect,
   defaultValue,
   selectedValue,
+  disabled,
 }) => {
   return (
     <>
@@ -32,6 +34,7 @@ const SelectWrapper: React.FunctionComponent<SelectWrapperProps> = ({
       </If>
       <SelectContainer style={style}>
         <Select
+          disabled={disabled}
           value={selectedValue}
           onChange={(e) => onSelect && onSelect(e.target.value)}
           defaultValue={defaultValue}
@@ -42,7 +45,9 @@ const SelectWrapper: React.FunctionComponent<SelectWrapperProps> = ({
             </option>
           ))}
         </Select>
-        <ExpandMoreIcon style={styles.showMoreIcon} />
+        <If condition={!disabled}>
+          <ExpandMoreIcon style={styles.showMoreIcon} />
+        </If>
       </SelectContainer>
     </>
   );

@@ -68,8 +68,23 @@ def seed_demo_trade_days(user):
         random.seed(999)  # stable across runs
 
         for i in range(len(day_pnls)):
-            # generate a realistic trading time (NY session feel)
-            hour = random.choice([9, 10, 11, 13, 14])
+            # 🔥 mix of safe + boundary-breaking times
+            hour = random.choice(
+                [
+                    9,
+                    10,
+                    11,  # normal (no shift)
+                    13,
+                    14,  # normal
+                    17,
+                    18,
+                    19,  # may shift
+                    21,
+                    22,
+                    23,  # WILL shift for Asia
+                ]
+            )
+
             minute = random.randint(0, 59)
             second = random.randint(0, 59)
 

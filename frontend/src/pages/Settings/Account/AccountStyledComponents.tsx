@@ -67,3 +67,15 @@ export const CheckDescriptionContainer = styled.div`
   align-items: center;
   gap: 10px;
 `;
+
+export const TimezoneSection = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+`;
+
+export const TimezoneComparisonModalContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;

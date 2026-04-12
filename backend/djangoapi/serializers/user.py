@@ -39,6 +39,7 @@ class UserSerializer(serializers.ModelSerializer):
             "membership_active",
             "email_preferences",
             "is_demo",
+            "timezone",
         )
 
     def get_membership_active(self, obj):

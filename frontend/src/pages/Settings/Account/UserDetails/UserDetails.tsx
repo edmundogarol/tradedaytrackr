@@ -10,16 +10,20 @@ import GlassTile from "@components/GlassTile/GlassTile";
 import { GlassTileChildrenWrapper } from "@components/GlassTile/GlassTileStyledComponents";
 import { If } from "@components/If/If";
 import Input from "@components/Input/Input";
+import ModalWrapper from "@components/Modal/Modal";
+import SelectWrapper from "@components/Select/SelectWrapper";
 import type { User } from "@interfaces/CustomTypes";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import DoneOutlineIcon from "@mui/icons-material/Done";
+import SouthIcon from "@mui/icons-material/South";
 import Switch from "@mui/material/Switch";
 import useLoginDispatch from "@pages/Login/hooks/useLoginDispatch";
 import useLoginState from "@pages/Login/hooks/useLoginState";
 import { BUTTON_WIDTH } from "@styles/constants";
-import { SubsectionHeader } from "@styles/globalStyledComponents";
+import { SectionText, SubsectionHeader } from "@styles/globalStyledComponents";
+import { TIMEZONE_OPTIONS } from "@utils/constants";
 import { isNotEmptyString } from "@utils/utils";
-import React from "react";
+import React, { useMemo, useState } from "react";
 import {
   AccountDetailsSection,
   AccountSettingsContainer,
@@ -27,11 +31,14 @@ import {
   EmailPreferencesSection,
   SubsectionHeaderWrapper,
   SwitchItemRow,
+  TimezoneComparisonModalContainer,
+  TimezoneSection,
   UserNameContainer,
 } from "../AccountStyledComponents";
 import useRequestVerificationApiCall from "../hooks/useRequestVerificationApiCall";
 import useUpdateEmailPreferencesSubmitHandler from "../hooks/useUpdateEmailPreferencesSubmitHandler";
 import useUpdateUserSubmitHandler from "../hooks/useUpdateUserSubmitHandler";
+import useUpdateUserTimezoneSubmitHandler from "../hooks/useUpdateUserTimezoneSubmitHandler";
 
 const UserDetails: React.FunctionComponent = () => {
   const {
@@ -39,19 +46,30 @@ const UserDetails: React.FunctionComponent = () => {
     user: { email_preferences },
     userUpdateSuccess,
     userDetailsErrors,
+    timezoneErrors,
+    timezoneUpdateModalOpen,
   } = useLoginState();
-  const { updateUser, updateUserUpdateSuccess, updateEmailPreferences } =
-    useLoginDispatch();
-  const [previousUserDetails, updatePreviousUserDetails] = React.useState({
+  const {
+    updateUser,
+    updateUserUpdateSuccess,
+    updateEmailPreferences,
+    updateTimezoneUpdateModalOpen,
+    updateTimezone,
+    updateTimezoneErrors,
+  } = useLoginDispatch();
+  const [previousUserDetails, updatePreviousUserDetails] = useState({
     username: user.username,
     email: user.email,
     first_name: user.first_name,
     last_name: user.last_name,
   });
+  const [originalUserTimezone, setOriginalUserTimezone] = useState(
+    user.timezone,
+  );
   const { updateUser: updateUserCall, loading } = useUpdateUserSubmitHandler();
-  const [showAlert, setShowAlert] = React.useState(false);
+  const [showAlert, setShowAlert] = useState(false);
   const { fetch: requestVerification } = useRequestVerificationApiCall();
-  const userFieldsAreDirty = React.useMemo(() => {
+  const userFieldsAreDirty = useMemo(() => {
     const dirtyFields =
       (user.username !== previousUserDetails.username &&
         isNotEmptyString(user.username)) ||
@@ -66,6 +84,8 @@ const UserDetails: React.FunctionComponent = () => {
   }, [user, previousUserDetails]);
   const { update: updateEmailPreferencesCall } =
     useUpdateEmailPreferencesSubmitHandler();
+  const { updateUserTimezone, loading: updatingTimezone } =
+    useUpdateUserTimezoneSubmitHandler();
 
   return (
     <GlassTile
@@ -75,6 +95,56 @@ const UserDetails: React.FunctionComponent = () => {
       padding={7}
       noGlow={true}
     >
+      <AlertPopout
+        message={timezoneErrors?.detail}
+        hideDuration={3000}
+        open={!!timezoneErrors?.detail}
+        setPopoutOpen={() => {
+          updateTimezoneErrors({});
+          setOriginalUserTimezone(user.timezone);
+        }}
+      />
+      <ModalWrapper
+        title={"Confirm Timezone Update"}
+        open={timezoneUpdateModalOpen}
+        setOpen={updateTimezoneUpdateModalOpen}
+      >
+        <TimezoneComparisonModalContainer>
+          <SelectWrapper
+            disabled
+            selectedValue={originalUserTimezone}
+            items={TIMEZONE_OPTIONS.map((option) => ({
+              name: option.label,
+              value: option.value,
+            }))}
+          />
+          <SouthIcon
+            style={{ color: "white", fontSize: 18, alignSelf: "center" }}
+          />
+          <SelectWrapper
+            disabled
+            selectedValue={user.timezone}
+            items={TIMEZONE_OPTIONS.map((option) => ({
+              name: option.label,
+              value: option.value,
+            }))}
+          />
+        </TimezoneComparisonModalContainer>
+        <Gap level={1} />
+        <SectionText>
+          {
+            "Updating the timezone will recalculate and affect the display of all time-related data. Are you sure you want to proceed?"
+          }
+        </SectionText>
+        <Gap level={2} />
+        <Button
+          loading={updatingTimezone}
+          text={"Save"}
+          onClick={() => {
+            updateUserTimezone(user.timezone?.toString() || "UTC");
+          }}
+        />
+      </ModalWrapper>
       <AlertPopout
         open={showAlert}
         setPopoutOpen={() => setShowAlert(false)}
@@ -275,6 +345,39 @@ const UserDetails: React.FunctionComponent = () => {
                 }}
               />
             </SwitchItemRow>
+            <Gap level={1} />
+            <TimezoneSection>
+              <SubsectionHeader>Timezone</SubsectionHeader>
+              <If condition={!!userDetailsErrors?.timezone}>
+                <Gap level={1} />
+                <FormError error={userDetailsErrors.timezone} />
+              </If>
+              <Gap level={1} />
+              <SelectWrapper
+                selectedValue={user.timezone}
+                onSelect={(selected) => {
+                  updateTimezone(selected);
+                }}
+                items={TIMEZONE_OPTIONS.map((option) => ({
+                  name: option.label,
+                  value: option.value,
+                }))}
+              />
+              <Gap level={1} />
+              <Button
+                loading={updatingTimezone}
+                disabled={user.timezone === originalUserTimezone}
+                disabledBlock={user.timezone === originalUserTimezone}
+                text={"Save Timezone"}
+                style={{
+                  marginLeft: "auto",
+                  maxWidth: `${BUTTON_WIDTH}px`,
+                }}
+                onClick={() => {
+                  updateTimezoneUpdateModalOpen(true);
+                }}
+              />
+            </TimezoneSection>
           </EmailPreferencesSection>
         </AccountSettingsContainer>
       </GlassTileChildrenWrapper>
