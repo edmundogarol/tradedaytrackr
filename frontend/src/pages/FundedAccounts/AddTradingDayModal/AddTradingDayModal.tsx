@@ -140,7 +140,6 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
       open={addTradeModalOpen}
       setOpen={updateAddTradeModalOpen}
       onClose={() => {
-        updateSelectedTrade(initialState.selectedTrade);
         updateAddTradeErrors({});
       }}
     >

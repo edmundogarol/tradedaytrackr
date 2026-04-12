@@ -8,8 +8,9 @@ import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { m } from "@utils/utils";
+import type moment from "moment";
 import type { Moment } from "moment";
-import moment from "moment";
 import type { JSX } from "react";
 import React, { useEffect, useState } from "react";
 import {
@@ -42,7 +43,7 @@ const CalendarPicker: React.FC<CalendarPickerProps> = ({
 
   useEffect(() => {
     if (value) {
-      setSelectedDate(moment(value));
+      setSelectedDate(m(value));
     } else {
       setSelectedDate(null);
     }

@@ -118,7 +118,7 @@ const DeleteTradeModal: React.FunctionComponent = () => {
       <Gap level={1} />
       <SectionText>
         {selectedTrade?.journalEntry?.accountCount > 0
-          ? "This trade is linked to a journal entry - and could affect its details. "
+          ? "This trade is linked to a journal entry - and could affect the entry's final details. "
           : ""}
         {"Are you sure you want to delete this trade?"}
       </SectionText>

@@ -19,8 +19,7 @@ import useGetFundedAccountTemplates from "@pages/Settings/hooks/useGetFundedAcco
 import useGetAccountTemplatesHandler from "@pages/Settings/Preferences/hooks/useGetAccountTemplatesHandler";
 import { color } from "@styles/colors";
 import { BorderLinearProgress } from "@styles/globalStyledComponents";
-import { decimalStringToInt, formatter } from "@utils/utils";
-import moment from "moment";
+import { decimalStringToInt, formatter, m } from "@utils/utils";
 import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
 import AddTradingDayModal from "../AddTradingDayModal/AddTradingDayModal";
@@ -594,14 +593,14 @@ const FundedAccountDetail: React.FunctionComponent<
                             </DaysItemValue>
                           </GlassTile>
                           <DaysItemSubtitle $smaller>
-                            {moment(trade.date).format("hh:mm A")}
+                            {m(trade.date).format("hh:mm A")}
                           </DaysItemSubtitle>
                         </DaysItem>
                       ))}
                     </DaysContainer>
                   </DateContainer>
                   <DateContainer>
-                    {moment(dayValue.date).format("MMM D, YYYY")}
+                    {m(dayValue.date).format("MMM D, YYYY")}
                   </DateContainer>
                   <PnL $positive={dayValue.pnl >= 0}>
                     {formatter.format(dayValue.pnl)}
@@ -613,6 +612,13 @@ const FundedAccountDetail: React.FunctionComponent<
                         <EditIcon
                           style={styles.editIcon}
                           onClick={() => {
+                            if (dayValue.trades.length > 1) {
+                              updateDeleteTradeErrors({
+                                detail:
+                                  "This trade day has multiple trades. Please edit individual records from trades displayed on this row",
+                              });
+                              return;
+                            }
                             updateSelectedTrade(dayValue.trades[0]);
                             updateAddTradeModalOpen(true);
                           }}
