@@ -23,7 +23,8 @@ const useDeleteTradeHandler = (): DeleteTradeHandler => {
   return {
     deleteTrade: useCallback(
       async (id: string) => {
-        console.log({ selectedTrade });
+        const accountId = selectedTrade.account?.id;
+
         const { error } = await fetch({
           url: `${environmentConfig.HOST}/api/trades/${id}/`,
         });
@@ -33,16 +34,28 @@ const useDeleteTradeHandler = (): DeleteTradeHandler => {
             error: (error as any)?.message || "Something went wrong",
           });
         } else {
-          getTradingAccount(selectedTrade.account.id.toString());
+          getTradingAccount(accountId.toString());
           updateDeleteTradeErrors({
             detail: "Trade deleted successfully",
           });
           updateDeleteTradeModalOpen(false);
           updateAddTradeModalOpen(false);
-          updateSelectedTrade(initialState.selectedTrade);
+          updateSelectedTrade({
+            ...initialState.selectedTrade,
+            account: {
+              id: accountId,
+            } as any,
+          });
         }
       },
-      [loading],
+      [
+        loading,
+        selectedTrade.account?.id,
+        getTradingAccount,
+        updateDeleteTradeErrors,
+        updateDeleteTradeModalOpen,
+        updateAddTradeModalOpen,
+      ],
     ),
     loading,
   };
