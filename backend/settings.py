@@ -89,6 +89,7 @@ else:
     CSRF_COOKIE_DOMAIN = ".tradedaytrackr.com"
 
 CSRF_TRUSTED_ORIGINS = [
+    "https://*.vercel.app",
     "http://localhost:3000",
     "http://192.168.254.161:3000",
     "https://tradedaytrackr.vercel.app",
