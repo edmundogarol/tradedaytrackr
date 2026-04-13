@@ -85,8 +85,8 @@ else:
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_SAMESITE = "None"
     CSRF_COOKIE_SAMESITE = "None"
-    SESSION_COOKIE_DOMAIN = ".tradedaytrackr.com"
-    CSRF_COOKIE_DOMAIN = ".tradedaytrackr.com"
+    SESSION_COOKIE_DOMAIN = None
+    CSRF_COOKIE_DOMAIN = None
 
 CSRF_TRUSTED_ORIGINS = [
     "https://*.vercel.app",
