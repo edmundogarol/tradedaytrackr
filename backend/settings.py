@@ -62,15 +62,15 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 if "DEVENV" in os.environ:
-    ALLOWED_HOSTS = ["*"]
+    ALLOWED_HOSTS = [
+        "*",
+        "localhost",
+        "127.0.0.1",
+    ]
 else:
     ALLOWED_HOSTS = [
         ".elasticbeanstalk.com",
-        "api.tradedaytrackr.com",
-        "tradedaytrackr.com",
         ".tradedaytrackr.com",
-        "localhost",
-        "127.0.0.1",
     ]
 
 if "DEVENV" in os.environ:
