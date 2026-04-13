@@ -175,12 +175,13 @@ export const DaysItem = styled.div`
 
 export const DaysItemValue = styled.span<{
   $positive?: boolean;
+  $clickable?: boolean;
 }>`
   z-index: 10;
   pointer-events: auto;
   min-width: 40px;
   text-align: center;
-  cursor: pointer;
+  cursor: ${({ $clickable }): string => ($clickable ? "pointer" : "default")};
   color: ${({ $positive }): string =>
     $positive ? color("SystemGreen") : "#d56060"};
 `;

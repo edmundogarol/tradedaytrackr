@@ -155,7 +155,7 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
               onChange={(date) => {
                 updateSelectedTrade({
                   ...selectedTrade,
-                  date: m(date).format("YYYY-MM-DDTHH:mm:ss"),
+                  date: m(date).format("YYYY-MM-DDTHH:mm:ssZ"),
                 });
               }}
             />

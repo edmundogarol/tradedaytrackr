@@ -55,8 +55,21 @@ class TradeSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, data):
-        if "date_time" in data and data["date_time"] > timezone.now():
+        date_time = data.get("date_time")
+        if not date_time:
+            return data
+
+        user = self.context["request"].user
+        user_tz = pytz.timezone(getattr(user, "timezone", "UTC"))
+
+        if timezone.is_naive(date_time):
+            date_time = user_tz.localize(date_time)
+
+        user_now = timezone.now().astimezone(user_tz)
+
+        if date_time.astimezone(user_tz) > user_now:
             raise serializers.ValidationError("Trade date cannot be in the future")
+
         return data
 
     def create(self, validated_data):

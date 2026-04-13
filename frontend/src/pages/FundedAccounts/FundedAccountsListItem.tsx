@@ -8,7 +8,10 @@ import InfoPopout from "@components/InfoPopout/InfoPopout";
 import type { Trade, TradingAccount } from "@interfaces/CustomTypes";
 import { PageEnum } from "@interfaces/NavigationTypes";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
-import { BorderLinearProgress } from "@styles/globalStyledComponents";
+import {
+  BorderLinearProgress,
+  HorizontalSection,
+} from "@styles/globalStyledComponents";
 import { initialState } from "./FundedAccountsState";
 import {
   AccountImage,
@@ -98,7 +101,7 @@ const FundedAccountsListItem: React.FunctionComponent<
         </AccountTitleContainer>
         <DaysContainer>
           {[...dayValues].reverse().map((dayValue, idx) => (
-            <DaysItem key={idx} onClick={() => setAlertNoRecord(true)}>
+            <DaysItem key={idx}>
               <GlassTile
                 positive={dayValue.pnl > 0}
                 featureTile
@@ -106,7 +109,7 @@ const FundedAccountsListItem: React.FunctionComponent<
                 minWidth={10}
                 padding={7}
               >
-                <DaysItemValue $positive={dayValue.pnl > 0}>
+                <DaysItemValue $positive={dayValue.pnl > 0} $clickable={false}>
                   {`${dayValue.pnl > 0 ? "+" : ""}${decimalStringToInt(dayValue.pnl)}`}
                 </DaysItemValue>
               </GlassTile>
@@ -163,16 +166,23 @@ const FundedAccountsListItem: React.FunctionComponent<
           />
         </BufferContainer>
         <PnLContainer>
-          <PnLValue
-            $withdrawable={
-              accountBalance - accountSize > minBuffer &&
-              withdrawableAmount >= minPayoutRequest
-            }
-          >
-            {withdrawableAmount > 0
-              ? formatter.format(withdrawableAmount)
-              : formatter.format(0)}
-          </PnLValue>
+          <HorizontalSection style={{ gap: 0 }}>
+            <PnLValue
+              $withdrawable={
+                accountBalance - accountSize > minBuffer &&
+                withdrawableAmount >= minPayoutRequest
+              }
+            >
+              {withdrawableAmount > 0
+                ? formatter.format(withdrawableAmount)
+                : formatter.format(0)}
+            </PnLValue>
+            <If condition={withdrawableAmount <= 0}>
+              <InfoPopout
+                infoDescription={`This account requires a minimum payout request of $${Number(minPayoutRequest).toFixed(0)} - above the buffer`}
+              />
+            </If>
+          </HorizontalSection>
           <PnLWithdrawable $positive={withdrawableAmount > 0}>
             <PnLWithdrawableText>Post-Payout Buffer:</PnLWithdrawableText>
             {formatter.format(postPayoutBuffer)}
