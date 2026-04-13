@@ -65,6 +65,7 @@ if "DEVENV" in os.environ:
     ALLOWED_HOSTS = ["*"]
 else:
     ALLOWED_HOSTS = [
+        "tradedaytrackr-env-3.eba-rs968fza.us-west-2.elasticbeanstalk.com"
         "api.tradedaytrackr.com",
         "tradedaytrackr.com",
         ".tradedaytrackr.com",
