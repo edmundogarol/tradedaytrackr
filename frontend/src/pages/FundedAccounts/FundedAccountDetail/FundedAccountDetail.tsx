@@ -165,7 +165,10 @@ const FundedAccountDetail: React.FunctionComponent<
         open={!!currentTradingAccountErrors?.detail}
         setPopoutOpen={() => updateCurrentTradingAccountErrors({})}
       />
-      <AddTradingDayModal payoutRecord={payoutRecord} />
+      <AddTradingDayModal
+        payoutRecord={payoutRecord}
+        setPayoutRecord={setPayoutRecord}
+      />
       <DeleteTradingAccountModal />
       <DeleteTradeModal />
       <Container>
@@ -578,6 +581,7 @@ const FundedAccountDetail: React.FunctionComponent<
                           key={idx}
                           onClick={() => {
                             updateAddTradeModalOpen(true);
+                            setPayoutRecord(false);
                             updateSelectedTrade(trade);
                           }}
                         >

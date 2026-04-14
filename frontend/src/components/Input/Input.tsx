@@ -32,6 +32,7 @@ export interface InputWrapperProps extends React.InputHTMLAttributes<HTMLInputEl
   maxInputLength?: number;
   darkMode?: boolean;
   positiveOnly?: boolean;
+  negativeOnly?: boolean;
 }
 
 const Input: React.FC<InputWrapperProps> = ({
@@ -50,6 +51,7 @@ const Input: React.FC<InputWrapperProps> = ({
   maxInputLength,
   darkMode,
   positiveOnly,
+  negativeOnly,
   onFocus,
   ...props
 }) => {
@@ -145,6 +147,9 @@ const Input: React.FC<InputWrapperProps> = ({
           $darkMode={darkMode}
           onChange={(e) => {
             if (positiveOnly && Number(e.target.value) < 0) {
+              return;
+            }
+            if (negativeOnly && Number(e.target.value) >= 0) {
               return;
             }
             props.onChange?.(e);

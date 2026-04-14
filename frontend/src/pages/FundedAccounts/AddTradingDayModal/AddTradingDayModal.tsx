@@ -30,10 +30,12 @@ import useUpdateTradeHandler from "./hooks/useUpdateTradeHandler";
 
 interface AddTradingDayModalProps {
   payoutRecord?: boolean;
+  setPayoutRecord?: (open: boolean) => void;
 }
 
 const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
   payoutRecord,
+  setPayoutRecord,
 }) => {
   const { getJournalEntriesByDate } = useGetJournalEntryByDateHandler();
   const {
@@ -101,7 +103,7 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
   }, [addNewTradePnL]);
 
   useEffect(() => {
-    if (addNewTradePnL) return;
+    if (addNewTradePnL || payoutRecord) return;
     if (selectedDateJournalEntries.length === 0) return;
     if (selectedTrade.journalEntry?.id) return;
 
@@ -141,6 +143,7 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
       setOpen={updateAddTradeModalOpen}
       onClose={() => {
         updateAddTradeErrors({});
+        if (setPayoutRecord) setPayoutRecord(false);
       }}
     >
       <AddTradingDayContainer>
@@ -251,6 +254,7 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
           <Gap level={1} />
 
           <Input
+            negativeOnly={payoutRecord}
             error={addTradeErrors?.pnl}
             type="number"
             label={payoutRecord ? "Payout Amount" : "Add Trade PnL"}
@@ -275,7 +279,7 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
               style={{
                 ...styles.addTradingDayButton,
                 ...(payoutRecord ? styles.payoutButton : styles.submitButton),
-                ...(!dirtyTrade ? {} : styles.greenButton),
+                ...(!dirtyTrade ? {} : payoutRecord ? styles.greenButton : {}),
               }}
               disabledBlock={!dirtyTrade}
               disabled={!dirtyTrade}
