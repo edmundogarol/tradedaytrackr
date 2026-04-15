@@ -35,7 +35,7 @@ const useUpdateTradeHandler = (): UpdateTradeHandler => {
             journal_entry_id:
               trade.journalEntry !== null && trade.journalEntry?.id !== 0
                 ? trade.journalEntry.id
-                : undefined,
+                : null,
           },
         });
 

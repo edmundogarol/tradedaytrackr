@@ -136,7 +136,8 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
 
   const dirtyTrade =
     selectedTrade.pnl !== originalTrade.pnl ||
-    selectedTrade.date !== originalTrade.date;
+    selectedTrade.date !== originalTrade.date ||
+    selectedTrade.journalEntry?.id !== originalTrade.journalEntry?.id;
 
   return (
     <Modal
