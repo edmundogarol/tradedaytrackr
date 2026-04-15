@@ -557,7 +557,7 @@ const FundedAccountDetail: React.FunctionComponent<
                   <TradeDay>
                     <PreviewDayValueContainer>
                       <TradePreviewContainer>
-                        {!!tradeWithJournalEntry ? (
+                        {!!tradeWithJournalEntry?.journalEntry ? (
                           <If
                             condition={
                               !!tradeWithJournalEntry &&

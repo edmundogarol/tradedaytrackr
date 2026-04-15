@@ -57,14 +57,24 @@ class PayoutCreateSerializer(serializers.ModelSerializer):
 
         payout_date = data.get("payout_date")
 
-        if payout_date:
-            if timezone.is_naive(payout_date):
-                payout_date = user_tz.localize(payout_date)
-
-            data["payout_date"] = payout_date.astimezone(pytz.UTC)
-        else:
-            # fallback to now
+        # fallback to now if not provided
+        if not payout_date:
             local_now = timezone.now().astimezone(user_tz)
             data["payout_date"] = local_now.astimezone(pytz.UTC)
+            return data
+
+        # normalize datetime (handle naive + aware)
+        if timezone.is_naive(payout_date):
+            payout_date = user_tz.localize(payout_date)
+        else:
+            payout_date = payout_date.astimezone(user_tz)
+
+        # validate future
+        user_now = timezone.now().astimezone(user_tz)
+        if payout_date > user_now:
+            raise serializers.ValidationError("Payout date cannot be in the future")
+
+        # store in UTC
+        data["payout_date"] = payout_date.astimezone(pytz.UTC)
 
         return data

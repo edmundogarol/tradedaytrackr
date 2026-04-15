@@ -2,8 +2,9 @@ from decimal import Decimal
 
 import pytz
 from django.db import transaction
+from django.utils import timezone
 from django.utils.dateparse import parse_datetime
-from rest_framework import status
+from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.views import APIView, PermissionDenied
 
@@ -90,6 +91,13 @@ class UpdatePayoutView(APIView):
 
             if new_date:
                 parsed = parse_datetime(new_date)
+
+                user_now = timezone.now().astimezone(user_tz)
+
+                if parsed > user_now:
+                    raise serializers.ValidationError(
+                        {"error": "Payout date cannot be in the future"}
+                    )
 
                 if parsed is None:
                     raise ValueError("Invalid datetime format")
