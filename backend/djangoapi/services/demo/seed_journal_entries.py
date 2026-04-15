@@ -4,17 +4,18 @@ from collections import defaultdict
 
 import pytz
 from django.conf import settings
+from django.core.files import File
 from django.db.models import Q
 
 from backend.djangoapi.models.journal_entry import JournalEntry
 from backend.djangoapi.models.trade import Trade
 
 image_paths = [
-    "dev/trade1.png",
-    "dev/trade2.png",
-    "dev/trade3.png",
-    "dev/trade4.png",
-    "dev/trade5.png",
+    "trade1.png",
+    "trade2.png",
+    "trade3.png",
+    "trade4.png",
+    "trade5.png",
 ]
 
 
@@ -92,9 +93,16 @@ def seed_demo_journal_entries(user):
 
         # attach image
         img_path = random.choice(image_paths)
-        full_path = os.path.join(settings.WEB_APP_URL, img_path)
-        journal.image = full_path
-        journal.save(update_fields=["image"])
+        full_path = os.path.join(settings.MEDIA_ROOT, img_path)
+
+        assert os.path.exists(full_path), f"Missing image: {full_path}"
+
+        with open(full_path, "rb") as f:
+            journal.image.save(
+                os.path.basename(img_path),
+                File(f),
+                save=True,
+            )
 
         journal.trades.set(selected_trades)
 
@@ -148,9 +156,17 @@ def seed_demo_journal_entries(user):
 
                 # attach image
                 img_path = random.choice(image_paths)
-                full_path = os.path.join(settings.WEB_APP_URL, img_path)
-                journal.image = full_path
-                journal.save(update_fields=["image"])
+                full_path = os.path.join(settings.MEDIA_ROOT, img_path)
+
+                assert os.path.exists(full_path), f"Missing image: {full_path}"
+
+                with open(full_path, "rb") as f:
+                    journal.image.save(
+                        os.path.basename(img_path),
+                        File(f),
+                        save=True,
+                    )
+
                 journal.trades.set(latest_trades)
 
                 tag, _ = user.tags.get_or_create(name="apex")

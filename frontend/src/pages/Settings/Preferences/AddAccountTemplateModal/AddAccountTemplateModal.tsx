@@ -681,7 +681,7 @@ const AddAccountTemplateModal: React.FunctionComponent<
               onSelect={(selected) => {
                 updateSelectedAccountTemplate({
                   ...selectedAccountTemplate,
-                  rules: selected,
+                  rules: Array.isArray(selected) ? selected : [selected],
                 });
               }}
               items={templateRules.map((rule) => ({

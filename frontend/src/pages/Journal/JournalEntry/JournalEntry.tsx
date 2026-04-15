@@ -13,10 +13,11 @@ import {
 } from "@components/Modal/Modal";
 import Page from "@components/Page/Page";
 import type { Tag } from "@interfaces/CustomTypes";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
-import WallpaperIcon from "@mui/icons-material/Wallpaper";
+import PhotoIcon from "@mui/icons-material/Photo";
 import Checkbox from "@mui/material/Checkbox";
 import {
   DateContainer,
@@ -44,7 +45,7 @@ import {
   sanitizeTag,
 } from "@utils/utils";
 import moment from "moment";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
 import useCreateJournalEntryHandler from "../hooks/useCreateJournalEntryHandler";
 import useDeleteJournalEntryHandler from "../hooks/useDeleteJournalEntryHandler";
@@ -128,6 +129,9 @@ const JournalEntry: React.FunctionComponent = () => {
   const [editing, setEditing] = useState(journalEntryId === "new" || false);
   const [editingDate, setEditingDate] = useState(false);
   const [editingAccounts, setEditingAccounts] = useState(false);
+  const [openJournalEntryImageModal, setOpenJournalEntryImageModal] =
+    useState(false);
+
   const [currentTagInput, setCurrentTagInput] = useState("");
   const { getJournalEntry } = useGetJournalEntryHandler();
   const { getTradesByDate } = useGetTradesByDateHandler();
@@ -135,7 +139,8 @@ const JournalEntry: React.FunctionComponent = () => {
     journalEntry.contracts <= 0 ||
     journalEntry.risk <= 0 ||
     journalEntry.instrument === "";
-
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [journalEntryImage, setJournalEntryImage] = useState<File | null>(null);
   useEffect(() => {
     if (journalEntry.id === 0 && searchParams.get("id") !== "new") {
       getJournalEntry(parseInt(searchParams.get("id") || "0"));
@@ -172,14 +177,25 @@ const JournalEntry: React.FunctionComponent = () => {
 
   const detectedTradesPnL = useMemo(() => {
     return selectedDateTrades
-      .filter((trade) => journalEntry.tradeIds.includes(trade.id))
+      .filter((trade) => journalEntry?.tradeIds?.includes(trade.id))
       .reduce((total, trade) => total + Number(trade.pnl), 0);
-  }, [selectedDateTrades, journalEntry.tradeIds]);
+  }, [selectedDateTrades, journalEntry?.tradeIds]);
 
   const { createJournalEntry, loading: creatingJournalEntry } =
     useCreateJournalEntryHandler();
   const { deleteJournalEntry, loading: deletingJournalEntry } =
     useDeleteJournalEntryHandler();
+
+  const imageSrc = useMemo(() => {
+    if (journalEntryImage instanceof File) {
+      return URL.createObjectURL(journalEntryImage);
+    }
+    if (journalEntry.image) {
+      return journalEntry.image;
+    }
+    return "";
+  }, [journalEntryImage, journalEntry.image]);
+
   return (
     <Page topBarShowMenu={true}>
       <AlertPopout
@@ -498,7 +514,9 @@ const JournalEntry: React.FunctionComponent = () => {
                       <If condition={editing}>
                         <TradeSubtitleEditing
                           $disabled={saveDisabled}
-                          onClick={() => createJournalEntry(journalEntry)}
+                          onClick={() =>
+                            createJournalEntry(journalEntry, journalEntryImage)
+                          }
                         >
                           {creatingJournalEntry ? (
                             <Loading size={10} />
@@ -510,6 +528,7 @@ const JournalEntry: React.FunctionComponent = () => {
                           onClick={() => {
                             setEditing(false);
                             updateJournalEntry(originalJournalEntry);
+                            setJournalEntryImage(null);
                           }}
                         >
                           {"Cancel"}
@@ -552,13 +571,48 @@ const JournalEntry: React.FunctionComponent = () => {
                 </TradeInfo>
                 <TradeCapture>
                   <div>
-                    <TradeImage $src={journalEntry.image}>
-                      <If condition={editing}>
+                    <TradeImage
+                      $src={imageSrc}
+                      $editing={editing}
+                      onClick={() => editing && fileInputRef?.current?.click()}
+                    >
+                      {/* ✅ ONLY show when NO image */}
+                      {!imageSrc && !editing && (
                         <IconContainer>
-                          <WallpaperIcon style={{ fontSize: 60 }} />
+                          <PhotoIcon
+                            style={{
+                              color: "#aaa",
+                              height: 50,
+                              width: 50,
+                            }}
+                          />
                         </IconContainer>
-                      </If>
+                      )}
+
+                      {/* ✅ overlay when editing */}
+                      {editing && (
+                        <IconContainer>
+                          <AddPhotoAlternateIcon
+                            style={{
+                              color: "white",
+                              height: 50,
+                              width: 50,
+                            }}
+                          />
+                        </IconContainer>
+                      )}
                     </TradeImage>
+                    <input
+                      type="file"
+                      style={{ display: "none" }}
+                      ref={fileInputRef}
+                      onChange={(e) => {
+                        const selected = e.target.files?.[0];
+                        if (selected) {
+                          setJournalEntryImage(selected);
+                        }
+                      }}
+                    />
                   </div>
                   <TradeSingleAccountInfo>
                     <SummaryItem>

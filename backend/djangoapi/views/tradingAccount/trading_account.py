@@ -3,6 +3,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
+from backend.djangoapi.models.trade import Trade
 from backend.djangoapi.models.trading_account import TradingAccount
 from backend.djangoapi.models.trading_day import TradingDay
 from backend.djangoapi.serializers.trading_account import TradingAccountSerializer
@@ -21,9 +22,14 @@ class TradingAccountViewSet(ModelViewSet):
             .prefetch_related(
                 Prefetch(
                     "trading_days",
-                    queryset=TradingDay.objects.annotate(
-                        pnl=Sum("trades__pnl")
-                    ).order_by("-date"),
+                    queryset=TradingDay.objects.annotate(pnl=Sum("trades__pnl"))
+                    .prefetch_related(
+                        Prefetch(
+                            "trades",
+                            queryset=Trade.objects.select_related("journal_entry"),
+                        )
+                    )
+                    .order_by("-date"),
                 )
             )
             .order_by("-id")

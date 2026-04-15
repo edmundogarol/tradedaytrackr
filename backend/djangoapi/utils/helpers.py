@@ -19,4 +19,14 @@ class RequestPayload:
 
 def upload_to(instance, filename):
     ext = filename.split(".")[-1]
+    return f"temp/{uuid.uuid4()}.{ext}"
+
+
+def trading_account_templates_upload_to(instance, filename):
+    ext = filename.split(".")[-1]
     return f"trading_account_templates/{uuid.uuid4()}.{ext}"
+
+
+def journal_entries_upload_to(instance, filename):
+    ext = filename.split(".")[-1]
+    return f"journal_entries/{uuid.uuid4()}.{ext}"

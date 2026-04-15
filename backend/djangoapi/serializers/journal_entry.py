@@ -20,7 +20,7 @@ class JournalEntrySerializer(serializers.ModelSerializer):
         write_only=True,
         required=False,
     )
-
+    image = serializers.SerializerMethodField()
     tags = serializers.ListField(
         child=serializers.CharField(), write_only=True, required=False
     )
@@ -47,6 +47,15 @@ class JournalEntrySerializer(serializers.ModelSerializer):
             "total_pnl",
             "account_count",
         ]
+
+    def get_image(self, obj):
+        request = self.context.get("request")
+
+        if not obj.image:
+            return None
+
+        url = obj.image.url
+        return request.build_absolute_uri(url) if request else url
 
     def get_fields(self):
         fields = super().get_fields()

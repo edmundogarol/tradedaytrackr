@@ -1,47 +1,65 @@
 import { PageEnum } from "@interfaces/NavigationTypes";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
-import { m } from "@utils/utils";
+import { appendIfDefined, resizeImage } from "@utils/utils";
 import { useCallback } from "react";
 import type { JournalEntry } from "../JournalInterfaces";
-import { initialState } from "../JournalState";
 import useCreateJournalEntryApiCall from "./useCreateJournalEntryApiCall";
 import useJournalDispatch from "./useJournalDispatch";
 import useJournalState from "./useJournalState";
 
 interface CreateJournalEntryHandler {
-  createJournalEntry: (journalEntry: JournalEntry) => Promise<void>;
+  createJournalEntry: (
+    journalEntry: JournalEntry,
+    journalEntryImage: File | string | null,
+  ) => Promise<void>;
   loading: boolean;
 }
 
 const useCreateJournalEntryHandler = (): CreateJournalEntryHandler => {
   const { fetch, loading } = useCreateJournalEntryApiCall();
-  const {} = useJournalState();
+  const { journalEntry } = useJournalState();
   const { updateJournalEntry, updateJournalErrors } = useJournalDispatch();
   const navigation = useReactNavigation();
 
   return {
     createJournalEntry: useCallback(
-      async (journalEntry: JournalEntry) => {
+      async (
+        journalEntry: JournalEntry,
+        journalEntryImage: File | string | null,
+      ) => {
+        const formData = new FormData();
+
+        appendIfDefined(formData, "date_time", journalEntry.dateTime);
+        appendIfDefined(formData, "risk", journalEntry.risk);
+        appendIfDefined(formData, "contracts", journalEntry.contracts);
+        appendIfDefined(formData, "outcome", journalEntry.outcome);
+        appendIfDefined(formData, "instrument", journalEntry.instrument);
+        appendIfDefined(formData, "description", journalEntry.description);
+        if (journalEntryImage) {
+          if (journalEntryImage instanceof File) {
+            const resized = await resizeImage(journalEntryImage, 800);
+            formData.append("image", resized);
+          }
+        }
+        journalEntry.tags.forEach((tag) => {
+          formData.append("tags", tag.name);
+        });
+        journalEntry.tradeIds.forEach((id) => {
+          formData.append("trade_ids_input", String(id));
+        });
+
         const { error, data } = await fetch({
-          data: {
-            ...journalEntry,
-            trade_ids_input: journalEntry.tradeIds,
-            tags: journalEntry.tags.map((tag) => tag.name),
-            date_time: m(journalEntry.dateTime).format("YYYY-MM-DDTHH:mm:ssZ"),
-          },
+          data: formData,
         });
 
         if (!!data && data.id) {
-          updateJournalEntry(initialState.journalEntry);
-          navigation.navigate(PageEnum.JournalEntry, { id: data.id });
-          updateJournalErrors({
-            detail: "Journal entry created successfully!",
-          });
+          updateJournalEntry(data);
+          navigation.navigate(PageEnum.Journal);
         } else if (error) {
           updateJournalErrors(error);
         }
       },
-      [loading],
+      [loading, journalEntry],
     ),
     loading,
   };

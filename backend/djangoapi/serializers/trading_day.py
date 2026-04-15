@@ -44,7 +44,7 @@ class TradingDaySerializer(serializers.ModelSerializer):
 
     def get_trades(self, obj):
         trades = obj.trades.all()
-        trade_data = TradeSerializer(trades, many=True).data
+        trade_data = TradeSerializer(trades, many=True, context=self.context).data
 
         user_tz = pytz.timezone(obj.account.user.timezone)
 
@@ -56,6 +56,7 @@ class TradingDaySerializer(serializers.ModelSerializer):
         ]
 
         date_field = UserTimezoneDateTimeField()
+
         payout_data = [
             {
                 "id": f"payout-{p.id}",
@@ -63,7 +64,10 @@ class TradingDaySerializer(serializers.ModelSerializer):
                 "account": {
                     "id": p.account.id,
                 },
-                "journal_entry": JournalEntrySerializer(p.journal_entry).data
+                "journal_entry": JournalEntrySerializer(
+                    p.journal_entry,
+                    context=self.context,
+                ).data
                 if p.journal_entry
                 else None,
                 "pnl": -p.amount,

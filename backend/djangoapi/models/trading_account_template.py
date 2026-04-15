@@ -2,7 +2,7 @@ import logging
 
 from django.db import models
 
-from backend.djangoapi.utils.helpers import upload_to
+from backend.djangoapi.utils.helpers import trading_account_templates_upload_to
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +27,9 @@ class TradingAccountTemplate(models.Model):
     account_size = models.IntegerField()
     is_evaluation = models.BooleanField()
     icon = models.CharField(max_length=50, choices=ICON_CHOICES, null=True, blank=True)
-    image = models.ImageField(upload_to=upload_to, blank=True, null=True)
+    image = models.ImageField(
+        upload_to=trading_account_templates_upload_to, blank=True, null=True
+    )
     profit_target = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True
     )

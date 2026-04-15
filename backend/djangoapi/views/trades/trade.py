@@ -11,13 +11,15 @@ from backend.djangoapi.serializers.trade import TradeSerializer
 from backend.djangoapi.services.trades.trade_day import recompute_all_trading_days
 
 
-def serialize_payout(payout):
+def serialize_payout(payout, context):
     return {
         "id": f"payout-{payout.id}",  # avoid ID collision
         "type": "payout",
         "date_time": payout.payout_date,
         "pnl": -payout.amount,
-        "journal_entry": JournalEntrySerializer(payout.journal_entry).data
+        "journal_entry": JournalEntrySerializer(
+            payout.journal_entry, context=context
+        ).data
         if payout.journal_entry
         else None,
         "is_payout": True,
@@ -82,7 +84,7 @@ class TradeViewSet(ModelViewSet):
             "-payout_date"
         )
 
-        payout_data = [serialize_payout(p) for p in payouts]
+        payout_data = [serialize_payout(p, {"request": request}) for p in payouts]
 
         # merge trades and payouts
         combined = trade_data + payout_data

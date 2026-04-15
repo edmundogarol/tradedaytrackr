@@ -13,6 +13,7 @@ class JournalEntryListSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
 
     account_count = serializers.IntegerField(source="trade_count", read_only=True)
+    image = serializers.SerializerMethodField()
 
     class Meta:
         model = JournalEntry
@@ -30,3 +31,11 @@ class JournalEntryListSerializer(serializers.ModelSerializer):
             "trades",
             "tags",
         ]
+
+    def get_image(self, obj):
+        request = self.context.get("request")
+        if obj.image:
+            return (
+                request.build_absolute_uri(obj.image.url) if request else obj.image.url
+            )
+        return None

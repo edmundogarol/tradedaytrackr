@@ -1,5 +1,7 @@
 from django.db import models
 
+from backend.djangoapi.utils.helpers import journal_entries_upload_to
+
 
 class JournalEntry(models.Model):
     user = models.ForeignKey(
@@ -11,7 +13,9 @@ class JournalEntry(models.Model):
     contracts = models.IntegerField()
     outcome = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField(max_length=1000)
-    image = models.URLField(blank=True, null=True)
+    image = models.ImageField(
+        upload_to=journal_entries_upload_to, blank=True, null=True
+    )
     tags = models.ManyToManyField(
         "djangoapi.Tag",
         related_name="journal_entries",

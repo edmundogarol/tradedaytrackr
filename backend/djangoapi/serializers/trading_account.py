@@ -135,7 +135,7 @@ class TradingAccountSerializer(serializers.ModelSerializer):
         latest_days = (
             obj.trading_days.all().order_by("-date").prefetch_related("trades")[:5]
         )
-        return TradingDaySerializer(latest_days, many=True).data
+        return TradingDaySerializer(latest_days, many=True, context=self.context).data
 
     def get_image(self, obj):
         request = self.context.get("request")

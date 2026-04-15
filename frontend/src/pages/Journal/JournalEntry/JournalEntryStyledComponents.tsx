@@ -37,13 +37,26 @@ export const TradeSingleAccountInfo = styled.div`
   margin-top: ${CONTAINER_MARGIN_DEFAULT}px;
 `;
 
-export const TradeImage = styled.div<{ $src: string }>`
+export const TradeImage = styled.div<{ $src: string; $editing?: boolean }>`
   width: 250px;
   height: 150px;
   background-image: url(${(props): string => props.$src});
   background-size: cover;
   background-position: center;
   position: relative;
+  ${({ $editing }): string =>
+    $editing
+      ? ` filter: brightness(70%);
+          &:hover {
+            filter: brightness(100%);
+            cursor: pointer;
+          }
+        `
+      : ``}
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const TradeSubtitle = styled.div`
