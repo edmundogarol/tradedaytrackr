@@ -20,6 +20,13 @@ class Trade(models.Model):
         on_delete=models.CASCADE,
         related_name="trades",
     )
+    payout = models.ForeignKey(
+        "Payout",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="trades",
+    )
 
     class Meta:
         indexes = [models.Index(fields=["account", "date_time"])]

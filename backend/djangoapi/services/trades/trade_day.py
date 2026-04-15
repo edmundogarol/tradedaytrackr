@@ -1,6 +1,7 @@
 import pytz
 from django.db.models import Sum
 
+from backend.djangoapi.models.payout import Payout
 from backend.djangoapi.models.trading_day import TradingDay
 
 
@@ -47,12 +48,16 @@ def recompute_all_trading_days(account):
     trading_days = (
         TradingDay.objects.annotate(pnl=Sum("trades__pnl"))
         .filter(account=account)
-        .order_by("date")
+        .order_by("date", "id")
     )
 
     current_day_number = 1
 
     user_tz = pytz.timezone(account.user.timezone)
+
+    payouts = list(Payout.objects.filter(account=account).order_by("payout_date"))
+    payout_index = 0
+    current_payout = payouts[payout_index] if payouts else None
 
     for td in trading_days:
         fields_to_update = ["day_number", "is_valid_day"]
@@ -65,6 +70,24 @@ def recompute_all_trading_days(account):
             if td.date != correct_date:
                 td.date = correct_date
                 fields_to_update.append("date")
+
+        # Check if we crossed payout trade
+        first_trade = None
+        if td.trades.exists():
+            first_trade = td.trades.order_by("date_time").first()
+
+            # advance through ALL past payouts
+            crossed_payout = False
+
+            while current_payout and first_trade.date_time > current_payout.payout_date:
+                crossed_payout = True
+                payout_index += 1
+                current_payout = (
+                    payouts[payout_index] if payout_index < len(payouts) else None
+                )
+
+    if crossed_payout:
+        current_day_number = 1
 
         pnl = td.pnl or 0
 
