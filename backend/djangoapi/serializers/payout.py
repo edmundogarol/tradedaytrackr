@@ -1,9 +1,8 @@
-from decimal import Decimal
-
+import pytz
+from django.utils import timezone
 from rest_framework import serializers
 
 from backend.djangoapi.models.payout import Payout
-from backend.djangoapi.models.trading_account import TradingAccount
 
 
 class PayoutSerializer(serializers.ModelSerializer):
@@ -30,26 +29,28 @@ class PayoutListSerializer(serializers.ModelSerializer):
         ]
 
 
-class PayoutCreateSerializer(serializers.Serializer):
-    account_id = serializers.IntegerField()
-    amount = serializers.DecimalField(max_digits=12, decimal_places=2)
+class PayoutCreateSerializer(serializers.ModelSerializer):
+    payout_date = serializers.DateTimeField(required=False)
+
+    class Meta:
+        model = Payout
+        fields = ["account", "amount", "payout_date"]
 
     def validate(self, data):
-        account_id = data.get("account_id")
-        amount = data.get("amount")
+        request = self.context.get("request")
+        user = request.user
+        user_tz = pytz.timezone(user.timezone)
 
-        try:
-            account = TradingAccount.objects.get(id=account_id)
-        except TradingAccount.DoesNotExist:
-            raise serializers.ValidationError("Invalid account.")
+        payout_date = data.get("payout_date")
 
-        if amount <= 0:
-            raise serializers.ValidationError("Amount must be greater than 0.")
+        if payout_date:
+            if timezone.is_naive(payout_date):
+                payout_date = user_tz.localize(payout_date)
 
-        if amount > account.account_balance:
-            raise serializers.ValidationError("Payout exceeds account balance.")
-
-        data["account"] = account
-        data["amount"] = Decimal(amount)
+            data["payout_date"] = payout_date.astimezone(pytz.UTC)
+        else:
+            # fallback to now
+            local_now = timezone.now().astimezone(user_tz)
+            data["payout_date"] = local_now.astimezone(pytz.UTC)
 
         return data

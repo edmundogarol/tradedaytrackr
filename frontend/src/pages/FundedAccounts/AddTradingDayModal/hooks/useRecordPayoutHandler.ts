@@ -4,6 +4,7 @@ import useFundedAccountsDispatch from "@pages/FundedAccounts/hooks/useFundedAcco
 import useFundedAccountsState from "@pages/FundedAccounts/hooks/useFundedAccountsState";
 import useGetTradingAccountDetailHandler from "@pages/FundedAccounts/hooks/useGetTradingAccountDetailHandler";
 import useGetTradingAccountsHandler from "@pages/FundedAccounts/hooks/useGetTradingAccountsHandler";
+import { m } from "@utils/utils";
 import { useCallback } from "react";
 import useRecordPayoutApiCall from "./useRecordPayoutApiCall";
 
@@ -27,8 +28,9 @@ const useRecordPayoutHandler = (): RecordPayoutHandler => {
 
         const { error, data } = await fetch({
           data: {
-            account_id: useAccountId,
+            account: useAccountId,
             amount: payout.pnl,
+            payout_date: m(payout.date).format(),
           },
         });
 
@@ -47,6 +49,12 @@ const useRecordPayoutHandler = (): RecordPayoutHandler => {
           });
         } else if (error) {
           console.warn(error);
+          if (!!(error as any).amount) {
+            updateAddTradeErrors({
+              amount: "Payout amount must be a valid number.",
+            });
+            return;
+          }
           updateAddTradeErrors(
             error || {
               error:

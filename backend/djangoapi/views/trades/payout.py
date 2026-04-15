@@ -2,7 +2,6 @@ from decimal import Decimal
 
 import pytz
 from django.db import transaction
-from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -23,15 +22,15 @@ from backend.djangoapi.services.trades.trade_day import (
 
 class RecordPayoutView(APIView):
     def post(self, request):
-        serializer = PayoutCreateSerializer(data=request.data)
+        serializer = PayoutCreateSerializer(
+            data=request.data, context={"request": request}
+        )
         serializer.is_valid(raise_exception=True)
 
         account = serializer.validated_data["account"]
         amount = serializer.validated_data["amount"]
 
-        user_tz = pytz.timezone(account.user.timezone)
-        local_now = timezone.now().astimezone(user_tz)
-        now = local_now.astimezone(pytz.UTC)
+        payout_date = serializer.validated_data["payout_date"]
 
         last_payout = (
             Payout.objects.filter(account=account).order_by("-payout_date").first()
@@ -40,13 +39,14 @@ class RecordPayoutView(APIView):
         payout = Payout.objects.create(
             account=account,
             amount=amount,
-            payout_date=now,
+            payout_date=payout_date,
             balance_before=account.account_balance,
             balance_after=account.account_balance - amount,
         )
 
         # ENSURE trading day exists
-        local_date = local_now.date()
+        user_tz = pytz.timezone(account.user.timezone)
+        local_date = payout_date.astimezone(user_tz).date()
         get_or_create_trading_day(account, local_date)
 
         # assign trades
@@ -55,7 +55,7 @@ class RecordPayoutView(APIView):
         if last_payout:
             trades = trades.filter(date_time__gt=last_payout.payout_date)
 
-        trades = trades.filter(date_time__lte=now)
+        trades = trades.filter(date_time__lte=payout_date)
         trades.update(payout=payout)
 
         # update balance

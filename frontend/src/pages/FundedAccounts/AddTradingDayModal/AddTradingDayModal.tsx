@@ -270,7 +270,7 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
 
           <Input
             positiveOnly={payoutRecord}
-            error={addTradeErrors?.pnl}
+            error={addTradeErrors?.pnl || addTradeErrors?.amount}
             type="number"
             label={
               payoutRecord

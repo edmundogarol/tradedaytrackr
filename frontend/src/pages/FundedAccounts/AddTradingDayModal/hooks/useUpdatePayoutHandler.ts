@@ -5,6 +5,7 @@ import useFundedAccountsState from "@pages/FundedAccounts/hooks/useFundedAccount
 import useGetTradingAccountDetailHandler from "@pages/FundedAccounts/hooks/useGetTradingAccountDetailHandler";
 import useGetTradingAccountsHandler from "@pages/FundedAccounts/hooks/useGetTradingAccountsHandler";
 import environmentConfig from "@utils/environmentConfig";
+import { m } from "@utils/utils";
 import { useCallback } from "react";
 import useUpdatePayoutApiCall from "./useUpdatePayoutApiCall";
 
@@ -29,8 +30,9 @@ const useUpdatePayoutHandler = (): UpdatePayoutHandler => {
         const { error, data } = await fetch({
           url: `${environmentConfig.HOST}/api/payouts/${payout.id.toString().replace("payout-", "")}/`,
           data: {
-            account_id: useAccountId,
+            account: useAccountId,
             amount: payout.pnl,
+            payout_date: m(payout.date).format(),
           },
         });
 
