@@ -1,15 +1,13 @@
-import os
 import random
 from collections import defaultdict
 
 import pytz
-from django.conf import settings
-from django.core.files import File
 from django.db.models import Q
 
 from backend.djangoapi.models.journal_entry import JournalEntry
 from backend.djangoapi.models.trade import Trade
 
+# S3 file keys (must exist in your bucket)
 image_paths = [
     "trade1.png",
     "trade2.png",
@@ -19,10 +17,16 @@ image_paths = [
 ]
 
 
+def attach_s3_image(journal):
+    journal.image.name = random.choice(image_paths)
+    journal.save(update_fields=["image"])
+
+
 def seed_demo_journal_entries(user):
     user_tz = pytz.timezone(user.timezone)
+
     # ---------------------------------
-    # GET FLEX ACCOUNTS ONLY
+    # FLEX ACCOUNTS
     # ---------------------------------
     flex_accounts = user.trading_accounts.filter(
         Q(template__name__icontains="Flex")
@@ -30,7 +34,7 @@ def seed_demo_journal_entries(user):
     )
 
     if flex_accounts.count() < 3:
-        return  # not enough accounts
+        return
 
     flex_accounts = flex_accounts[:3]
 
@@ -43,10 +47,8 @@ def seed_demo_journal_entries(user):
 
     for trade in trades:
         local_dt = trade.date_time.astimezone(user_tz)
-        day = local_dt.date()
-        trades_by_day[day].append(trade)
+        trades_by_day[local_dt.date()].append(trade)
 
-    # only take last 5 days
     sorted_days = sorted(trades_by_day.keys())[-5:]
 
     descriptions = [
@@ -66,20 +68,18 @@ def seed_demo_journal_entries(user):
     ]
 
     # ---------------------------------
-    # CREATE JOURNAL ENTRIES
+    # CREATE FLEX JOURNAL ENTRIES
     # ---------------------------------
     for i, day in enumerate(sorted_days):
         day_trades = trades_by_day[day]
 
-        # ensure exactly 3 trades (one per account)
         if len(day_trades) < 3:
             continue
 
         selected_trades = day_trades[:3]
 
-        # derive fields from trades
-        outcome = sum(t.pnl for t in selected_trades) / len(selected_trades)
         total_pnl = sum(t.pnl for t in selected_trades)
+        outcome = total_pnl / len(selected_trades)
 
         journal = JournalEntry.objects.create(
             user=user,
@@ -91,30 +91,23 @@ def seed_demo_journal_entries(user):
             description=descriptions[i],
         )
 
-        # attach image
-        img_path = random.choice(image_paths)
-        full_path = os.path.join(settings.MEDIA_ROOT, img_path)
+        # ✅ S3 image attach
+        attach_s3_image(journal)
 
-        assert os.path.exists(full_path), f"Missing image: {full_path}"
-
-        with open(full_path, "rb") as f:
-            journal.image.save(
-                os.path.basename(img_path),
-                File(f),
-                save=True,
-            )
-
+        # attach trades
         journal.trades.set(selected_trades)
 
         # attach tags
-        tags = tag_sets[i]
         tag_instances = []
-        for tag_name in tags:
+        for tag_name in tag_sets[i]:
             tag, _ = user.tags.get_or_create(name=tag_name)
             tag_instances.append(tag)
 
         journal.tags.set(tag_instances)
 
+    # ---------------------------------
+    # APEX ACCOUNT JOURNAL ENTRY
+    # ---------------------------------
     apex_accounts = user.trading_accounts.filter(Q(template__name__icontains="Apex"))
 
     if apex_accounts.exists():
@@ -127,8 +120,7 @@ def seed_demo_journal_entries(user):
 
             for trade in apex_trades:
                 local_dt = trade.date_time.astimezone(user_tz)
-                day = local_dt.date()
-                apex_trades_by_day[day].append(trade)
+                apex_trades_by_day[local_dt.date()].append(trade)
 
             latest_day = sorted(apex_trades_by_day.keys())[-1]
             latest_trades = apex_trades_by_day[latest_day]
@@ -136,7 +128,6 @@ def seed_demo_journal_entries(user):
             if latest_trades:
                 base_time = latest_trades[0].date_time
 
-                # shift time so it doesn't match flex entries
                 local_base = base_time.astimezone(user_tz)
                 local_apex = local_base.replace(hour=7, minute=23, second=0)
                 apex_time = local_apex.astimezone(pytz.UTC)
@@ -154,18 +145,8 @@ def seed_demo_journal_entries(user):
                     description="Apex execution day. Controlled execution with adherence to rules.",
                 )
 
-                # attach image
-                img_path = random.choice(image_paths)
-                full_path = os.path.join(settings.MEDIA_ROOT, img_path)
-
-                assert os.path.exists(full_path), f"Missing image: {full_path}"
-
-                with open(full_path, "rb") as f:
-                    journal.image.save(
-                        os.path.basename(img_path),
-                        File(f),
-                        save=True,
-                    )
+                # ✅ S3 image attach
+                attach_s3_image(journal)
 
                 journal.trades.set(latest_trades)
 
