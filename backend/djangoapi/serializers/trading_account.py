@@ -279,12 +279,14 @@ class TradingAccountSerializer(serializers.ModelSerializer):
         days = obj.trading_days.annotate(pnl=Sum("trades__pnl"))
         pnls = [day.pnl for day in days if day.pnl is not None]
 
-        total_profit = sum(pnls)
-        largest_day = max(pnls)
+        if not pnls:
+            return 0
 
+        total_profit = sum(pnls)
         if total_profit == 0:
             return 0
 
+        largest_day = max(pnls)
         score = (largest_day / total_profit) * 100
 
         return round(score, 2)
