@@ -39,6 +39,7 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
 }) => {
   const { getJournalEntriesByDate } = useGetJournalEntryByDateHandler();
   const {
+    currentTradingAccount,
     selectedDateJournalEntries,
     addTradeModalOpen,
     selectedTrade,
@@ -82,6 +83,14 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
   useEffect(() => {
     if (addTradeModalOpen) {
       setOriginalTrade(selectedTrade);
+    }
+    if (payoutRecord) {
+      updateSelectedTrade({
+        ...initialState.selectedTrade,
+        account: {
+          id: currentTradingAccount.id,
+        },
+      } as Trade);
     }
   }, [addTradeModalOpen]);
 
@@ -254,7 +263,7 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
           <Gap level={1} />
 
           <Input
-            negativeOnly={payoutRecord}
+            positiveOnly={payoutRecord}
             error={addTradeErrors?.pnl}
             type="number"
             label={payoutRecord ? "Payout Amount" : "Add Trade PnL"}
@@ -279,7 +288,7 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
               style={{
                 ...styles.addTradingDayButton,
                 ...(payoutRecord ? styles.payoutButton : styles.submitButton),
-                ...(!dirtyTrade ? {} : payoutRecord ? styles.greenButton : {}),
+                ...(!dirtyTrade ? {} : styles.greenButton),
               }}
               disabledBlock={!dirtyTrade}
               disabled={!dirtyTrade}

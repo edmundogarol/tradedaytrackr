@@ -18,8 +18,10 @@ const styles = {
   } as React.CSSProperties,
   payoutButton: {
     marginLeft: "auto",
-    backgroundColor: color("SystemRed"),
   } as React.CSSProperties,
+  payoutReadyButton: {
+    backgroundColor: color("SystemRed"),
+  },
 };
 
 export default styles;

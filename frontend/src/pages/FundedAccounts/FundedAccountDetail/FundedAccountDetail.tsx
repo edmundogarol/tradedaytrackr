@@ -9,7 +9,7 @@ import InfoPopout from "@components/InfoPopout/InfoPopout";
 import Input from "@components/Input/Input";
 import Page from "@components/Page/Page";
 import SelectWrapper from "@components/Select/SelectWrapper";
-import type { Trade, TradingAccount } from "@interfaces/CustomTypes";
+import type { TradingAccount } from "@interfaces/CustomTypes";
 import { PageEnum } from "@interfaces/NavigationTypes";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
@@ -25,7 +25,6 @@ import { useSearchParams } from "react-router";
 import AddTradingDayModal from "../AddTradingDayModal/AddTradingDayModal";
 import DeleteTradeModal from "../DeleteTradeModal/DeleteTradeModal";
 import DeleteTradingAccountModal from "../DeleteTradingAccountModal/DeleteTradingAccountModal";
-import { initialState } from "../FundedAccountsState";
 import {
   AccountImage,
   AccountSubtitle,
@@ -92,6 +91,7 @@ const FundedAccountDetail: React.FunctionComponent<
     editingAccountTemplate,
     addTradeErrors,
     deleteTradeErrors,
+    addTradeModalOpen,
   } = useFundedAccountsState();
   const {
     updateCurrentTradingAccount,
@@ -130,14 +130,16 @@ const FundedAccountDetail: React.FunctionComponent<
   }, []);
 
   useEffect(() => {
-    const selectedAccount = tradingAccounts.find(
-      (account) => account.id === Number(accountId),
-    );
+    const selectedAccount =
+      currentTradingAccount.id !== 0
+        ? currentTradingAccount
+        : tradingAccounts.find((account) => account.id === Number(accountId));
+    if (currentTradingAccount.id === selectedAccount?.id) return;
     if (accountId && selectedAccount) {
       updateCurrentTradingAccount(selectedAccount);
       setOriginalTradingAccountDetails(selectedAccount);
     }
-  }, [tradingAccounts, accountId]);
+  }, [tradingAccounts, accountId, addTradeModalOpen]);
 
   return (
     <Page topBarShowMenu={true}>
@@ -514,12 +516,6 @@ const FundedAccountDetail: React.FunctionComponent<
             onClick={(): void => {
               updateAddTradeModalOpen(true);
               setPayoutRecord(false);
-              updateSelectedTrade({
-                ...initialState.selectedTrade,
-                account: {
-                  id: Number(!!accountId ? currentTradingAccount?.id : 0),
-                },
-              } as Trade);
             }}
           />
         </TradingDaysHeaderContainer>

@@ -5,14 +5,13 @@ import React from "react";
 import AlertPopout from "@components/Alert/AlertPopout";
 import { Else, If } from "@components/If/If";
 import InfoPopout from "@components/InfoPopout/InfoPopout";
-import type { Trade, TradingAccount } from "@interfaces/CustomTypes";
+import type { TradingAccount } from "@interfaces/CustomTypes";
 import { PageEnum } from "@interfaces/NavigationTypes";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
 import {
   BorderLinearProgress,
   HorizontalSection,
 } from "@styles/globalStyledComponents";
-import { initialState } from "./FundedAccountsState";
 import {
   AccountImage,
   AccountSubtitle,
@@ -63,7 +62,7 @@ const FundedAccountsListItem: React.FunctionComponent<
   } = account;
   const navigation = useReactNavigation();
   const [alertNoRecord, setAlertNoRecord] = React.useState(false);
-  const { updateSelectedTrade } = useFundedAccountsDispatch();
+  const { updateCurrentTradingAccount } = useFundedAccountsDispatch();
   return (
     <GlassTile positive featureTile minHeight={70} noGlow noShine>
       <AlertPopout
@@ -133,12 +132,7 @@ const FundedAccountsListItem: React.FunctionComponent<
                 $positive={true}
                 onClick={() => {
                   openAddTradingDayModal && openAddTradingDayModal(true);
-                  updateSelectedTrade({
-                    ...initialState.selectedTrade,
-                    account: {
-                      id,
-                    },
-                  } as Trade);
+                  updateCurrentTradingAccount(account);
                 }}
               >
                 {"+"}

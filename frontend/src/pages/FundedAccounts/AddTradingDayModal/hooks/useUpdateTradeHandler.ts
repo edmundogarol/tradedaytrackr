@@ -1,6 +1,7 @@
 import type { Trade } from "@interfaces/CustomTypes";
 import { initialState } from "@pages/FundedAccounts/FundedAccountsState";
 import useFundedAccountsDispatch from "@pages/FundedAccounts/hooks/useFundedAccountsDispatch";
+import useFundedAccountsState from "@pages/FundedAccounts/hooks/useFundedAccountsState";
 import useGetTradingAccountDetailHandler from "@pages/FundedAccounts/hooks/useGetTradingAccountDetailHandler";
 import useGetTradingAccountsHandler from "@pages/FundedAccounts/hooks/useGetTradingAccountsHandler";
 import environmentConfig from "@utils/environmentConfig";
@@ -15,6 +16,7 @@ interface UpdateTradeHandler {
 
 const useUpdateTradeHandler = (): UpdateTradeHandler => {
   const { fetch, loading } = useUpdateTradeApiCall();
+  const { currentTradingAccount } = useFundedAccountsState();
   const { updateSelectedTrade, updateAddTradeErrors, updateAddTradeModalOpen } =
     useFundedAccountsDispatch();
   const { getTradingAccount } = useGetTradingAccountDetailHandler();
@@ -23,12 +25,13 @@ const useUpdateTradeHandler = (): UpdateTradeHandler => {
   return {
     updateTrade: useCallback(
       async (trade: Trade) => {
+        const useAccountId = trade.account.id || currentTradingAccount.id;
         const { error, data } = await fetch({
           url: `${environmentConfig.HOST}/api/trades/${trade.id}/`,
           data: {
             pnl: trade.pnl,
             date: trade.date,
-            account_id: trade.account.id,
+            account_id: useAccountId,
             journal_entry_id:
               trade.journalEntry !== null && trade.journalEntry?.id !== 0
                 ? trade.journalEntry.id
@@ -37,7 +40,7 @@ const useUpdateTradeHandler = (): UpdateTradeHandler => {
         });
 
         if (!!data) {
-          getTradingAccount(trade.account.id.toString());
+          getTradingAccount(useAccountId.toString());
           getTradingAccounts();
           updateSelectedTrade(initialState.selectedTrade);
           updateAddTradeModalOpen(false);
@@ -77,7 +80,7 @@ const useUpdateTradeHandler = (): UpdateTradeHandler => {
           );
         }
       },
-      [loading],
+      [loading, currentTradingAccount.id],
     ),
     loading,
   };

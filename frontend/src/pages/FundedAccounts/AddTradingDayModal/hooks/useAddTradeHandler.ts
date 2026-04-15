@@ -1,6 +1,7 @@
 import type { Trade } from "@interfaces/CustomTypes";
 import { initialState } from "@pages/FundedAccounts/FundedAccountsState";
 import useFundedAccountsDispatch from "@pages/FundedAccounts/hooks/useFundedAccountsDispatch";
+import useFundedAccountsState from "@pages/FundedAccounts/hooks/useFundedAccountsState";
 import useGetTradingAccountDetailHandler from "@pages/FundedAccounts/hooks/useGetTradingAccountDetailHandler";
 import useGetTradingAccountsHandler from "@pages/FundedAccounts/hooks/useGetTradingAccountsHandler";
 import { useCallback } from "react";
@@ -14,6 +15,7 @@ interface AddTradeHandler {
 
 const useAddTradeHandler = (): AddTradeHandler => {
   const { fetch, loading } = useAddTradeApiCall();
+  const { currentTradingAccount } = useFundedAccountsState();
   const { updateSelectedTrade, updateAddTradeErrors, updateAddTradeModalOpen } =
     useFundedAccountsDispatch();
   const { getTradingAccount } = useGetTradingAccountDetailHandler();
@@ -21,11 +23,13 @@ const useAddTradeHandler = (): AddTradeHandler => {
   return {
     addTrade: useCallback(
       async (trade: Trade) => {
+        const useAccountId = trade.account.id || currentTradingAccount.id;
+
         const { error, data } = await fetch({
           data: {
             pnl: trade.pnl,
             date: trade.date,
-            account_id: trade.account.id,
+            account_id: useAccountId,
             journal_entry_id:
               trade.journalEntry !== null && trade.journalEntry?.id !== 0
                 ? trade.journalEntry.id
@@ -34,7 +38,7 @@ const useAddTradeHandler = (): AddTradeHandler => {
         });
 
         if (!!data) {
-          getTradingAccount(trade.account.id.toString());
+          getTradingAccount(useAccountId.toString());
           getTradingAccounts();
           updateSelectedTrade(initialState.selectedTrade);
           updateAddTradeModalOpen(false);
@@ -66,7 +70,7 @@ const useAddTradeHandler = (): AddTradeHandler => {
           );
         }
       },
-      [loading],
+      [loading, currentTradingAccount.id],
     ),
     loading,
   };
