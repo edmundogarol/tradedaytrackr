@@ -1,11 +1,11 @@
-import { isNotEmptyString } from "@utils/utils";
-import { set } from "lodash";
 import { PageEnum } from "@interfaces/NavigationTypes";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
-import useLoginState from "@pages/Login/hooks/useLoginState";
 import useLoginDispatch from "@pages/Login/hooks/useLoginDispatch";
-import { useCallback } from "react";
+import useLoginState from "@pages/Login/hooks/useLoginState";
 import { initialState } from "@pages/Login/LoginState";
+import { isNotEmptyString } from "@utils/utils";
+import { set } from "lodash";
+import { useCallback } from "react";
 import useSignUpApiCall from "./useSignUpApiCall";
 
 interface SignUpSubmitHandler {
@@ -75,6 +75,7 @@ const useSignUpHandler = (): SignUpSubmitHandler => {
           updateUser({
             ...data?.user,
             logged_in: data?.logged_in,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           });
           updateLoginFormErrors({});
           updateSignUpFormErrors({});

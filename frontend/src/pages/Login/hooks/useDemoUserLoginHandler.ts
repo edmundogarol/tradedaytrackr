@@ -20,6 +20,7 @@ const useDemoUserLoginHandler = (): UseDemoUserLoginHandlerProps => {
         data: {
           email: "demo@user.com",
           password: "demopassword",
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         },
       });
 

@@ -106,6 +106,7 @@ class LoginViewSet(APIView):
                 extra={"user_id": user.id},
             )
             reset_demo_user(user)
+            user.timezone = request.data.get("timezone", user.timezone)
 
         user = request.user
         user.last_login = timezone.now()

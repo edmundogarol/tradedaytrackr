@@ -1,4 +1,3 @@
-import pytz
 from django.db.models import Sum
 
 from backend.djangoapi.models.payout import Payout
@@ -53,8 +52,6 @@ def recompute_all_trading_days(account):
 
     current_day_number = 1
 
-    user_tz = pytz.timezone(account.user.timezone)
-
     payouts = list(Payout.objects.filter(account=account).order_by("payout_date"))
     payout_index = 0
     current_payout = payouts[payout_index] if payouts else None
@@ -68,14 +65,6 @@ def recompute_all_trading_days(account):
 
         if td.trades.exists():
             first_trade = td.trades.order_by("date_time").first()
-
-            # timezone fix logic...
-            local_dt = first_trade.date_time.astimezone(user_tz)
-            correct_date = local_dt.date()
-
-            if td.date != correct_date:
-                td.date = correct_date
-                fields_to_update.append("date")
 
             # payout crossing logic
             while current_payout and first_trade.date_time > current_payout.payout_date:

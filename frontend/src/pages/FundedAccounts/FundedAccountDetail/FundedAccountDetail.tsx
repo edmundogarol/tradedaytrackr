@@ -18,7 +18,10 @@ import { AccountTradingDaysComplete } from "@pages/EvaluationAccounts/Evaluation
 import useGetFundedAccountTemplates from "@pages/Settings/hooks/useGetFundedAccountTemplates";
 import useGetAccountTemplatesHandler from "@pages/Settings/Preferences/hooks/useGetAccountTemplatesHandler";
 import { color } from "@styles/colors";
-import { BorderLinearProgress } from "@styles/globalStyledComponents";
+import {
+  BorderLinearProgress,
+  HorizontalSection,
+} from "@styles/globalStyledComponents";
 import { decimalStringToInt, formatter, m } from "@utils/utils";
 import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
@@ -473,11 +476,26 @@ const FundedAccountDetail: React.FunctionComponent<
                   </ConsistencyLabel>
                 </ConsistencyContainer>
                 <PnLContainer>
-                  <PnLValue
-                    $withdrawable={currentTradingAccount.withdrawableAmount > 0}
-                  >
-                    {formatter.format(currentTradingAccount.withdrawableAmount)}
-                  </PnLValue>
+                  <HorizontalSection style={{ gap: 0 }}>
+                    <PnLValue
+                      $withdrawable={
+                        currentTradingAccount.withdrawableAmount > 0
+                      }
+                    >
+                      {currentTradingAccount.withdrawableAmount > 0
+                        ? formatter.format(
+                            currentTradingAccount.withdrawableAmount,
+                          )
+                        : formatter.format(0)}
+                    </PnLValue>
+                    <If
+                      condition={currentTradingAccount.withdrawableAmount <= 0}
+                    >
+                      <InfoPopout
+                        infoDescription={`This account requires a minimum payout request of $${Number(currentTradingAccount.minPayoutRequest).toFixed(0)} - above the buffer`}
+                      />
+                    </If>
+                  </HorizontalSection>
                   <PnLWithdrawable
                     $positive={currentTradingAccount?.postPayoutBuffer > 0}
                   >

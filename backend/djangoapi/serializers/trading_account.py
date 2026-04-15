@@ -216,7 +216,6 @@ class TradingAccountSerializer(serializers.ModelSerializer):
 
             return round(max_safe, 2)
 
-        # NORMAL LOGIC
         account_size = template.account_size
         min_buffer = template.min_buffer or 0
         min_req = template.min_payout_request or 0
@@ -224,20 +223,29 @@ class TradingAccountSerializer(serializers.ModelSerializer):
         split = template.withdrawal_split
 
         profit = balance - account_size
-        available = profit - min_buffer
+
+        if profit <= 0:
+            return 0
+
+        # constraint 1: withdrawal split
+        max_by_split = profit
+        if split or split != 0:
+            max_by_split = (profit * split) / 100
+
+        # constraint 2: buffer
+        max_by_buffer = balance - (account_size + min_buffer)
+
+        # final available = stricter constraint
+        available = min(max_by_split, max_by_buffer)
 
         if available <= 0:
             return 0
-
-        if split:
-            split_limit = (profit * split) / 100
-            available = min(available, split_limit)
 
         if available < min_req:
             return 0
 
         if max_req:
-            return round(min(available, max_req), 2)
+            available = min(available, max_req)
 
         return round(available, 2)
 
