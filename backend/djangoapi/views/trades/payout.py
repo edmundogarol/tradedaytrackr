@@ -2,10 +2,12 @@ from decimal import Decimal
 
 import pytz
 from django.db import transaction
+from django.utils.dateparse import parse_datetime
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework.views import APIView, PermissionDenied
 
+from backend.djangoapi.models.journal_entry import JournalEntry
 from backend.djangoapi.models.payout import Payout
 from backend.djangoapi.models.trade import Trade
 from backend.djangoapi.models.trading_day import TradingDay
@@ -31,6 +33,7 @@ class RecordPayoutView(APIView):
         amount = serializer.validated_data["amount"]
 
         payout_date = serializer.validated_data["payout_date"]
+        journal_entry = serializer.validated_data.get("journal_entry")
 
         last_payout = (
             Payout.objects.filter(account=account).order_by("-payout_date").first()
@@ -40,6 +43,7 @@ class RecordPayoutView(APIView):
             account=account,
             amount=amount,
             payout_date=payout_date,
+            journal_entry=journal_entry,
             balance_before=account.account_balance,
             balance_after=account.account_balance - amount,
         )
@@ -72,6 +76,9 @@ class UpdatePayoutView(APIView):
 
         user_tz = pytz.timezone(account.user.timezone)
 
+        if payout.journal_entry and payout.journal_entry.user != request.user:
+            raise PermissionDenied("Invalid journal entry")
+
         with transaction.atomic():
             # store old values
             old_amount = payout.amount
@@ -82,18 +89,36 @@ class UpdatePayoutView(APIView):
             new_date = request.data.get("payout_date")
 
             if new_date:
-                from django.utils.dateparse import parse_datetime
-
                 parsed = parse_datetime(new_date)
-                local_dt = user_tz.localize(parsed)
-                new_date = local_dt.astimezone(pytz.UTC)
+
+                if parsed is None:
+                    raise ValueError("Invalid datetime format")
+
+                # handle both cases
+                if parsed.tzinfo is None:
+                    # naive → assume user timezone
+                    parsed = user_tz.localize(parsed)
+                else:
+                    # aware → convert to user timezone first (optional but clean)
+                    parsed = parsed.astimezone(user_tz)
+
+                # finally convert to UTC
+                new_date = parsed.astimezone(pytz.UTC)
             else:
                 new_date = old_date
+
+            journal_entry_id = request.data.get("journal_entry_id")
+
+            if "journal_entry_id" in request.data:
+                if journal_entry_id is None:
+                    payout.journal_entry = None
+                else:
+                    payout.journal_entry = JournalEntry.objects.get(id=journal_entry_id)
 
             # update payout
             payout.amount = new_amount
             payout.payout_date = new_date
-            payout.save(update_fields=["amount", "payout_date"])
+            payout.save(update_fields=["amount", "payout_date", "journal_entry"])
 
             # RESET ALL TRADE → PAYOUT LINKS
             Trade.objects.filter(account=account).update(payout=None)

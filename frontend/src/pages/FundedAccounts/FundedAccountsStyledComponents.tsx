@@ -171,6 +171,15 @@ export const DaysItem = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 5px;
+  position: relative;
+
+  .payout-icon {
+    position: absolute;
+    right: 0px;
+    top: -5px;
+    height: 15px;
+    width: 15px;
+  }
 `;
 
 export const DaysItemValue = styled.span<{

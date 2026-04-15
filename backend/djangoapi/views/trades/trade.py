@@ -1,4 +1,4 @@
-from django.utils.timezone import localtime
+import pytz
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -6,6 +6,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from backend.djangoapi.models.payout import Payout
 from backend.djangoapi.models.trade import Trade
+from backend.djangoapi.serializers.journal_entry import JournalEntrySerializer
 from backend.djangoapi.serializers.trade import TradeSerializer
 from backend.djangoapi.services.trades.trade_day import recompute_all_trading_days
 
@@ -16,6 +17,9 @@ def serialize_payout(payout):
         "type": "payout",
         "date_time": payout.payout_date,
         "pnl": -payout.amount,
+        "journal_entry": JournalEntrySerializer(payout.journal_entry).data
+        if payout.journal_entry
+        else None,
         "is_payout": True,
     }
 
@@ -51,8 +55,10 @@ class TradeViewSet(ModelViewSet):
         if trading_day:
             payouts = Payout.objects.filter(account=account)
 
+            user_tz = pytz.timezone(account.user.timezone)
             has_payout = any(
-                localtime(p.payout_date).date() == trading_day.date for p in payouts
+                p.payout_date.astimezone(user_tz).date() == trading_day.date
+                for p in payouts
             )
 
         # only delete if truly empty

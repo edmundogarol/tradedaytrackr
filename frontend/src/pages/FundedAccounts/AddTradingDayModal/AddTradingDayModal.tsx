@@ -139,6 +139,12 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
     } as Trade);
   }, [selectedDateJournalEntries, addNewTradePnL]);
 
+  useEffect(() => {
+    if (!!selectedTrade?.journalEntry?.id) {
+      setAddNewTradePnL(false);
+    }
+  }, [selectedTrade?.journalEntry?.id, addTradeModalOpen]);
+
   const dirtyTrade =
     selectedTrade.pnl !== originalTrade.pnl ||
     selectedTrade.date !== originalTrade.date;
@@ -188,83 +194,82 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
 
           <Gap level={1} />
 
-          <If condition={!payoutRecord}>
-            <Collapse
-              sx={{ "& .MuiCollapse-wrapperInner": { width: "100%" } }}
-              orientation="horizontal"
-              in={!addNewTradePnL}
-              collapsedSize={0}
-              hidden={addNewTradePnL}
-            >
-              <If condition={formattedJournalEntries.length > 0}>
-                <SelectWrapper
-                  onSelect={(selectedId) => {
-                    const selected = selectedDateJournalEntries.find(
-                      (entry) => entry.id === Number(selectedId),
-                    );
+          <Collapse
+            sx={{ "& .MuiCollapse-wrapperInner": { width: "100%" } }}
+            orientation="horizontal"
+            in={!addNewTradePnL}
+            collapsedSize={0}
+            hidden={addNewTradePnL}
+          >
+            <If condition={formattedJournalEntries.length > 0}>
+              <SelectWrapper
+                selectedValue={selectedTrade?.journalEntry?.id}
+                onSelect={(selectedId) => {
+                  const selected = selectedDateJournalEntries.find(
+                    (entry) => entry.id === Number(selectedId),
+                  );
 
-                    if (!selected) return;
+                  if (!selected) return;
 
-                    const baseDate = m(selectedTrade.date);
-                    const entryMoment = m(selected.dateTime);
+                  const baseDate = m(selectedTrade.date);
+                  const entryMoment = m(selected.dateTime);
 
-                    const merged = baseDate
-                      .hour(entryMoment.hour())
-                      .minute(entryMoment.minute())
-                      .second(entryMoment.second());
+                  const merged = baseDate
+                    .hour(entryMoment.hour())
+                    .minute(entryMoment.minute())
+                    .second(entryMoment.second());
 
-                    updateSelectedTrade({
-                      ...selectedTrade,
-                      journalEntry: {
-                        id: selected.id,
-                      },
-                      date: merged.toISOString(),
-                    } as Trade);
-                  }}
-                  items={formattedJournalEntries}
-                  label="Journal Entries detected for this date"
-                />
-              </If>
+                  updateSelectedTrade({
+                    ...selectedTrade,
+                    journalEntry: {
+                      id: selected.id,
+                    },
+                    date: merged.toISOString(),
+                  } as Trade);
+                }}
+                items={formattedJournalEntries}
+                label="Journal Entries detected for this date"
+              />
+            </If>
 
+            <Gap level={1} />
+
+            <If condition={formattedJournalEntries.length > 0}>
+              <Button
+                text={"Do not link to existing journal entry"}
+                style={{
+                  ...styles.addTradingDayButton,
+                  ...styles.dontLinkButton,
+                }}
+                onClick={(): void => {
+                  setAddNewTradePnL(!addNewTradePnL);
+                  updateSelectedTrade({
+                    ...selectedTrade,
+                    journalEntry: {
+                      id: 0,
+                    },
+                  } as Trade);
+                }}
+              />
+            </If>
+          </Collapse>
+
+          <Collapse
+            sx={{ "& .MuiCollapse-wrapperInner": { width: "100%" } }}
+            orientation="horizontal"
+            in={addNewTradePnL}
+            collapsedSize={0}
+            hidden={!addNewTradePnL}
+          >
+            <If condition={formattedJournalEntries.length > 0}>
+              <Button
+                text={`Assign To Existing Journal Entry (${formattedJournalEntries.length})`}
+                style={{ ...styles.addTradingDayButton }}
+                onClick={(): void => setAddNewTradePnL(!addNewTradePnL)}
+              />
               <Gap level={1} />
-
-              <If condition={formattedJournalEntries.length > 0}>
-                <Button
-                  text={"Do not link to existing journal entry"}
-                  style={{
-                    ...styles.addTradingDayButton,
-                    ...styles.dontLinkButton,
-                  }}
-                  onClick={(): void => {
-                    setAddNewTradePnL(!addNewTradePnL);
-                    updateSelectedTrade({
-                      ...selectedTrade,
-                      journalEntry: {
-                        id: 0,
-                      },
-                    } as Trade);
-                  }}
-                />
-              </If>
-            </Collapse>
-
-            <Collapse
-              sx={{ "& .MuiCollapse-wrapperInner": { width: "100%" } }}
-              orientation="horizontal"
-              in={addNewTradePnL}
-              collapsedSize={0}
-              hidden={!addNewTradePnL}
-            >
-              <If condition={formattedJournalEntries.length > 0}>
-                <Button
-                  text={`Assign To Existing Journal Entry (${formattedJournalEntries.length})`}
-                  style={{ ...styles.addTradingDayButton }}
-                  onClick={(): void => setAddNewTradePnL(!addNewTradePnL)}
-                />
-                <Gap level={1} />
-              </If>
-            </Collapse>
-          </If>
+            </If>
+          </Collapse>
 
           <Gap level={1} />
 

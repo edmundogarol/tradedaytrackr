@@ -1,11 +1,11 @@
 import pytz
 from django.utils import timezone
-from django.utils.timezone import localtime
 from rest_framework import serializers
 
 from backend.djangoapi.models.payout import Payout
 from backend.djangoapi.models.trading_account import TradingAccount
 from backend.djangoapi.models.trading_day import TradingDay
+from backend.djangoapi.serializers.journal_entry import JournalEntrySerializer
 from backend.djangoapi.serializers.trade import TradeSerializer
 from backend.djangoapi.services.trades.trade_day import compute_trading_day_fields
 from backend.djangoapi.utils.account import UserTimezoneDateTimeField
@@ -46,11 +46,13 @@ class TradingDaySerializer(serializers.ModelSerializer):
         trades = obj.trades.all()
         trade_data = TradeSerializer(trades, many=True).data
 
+        user_tz = pytz.timezone(obj.account.user.timezone)
+
         # inject payouts for this day
         payouts = [
             p
             for p in Payout.objects.filter(account=obj.account)
-            if localtime(p.payout_date).date() == obj.date
+            if p.payout_date.astimezone(user_tz).date() == obj.date
         ]
 
         date_field = UserTimezoneDateTimeField()
@@ -61,6 +63,9 @@ class TradingDaySerializer(serializers.ModelSerializer):
                 "account": {
                     "id": p.account.id,
                 },
+                "journal_entry": JournalEntrySerializer(p.journal_entry).data
+                if p.journal_entry
+                else None,
                 "pnl": -p.amount,
                 "is_payout": True,
             }

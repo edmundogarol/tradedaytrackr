@@ -1,6 +1,8 @@
 import logging
 
+import pytz
 from django.db import transaction
+from django.utils import timezone as dj_timezone
 
 from backend.djangoapi.services.demo.seed_account_templates import (
     seed_demo_account_templates,
@@ -19,15 +21,18 @@ logger = logging.getLogger(__name__)
 
 def reset_demo_user(user):
     logger.info("Resetting demo user data.", extra={"user_id": user.id})
+    try:
+        tz = pytz.timezone(user.timezone)
+    except Exception:
+        tz = pytz.UTC
+
+    dj_timezone.activate(tz)
 
     with transaction.atomic():
         user.journal_entries.all().delete()
         user.tags.all().delete()
         user.trading_accounts.all().delete()
         user.trading_account_templates.all().delete()
-
-        user.timezone = "UTC"
-        user.save(update_fields=["timezone"])
 
         seed_demo_account_templates(user)
         seed_demo_tags(user)

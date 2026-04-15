@@ -13,6 +13,7 @@ import type { TradingAccount } from "@interfaces/CustomTypes";
 import { PageEnum } from "@interfaces/NavigationTypes";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
+import LocalParkingIcon from "@mui/icons-material/LocalParking";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
 import { AccountTradingDaysComplete } from "@pages/EvaluationAccounts/EvaluationAccountsStyledComponents";
 import useGetFundedAccountTemplates from "@pages/Settings/hooks/useGetFundedAccountTemplates";
@@ -540,37 +541,51 @@ const FundedAccountDetail: React.FunctionComponent<
         </TradingDaysHeaderContainer>
         <GlassTile featureTile minHeight={70} noGlow={true} noShine={false}>
           <TradingDaysContainer>
-            {[...currentTradingAccount?.dayValues].map((dayValue, index) => (
-              <GlassTile
-                key={index}
-                featureTile
-                minHeight={10}
-                minWidth={10}
-                padding={7}
-                noGlow={true}
-              >
-                <TradeDay>
-                  <PreviewDayValueContainer>
-                    <TradePreviewContainer>
-                      <If condition={!!dayValue.trades[0]?.journalEntry}>
-                        <TradePreview
-                          $src={dayValue.trades[0]?.journalEntry?.image}
-                          onClick={() =>
-                            navigation.navigate(PageEnum.JournalEntry, {
-                              id:
-                                dayValue.trades[0]?.journalEntry?.id.toString() ||
-                                "",
-                            })
-                          }
-                        />
-                        <TradeJournalPnL
-                          $positive={
-                            dayValue.trades[0]?.journalEntry?.totalPnl > 0
-                          }
-                        >
-                          ${dayValue.trades[0]?.journalEntry?.totalPnl || 0}
-                        </TradeJournalPnL>
-                        <Else>
+            {[...currentTradingAccount?.dayValues].map((dayValue, index) => {
+              const tradeWithJournalEntry = dayValue.trades.find(
+                (trade) => !!trade?.journalEntry?.id,
+              );
+              return (
+                <GlassTile
+                  key={index}
+                  featureTile
+                  minHeight={10}
+                  minWidth={10}
+                  padding={7}
+                  noGlow={true}
+                >
+                  <TradeDay>
+                    <PreviewDayValueContainer>
+                      <TradePreviewContainer>
+                        {!!tradeWithJournalEntry ? (
+                          <If
+                            condition={
+                              !!tradeWithJournalEntry &&
+                              !!tradeWithJournalEntry?.journalEntry
+                            }
+                          >
+                            <TradePreview
+                              $src={tradeWithJournalEntry?.journalEntry?.image}
+                              onClick={() =>
+                                navigation.navigate(PageEnum.JournalEntry, {
+                                  id:
+                                    tradeWithJournalEntry?.journalEntry?.id.toString() ||
+                                    "",
+                                })
+                              }
+                            />
+                            <TradeJournalPnL
+                              $positive={
+                                tradeWithJournalEntry?.journalEntry?.totalPnl >
+                                0
+                              }
+                            >
+                              $
+                              {tradeWithJournalEntry?.journalEntry?.totalPnl ||
+                                0}
+                            </TradeJournalPnL>
+                          </If>
+                        ) : (
                           <InfoPopout
                             infoDescription={`Link or create journal entry`}
                           >
@@ -584,91 +599,94 @@ const FundedAccountDetail: React.FunctionComponent<
                               />
                             </div>
                           </InfoPopout>
-                        </Else>
-                      </If>
-                    </TradePreviewContainer>
-                    <DayValue>{dayValue.dayNumber || "-"}</DayValue>
-                  </PreviewDayValueContainer>
-                  <DateContainer>
-                    <DaysContainer>
-                      {[...dayValue.trades].reverse().map((trade, idx) => (
-                        <DaysItem
-                          key={idx}
-                          onClick={() => {
-                            if (trade.isPayout) {
-                              setEditingPayout(true);
-                            }
-                            updateAddTradeModalOpen(true);
-                            setPayoutRecord(false);
-                            updateSelectedTrade(trade);
-                          }}
-                        >
-                          <GlassTile
-                            positive={(trade.pnl ?? 0) > 0}
-                            featureTile
-                            minHeight={10}
-                            minWidth={10}
-                            padding={7}
+                        )}
+                      </TradePreviewContainer>
+                      <DayValue>{dayValue.dayNumber || "-"}</DayValue>
+                    </PreviewDayValueContainer>
+                    <DateContainer>
+                      <DaysContainer>
+                        {[...dayValue.trades].reverse().map((trade, idx) => (
+                          <DaysItem
+                            key={idx}
+                            onClick={() => {
+                              if (trade.isPayout) {
+                                setEditingPayout(true);
+                              }
+                              updateAddTradeModalOpen(true);
+                              setPayoutRecord(false);
+                              updateSelectedTrade(trade);
+                            }}
                           >
-                            <DaysItemValue $positive={(trade.pnl ?? 0) > 0}>
-                              {`${(trade.pnl ?? 0) > 0 ? "+" : ""}${decimalStringToInt(trade.pnl ?? 0)}`}
-                            </DaysItemValue>
-                          </GlassTile>
-                          <DaysItemSubtitle $smaller>
-                            {m(trade.date).format("hh:mm A")}
-                          </DaysItemSubtitle>
-                        </DaysItem>
-                      ))}
-                    </DaysContainer>
-                  </DateContainer>
-                  <DateContainer>
-                    {m(dayValue.date).format("MMM D, YYYY")}
-                  </DateContainer>
-                  <PnL $positive={dayValue.pnl >= 0}>
-                    {formatter.format(dayValue.pnl)}
-                  </PnL>
+                            <GlassTile
+                              positive={(trade.pnl ?? 0) > 0}
+                              featureTile
+                              minHeight={10}
+                              minWidth={10}
+                              padding={7}
+                            >
+                              <DaysItemValue $positive={(trade.pnl ?? 0) > 0}>
+                                {`${(trade.pnl ?? 0) > 0 ? "+" : ""}${decimalStringToInt(trade.pnl ?? 0)}`}
+                              </DaysItemValue>
+                            </GlassTile>
+                            <DaysItemSubtitle $smaller>
+                              {m(trade.date).format("hh:mm A")}
+                            </DaysItemSubtitle>
+                            <If condition={trade.isPayout}>
+                              <LocalParkingIcon className="payout-icon" />
+                            </If>
+                          </DaysItem>
+                        ))}
+                      </DaysContainer>
+                    </DateContainer>
+                    <DateContainer>
+                      {m(dayValue.date).format("MMM D, YYYY")}
+                    </DateContainer>
+                    <PnL $positive={dayValue.pnl >= 0}>
+                      {formatter.format(dayValue.pnl)}
+                    </PnL>
 
-                  <EditDeleteContainer>
-                    <InfoPopout infoDescription="Edit Details">
-                      <EditContainer>
-                        <EditIcon
-                          style={styles.editIcon}
-                          onClick={() => {
-                            if (dayValue.trades.length > 1) {
-                              updateDeleteTradeErrors({
-                                detail:
-                                  "This trade day has multiple trades. Please edit individual records from trades displayed on this row",
-                              });
-                              return;
-                            }
-                            updateSelectedTrade(dayValue.trades[0]);
-                            updateAddTradeModalOpen(true);
-                          }}
-                        />
-                      </EditContainer>
-                    </InfoPopout>
-                    <InfoPopout infoDescription="Delete Trade">
-                      <EditContainer>
-                        <DeleteOutlineIcon
-                          style={styles.editIcon}
-                          onClick={() => {
-                            if (dayValue.trades.length > 1) {
-                              updateDeleteTradeErrors({
-                                detail:
-                                  "This trade day has multiple trades. Please delete individual records from trades displayed on this row",
-                              });
-                              return;
-                            }
-                            updateDeleteTradeModalOpen(true);
-                            updateSelectedTrade(dayValue.trades[0]);
-                          }}
-                        />
-                      </EditContainer>
-                    </InfoPopout>
-                  </EditDeleteContainer>
-                </TradeDay>
-              </GlassTile>
-            ))}
+                    <EditDeleteContainer>
+                      <InfoPopout infoDescription="Edit Details">
+                        <EditContainer>
+                          <EditIcon
+                            style={styles.editIcon}
+                            onClick={() => {
+                              if (dayValue.trades.length > 1) {
+                                updateDeleteTradeErrors({
+                                  detail:
+                                    "This trade day has multiple trades. Please edit individual records from trades displayed on this row",
+                                });
+                                return;
+                              }
+                              updateSelectedTrade(dayValue.trades[0]);
+                              updateAddTradeModalOpen(true);
+                            }}
+                          />
+                        </EditContainer>
+                      </InfoPopout>
+                      <InfoPopout infoDescription="Delete Trade">
+                        <EditContainer>
+                          <DeleteOutlineIcon
+                            style={styles.editIcon}
+                            onClick={() => {
+                              if (dayValue.trades.length > 1) {
+                                updateDeleteTradeErrors({
+                                  detail:
+                                    "This trade day has multiple trades. Please delete individual records from trades displayed on this row",
+                                });
+                                return;
+                              }
+                              updateDeleteTradeModalOpen(true);
+                              updateSelectedTrade(dayValue.trades[0]);
+                            }}
+                          />
+                        </EditContainer>
+                      </InfoPopout>
+                    </EditDeleteContainer>
+                  </TradeDay>
+                </GlassTile>
+              );
+            })}
           </TradingDaysContainer>
         </GlassTile>
       </Container>

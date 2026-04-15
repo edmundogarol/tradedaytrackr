@@ -33,6 +33,10 @@ const useUpdatePayoutHandler = (): UpdatePayoutHandler => {
             account: useAccountId,
             amount: payout.pnl,
             payout_date: m(payout.date).format(),
+            journal_entry_id:
+              payout.journalEntry !== null && payout.journalEntry?.id !== 0
+                ? payout.journalEntry.id
+                : null,
           },
         });
 

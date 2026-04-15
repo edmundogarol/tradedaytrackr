@@ -100,15 +100,22 @@ class LoginViewSet(APIView):
         else:
             login(request, user)
 
+        user = request.user
+
         if user.is_demo:
             logger.info(
                 "Resetting demo user after login.",
                 extra={"user_id": user.id},
             )
-            reset_demo_user(user)
-            user.timezone = request.data.get("timezone", user.timezone)
 
-        user = request.user
+            timezone_input = request.data.get("timezone")
+
+            if timezone_input:
+                user.timezone = timezone_input
+                user.save(update_fields=["timezone"])
+
+            reset_demo_user(user)
+
         user.last_login = timezone.now()
         user.last_ip = ip_data["ip"] if ip_data["valid"] else None
         user.save()
