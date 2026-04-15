@@ -105,18 +105,7 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
   }, [addTradeModalOpen, selectedDay]);
 
   useEffect(() => {
-    if (!addNewTradePnL) {
-      updateSelectedTrade({
-        ...selectedTrade,
-        journalEntry: {
-          id: 0,
-        },
-      } as Trade);
-    }
-  }, [addNewTradePnL]);
-
-  useEffect(() => {
-    if (addNewTradePnL || payoutRecord) return;
+    if (addNewTradePnL) return;
     if (selectedDateJournalEntries.length === 0) return;
     if (selectedTrade.journalEntry?.id) return;
 
@@ -135,7 +124,7 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
       journalEntry: {
         id: first.id,
       },
-      date: merged.format("YYYY-MM-DDTHH:mm:ss"),
+      date: m(merged).format(),
     } as Trade);
   }, [selectedDateJournalEntries, addNewTradePnL]);
 
@@ -224,7 +213,7 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
                     journalEntry: {
                       id: selected.id,
                     },
-                    date: merged.toISOString(),
+                    date: m(merged).format(),
                   } as Trade);
                 }}
                 items={formattedJournalEntries}
@@ -245,9 +234,7 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
                   setAddNewTradePnL(!addNewTradePnL);
                   updateSelectedTrade({
                     ...selectedTrade,
-                    journalEntry: {
-                      id: 0,
-                    },
+                    journalEntry: null,
                   } as Trade);
                 }}
               />
@@ -286,7 +273,11 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
                     ? "Edit Trade PnL"
                     : "Add Trade PnL"
             }
-            value={decimalStringToInt(selectedTrade.pnl)}
+            value={
+              selectedTrade.isPayout
+                ? decimalStringToInt(Math.abs(selectedTrade.pnl || 0))
+                : decimalStringToInt(selectedTrade.pnl)
+            }
             placeholder={
               payoutRecord
                 ? "Enter Payout Amount"

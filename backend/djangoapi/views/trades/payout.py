@@ -41,11 +41,11 @@ class RecordPayoutView(APIView):
 
         payout = Payout.objects.create(
             account=account,
-            amount=amount,
+            amount=abs(amount),
             payout_date=payout_date,
             journal_entry=journal_entry,
             balance_before=account.account_balance,
-            balance_after=account.account_balance - amount,
+            balance_after=account.account_balance - abs(amount),
         )
 
         # ENSURE trading day exists
@@ -81,7 +81,7 @@ class UpdatePayoutView(APIView):
 
         with transaction.atomic():
             # store old values
-            old_amount = payout.amount
+            old_amount = abs(payout.amount)
             old_date = payout.payout_date
 
             # get new values (fallback to old)

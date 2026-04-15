@@ -27,7 +27,6 @@ const SelectWrapper: React.FunctionComponent<SelectWrapperProps> = ({
   selectedValue,
   disabled,
 }) => {
-  console.log({ selectedValue });
   return (
     <>
       <If condition={!!label}>

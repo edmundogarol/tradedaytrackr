@@ -94,7 +94,7 @@ export interface Trade {
     name: string;
     type: string;
   };
-  journalEntry: JournalEntry;
+  journalEntry: JournalEntry | null;
   isPayout?: boolean;
 }
 
