@@ -10,6 +10,7 @@ export const Container = styled.div`
   padding-bottom: 20px;
   justify-self: center;
   background-color: white;
+  z-index: 21;
 `;
 
 export const ListContainer = styled.div`

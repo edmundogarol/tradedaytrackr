@@ -13,5 +13,6 @@ export interface JournalEntry {
   totalPnl: number;
   accountCount: number;
   tags: Tag[];
+  tagObjects?: Tag[];
   accounts: number[];
 }

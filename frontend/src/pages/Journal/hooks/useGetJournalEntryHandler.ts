@@ -40,6 +40,7 @@ const useGetJournalEntryHandler = (): GetJournalEntryHandlerProps => {
           updateJournalEntry({
             ...journalEntry,
             ...keysToCamel(data),
+            tags: keysToCamel(data).tagObjects || [],
           });
         }
       },

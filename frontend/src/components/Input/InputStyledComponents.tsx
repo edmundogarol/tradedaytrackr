@@ -159,7 +159,7 @@ export const ListContainer = styled.div`
   gap: 3px;
   padding: 5px;
   border-radius: 3px;
-  z-index: 20;
+  z-index: 21;
   max-height: 200px;
   overflow-y: auto;
   font-size: 14px;

@@ -11,6 +11,8 @@ export interface JournalState {
   readonly journalEntries: JournalEntry[];
   readonly selectedDateTrades: Trade[];
   readonly selectedDateTradesErrors: { [key: string]: any };
+  readonly deleteJournalEntryModalOpen: boolean;
+  readonly deleteJournalEntryErrors: { [key: string]: any };
 }
 
 export const initialState: JournalState = {
@@ -34,6 +36,8 @@ export const initialState: JournalState = {
   detectedTrades: [],
   selectedDateTrades: [],
   selectedDateTradesErrors: {},
+  deleteJournalEntryModalOpen: false,
+  deleteJournalEntryErrors: {},
 };
 
 type UpdateJournalEntryAction = PayloadAction<JournalEntry>;
@@ -45,13 +49,20 @@ type UpdateSelectedDateTradesErrorsAction = PayloadAction<{
   [key: string]: any;
 }>;
 
+type UpdateDeleteJournalEntryModalOpenAction = PayloadAction<boolean>;
+type UpdateDeleteJournalEntryErrorsAction = PayloadAction<{
+  [key: string]: any;
+}>;
+
 export type JournalAction =
   | UpdateJournalEntryAction
   | UpdateJournalErrorsAction
   | UpdateDetectedTradesAction
   | UpdateJournalEntriesAction
   | UpdateSelectedDateTradesAction
-  | UpdateSelectedDateTradesErrorsAction;
+  | UpdateSelectedDateTradesErrorsAction
+  | UpdateDeleteJournalEntryModalOpenAction
+  | UpdateDeleteJournalEntryErrorsAction;
 
 export const journalSlice = createSlice({
   name: "journal",
@@ -81,6 +92,18 @@ export const journalSlice = createSlice({
     ) => {
       state.selectedDateTradesErrors = action.payload;
     },
+    updateDeleteJournalEntryModalOpen: (
+      state,
+      action: UpdateDeleteJournalEntryModalOpenAction,
+    ) => {
+      state.deleteJournalEntryModalOpen = action.payload;
+    },
+    updateDeleteJournalEntryErrors: (
+      state,
+      action: UpdateDeleteJournalEntryErrorsAction,
+    ) => {
+      state.deleteJournalEntryErrors = action.payload;
+    },
   },
 });
 
@@ -91,6 +114,8 @@ export const {
   updateJournalEntries,
   updateSelectedDateTrades,
   updateSelectedDateTradesErrors,
+  updateDeleteJournalEntryModalOpen,
+  updateDeleteJournalEntryErrors,
 } = journalSlice.actions;
 
 export const journalReducer = journalSlice.reducer;

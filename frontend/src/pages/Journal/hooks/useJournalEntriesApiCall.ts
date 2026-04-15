@@ -10,14 +10,13 @@ export interface JournalEntriesApiCallResponse {
 
 const useJournalEntriesApiCall =
   (): AxiosFetchWrapperResponse<JournalEntriesApiCallResponse> => {
-    const { journalEntries } = useJournalState();
+    const { deleteJournalEntryErrors } = useJournalState();
     const { fetch, data, loading, error } =
       useAxiosFetch<JournalEntriesApiCallResponse>("journal-entries/");
 
     useEffect(() => {
-      if (journalEntries.length > 0) return;
       fetch();
-    }, [fetch]);
+    }, [deleteJournalEntryErrors]);
 
     return { fetch, data, loading, error };
   };

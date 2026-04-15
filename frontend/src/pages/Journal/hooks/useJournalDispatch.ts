@@ -4,6 +4,8 @@ import { useDispatch } from "react-redux";
 import type { JournalEntry } from "../JournalInterfaces";
 import type { JournalAction } from "../JournalState";
 import {
+  updateDeleteJournalEntryErrors,
+  updateDeleteJournalEntryModalOpen,
   updateDetectedTrades,
   updateJournalEntries,
   updateJournalEntry,
@@ -19,6 +21,10 @@ interface JournalDispatch {
   updateJournalEntries(journalEntries: JournalEntry[]): void;
   updateSelectedDateTrades(selectedDateTrades: Trade[]): void;
   updateSelectedDateTradesErrors(selectedDateTradesErrors: {
+    [key: string]: any;
+  }): void;
+  updateDeleteJournalEntryModalOpen(deleteJournalEntryModalOpen: boolean): void;
+  updateDeleteJournalEntryErrors(deleteJournalEntryErrors: {
     [key: string]: any;
   }): void;
 }
@@ -45,6 +51,16 @@ export const useJournalDispatch = (): JournalDispatch => {
       [key: string]: any;
     }): void {
       dispatch(updateSelectedDateTradesErrors(selectedDateTradesErrors));
+    },
+    updateDeleteJournalEntryModalOpen(
+      deleteJournalEntryModalOpen: boolean,
+    ): void {
+      dispatch(updateDeleteJournalEntryModalOpen(deleteJournalEntryModalOpen));
+    },
+    updateDeleteJournalEntryErrors(deleteJournalEntryErrors: {
+      [key: string]: any;
+    }): void {
+      dispatch(updateDeleteJournalEntryErrors(deleteJournalEntryErrors));
     },
   };
 };

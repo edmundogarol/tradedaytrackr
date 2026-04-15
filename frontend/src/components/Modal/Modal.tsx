@@ -1,3 +1,7 @@
+import Button from "@components/Button/Button";
+import FormError from "@components/Error/FormError/FormError";
+import Gap from "@components/Gap/Gap";
+import { If } from "@components/If/If";
 import {
   CloseContainer,
   Content,
@@ -8,6 +12,8 @@ import {
 import modalStyles from "@components/Modal/ModalStyles";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { Modal } from "@mui/material";
+import { HorizontalSection, SectionText } from "@styles/globalStyledComponents";
+import { isNotEmptyString } from "@utils/utils";
 import React from "react";
 
 export interface ModalWrapperProps {
@@ -18,6 +24,20 @@ export interface ModalWrapperProps {
   onClose?: () => void;
   style?: React.CSSProperties;
   contentContainerStyle?: React.CSSProperties;
+  confirmText?: string | React.ReactNode;
+  saveButton?: {
+    text: string;
+    loading?: boolean;
+    onClick: () => void;
+    style?: React.CSSProperties;
+  };
+  cancelButton?: {
+    text: string;
+    loading?: boolean;
+    onClick: () => void;
+    style?: React.CSSProperties;
+  };
+  error?: string;
 }
 
 const ModalWrapper: React.FunctionComponent<ModalWrapperProps> = ({
@@ -28,6 +48,10 @@ const ModalWrapper: React.FunctionComponent<ModalWrapperProps> = ({
   onClose,
   style,
   contentContainerStyle,
+  confirmText,
+  saveButton,
+  cancelButton,
+  error,
 }) => {
   return (
     <Modal
@@ -56,7 +80,39 @@ const ModalWrapper: React.FunctionComponent<ModalWrapperProps> = ({
             />
           </CloseContainer>
         </Header>
-        <Content style={contentContainerStyle}>{children}</Content>
+        <Content style={contentContainerStyle}>
+          {children}
+          <If condition={!!confirmText}>
+            <Gap level={2} />
+            <If condition={!!error && isNotEmptyString(error)}>
+              <FormError error={error} />
+            </If>
+            <SectionText>{confirmText}</SectionText>
+          </If>
+          <Gap level={1} />
+          <HorizontalSection>
+            <If condition={!!saveButton}>
+              <Button
+                loading={saveButton?.loading}
+                disabled={saveButton?.loading}
+                text={saveButton?.text}
+                style={saveButton?.style}
+                onClick={() => saveButton?.onClick()}
+              />
+            </If>
+            <If condition={!!cancelButton}>
+              <Button
+                loading={cancelButton?.loading}
+                disabled={cancelButton?.loading}
+                text={cancelButton?.text}
+                onClick={() => {
+                  cancelButton?.onClick();
+                }}
+                style={cancelButton?.style}
+              />
+            </If>
+          </HorizontalSection>
+        </Content>
       </ModalContainer>
     </Modal>
   );

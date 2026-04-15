@@ -7,7 +7,10 @@ import InfoPopout from "@components/InfoPopout/InfoPopout";
 import CalendarPicker from "@components/Input/CalendarPicker/CalendarPicker";
 import Input from "@components/Input/Input";
 import Loading from "@components/Loading/Loading";
-import Modal from "@components/Modal/Modal";
+import {
+  default as Modal,
+  default as ModalWrapper,
+} from "@components/Modal/Modal";
 import Page from "@components/Page/Page";
 import type { Tag } from "@interfaces/CustomTypes";
 import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
@@ -15,6 +18,15 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
 import WallpaperIcon from "@mui/icons-material/Wallpaper";
 import Checkbox from "@mui/material/Checkbox";
+import {
+  DateContainer,
+  PnL,
+  PreviewDayValueContainer,
+  Time,
+  TradeDay,
+  TradePreview,
+  TradePreviewContainer,
+} from "@pages/FundedAccounts/FundedAccountDetail/FundedAccountDetailStyledComponents";
 import { color } from "@styles/colors";
 import { BUTTON_WIDTH } from "@styles/constants";
 import {
@@ -31,8 +43,11 @@ import {
   m,
   sanitizeTag,
 } from "@utils/utils";
+import moment from "moment";
 import React, { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
+import useCreateJournalEntryHandler from "../hooks/useCreateJournalEntryHandler";
+import useDeleteJournalEntryHandler from "../hooks/useDeleteJournalEntryHandler";
 import useGenerateDraftAIHandler from "../hooks/useGenerateDraftAIHandler";
 import useGenerateTagsAIHandler from "../hooks/useGenerateTagsAIHandler";
 import useGetJournalEntryHandler from "../hooks/useGetJournalEntryHandler";
@@ -41,6 +56,11 @@ import useJournalDispatch from "../hooks/useJournalDispatch";
 import useJournalState from "../hooks/useJournalState";
 import type { JournalEntry as JournalEntryType } from "../JournalInterfaces";
 import { initialState } from "../JournalState";
+import {
+  Description,
+  TileTradeCount,
+  TileTradeCountContainer,
+} from "../JournalStyledComponents";
 import { availableAccountTradesOnDateMock } from "../mocks/tradesOnDate";
 import {
   ButtonContainer,
@@ -88,14 +108,24 @@ const JournalEntry: React.FunctionComponent = () => {
     useGenerateTagsAIHandler();
   const { generateDraft, loading: generateDraftLoading } =
     useGenerateDraftAIHandler();
-  const { journalEntry, selectedDateTrades, journalErrors, journalEntries } =
-    useJournalState();
-  const { updateJournalEntry, updateDetectedTrades, updateJournalErrors } =
-    useJournalDispatch();
+  const {
+    journalEntry,
+    selectedDateTrades,
+    journalErrors,
+    journalEntries,
+    deleteJournalEntryErrors,
+    deleteJournalEntryModalOpen,
+  } = useJournalState();
+  const {
+    updateJournalEntry,
+    updateDetectedTrades,
+    updateJournalErrors,
+    updateDeleteJournalEntryModalOpen,
+    updateDeleteJournalEntryErrors,
+  } = useJournalDispatch();
   let [searchParams] = useSearchParams();
-  const [editing, setEditing] = useState(
-    searchParams.get("id") === "new" || false,
-  );
+  const journalEntryId = searchParams.get("id");
+  const [editing, setEditing] = useState(journalEntryId === "new" || false);
   const [editingDate, setEditingDate] = useState(false);
   const [editingAccounts, setEditingAccounts] = useState(false);
   const [currentTagInput, setCurrentTagInput] = useState("");
@@ -134,12 +164,22 @@ const JournalEntry: React.FunctionComponent = () => {
     }
   }, [editingAccounts]);
 
+  useEffect(() => {
+    if (editing && journalEntryId !== "new") {
+      setEditing(false);
+    }
+  }, [journalEntryId]);
+
   const detectedTradesPnL = useMemo(() => {
     return selectedDateTrades
       .filter((trade) => journalEntry.tradeIds.includes(trade.id))
       .reduce((total, trade) => total + Number(trade.pnl), 0);
   }, [selectedDateTrades, journalEntry.tradeIds]);
 
+  const { createJournalEntry, loading: creatingJournalEntry } =
+    useCreateJournalEntryHandler();
+  const { deleteJournalEntry, loading: deletingJournalEntry } =
+    useDeleteJournalEntryHandler();
   return (
     <Page topBarShowMenu={true}>
       <AlertPopout
@@ -148,6 +188,58 @@ const JournalEntry: React.FunctionComponent = () => {
         open={isNotEmptyString(journalErrors.detail)}
         message={journalErrors?.detail}
       />
+      <ModalWrapper
+        title="Delete Journal Entry"
+        open={deleteJournalEntryModalOpen}
+        setOpen={updateDeleteJournalEntryModalOpen}
+        saveButton={{
+          text: "Permanently Delete",
+          style: { backgroundColor: color("SystemRed") },
+          onClick: () => deleteJournalEntry(journalEntry.id),
+          loading: deletingJournalEntry,
+        }}
+        cancelButton={{
+          text: "Cancel",
+          onClick: () => updateDeleteJournalEntryModalOpen(false),
+          loading: false,
+        }}
+        confirmText={
+          "Are you sure you want to permanently delete this journal entry?"
+        }
+        error={deleteJournalEntryErrors?.error}
+        onClose={() => {
+          updateDeleteJournalEntryErrors({});
+        }}
+      >
+        <GlassTile
+          featureTile
+          minHeight={10}
+          minWidth={10}
+          padding={7}
+          noGlow={true}
+          overlay={
+            <TileTradeCountContainer>
+              <TileTradeCount className="trade-count">{`x${journalEntry.accountCount} acc`}</TileTradeCount>
+            </TileTradeCountContainer>
+          }
+        >
+          <TradeDay>
+            <PreviewDayValueContainer>
+              <TradePreviewContainer>
+                <TradePreview $src={journalEntry.image} />
+              </TradePreviewContainer>
+              <DateContainer>
+                {m(journalEntry.dateTime).format("MMM D, YYYY")}
+                <Time>{m(journalEntry.dateTime).format("h:mm A")}</Time>
+              </DateContainer>
+            </PreviewDayValueContainer>
+            <Description>{journalEntry.description}</Description>
+            <PnL $positive={journalEntry.totalPnl >= 0}>
+              {formatter.format(journalEntry.totalPnl)}
+            </PnL>
+          </TradeDay>
+        </GlassTile>
+      </ModalWrapper>
       <Modal
         open={editingAccounts}
         setOpen={setEditingAccounts}
@@ -406,11 +498,13 @@ const JournalEntry: React.FunctionComponent = () => {
                       <If condition={editing}>
                         <TradeSubtitleEditing
                           $disabled={saveDisabled}
-                          onClick={() =>
-                            saveDisabled ? null : setEditing(false)
-                          }
+                          onClick={() => createJournalEntry(journalEntry)}
                         >
-                          {"Save"}
+                          {creatingJournalEntry ? (
+                            <Loading size={10} />
+                          ) : (
+                            "Save"
+                          )}
                         </TradeSubtitleEditing>
                         <TradeSubtitleEditing
                           onClick={() => {
@@ -419,6 +513,24 @@ const JournalEntry: React.FunctionComponent = () => {
                           }}
                         >
                           {"Cancel"}
+                        </TradeSubtitleEditing>
+                        <TradeSubtitleEditing
+                          onClick={() => {
+                            updateJournalEntry({
+                              dateTime: moment().format(),
+                              risk: 250,
+                              contracts: 1,
+                              outcome: 300,
+                              instrument: "NQ",
+                              description: "Here's a description of the trade.",
+                              tags: [
+                                { name: "Momentum" },
+                                { name: "Long" },
+                              ] as Tag[],
+                            } as JournalEntryType);
+                          }}
+                        >
+                          {"MockFill"}
                         </TradeSubtitleEditing>
                         <Else>
                           <EditIcon
@@ -431,7 +543,9 @@ const JournalEntry: React.FunctionComponent = () => {
                     <ButtonContainer>
                       <DeleteOutlineIcon
                         style={styles.editIcon}
-                        onClick={() => alert("Delete Trade")}
+                        onClick={() => {
+                          updateDeleteJournalEntryModalOpen(true);
+                        }}
                       />
                     </ButtonContainer>
                   </EditDeleteButtons>
@@ -465,8 +579,16 @@ const JournalEntry: React.FunctionComponent = () => {
                                 risk: parseInt(e.target.value),
                               })
                             }
-                            defaultValue={journalEntry.risk}
+                            value={journalEntry.risk}
                             style={styles.input}
+                            suggestions={[
+                              {
+                                description: "250",
+                              },
+                              {
+                                description: "300",
+                              },
+                            ]}
                           />
                         </SummaryItemValue>
                         <Else>
@@ -494,7 +616,7 @@ const JournalEntry: React.FunctionComponent = () => {
                                 contracts: parseInt(e.target.value),
                               })
                             }
-                            defaultValue={journalEntry.contracts}
+                            value={journalEntry.contracts}
                             style={styles.input}
                           />
                         </SummaryItemValue>
@@ -518,7 +640,7 @@ const JournalEntry: React.FunctionComponent = () => {
                                 outcome: parseInt(e.target.value),
                               })
                             }
-                            defaultValue={journalEntry.outcome}
+                            value={journalEntry.outcome}
                             style={styles.input}
                           />
                         </SummaryItemValue>
@@ -688,7 +810,7 @@ const JournalEntry: React.FunctionComponent = () => {
                     <SummaryItemTitle>Total PnL</SummaryItemTitle>
                     <SummaryItemPnL
                       $isPositive={journalEntry.totalPnl >= 0}
-                    >{`${formatter.format(journalEntry.totalPnl)}`}</SummaryItemPnL>
+                    >{`${formatter.format(editing ? detectedTradesPnL : journalEntry.totalPnl)}`}</SummaryItemPnL>
                   </SummaryItem>
                 </SummarySection>
               </SummaryTitleInfoContainer>

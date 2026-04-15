@@ -24,8 +24,10 @@ import {
   TradePreview,
   TradePreviewContainer,
 } from "@pages/FundedAccounts/FundedAccountDetail/FundedAccountDetailStyledComponents";
-import { formatter, m } from "@utils/utils";
+import { formatter, isNotEmptyString, m } from "@utils/utils";
 
+import AlertPopout from "@components/Alert/AlertPopout";
+import useJournalDispatch from "./hooks/useJournalDispatch";
 import useJournalEntriesApiCall from "./hooks/useJournalEntriesApiCall";
 import useJournalEntriesHandler from "./hooks/useJournalEntriesHandler";
 import useJournalState from "./hooks/useJournalState";
@@ -40,7 +42,8 @@ import styles from "./JournalStyles";
 
 const Journal: React.FunctionComponent = () => {
   const navigation = useReactNavigation();
-  const { journalEntries } = useJournalState();
+  const { journalEntries, deleteJournalEntryErrors } = useJournalState();
+  const { updateDeleteJournalEntryErrors } = useJournalDispatch();
   const journalEntriesApiCall = useJournalEntriesApiCall();
   useJournalEntriesHandler(journalEntriesApiCall);
   const [sortByFilter, setSortByFilter] = React.useState("date");
@@ -73,6 +76,12 @@ const Journal: React.FunctionComponent = () => {
 
   return (
     <Page topBarShowMenu={true}>
+      <AlertPopout
+        setPopoutOpen={() => updateDeleteJournalEntryErrors({})}
+        hideDuration={4000}
+        open={isNotEmptyString(deleteJournalEntryErrors?.detail)}
+        message={deleteJournalEntryErrors?.detail}
+      />
       <Container>
         <SectionTitle>Journal</SectionTitle>
         <Gap level={1} />

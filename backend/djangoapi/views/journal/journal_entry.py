@@ -1,6 +1,7 @@
 from django.db.models import Count, DecimalField, Sum, Value
 from django.db.models.functions import Coalesce
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from backend.djangoapi.models.journal_entry import JournalEntry
@@ -39,3 +40,12 @@ class JournalEntryViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+
+        return Response(
+            {"detail": "Journal entry deleted successfully."},
+            status=200,
+        )
