@@ -26,6 +26,7 @@ import {
 import {
   decimalStringToInt,
   formatter,
+  getICTMacroLabel,
   isNotEmptyString,
   m,
   sanitizeTag,
@@ -135,9 +136,9 @@ const JournalEntry: React.FunctionComponent = () => {
 
   const detectedTradesPnL = useMemo(() => {
     return selectedDateTrades
-      .filter((trade) => journalEntry.trades.includes(trade.id))
+      .filter((trade) => journalEntry.tradeIds.includes(trade.id))
       .reduce((total, trade) => total + Number(trade.pnl), 0);
-  }, [selectedDateTrades, journalEntry.trades]);
+  }, [selectedDateTrades, journalEntry.tradeIds]);
 
   return (
     <Page topBarShowMenu={true}>
@@ -155,7 +156,7 @@ const JournalEntry: React.FunctionComponent = () => {
           setEditingAccounts(false);
           updateJournalEntry({
             ...journalEntry,
-            trades: journalEntry.trades,
+            tradeIds: journalEntry.tradeIds,
           });
         }}
       >
@@ -168,17 +169,17 @@ const JournalEntry: React.FunctionComponent = () => {
               <TradesDetectedTrade key={trade.id}>
                 <Checkbox
                   sx={{ color: "#a9b1c2" }}
-                  checked={journalEntry.trades.includes(trade.id)}
+                  checked={journalEntry.tradeIds.includes(trade.id)}
                   onChange={(e) => {
                     if (e.target.checked) {
                       updateJournalEntry({
                         ...journalEntry,
-                        trades: [...journalEntry.trades, trade.id],
+                        tradeIds: [...journalEntry.tradeIds, trade.id],
                       });
                     } else {
                       updateJournalEntry({
                         ...journalEntry,
-                        trades: journalEntry.trades.filter(
+                        tradeIds: journalEntry.tradeIds.filter(
                           (id) => id !== trade.id,
                         ),
                       });
@@ -255,10 +256,10 @@ const JournalEntry: React.FunctionComponent = () => {
                     <TradeSubtitleEditing
                       onClick={() => setEditingAccounts(true)}
                     >
-                      {`${journalEntry.trades.length} Accounts`}
+                      {`${journalEntry.tradeIds.length} Accounts`}
                     </TradeSubtitleEditing>
                     <Else>
-                      <TradeSubtitle>{`${journalEntry.trades.length} Accounts`}</TradeSubtitle>
+                      <TradeSubtitle>{`${journalEntry.tradeIds.length} Accounts`}</TradeSubtitle>
                     </Else>
                   </If>
                   <TagInputContainer>
@@ -671,15 +672,17 @@ const JournalEntry: React.FunctionComponent = () => {
                   <SummaryItem>
                     <SummaryItemTitle>Total Contracts</SummaryItemTitle>
                     <SummaryItemValue>
-                      {`x${journalEntry.trades.length === 0 ? journalEntry.contracts : journalEntry.contracts * journalEntry.trades.length}`}
+                      {`x${journalEntry.tradeIds.length === 0 ? journalEntry.contracts : journalEntry.contracts * journalEntry.tradeIds.length}`}
                       <SummaryItemValueSubtext>
-                        {`[${journalEntry.trades.length} Accounts]`}
+                        {`[${journalEntry.tradeIds.length} Accounts]`}
                       </SummaryItemValueSubtext>
                     </SummaryItemValue>
                   </SummaryItem>
                   <SummaryItem>
                     <SummaryItemTitle>Session</SummaryItemTitle>
-                    <SummaryItemValue>{"NYAM"}</SummaryItemValue>
+                    <SummaryItemValue>
+                      {getICTMacroLabel(journalEntry.dateTime)}
+                    </SummaryItemValue>
                   </SummaryItem>
                   <SummaryItem>
                     <SummaryItemTitle>Total PnL</SummaryItemTitle>

@@ -23,7 +23,7 @@ export const initialState: JournalState = {
     instrument: "",
     description: "",
     image: "",
-    trades: [],
+    tradeIds: [],
     totalPnl: 0,
     accountCount: 0,
     tags: [],

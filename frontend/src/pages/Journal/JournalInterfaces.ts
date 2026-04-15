@@ -9,7 +9,7 @@ export interface JournalEntry {
   instrument: string;
   description: string;
   image: string;
-  trades: number[];
+  tradeIds: number[];
   totalPnl: number;
   accountCount: number;
   tags: Tag[];

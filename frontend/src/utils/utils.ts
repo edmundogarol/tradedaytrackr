@@ -1,6 +1,7 @@
 import { css } from "styled-components";
 
 import moment from "moment-timezone";
+import { ICT_MACROS } from "./constants";
 
 let CURRENT_TZ = "UTC"; // default fallback
 
@@ -177,4 +178,30 @@ export const decimalStringToInt = (
   if (isNaN(num)) return 0;
 
   return Math.round(num);
+};
+
+export const getICTMacroLabel = (dateTime: string): string | null => {
+  if (!dateTime) return null;
+
+  // convert UTC → New York time
+  const nyTime = moment.utc(dateTime).tz("America/New_York");
+
+  const hour = nyTime.hour();
+  const minute = nyTime.minute();
+
+  for (const macro of ICT_MACROS) {
+    const { open, close } = macro;
+
+    const afterOpen =
+      hour > open.hour || (hour === open.hour && minute >= open.minute);
+
+    const beforeClose =
+      hour < close.hour || (hour === close.hour && minute <= close.minute);
+
+    if (afterOpen && beforeClose) {
+      return macro.label;
+    }
+  }
+
+  return null; // no macro match
 };

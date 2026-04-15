@@ -51,3 +51,54 @@ export const TIMEZONE_OPTIONS = [
   { label: "GMT+12 — Auckland", value: "Pacific/Auckland" },
   { label: "GMT+13 — Fiji", value: "Pacific/Fiji" },
 ];
+
+export const ICT_MACROS = [
+  {
+    key: "london",
+    label: "London Open",
+    open: { hour: 2, minute: 33 },
+    close: { hour: 3, minute: 0 },
+  },
+  {
+    key: "london2",
+    label: "London Continuation",
+    open: { hour: 4, minute: 3 },
+    close: { hour: 4, minute: 30 },
+  },
+  {
+    key: "nyAm",
+    label: "NY AM 1",
+    open: { hour: 8, minute: 50 },
+    close: { hour: 9, minute: 10 },
+  },
+  {
+    key: "nyAm2",
+    label: "NY AM 2",
+    open: { hour: 9, minute: 50 },
+    close: { hour: 10, minute: 10 },
+  },
+  {
+    key: "nyAm3",
+    label: "NY AM 3",
+    open: { hour: 10, minute: 50 },
+    close: { hour: 11, minute: 10 },
+  },
+  {
+    key: "nyLunch",
+    label: "NY Lunch",
+    open: { hour: 11, minute: 50 },
+    close: { hour: 12, minute: 10 },
+  },
+  {
+    key: "nyPm",
+    label: "NY PM",
+    open: { hour: 13, minute: 10 },
+    close: { hour: 13, minute: 40 },
+  },
+  {
+    key: "nyLast",
+    label: "NY Power Hour",
+    open: { hour: 15, minute: 15 },
+    close: { hour: 15, minute: 45 },
+  },
+];

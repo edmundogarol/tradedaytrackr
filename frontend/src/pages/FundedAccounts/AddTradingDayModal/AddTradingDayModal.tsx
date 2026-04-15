@@ -66,7 +66,7 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
 
   const formattedJournalEntries = (selectedDateJournalEntries || []).map(
     (entry) => ({
-      name: `${m(entry.dateTime).format("MMMM Do YYYY h:mm A")} - ${entry.trades.length} Account(s)`,
+      name: `${m(entry.dateTime).format("MMMM Do YYYY h:mm A")} - ${entry.tradeIds.length} Account(s)`,
       value: entry.id,
     }),
   );
