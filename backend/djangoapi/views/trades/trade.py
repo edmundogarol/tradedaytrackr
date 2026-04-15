@@ -1,10 +1,22 @@
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
+from backend.djangoapi.models.payout import Payout
 from backend.djangoapi.models.trade import Trade
 from backend.djangoapi.serializers.trade import TradeSerializer
 from backend.djangoapi.services.trades.trade_day import recompute_all_trading_days
+
+
+def serialize_payout(payout):
+    return {
+        "id": f"payout-{payout.id}",  # avoid ID collision
+        "type": "payout",
+        "date_time": payout.payout_date,
+        "pnl": -payout.amount,
+        "is_payout": True,
+    }
 
 
 class TradeViewSet(ModelViewSet):
@@ -36,3 +48,31 @@ class TradeViewSet(ModelViewSet):
             trading_day.delete()
 
         recompute_all_trading_days(account)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            trade_data = self.get_serializer(page, many=True).data
+        else:
+            trade_data = self.get_serializer(queryset, many=True).data
+
+        # get payouts
+        payouts = Payout.objects.filter(account__user=request.user).order_by(
+            "-payout_date"
+        )
+
+        payout_data = [serialize_payout(p) for p in payouts]
+
+        # merge trades and payouts
+        combined = trade_data + payout_data
+
+        # sort (DESC to match your queryset)
+        combined.sort(key=lambda x: x["date_time"], reverse=True)
+
+        if page is not None:
+            return self.get_paginated_response(combined)
+
+        return Response(combined)

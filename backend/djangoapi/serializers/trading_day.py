@@ -2,6 +2,7 @@ import pytz
 from django.utils import timezone
 from rest_framework import serializers
 
+from backend.djangoapi.models.payout import Payout
 from backend.djangoapi.models.trading_account import TradingAccount
 from backend.djangoapi.models.trading_day import TradingDay
 from backend.djangoapi.serializers.trade import TradeSerializer
@@ -16,7 +17,7 @@ class TradingDaySerializer(serializers.ModelSerializer):
         write_only=True,
     )
     pnl = serializers.SerializerMethodField()
-    trades = TradeSerializer(many=True, read_only=True)
+    trades = serializers.SerializerMethodField()
     created_at = UserTimezoneDateTimeField(read_only=True)
 
     class Meta:
@@ -39,6 +40,32 @@ class TradingDaySerializer(serializers.ModelSerializer):
             "id": obj.account.id,
             "name": obj.account.account_name,
         }
+
+    def get_trades(self, obj):
+        trades = obj.trades.all()
+        trade_data = TradeSerializer(trades, many=True).data
+
+        # inject payouts for this day
+        payouts = Payout.objects.filter(
+            account=obj.account,
+            payout_date__date=obj.date,  # match same day
+        )
+
+        date_field = UserTimezoneDateTimeField()
+        payout_data = [
+            {
+                "id": f"payout-{p.id}",
+                "date": date_field.to_representation(p.payout_date),
+                "pnl": -p.amount,
+                "is_payout": True,
+            }
+            for p in payouts
+        ]
+
+        combined = trade_data + payout_data
+        combined.sort(key=lambda x: x["date"])
+
+        return combined
 
     def get_pnl(self, obj):
         return getattr(obj, "pnl", 0) or 0

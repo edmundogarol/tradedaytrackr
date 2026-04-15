@@ -24,6 +24,7 @@ class TradeSerializer(serializers.ModelSerializer):
         required=False,
         allow_null=True,
     )
+    is_payout = serializers.SerializerMethodField()
 
     class Meta:
         model = Trade
@@ -35,6 +36,7 @@ class TradeSerializer(serializers.ModelSerializer):
             "pnl",
             "journal_entry",
             "journal_entry_id",
+            "is_payout",
         ]
 
     def get_account(self, obj):
@@ -43,6 +45,9 @@ class TradeSerializer(serializers.ModelSerializer):
             "name": obj.account.account_name,
             "type": obj.account.template.name,
         }
+
+    def get_is_payout(self, obj):
+        return False
 
     def validate_pnl(self, value):
         if value is None:

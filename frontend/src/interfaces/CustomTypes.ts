@@ -118,3 +118,13 @@ export interface Rule {
   rule_type: string;
   description: string;
 }
+
+export interface Payout {
+  id: number;
+  account: number;
+  amount: number;
+  payout_date: string;
+  balance_before: number;
+  balance_after: number;
+  created_at: string;
+}

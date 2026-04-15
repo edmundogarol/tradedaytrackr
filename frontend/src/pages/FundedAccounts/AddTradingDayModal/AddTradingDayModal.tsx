@@ -7,7 +7,7 @@ import Input from "@components/Input/Input";
 import { LabelWrapper as Label } from "@components/Label/LabelStyledComponents";
 import Modal from "@components/Modal/Modal";
 import SelectWrapper from "@components/Select/SelectWrapper";
-import type { Trade } from "@interfaces/CustomTypes";
+import type { Payout, Trade } from "@interfaces/CustomTypes";
 import Collapse from "@mui/material/Collapse";
 import { color } from "@styles/colors";
 import { HorizontalSection } from "@styles/globalStyledComponents";
@@ -26,6 +26,7 @@ import {
 import styles from "./AddTradingDayModalStyles";
 import useAddTradeHandler from "./hooks/useAddTradeHandler";
 import useGetJournalEntryByDateHandler from "./hooks/useGetJournalEntryByDateHandler";
+import useRecordPayoutHandler from "./hooks/useRecordPayoutHandler";
 import useUpdateTradeHandler from "./hooks/useUpdateTradeHandler";
 
 interface AddTradingDayModalProps {
@@ -71,6 +72,7 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
 
   const { addTrade, loading: addingTrade } = useAddTradeHandler();
   const { updateTrade, loading: updatingTrade } = useUpdateTradeHandler();
+  const { recordPayout, loading: recordingPayout } = useRecordPayoutHandler();
 
   useEffect(() => {
     if (editingExistingTrade) {
@@ -292,7 +294,7 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
               }}
               disabledBlock={!dirtyTrade}
               disabled={!dirtyTrade}
-              loading={addingTrade || updatingTrade}
+              loading={addingTrade || updatingTrade || recordingPayout}
               text={
                 payoutRecord
                   ? "Record Payout"
@@ -304,6 +306,12 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
                 if (editingExistingTrade) {
                   updateTrade(selectedTrade);
                 } else {
+                  if (payoutRecord) {
+                    recordPayout({
+                      amount: selectedTrade.pnl,
+                    } as Payout);
+                    return;
+                  }
                   addTrade(selectedTrade);
                 }
               }}

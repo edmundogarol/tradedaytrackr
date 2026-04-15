@@ -26,6 +26,7 @@ from backend.djangoapi.views.journal.journal_entry_by_date import (
     JournalEntriesByDateView,
 )
 from backend.djangoapi.views.journal.tag import TagViewSet
+from backend.djangoapi.views.trades.payout import RecordPayoutView
 from backend.djangoapi.views.trades.trade import TradeViewSet
 from backend.djangoapi.views.trades.trade_by_date import TradesByDateView
 from backend.djangoapi.views.tradingAccount.rule import RuleViewSet
@@ -74,6 +75,11 @@ router.register(r"trades", TradeViewSet, basename="trades")
 urlpatterns = [
     path("docs/", schema_view),
     path("health/", health_check),
+    path(
+        "api/payouts/",
+        RecordPayoutView.as_view(),
+        name="payouts",
+    ),
     path(
         "api/journal-entries/by-date/",
         JournalEntriesByDateView.as_view(),

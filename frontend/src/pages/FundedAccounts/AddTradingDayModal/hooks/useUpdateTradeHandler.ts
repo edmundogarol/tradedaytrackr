@@ -16,7 +16,7 @@ interface UpdateTradeHandler {
 
 const useUpdateTradeHandler = (): UpdateTradeHandler => {
   const { fetch, loading } = useUpdateTradeApiCall();
-  const { currentTradingAccount } = useFundedAccountsState();
+  const { currentTradingAccount, tradingAccounts } = useFundedAccountsState();
   const { updateSelectedTrade, updateAddTradeErrors, updateAddTradeModalOpen } =
     useFundedAccountsDispatch();
   const { getTradingAccount } = useGetTradingAccountDetailHandler();
@@ -40,8 +40,14 @@ const useUpdateTradeHandler = (): UpdateTradeHandler => {
         });
 
         if (!!data) {
+          // Only update trading accounts list if on the funded accounts page
+          // (i.e. tradingAccounts is not empty), otherwise just update the
+          // current trading account details.
+          if (tradingAccounts.length !== 0) {
+            getTradingAccounts();
+          }
+
           getTradingAccount(useAccountId.toString());
-          getTradingAccounts();
           updateSelectedTrade(initialState.selectedTrade);
           updateAddTradeModalOpen(false);
           updateAddTradeErrors({
@@ -80,7 +86,7 @@ const useUpdateTradeHandler = (): UpdateTradeHandler => {
           );
         }
       },
-      [loading, currentTradingAccount.id],
+      [loading, currentTradingAccount.id, tradingAccounts],
     ),
     loading,
   };
