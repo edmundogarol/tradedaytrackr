@@ -106,6 +106,7 @@ const FundedAccountDetail: React.FunctionComponent<
   } = useFundedAccountsDispatch();
   let [searchParams] = useSearchParams();
   const accountId = searchParams.get("id");
+  const [editingPayout, setEditingPayout] = useState(false);
   const [originalTradingAccountDetails, setOriginalTradingAccountDetails] =
     useState<TradingAccount | null>(null);
   const [payoutRecord, setPayoutRecord] = useState<boolean>(false);
@@ -576,6 +577,9 @@ const FundedAccountDetail: React.FunctionComponent<
                         <DaysItem
                           key={idx}
                           onClick={() => {
+                            if (trade.isPayout) {
+                              setEditingPayout(true);
+                            }
                             updateAddTradeModalOpen(true);
                             setPayoutRecord(false);
                             updateSelectedTrade(trade);

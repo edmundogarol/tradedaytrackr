@@ -29,6 +29,7 @@ import {
   DaysItemSubtitle,
   DaysItemValue,
 } from "../FundedAccountsStyledComponents";
+import useDeletePayoutHandler from "../hooks/useDeletePayoutHandler";
 import useDeleteTradeHandler from "../hooks/useDeleteTradeHandler";
 import useFundedAccountsDispatch from "../hooks/useFundedAccountsDispatch";
 import useFundedAccountsState from "../hooks/useFundedAccountsState";
@@ -40,10 +41,11 @@ const DeleteTradeModal: React.FunctionComponent = () => {
     useFundedAccountsDispatch();
   const navigation = useReactNavigation();
   const { deleteTrade, loading: deletingTrade } = useDeleteTradeHandler();
+  const { deletePayout, loading: deletingPayout } = useDeletePayoutHandler();
 
   return (
     <ModalWrapper
-      title="Delete Trade"
+      title={selectedTrade.isPayout ? "Delete Payout" : "Delete Trade"}
       open={deleteTradeModalOpen}
       setOpen={updateDeleteTradeModalOpen}
     >
@@ -120,7 +122,7 @@ const DeleteTradeModal: React.FunctionComponent = () => {
         {selectedTrade?.journalEntry?.accountCount > 0
           ? "This trade is linked to a journal entry - and could affect the entry's final details. "
           : ""}
-        {"Are you sure you want to delete this trade?"}
+        {`Are you sure you want to delete this ${selectedTrade.isPayout ? "payout" : "trade"}?`}
       </SectionText>
       <Gap level={1} />
       <If condition={!!deleteTradeErrors?.error}>
@@ -129,10 +131,14 @@ const DeleteTradeModal: React.FunctionComponent = () => {
       </If>
       <HorizontalSection>
         <Button
-          loading={deletingTrade}
+          loading={deletingTrade || deletingPayout}
           text={"Permanently Delete"}
           style={{ backgroundColor: color("SystemRed") }}
           onClick={() => {
+            if (selectedTrade.isPayout) {
+              deletePayout(selectedTrade.id.toString());
+              return;
+            }
             deleteTrade(selectedTrade.id.toString());
           }}
         />

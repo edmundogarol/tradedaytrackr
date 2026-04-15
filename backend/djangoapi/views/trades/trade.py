@@ -1,3 +1,4 @@
+from django.utils.timezone import localtime
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -44,7 +45,18 @@ class TradeViewSet(ModelViewSet):
 
         instance.delete()
 
-        if not trading_day.trades.exists():
+        # check if payouts exist for this trading day
+        has_payout = False
+
+        if trading_day:
+            payouts = Payout.objects.filter(account=account)
+
+            has_payout = any(
+                localtime(p.payout_date).date() == trading_day.date for p in payouts
+            )
+
+        # only delete if truly empty
+        if trading_day and not trading_day.trades.exists() and not has_payout:
             trading_day.delete()
 
         recompute_all_trading_days(account)

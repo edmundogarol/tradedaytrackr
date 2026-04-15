@@ -1,6 +1,6 @@
 import GlassTile from "@components/GlassTile/GlassTile";
 import { decimalStringToInt, formatter } from "@utils/utils";
-import React from "react";
+import React, { useState } from "react";
 
 import AlertPopout from "@components/Alert/AlertPopout";
 import { Else, If } from "@components/If/If";
@@ -61,7 +61,8 @@ const FundedAccountsListItem: React.FunctionComponent<
     postPayoutBuffer,
   } = account;
   const navigation = useReactNavigation();
-  const [alertNoRecord, setAlertNoRecord] = React.useState(false);
+  const [alertNoRecord, setAlertNoRecord] = useState(false);
+
   const { updateCurrentTradingAccount } = useFundedAccountsDispatch();
   return (
     <GlassTile positive featureTile minHeight={70} noGlow noShine>

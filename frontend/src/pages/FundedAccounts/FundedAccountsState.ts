@@ -74,6 +74,7 @@ export const initialState: FundedAccountsState = {
     journalEntry: {
       id: 0,
     } as JournalEntry,
+    isPayout: false,
   },
   createTradingAccountModalOpen: false,
   createTradingAccountErrors: {},

@@ -62,8 +62,14 @@ def recompute_all_trading_days(account):
     for td in trading_days:
         fields_to_update = ["day_number", "is_valid_day"]
 
+        crossed_payout = False
+
+        first_trade = None
+
         if td.trades.exists():
             first_trade = td.trades.order_by("date_time").first()
+
+            # timezone fix logic...
             local_dt = first_trade.date_time.astimezone(user_tz)
             correct_date = local_dt.date()
 
@@ -71,14 +77,7 @@ def recompute_all_trading_days(account):
                 td.date = correct_date
                 fields_to_update.append("date")
 
-        # Check if we crossed payout trade
-        first_trade = None
-        if td.trades.exists():
-            first_trade = td.trades.order_by("date_time").first()
-
-            # advance through ALL past payouts
-            crossed_payout = False
-
+            # payout crossing logic
             while current_payout and first_trade.date_time > current_payout.payout_date:
                 crossed_payout = True
                 payout_index += 1
@@ -86,8 +85,8 @@ def recompute_all_trading_days(account):
                     payouts[payout_index] if payout_index < len(payouts) else None
                 )
 
-    if crossed_payout:
-        current_day_number = 1
+        if crossed_payout:
+            current_day_number = 1
 
         pnl = td.pnl or 0
 

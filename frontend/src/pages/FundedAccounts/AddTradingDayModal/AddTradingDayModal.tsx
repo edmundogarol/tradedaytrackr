@@ -7,7 +7,7 @@ import Input from "@components/Input/Input";
 import { LabelWrapper as Label } from "@components/Label/LabelStyledComponents";
 import Modal from "@components/Modal/Modal";
 import SelectWrapper from "@components/Select/SelectWrapper";
-import type { Payout, Trade } from "@interfaces/CustomTypes";
+import type { Trade } from "@interfaces/CustomTypes";
 import Collapse from "@mui/material/Collapse";
 import { color } from "@styles/colors";
 import { HorizontalSection } from "@styles/globalStyledComponents";
@@ -27,6 +27,7 @@ import styles from "./AddTradingDayModalStyles";
 import useAddTradeHandler from "./hooks/useAddTradeHandler";
 import useGetJournalEntryByDateHandler from "./hooks/useGetJournalEntryByDateHandler";
 import useRecordPayoutHandler from "./hooks/useRecordPayoutHandler";
+import useUpdatePayoutHandler from "./hooks/useUpdatePayoutHandler";
 import useUpdateTradeHandler from "./hooks/useUpdateTradeHandler";
 
 interface AddTradingDayModalProps {
@@ -73,6 +74,7 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
   const { addTrade, loading: addingTrade } = useAddTradeHandler();
   const { updateTrade, loading: updatingTrade } = useUpdateTradeHandler();
   const { recordPayout, loading: recordingPayout } = useRecordPayoutHandler();
+  const { updatePayout, loading: updatingPayout } = useUpdatePayoutHandler();
 
   useEffect(() => {
     if (editingExistingTrade) {
@@ -147,7 +149,9 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
         payoutRecord
           ? "Record Payout"
           : editingExistingTrade
-            ? "Edit Trade"
+            ? selectedTrade.isPayout
+              ? "Edit Payout"
+              : "Edit Trade"
             : "Add Trade"
       }
       open={addTradeModalOpen}
@@ -268,10 +272,24 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
             positiveOnly={payoutRecord}
             error={addTradeErrors?.pnl}
             type="number"
-            label={payoutRecord ? "Payout Amount" : "Add Trade PnL"}
+            label={
+              payoutRecord
+                ? "Payout Amount"
+                : selectedTrade.isPayout
+                  ? "Payout Amount"
+                  : editingExistingTrade
+                    ? "Edit Trade PnL"
+                    : "Add Trade PnL"
+            }
             value={decimalStringToInt(selectedTrade.pnl)}
             placeholder={
-              payoutRecord ? "Enter Payout Amount" : "Enter Trade PnL"
+              payoutRecord
+                ? "Enter Payout Amount"
+                : selectedTrade.isPayout
+                  ? "Enter Payout Amount"
+                  : editingExistingTrade
+                    ? "Update Trade PnL"
+                    : "Enter Trade PnL"
             }
             onChange={(e) =>
               updateSelectedTrade({
@@ -294,7 +312,12 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
               }}
               disabledBlock={!dirtyTrade}
               disabled={!dirtyTrade}
-              loading={addingTrade || updatingTrade || recordingPayout}
+              loading={
+                addingTrade ||
+                updatingTrade ||
+                recordingPayout ||
+                updatingPayout
+              }
               text={
                 payoutRecord
                   ? "Record Payout"
@@ -304,12 +327,14 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
               }
               onClick={(): void => {
                 if (editingExistingTrade) {
+                  if (selectedTrade.isPayout) {
+                    updatePayout(selectedTrade);
+                    return;
+                  }
                   updateTrade(selectedTrade);
                 } else {
                   if (payoutRecord) {
-                    recordPayout({
-                      amount: selectedTrade.pnl,
-                    } as Payout);
+                    recordPayout(selectedTrade);
                     return;
                   }
                   addTrade(selectedTrade);
@@ -319,7 +344,7 @@ const AddTradingDayModal: React.FunctionComponent<AddTradingDayModalProps> = ({
 
             <If condition={editingExistingTrade && !payoutRecord}>
               <Button
-                text={"Delete Trade"}
+                text={selectedTrade.isPayout ? "Delete Payout" : "Delete Trade"}
                 style={{ backgroundColor: color("SystemRed") }}
                 onClick={() => {
                   updateDeleteTradeModalOpen(true);

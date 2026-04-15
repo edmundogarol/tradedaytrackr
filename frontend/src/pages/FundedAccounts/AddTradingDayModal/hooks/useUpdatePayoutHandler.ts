@@ -4,16 +4,17 @@ import useFundedAccountsDispatch from "@pages/FundedAccounts/hooks/useFundedAcco
 import useFundedAccountsState from "@pages/FundedAccounts/hooks/useFundedAccountsState";
 import useGetTradingAccountDetailHandler from "@pages/FundedAccounts/hooks/useGetTradingAccountDetailHandler";
 import useGetTradingAccountsHandler from "@pages/FundedAccounts/hooks/useGetTradingAccountsHandler";
+import environmentConfig from "@utils/environmentConfig";
 import { useCallback } from "react";
-import useRecordPayoutApiCall from "./useRecordPayoutApiCall";
+import useUpdatePayoutApiCall from "./useUpdatePayoutApiCall";
 
-interface RecordPayoutHandler {
-  recordPayout: (payout: Trade) => Promise<void>;
+interface UpdatePayoutHandler {
+  updatePayout: (payout: Trade) => Promise<void>;
   loading: boolean;
 }
 
-const useRecordPayoutHandler = (): RecordPayoutHandler => {
-  const { fetch, loading } = useRecordPayoutApiCall();
+const useUpdatePayoutHandler = (): UpdatePayoutHandler => {
+  const { fetch, loading } = useUpdatePayoutApiCall();
   const { currentTradingAccount, tradingAccounts } = useFundedAccountsState();
   const { updateSelectedTrade, updateAddTradeErrors, updateAddTradeModalOpen } =
     useFundedAccountsDispatch();
@@ -21,11 +22,12 @@ const useRecordPayoutHandler = (): RecordPayoutHandler => {
   const { getTradingAccounts } = useGetTradingAccountsHandler();
 
   return {
-    recordPayout: useCallback(
+    updatePayout: useCallback(
       async (payout: Trade) => {
         const useAccountId = payout.account.id || currentTradingAccount.id;
 
         const { error, data } = await fetch({
+          url: `${environmentConfig.HOST}/api/payouts/${payout.id.toString().replace("payout-", "")}/`,
           data: {
             account_id: useAccountId,
             amount: payout.pnl,
@@ -43,14 +45,14 @@ const useRecordPayoutHandler = (): RecordPayoutHandler => {
           updateSelectedTrade(initialState.selectedTrade);
           updateAddTradeModalOpen(false);
           updateAddTradeErrors({
-            detail: "Payout record added successfully!",
+            detail: "Payout record updated successfully!",
           });
         } else if (error) {
           console.warn(error);
           updateAddTradeErrors(
             error || {
               error:
-                "An error occurred while recording the payout. Please try again.",
+                "An error occurred while updating the payout. Please try again.",
             },
           );
         }
@@ -61,4 +63,4 @@ const useRecordPayoutHandler = (): RecordPayoutHandler => {
   };
 };
 
-export default useRecordPayoutHandler;
+export default useUpdatePayoutHandler;

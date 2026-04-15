@@ -95,6 +95,7 @@ export interface Trade {
     type: string;
   };
   journalEntry: JournalEntry;
+  isPayout?: boolean;
 }
 
 export interface TradingDay {
