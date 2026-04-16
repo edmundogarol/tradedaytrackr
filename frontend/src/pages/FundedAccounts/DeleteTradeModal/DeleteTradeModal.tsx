@@ -61,7 +61,7 @@ const DeleteTradeModal: React.FunctionComponent = () => {
             <TradePreviewContainer>
               <If condition={!!selectedTrade.journalEntry}>
                 <TradePreview
-                  $src={selectedTrade.journalEntry?.image}
+                  $src={selectedTrade?.journalEntry?.imageUrl || ""}
                   onClick={() =>
                     navigation.navigate(PageEnum.JournalEntry, {
                       id: selectedTrade.journalEntry?.id.toString() || "",
@@ -69,7 +69,7 @@ const DeleteTradeModal: React.FunctionComponent = () => {
                   }
                 />
                 <TradeJournalPnL
-                  $positive={selectedTrade.journalEntry?.totalPnl > 0}
+                  $positive={(selectedTrade?.journalEntry?.totalPnl || 1) > 0}
                 >
                   ${selectedTrade.journalEntry?.totalPnl || 0}
                 </TradeJournalPnL>

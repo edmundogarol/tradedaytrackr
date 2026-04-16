@@ -1,5 +1,6 @@
 import AlertPopout from "@components/Alert/AlertPopout";
 import Button from "@components/Button/Button";
+import FormError from "@components/Error/FormError/FormError";
 import Gap from "@components/Gap/Gap";
 import GlassTile from "@components/GlassTile/GlassTile";
 import { Else, If } from "@components/If/If";
@@ -55,6 +56,7 @@ import useGetJournalEntryHandler from "../hooks/useGetJournalEntryHandler";
 import useGetTradesByDateHandler from "../hooks/useGetTradesByDateHandler";
 import useJournalDispatch from "../hooks/useJournalDispatch";
 import useJournalState from "../hooks/useJournalState";
+import useUpdateJournalEntryHandler from "../hooks/useUpdateJournalEntryHandler";
 import type { JournalEntry as JournalEntryType } from "../JournalInterfaces";
 import { initialState } from "../JournalState";
 import {
@@ -116,6 +118,7 @@ const JournalEntry: React.FunctionComponent = () => {
     journalEntries,
     deleteJournalEntryErrors,
     deleteJournalEntryModalOpen,
+    editingJournalEntry: editing,
   } = useJournalState();
   const {
     updateJournalEntry,
@@ -123,10 +126,10 @@ const JournalEntry: React.FunctionComponent = () => {
     updateJournalErrors,
     updateDeleteJournalEntryModalOpen,
     updateDeleteJournalEntryErrors,
+    updateEditingJournalEntry,
   } = useJournalDispatch();
   let [searchParams] = useSearchParams();
   const journalEntryId = searchParams.get("id");
-  const [editing, setEditing] = useState(journalEntryId === "new" || false);
   const [editingDate, setEditingDate] = useState(false);
   const [editingAccounts, setEditingAccounts] = useState(false);
   const [openJournalEntryImageModal, setOpenJournalEntryImageModal] =
@@ -141,6 +144,7 @@ const JournalEntry: React.FunctionComponent = () => {
     journalEntry.instrument === "";
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [journalEntryImage, setJournalEntryImage] = useState<File | null>(null);
+
   useEffect(() => {
     if (journalEntry.id === 0 && searchParams.get("id") !== "new") {
       getJournalEntry(parseInt(searchParams.get("id") || "0"));
@@ -171,9 +175,15 @@ const JournalEntry: React.FunctionComponent = () => {
 
   useEffect(() => {
     if (editing && journalEntryId !== "new") {
-      setEditing(false);
+      updateEditingJournalEntry(false);
     }
   }, [journalEntryId]);
+
+  useEffect(() => {
+    if (!editing) {
+      setJournalEntryImage(null);
+    }
+  }, [journalEntry.imageUrl]);
 
   const detectedTradesPnL = useMemo(() => {
     return selectedDateTrades
@@ -185,16 +195,20 @@ const JournalEntry: React.FunctionComponent = () => {
     useCreateJournalEntryHandler();
   const { deleteJournalEntry, loading: deletingJournalEntry } =
     useDeleteJournalEntryHandler();
+  const {
+    updateJournalEntry: updateJournalEntryApiCall,
+    loading: updatingJournalEntry,
+  } = useUpdateJournalEntryHandler();
 
   const imageSrc = useMemo(() => {
     if (journalEntryImage instanceof File) {
       return URL.createObjectURL(journalEntryImage);
     }
-    if (journalEntry.image) {
-      return journalEntry.image;
+    if (journalEntry.imageUrl) {
+      return journalEntry.imageUrl;
     }
     return "";
-  }, [journalEntryImage, journalEntry.image]);
+  }, [journalEntryImage, journalEntry.imageUrl]);
 
   return (
     <Page topBarShowMenu={true}>
@@ -242,7 +256,7 @@ const JournalEntry: React.FunctionComponent = () => {
           <TradeDay>
             <PreviewDayValueContainer>
               <TradePreviewContainer>
-                <TradePreview $src={journalEntry.image} />
+                <TradePreview $src={journalEntry.imageUrl} />
               </TradePreviewContainer>
               <DateContainer>
                 {m(journalEntry.dateTime).format("MMM D, YYYY")}
@@ -514,11 +528,21 @@ const JournalEntry: React.FunctionComponent = () => {
                       <If condition={editing}>
                         <TradeSubtitleEditing
                           $disabled={saveDisabled}
-                          onClick={() =>
-                            createJournalEntry(journalEntry, journalEntryImage)
-                          }
+                          onClick={() => {
+                            if (journalEntryId === "new") {
+                              createJournalEntry(
+                                journalEntry,
+                                journalEntryImage,
+                              );
+                            } else {
+                              updateJournalEntryApiCall(
+                                journalEntry,
+                                journalEntryImage,
+                              );
+                            }
+                          }}
                         >
-                          {creatingJournalEntry ? (
+                          {creatingJournalEntry || updatingJournalEntry ? (
                             <Loading size={10} />
                           ) : (
                             "Save"
@@ -526,9 +550,9 @@ const JournalEntry: React.FunctionComponent = () => {
                         </TradeSubtitleEditing>
                         <TradeSubtitleEditing
                           onClick={() => {
-                            setEditing(false);
                             updateJournalEntry(originalJournalEntry);
                             setJournalEntryImage(null);
+                            updateEditingJournalEntry(false);
                           }}
                         >
                           {"Cancel"}
@@ -554,7 +578,7 @@ const JournalEntry: React.FunctionComponent = () => {
                         <Else>
                           <EditIcon
                             style={styles.editIcon}
-                            onClick={() => setEditing(true)}
+                            onClick={() => updateEditingJournalEntry(true)}
                           />
                         </Else>
                       </If>
@@ -569,6 +593,8 @@ const JournalEntry: React.FunctionComponent = () => {
                     </ButtonContainer>
                   </EditDeleteButtons>
                 </TradeInfo>
+                <FormError error={journalErrors?.trade_ids} />
+                <FormError error={journalErrors?.risk} />
                 <TradeCapture>
                   <div>
                     <TradeImage

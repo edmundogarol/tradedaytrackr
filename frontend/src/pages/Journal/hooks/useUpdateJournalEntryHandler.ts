@@ -1,33 +1,32 @@
-import { PageEnum } from "@interfaces/NavigationTypes";
-import useReactNavigation from "@navigation/hooks/useReactNavigation";
+import environmentConfig from "@utils/environmentConfig";
 import { appendIfDefined, resizeImage } from "@utils/utils";
 import { useCallback } from "react";
 import type { JournalEntry } from "../JournalInterfaces";
-import useCreateJournalEntryApiCall from "./useCreateJournalEntryApiCall";
 import useJournalDispatch from "./useJournalDispatch";
 import useJournalState from "./useJournalState";
+import useUpdateJournalEntryApiCall from "./useUpdateJournalEntryApiCall";
 
-interface CreateJournalEntryHandler {
-  createJournalEntry: (
+interface UpdateJournalEntryHandler {
+  updateJournalEntry: (
     journalEntry: JournalEntry,
     journalEntryImage: File | string | null,
   ) => Promise<void>;
   loading: boolean;
 }
 
-const useCreateJournalEntryHandler = (): CreateJournalEntryHandler => {
-  const { fetch, loading } = useCreateJournalEntryApiCall();
+const useUpdateJournalEntryHandler = (): UpdateJournalEntryHandler => {
+  const { fetch, loading } = useUpdateJournalEntryApiCall();
   const { journalEntry } = useJournalState();
   const { updateJournalEntry, updateJournalErrors, updateEditingJournalEntry } =
     useJournalDispatch();
-  const navigation = useReactNavigation();
 
   return {
-    createJournalEntry: useCallback(
+    updateJournalEntry: useCallback(
       async (
         journalEntry: JournalEntry,
         journalEntryImage: File | string | null,
       ) => {
+        console.log({ journalEntry, journalEntryImage });
         const formData = new FormData();
 
         appendIfDefined(formData, "date_time", journalEntry.dateTime);
@@ -50,14 +49,14 @@ const useCreateJournalEntryHandler = (): CreateJournalEntryHandler => {
         });
 
         const { error, data } = await fetch({
+          url: `${environmentConfig.HOST}/api/journal-entries/${journalEntry.id}/`,
           data: formData,
         });
 
         if (!!data && data.id) {
           updateJournalEntry(data);
-          navigation.navigate(PageEnum.Journal);
           updateJournalErrors({
-            detail: "Journal entry created successfully!",
+            detail: "Journal entry updated successfully!",
           });
           updateEditingJournalEntry(false);
         } else if (error) {
@@ -70,4 +69,4 @@ const useCreateJournalEntryHandler = (): CreateJournalEntryHandler => {
   };
 };
 
-export default useCreateJournalEntryHandler;
+export default useUpdateJournalEntryHandler;

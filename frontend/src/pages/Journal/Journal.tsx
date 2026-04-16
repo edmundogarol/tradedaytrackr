@@ -132,7 +132,7 @@ const Journal: React.FunctionComponent = () => {
               >
                 <PreviewDayValueContainer>
                   <TradePreviewContainer>
-                    <TradePreview $src={entry.image} />
+                    <TradePreview $src={entry.imageUrl} />
                   </TradePreviewContainer>
                   <DateContainer>
                     {m(entry.dateTime).format("MMM D, YYYY")}

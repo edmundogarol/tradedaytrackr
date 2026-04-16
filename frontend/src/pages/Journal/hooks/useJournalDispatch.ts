@@ -7,6 +7,7 @@ import {
   updateDeleteJournalEntryErrors,
   updateDeleteJournalEntryModalOpen,
   updateDetectedTrades,
+  updateEditingJournalEntry,
   updateJournalEntries,
   updateJournalEntry,
   updateJournalErrors,
@@ -27,6 +28,7 @@ interface JournalDispatch {
   updateDeleteJournalEntryErrors(deleteJournalEntryErrors: {
     [key: string]: any;
   }): void;
+  updateEditingJournalEntry(editingJournalEntry: boolean): void;
 }
 
 export const useJournalDispatch = (): JournalDispatch => {
@@ -61,6 +63,9 @@ export const useJournalDispatch = (): JournalDispatch => {
       [key: string]: any;
     }): void {
       dispatch(updateDeleteJournalEntryErrors(deleteJournalEntryErrors));
+    },
+    updateEditingJournalEntry(editingJournalEntry: boolean): void {
+      dispatch(updateEditingJournalEntry(editingJournalEntry));
     },
   };
 };

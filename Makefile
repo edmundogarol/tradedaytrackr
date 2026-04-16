@@ -43,6 +43,9 @@ migrate:
 makemigrations:
 	DEVENV=development python manage.py makemigrations 
 
+cleanmedia:
+	DEVENV=development python manage.py cleanup_media
+
 static:
 	DEVENV=deployment python manage.py collectstatic --noinput 
 

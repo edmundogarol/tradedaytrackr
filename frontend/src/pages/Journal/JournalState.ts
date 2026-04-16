@@ -7,6 +7,7 @@ import type { JournalEntry } from "./JournalInterfaces";
 export interface JournalState {
   readonly journalEntry: JournalEntry;
   readonly journalErrors: { [key: string]: any };
+  readonly editingJournalEntry: boolean;
   readonly detectedTrades: Trade[];
   readonly journalEntries: JournalEntry[];
   readonly selectedDateTrades: Trade[];
@@ -25,6 +26,7 @@ export const initialState: JournalState = {
     instrument: "",
     description: "",
     image: "",
+    imageUrl: "",
     tradeIds: [],
     totalPnl: 0,
     accountCount: 0,
@@ -33,6 +35,7 @@ export const initialState: JournalState = {
   },
   journalEntries: [],
   journalErrors: {},
+  editingJournalEntry: false,
   detectedTrades: [],
   selectedDateTrades: [],
   selectedDateTradesErrors: {},
@@ -53,6 +56,7 @@ type UpdateDeleteJournalEntryModalOpenAction = PayloadAction<boolean>;
 type UpdateDeleteJournalEntryErrorsAction = PayloadAction<{
   [key: string]: any;
 }>;
+type UpdateEditingJournalEntryAction = PayloadAction<boolean>;
 
 export type JournalAction =
   | UpdateJournalEntryAction
@@ -62,7 +66,8 @@ export type JournalAction =
   | UpdateSelectedDateTradesAction
   | UpdateSelectedDateTradesErrorsAction
   | UpdateDeleteJournalEntryModalOpenAction
-  | UpdateDeleteJournalEntryErrorsAction;
+  | UpdateDeleteJournalEntryErrorsAction
+  | UpdateEditingJournalEntryAction;
 
 export const journalSlice = createSlice({
   name: "journal",
@@ -104,6 +109,12 @@ export const journalSlice = createSlice({
     ) => {
       state.deleteJournalEntryErrors = action.payload;
     },
+    updateEditingJournalEntry: (
+      state,
+      action: UpdateEditingJournalEntryAction,
+    ) => {
+      state.editingJournalEntry = action.payload;
+    },
   },
 });
 
@@ -116,6 +127,7 @@ export const {
   updateSelectedDateTradesErrors,
   updateDeleteJournalEntryModalOpen,
   updateDeleteJournalEntryErrors,
+  updateEditingJournalEntry,
 } = journalSlice.actions;
 
 export const journalReducer = journalSlice.reducer;

@@ -29,6 +29,17 @@ def reset_demo_user(user):
     dj_timezone.activate(tz)
 
     with transaction.atomic():
+        # DELETE ONLY journal_entries + templates files
+        for entry in user.journal_entries.all():
+            if entry.image and entry.image.name.startswith("journal_entries/"):
+                entry.image.delete(save=False)
+
+        for template in user.trading_account_templates.all():
+            if template.image and template.image.name.startswith(
+                "trading_account_templates/"
+            ):
+                template.image.delete(save=False)
+
         user.journal_entries.all().delete()
         user.tags.all().delete()
         user.trading_accounts.all().delete()
