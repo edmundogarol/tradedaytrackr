@@ -67,13 +67,24 @@ export const useGetFundedAccountsStatsSummaryDetails =
       );
     }, [filteredTradingAccounts]);
 
+    const accountsFirmsCount = useMemo(() => {
+      const firmCounts: Record<string, number> = {};
+      filteredTradingAccounts.forEach((account) => {
+        const firm = account.accountType.firm;
+        firmCounts[firm] = (firmCounts[firm] || 0) + 1;
+      });
+      return firmCounts;
+    }, [filteredTradingAccounts]);
+
     return [
       {
         tileValue: formatter.format(totalActiveFunding),
         tileValueColor: "#b2deb2",
         tileTitle: "Total Active Funding",
         tileSubtitle: {
-          content: "2 x Apex, 2 x MFFU, 2 x Bulenox",
+          content: Object.entries(accountsFirmsCount)
+            .map(([firm, count]) => `${count}x ${firm}`)
+            .join(", "),
         },
         tileShinePositive: true,
         tileIcon: (
