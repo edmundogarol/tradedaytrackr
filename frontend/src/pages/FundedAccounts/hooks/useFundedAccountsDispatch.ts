@@ -15,6 +15,8 @@ import {
   updateDeleteTradingAccountErrors,
   updateDeletingTradingAccountModalOpen,
   updateEditingFields,
+  updateEvalFirmFilter,
+  updateEvalStatusFilter,
   updateFirmFilter,
   updateSelectedDateJournalEntries,
   updateSelectedTrade,
@@ -46,6 +48,8 @@ interface FundedAccountsDispatch {
   updateSelectedDateJournalEntries: (journalEntries: any[]) => void;
   updateDeleteTradeModalOpen: (open: boolean) => void;
   updateDeleteTradeErrors: (errors: { [key: string]: any }) => void;
+  updateEvalFirmFilter: (filter: string[]) => void;
+  updateEvalStatusFilter: (filter: string[]) => void;
 }
 
 const useFundedAccountsDispatch = (): FundedAccountsDispatch => {
@@ -108,6 +112,12 @@ const useFundedAccountsDispatch = (): FundedAccountsDispatch => {
     },
     updateDeleteTradeErrors(errors: { [key: string]: any }): void {
       dispatch(updateDeleteTradeErrors(errors));
+    },
+    updateEvalFirmFilter(filter: string[]): void {
+      dispatch(updateEvalFirmFilter(filter));
+    },
+    updateEvalStatusFilter(filter: string[]): void {
+      dispatch(updateEvalStatusFilter(filter));
     },
   };
 };

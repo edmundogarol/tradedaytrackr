@@ -1,5 +1,6 @@
 import type { StatsSummaryTileDetails } from "@components/Stats/StatsSummary/StatsSummary";
 import styles from "@components/Stats/StatsSummary/StatsSummaryStyles";
+import type { TradingAccount } from "@interfaces/CustomTypes";
 import AssuredWorkloadIcon from "@mui/icons-material/AssuredWorkload";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import DateRangeIcon from "@mui/icons-material/DateRange";
@@ -13,28 +14,30 @@ export const useGetFundedAccountsStatsSummaryDetails =
     const { tradingAccounts, firmFilter, bufferFilter } =
       useFundedAccountsState();
 
-    const filteredTradingAccounts = useMemo(() => {
-      return tradingAccounts.filter((account) => {
-        const firmMatch =
-          firmFilter.length === 0 ||
-          firmFilter.includes(account.accountType.firm);
+    const filteredTradingAccounts: TradingAccount[] = useMemo(() => {
+      return tradingAccounts
+        .filter((account) => !account.accountType.isEval)
+        .filter((account) => {
+          const firmMatch =
+            firmFilter.length === 0 ||
+            firmFilter.includes(account.accountType.firm);
 
-        const bufferMatch =
-          bufferFilter.length === 0 ||
-          bufferFilter.some((filter) => {
-            const v = Math.round(account.bufferPercent);
+          const bufferMatch =
+            bufferFilter.length === 0 ||
+            bufferFilter.some((filter) => {
+              const v = Math.round((account as TradingAccount).bufferPercent);
 
-            if (filter === "<20") return v < 20;
-            if (filter === "<50") return v < 50;
-            if (filter === ">50") return v > 50;
-            if (filter === ">90") return v > 90;
-            if (filter === "complete") return v === 100;
+              if (filter === "<20") return v < 20;
+              if (filter === "<50") return v < 50;
+              if (filter === ">50") return v > 50;
+              if (filter === ">90") return v > 90;
+              if (filter === "complete") return v === 100;
 
-            return false;
-          });
+              return false;
+            });
 
-        return firmMatch && bufferMatch;
-      });
+          return firmMatch && bufferMatch;
+        }) as TradingAccount[];
     }, [tradingAccounts, firmFilter, bufferFilter]);
 
     const totalActiveFunding = useMemo(() => {

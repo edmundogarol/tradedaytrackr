@@ -29,7 +29,6 @@ import {
 } from "./EvaluationAccountsStyledComponents";
 import styles from "./EvaluationAccountsStyles";
 import { EvalProgressStatus } from "./hooks/useGetEvalProgressStatus";
-import useGetEvaluationAccountsList from "./hooks/useGetEvaluationAccountsList";
 import { useGetEvaluationAccountsStatsSummaryDetails } from "./hooks/useGetEvaluationAccountsStatsSummaryDetails";
 
 const EvaluationAccounts: React.FunctionComponent = () => {
@@ -39,8 +38,8 @@ const EvaluationAccounts: React.FunctionComponent = () => {
     tradingAccounts,
     deleteTradingAccountErrors,
     createTradingAccountErrors,
-    firmFilter,
-    bufferFilter,
+    evalFirmFilter,
+    evalStatusFilter,
   } = useFundedAccountsState();
   const {
     updateCreateTradingAccountModalOpen,
@@ -49,17 +48,21 @@ const EvaluationAccounts: React.FunctionComponent = () => {
     updateFirmFilter,
     updateBufferFilter,
     updateAddTradeModalOpen,
+    updateEvalStatusFilter,
+    updateEvalFirmFilter,
   } = useFundedAccountsDispatch();
   const { accountTemplates } = useSettingsState();
   const { getAccountTemplates } = useGetAccountTemplatesHandler();
   const { getTradingAccounts } = useGetTradingAccountsHandler();
   const firmsList = uniqBy(
-    tradingAccounts.map((account) => {
-      return {
-        name: account.accountType.firm,
-        value: account.accountType.firm,
-      };
-    }),
+    tradingAccounts
+      .filter((account) => account.accountType.isEval)
+      .map((account) => {
+        return {
+          name: account.accountType.firm,
+          value: account.accountType.firm,
+        };
+      }),
     "value",
   );
 
@@ -72,7 +75,7 @@ const EvaluationAccounts: React.FunctionComponent = () => {
     }
   }, []);
 
-  const bufferState = [
+  const statuses = [
     EvalProgressStatus.Started,
     EvalProgressStatus.InProgress,
     EvalProgressStatus.OnTrack,
@@ -80,7 +83,6 @@ const EvaluationAccounts: React.FunctionComponent = () => {
     EvalProgressStatus.Complete,
   ];
 
-  const accountsList = useGetEvaluationAccountsList();
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
   const [addTradingDayOpen, setAddTradingDayOpen] =
     React.useState<boolean>(false);
@@ -107,15 +109,19 @@ const EvaluationAccounts: React.FunctionComponent = () => {
           <DropdownMultiselect
             items={firmsList}
             title="All Firms"
+            onSelect={(selected) => updateEvalFirmFilter(selected as string[])}
             icon={<FilterAltIcon style={{ color: "#c0c0c0" }} />}
           />
           <DropdownMultiselect
-            items={bufferState.map((status) => {
+            items={statuses.map((status) => {
               return {
                 name: status,
                 value: status,
               };
             })}
+            onSelect={(selected) =>
+              updateEvalStatusFilter(selected as string[])
+            }
             title="Status"
             icon={<FilterAltIcon style={{ color: "#c0c0c0" }} />}
           />
@@ -135,13 +141,41 @@ const EvaluationAccounts: React.FunctionComponent = () => {
           <PnLHeader>Status</PnLHeader>
         </ListHeaders>
         <ListContainer>
-          {tradingAccounts
+          {(tradingAccounts as EvaluationAccount[])
             .filter((account) => account.accountType.isEval)
             .filter(
               (account) =>
-                firmFilter.length === 0 ||
-                firmFilter.includes(account.accountType.firm),
+                evalFirmFilter.length === 0 ||
+                evalFirmFilter.includes(account.accountType.firm),
             )
+            .filter((account) => {
+              if (evalStatusFilter.length === 0) {
+                return true;
+              }
+              const getProgress = (account: EvaluationAccount): number => {
+                const profit =
+                  Number(account.accountBalance) - Number(account.accountSize);
+
+                if (!account.profitTarget) return 0;
+
+                return (profit / Number(account.profitTarget)) * 100;
+              };
+              const progress = getProgress(account);
+
+              return evalStatusFilter.some((filter) => {
+                if (filter === EvalProgressStatus.Started)
+                  return progress >= 0 && progress < 25;
+                if (filter === EvalProgressStatus.InProgress)
+                  return progress >= 25 && progress < 30;
+                if (filter === EvalProgressStatus.OnTrack)
+                  return progress >= 30 && progress < 60;
+                if (filter === EvalProgressStatus.NearPass)
+                  return progress >= 60 && progress < 100;
+                if (filter === EvalProgressStatus.Complete)
+                  return progress >= 100;
+                return false;
+              });
+            })
             .map((account, index) => (
               <ListItem
                 key={index}

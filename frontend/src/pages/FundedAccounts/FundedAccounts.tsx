@@ -74,12 +74,14 @@ const FundedAccounts: React.FunctionComponent = () => {
   const { getAccountTemplates } = useGetAccountTemplatesHandler();
   const { getTradingAccounts } = useGetTradingAccountsHandler();
   const firmsList = uniqBy(
-    tradingAccounts.map((account) => {
-      return {
-        name: account.accountType.firm,
-        value: account.accountType.firm,
-      };
-    }),
+    tradingAccounts
+      .filter((account) => !account.accountType.isEval)
+      .map((account) => {
+        return {
+          name: account.accountType.firm,
+          value: account.accountType.firm,
+        };
+      }),
     "value",
   );
 
@@ -146,7 +148,7 @@ const FundedAccounts: React.FunctionComponent = () => {
           <PnLHeader>Withdrawable</PnLHeader>
         </ListHeaders>
         <ListContainer>
-          {tradingAccounts
+          {(tradingAccounts as TradingAccount[])
             .filter((account) => !account.accountType.isEval)
             .filter(
               (account) =>

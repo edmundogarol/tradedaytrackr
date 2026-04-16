@@ -4,15 +4,29 @@ from backend.djangoapi.models.payout import Payout
 from backend.djangoapi.models.trading_day import TradingDay
 
 
+def is_valid_trading_day(template, pnl):
+    """
+    Determines if a trading day is valid.
+
+    Eval accounts:
+        - Always valid (for now, until rules are introduced)
+
+    Funded accounts:
+        - Must meet minimum day pnl
+    """
+    if template.is_evaluation:
+        return True
+
+    return pnl >= (template.min_day_pnl or 0)
+
+
 def compute_trading_day_fields(trading_day):
     account = trading_day.account
 
     pnl = trading_day.trades.aggregate(total=Sum("pnl"))["total"] or 0
-
     template = account.template
-    min_profit = template.min_day_pnl or 0
 
-    is_valid_day = pnl >= min_profit
+    is_valid_day = is_valid_trading_day(template, pnl)
 
     if not is_valid_day:
         return {
@@ -51,6 +65,7 @@ def recompute_all_trading_days(account):
     )
 
     current_day_number = 1
+    template = account.template
 
     payouts = list(Payout.objects.filter(account=account).order_by("payout_date"))
     payout_index = 0
@@ -61,12 +76,12 @@ def recompute_all_trading_days(account):
 
         crossed_payout = False
 
+        # --- Get first trade (if exists) ---
         first_trade = None
-
         if td.trades.exists():
             first_trade = td.trades.order_by("date_time").first()
 
-            # payout crossing logic
+            # --- Handle payout crossing ---
             while current_payout and first_trade.date_time > current_payout.payout_date:
                 crossed_payout = True
                 payout_index += 1
@@ -79,10 +94,10 @@ def recompute_all_trading_days(account):
 
         pnl = td.pnl or 0
 
-        template = account.template
-        min_profit = template.min_day_pnl or 0
-        is_valid = pnl >= min_profit
+        # --- VALIDATION LOGIC ---
+        is_valid = is_valid_trading_day(template, pnl)
 
+        # --- DAY NUMBER LOGIC ---
         if is_valid:
             td.day_number = current_day_number
             current_day_number += 1
