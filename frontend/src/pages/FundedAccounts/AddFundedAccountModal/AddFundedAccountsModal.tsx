@@ -16,6 +16,9 @@ import styles from "./AddFundedAccountsModalStyles";
 
 const AddFundedAccountsModal: React.FunctionComponent = () => {
   const { accountTemplates } = useSettingsState();
+  const fundedTemplates = accountTemplates.filter(
+    (template) => !template.isEval,
+  );
   const {
     selectedTradingAccount,
     createTradingAccountErrors,
@@ -31,8 +34,8 @@ const AddFundedAccountsModal: React.FunctionComponent = () => {
   const [selectedTemplateId, setSelectedTemplateId] = useState(0);
 
   useEffect(() => {
-    setSelectedTemplateId(accountTemplates[0]?.id || 0);
-  }, [accountTemplates]);
+    setSelectedTemplateId(fundedTemplates[0]?.id || 0);
+  }, [fundedTemplates]);
 
   return (
     <Modal
@@ -43,11 +46,9 @@ const AddFundedAccountsModal: React.FunctionComponent = () => {
       <AddFundedAccountContainer>
         <SelectWrapper
           selectedValue={selectedTemplateId}
-          items={accountTemplates
-            .filter((template) => !template.isEval)
-            .map((template) => {
-              return { name: template.name, value: template.id };
-            })}
+          items={fundedTemplates.map((template) => {
+            return { name: template.name, value: template.id };
+          })}
           label="Select Account Template"
           onSelect={(selected) => {
             setSelectedTemplateId(Number(selected));
@@ -101,7 +102,6 @@ const AddFundedAccountsModal: React.FunctionComponent = () => {
           style={{ ...styles.addTradingDayButton, ...styles.submitButton }}
           onClick={(): void => {
             createTradingAccount(selectedTradingAccount, selectedTemplateId);
-            setSelectedTemplateId(accountTemplates[0]?.id || 0);
           }}
         />
       </AddFundedAccountContainer>

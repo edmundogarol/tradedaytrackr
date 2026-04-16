@@ -92,12 +92,7 @@ const EvaluationAccounts: React.FunctionComponent = () => {
         modalOpen={addTradingDayOpen}
         setModalOpen={setAddTradingDayOpen}
       />
-      <AddEvaluationAccountsModal
-        accountTemplates={[]}
-        modalOpen={modalOpen}
-        setModalOpen={setModalOpen}
-        setAddTradingDayOpen={setAddTradingDayOpen}
-      />
+      <AddEvaluationAccountsModal />
       <Container>
         <Title>Evaluation Accounts</Title>
         <StatsSummary
@@ -126,7 +121,9 @@ const EvaluationAccounts: React.FunctionComponent = () => {
             icon={<FilterAltIcon style={{ color: "#c0c0c0" }} />}
           />
           <Button
-            onClick={() => setModalOpen(true)}
+            onClick={(): void => {
+              updateCreateTradingAccountModalOpen(true);
+            }}
             text={"Add Eval"}
             iconType={IconTypeEnum.MaterialIcons}
             iconLeft={"add"}

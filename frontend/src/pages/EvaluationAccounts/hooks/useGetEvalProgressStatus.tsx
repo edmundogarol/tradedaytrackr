@@ -16,7 +16,7 @@ export const useGetEvalProgressStatus = (): ((progress: number) => string) => {
       return EvalProgressStatus.OnTrack;
     } else if (progress >= 60 && progress < 100) {
       return EvalProgressStatus.NearPass;
-    } else if (progress === 100) {
+    } else if (progress > 100) {
       return EvalProgressStatus.Complete;
     } else {
       return "Unknown Status";

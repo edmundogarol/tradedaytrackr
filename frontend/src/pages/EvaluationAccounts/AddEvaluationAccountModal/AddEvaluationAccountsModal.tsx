@@ -1,66 +1,108 @@
-import React from "react";
-import Gap from "@components/Gap/Gap";
 import Button from "@components/Button/Button";
-import { IconTypeEnum } from "@components/Icon/IconInterfaces";
-import SelectWrapper from "@components/Select/SelectWrapper";
-import Modal from "@components/Modal/Modal";
+import FormError from "@components/Error/FormError/FormError";
+import Gap from "@components/Gap/Gap";
+import { Else, If } from "@components/If/If";
 import Input from "@components/Input/Input";
-import { LabelWrapper as Label } from "@components/Label/LabelStyledComponents";
+import Modal from "@components/Modal/Modal";
+import SelectWrapper from "@components/Select/SelectWrapper";
+import useCreateTradingAccountHandler from "@pages/FundedAccounts/hooks/useCreateTradingAccountHandler";
+import useFundedAccountsDispatch from "@pages/FundedAccounts/hooks/useFundedAccountsDispatch";
+import useFundedAccountsState from "@pages/FundedAccounts/hooks/useFundedAccountsState";
+import useSettingsState from "@pages/Settings/hooks/useSettingsState";
+import { decimalStringToInt } from "@utils/utils";
+import React, { useEffect, useState } from "react";
 import { AddFundedAccountContainer } from "./AddEvaluationAccountsModalStyledComponents";
 import styles from "./AddEvaluationAccountsModalStyles";
 
-interface AddEvaluationAccountsModalProps {
-  accountTemplates: string[];
-  modalOpen: boolean;
-  setModalOpen: (open: boolean) => void;
-  setAddTradingDayOpen: (open: boolean) => void;
-}
+const AddEvaluationAccountsModal: React.FunctionComponent = () => {
+  const { accountTemplates } = useSettingsState();
+  const evaluationTemplates = accountTemplates.filter(
+    (template) => template.isEval,
+  );
+  const {
+    selectedTradingAccount,
+    createTradingAccountErrors,
+    createTradingAccountModalOpen,
+  } = useFundedAccountsState();
+  const {
+    updateSelectedTradingAccount,
+    updateCreateTradingAccountErrors,
+    updateCreateTradingAccountModalOpen,
+  } = useFundedAccountsDispatch();
+  const { createTradingAccount, loading: createTradingAccountLoading } =
+    useCreateTradingAccountHandler();
+  const [selectedTemplateId, setSelectedTemplateId] = useState(0);
 
-const AddEvaluationAccountsModal: React.FunctionComponent<
-  AddEvaluationAccountsModalProps
-> = ({ accountTemplates, modalOpen, setModalOpen, setAddTradingDayOpen }) => {
+  useEffect(() => {
+    setSelectedTemplateId(evaluationTemplates[0]?.id || 0);
+  }, [evaluationTemplates]);
+
   return (
     <Modal
       title="Add Evaluation Account"
-      open={modalOpen}
-      setOpen={setModalOpen}
+      open={createTradingAccountModalOpen}
+      setOpen={updateCreateTradingAccountModalOpen}
     >
       <AddFundedAccountContainer>
         <SelectWrapper
-          items={accountTemplates}
+          selectedValue={selectedTemplateId}
+          items={evaluationTemplates.map((template) => {
+            return { name: template.name, value: template.id };
+          })}
           label="Select Account Template"
+          onSelect={(selected) => {
+            setSelectedTemplateId(Number(selected));
+          }}
         />
         <Gap level={2} />
         <Input
           label="Account Name"
-          value={undefined}
+          error={createTradingAccountErrors?.account_name}
+          value={selectedTradingAccount?.name}
           placeholder="Enter Account Name"
-          onChange={(e) => console.log(e.target.value)}
+          onChange={(e) => {
+            updateSelectedTradingAccount({
+              ...selectedTradingAccount,
+              name: e.target.value,
+            });
+            updateCreateTradingAccountErrors({});
+          }}
         />
         <Gap level={2} />
         <Input
+          error={createTradingAccountErrors?.account_balance}
           type="number"
           label="Account Balance"
-          value={undefined}
+          positiveOnly={true}
+          value={
+            decimalStringToInt(selectedTradingAccount?.accountBalance) === 0
+              ? ""
+              : decimalStringToInt(selectedTradingAccount?.accountBalance)
+          }
           placeholder="Enter Account Balance"
-          onChange={(e) => console.log(e.target.value)}
+          onChange={(e) => {
+            updateSelectedTradingAccount({
+              ...selectedTradingAccount,
+              accountBalance: decimalStringToInt(e.target.value) as number,
+            });
+            updateCreateTradingAccountErrors({});
+          }}
         />
-        <Gap level={2} />
-        <Label>Trading Day</Label>
+        <If condition={!!createTradingAccountErrors?.error}>
+          <Gap level={2} />
+          <FormError error={createTradingAccountErrors?.error} />
+          <Else>
+            <Gap level={1} />
+          </Else>
+        </If>
+        <Gap level={1} />
         <Button
-          text={"Add Trading Day"}
-          iconType={IconTypeEnum.MaterialIcons}
-          iconLeft={"add"}
-          textStyle={styles.addTradingDayButton}
-          style={styles.addTradingDayButton}
-          onClick={(): void => setAddTradingDayOpen(true)}
-        />
-        <Gap level={2} />
-
-        <Button
+          loading={createTradingAccountLoading}
           text={"Save"}
           style={{ ...styles.addTradingDayButton, ...styles.submitButton }}
-          onClick={(): void => setModalOpen(false)}
+          onClick={(): void => {
+            createTradingAccount(selectedTradingAccount, selectedTemplateId);
+          }}
         />
       </AddFundedAccountContainer>
     </Modal>

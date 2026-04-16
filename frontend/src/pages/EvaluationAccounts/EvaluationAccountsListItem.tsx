@@ -141,7 +141,7 @@ const EvaluationAccountsListItem: React.FunctionComponent<
           <BorderLinearProgress
             $bufferPercent={progress}
             variant="determinate"
-            value={progress}
+            value={progress > 100 ? 100 : progress < 0 ? 0 : progress}
             style={styles.progressBar}
           />
         </BufferContainer>
