@@ -1,5 +1,4 @@
 import AlertPopout from "@components/Alert/AlertPopout";
-import Button from "@components/Button/Button";
 import FormError from "@components/Error/FormError/FormError";
 import Gap from "@components/Gap/Gap";
 import GlassTile from "@components/GlassTile/GlassTile";
@@ -8,10 +7,7 @@ import InfoPopout from "@components/InfoPopout/InfoPopout";
 import CalendarPicker from "@components/Input/CalendarPicker/CalendarPicker";
 import Input from "@components/Input/Input";
 import Loading from "@components/Loading/Loading";
-import {
-  default as Modal,
-  default as ModalWrapper,
-} from "@components/Modal/Modal";
+import ModalWrapper from "@components/Modal/Modal";
 import Page from "@components/Page/Page";
 import type { Tag } from "@interfaces/CustomTypes";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
@@ -19,18 +15,6 @@ import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
 import PhotoIcon from "@mui/icons-material/Photo";
-import Checkbox from "@mui/material/Checkbox";
-import {
-  DateContainer,
-  PnL,
-  PreviewDayValueContainer,
-  Time,
-  TradeDay,
-  TradePreview,
-  TradePreviewContainer,
-} from "@pages/FundedAccounts/FundedAccountDetail/FundedAccountDetailStyledComponents";
-import { color } from "@styles/colors";
-import { BUTTON_WIDTH } from "@styles/constants";
 import {
   PageContainer as Container,
   Section,
@@ -38,7 +22,6 @@ import {
   SubsectionHeader,
 } from "@styles/globalStyledComponents";
 import {
-  decimalStringToInt,
   formatter,
   getICTMacroLabel,
   isNotEmptyString,
@@ -48,8 +31,8 @@ import {
 import moment from "moment";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
+import DeleteJournalEntry from "../DeleteJournalEntry/JournalEntry";
 import useCreateJournalEntryHandler from "../hooks/useCreateJournalEntryHandler";
-import useDeleteJournalEntryHandler from "../hooks/useDeleteJournalEntryHandler";
 import useGenerateDraftAIHandler from "../hooks/useGenerateDraftAIHandler";
 import useGenerateTagsAIHandler from "../hooks/useGenerateTagsAIHandler";
 import useGetJournalEntryHandler from "../hooks/useGetJournalEntryHandler";
@@ -59,12 +42,8 @@ import useJournalState from "../hooks/useJournalState";
 import useUpdateJournalEntryHandler from "../hooks/useUpdateJournalEntryHandler";
 import type { JournalEntry as JournalEntryType } from "../JournalInterfaces";
 import { initialState } from "../JournalState";
-import {
-  Description,
-  TileTradeCount,
-  TileTradeCountContainer,
-} from "../JournalStyledComponents";
 import { availableAccountTradesOnDateMock } from "../mocks/tradesOnDate";
+import SelectDateTrades from "../SelectDateTrades/SelectDateTrades";
 import {
   ButtonContainer,
   CloseIconStyled,
@@ -88,16 +67,9 @@ import {
   TagInputContainer,
   TagInputWithAIButtonContainer,
   TagsContainer,
-  TradeAccountsSelectSaveButtonContainer,
   TradeCapture,
   TradeImage,
   TradeInfo,
-  TradesDetectedContainer,
-  TradesDetectedPnL,
-  TradesDetectedPnLTotal,
-  TradesDetectedPnLTotalHighlighted,
-  TradesDetectedTime,
-  TradesDetectedTrade,
   TradeSingleAccountInfo,
   TradeSubtitle,
   TradeSubtitleEditing,
@@ -116,8 +88,6 @@ const JournalEntry: React.FunctionComponent = () => {
     selectedDateTrades,
     journalErrors,
     journalEntries,
-    deleteJournalEntryErrors,
-    deleteJournalEntryModalOpen,
     editingJournalEntry: editing,
   } = useJournalState();
   const {
@@ -125,7 +95,6 @@ const JournalEntry: React.FunctionComponent = () => {
     updateDetectedTrades,
     updateJournalErrors,
     updateDeleteJournalEntryModalOpen,
-    updateDeleteJournalEntryErrors,
     updateEditingJournalEntry,
   } = useJournalDispatch();
   let [searchParams] = useSearchParams();
@@ -193,8 +162,7 @@ const JournalEntry: React.FunctionComponent = () => {
 
   const { createJournalEntry, loading: creatingJournalEntry } =
     useCreateJournalEntryHandler();
-  const { deleteJournalEntry, loading: deletingJournalEntry } =
-    useDeleteJournalEntryHandler();
+
   const {
     updateJournalEntry: updateJournalEntryApiCall,
     loading: updatingJournalEntry,
@@ -219,122 +187,27 @@ const JournalEntry: React.FunctionComponent = () => {
         message={journalErrors?.detail}
       />
       <ModalWrapper
-        title="Delete Journal Entry"
-        open={deleteJournalEntryModalOpen}
-        setOpen={updateDeleteJournalEntryModalOpen}
-        saveButton={{
-          text: "Permanently Delete",
-          style: { backgroundColor: color("SystemRed") },
-          onClick: () => deleteJournalEntry(journalEntry.id),
-          loading: deletingJournalEntry,
-        }}
-        cancelButton={{
-          text: "Cancel",
-          onClick: () => updateDeleteJournalEntryModalOpen(false),
-          loading: false,
-        }}
-        confirmText={
-          "Are you sure you want to permanently delete this journal entry?"
-        }
-        error={deleteJournalEntryErrors?.error}
-        onClose={() => {
-          updateDeleteJournalEntryErrors({});
-        }}
+        backdropClose={() => setOpenJournalEntryImageModal(false)}
+        title="Trade Preview"
+        open={openJournalEntryImageModal}
+        setOpen={setOpenJournalEntryImageModal}
       >
-        <GlassTile
-          featureTile
-          minHeight={10}
-          minWidth={10}
-          padding={7}
-          noGlow={true}
-          overlay={
-            <TileTradeCountContainer>
-              <TileTradeCount className="trade-count">{`x${journalEntry.accountCount} acc`}</TileTradeCount>
-            </TileTradeCountContainer>
-          }
-        >
-          <TradeDay>
-            <PreviewDayValueContainer>
-              <TradePreviewContainer>
-                <TradePreview $src={journalEntry.imageUrl} />
-              </TradePreviewContainer>
-              <DateContainer>
-                {m(journalEntry.dateTime).format("MMM D, YYYY")}
-                <Time>{m(journalEntry.dateTime).format("h:mm A")}</Time>
-              </DateContainer>
-            </PreviewDayValueContainer>
-            <Description>{journalEntry.description}</Description>
-            <PnL $positive={journalEntry.totalPnl >= 0}>
-              {formatter.format(journalEntry.totalPnl)}
-            </PnL>
-          </TradeDay>
-        </GlassTile>
+        <img
+          src={imageSrc}
+          style={{
+            width: "100%",
+            maxHeight: 400,
+            objectFit: "contain",
+            borderRadius: 12,
+          }}
+        />
       </ModalWrapper>
-      <Modal
-        open={editingAccounts}
-        setOpen={setEditingAccounts}
-        title="Select Accounts Trades"
-        onClose={() => {
-          setEditingAccounts(false);
-          updateJournalEntry({
-            ...journalEntry,
-            tradeIds: journalEntry.tradeIds,
-          });
-        }}
-      >
-        <TradesDetectedContainer>
-          {`${selectedDateTrades.length} trades detected for ${m(journalEntry.dateTime).format("MMM DD")}`}
-        </TradesDetectedContainer>
-        <TradesDetectedContainer>
-          {selectedDateTrades.map((trade) => {
-            return (
-              <TradesDetectedTrade key={trade.id}>
-                <Checkbox
-                  sx={{ color: "#a9b1c2" }}
-                  checked={journalEntry.tradeIds.includes(trade.id)}
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      updateJournalEntry({
-                        ...journalEntry,
-                        tradeIds: [...journalEntry.tradeIds, trade.id],
-                      });
-                    } else {
-                      updateJournalEntry({
-                        ...journalEntry,
-                        tradeIds: journalEntry.tradeIds.filter(
-                          (id) => id !== trade.id,
-                        ),
-                      });
-                    }
-                  }}
-                />
-                <div>{trade.account.name}</div>
-                <TradesDetectedTime>
-                  {m(trade.date).format("hh:mm A")}
-                </TradesDetectedTime>
-                <TradesDetectedPnL
-                  $positive={trade.pnl !== null && trade.pnl >= 0}
-                >{`$${decimalStringToInt(trade.pnl || 0)}`}</TradesDetectedPnL>
-              </TradesDetectedTrade>
-            );
-          })}
-        </TradesDetectedContainer>
-        <TradesDetectedPnLTotal>
-          {`Total selected PnL: `}
-          <TradesDetectedPnLTotalHighlighted $positive={detectedTradesPnL >= 0}>
-            {formatter.format(detectedTradesPnL)}
-          </TradesDetectedPnLTotalHighlighted>
-        </TradesDetectedPnLTotal>
-        <TradeAccountsSelectSaveButtonContainer>
-          <Button
-            onClick={() => {
-              setEditingAccounts(false);
-            }}
-            text={"Save"}
-            style={{ background: color("SystemGreen"), width: BUTTON_WIDTH }}
-          />
-        </TradeAccountsSelectSaveButtonContainer>
-      </Modal>
+      <DeleteJournalEntry />
+      <SelectDateTrades
+        detectedTradesPnL={detectedTradesPnL}
+        editingAccounts={editingAccounts}
+        setEditingAccounts={setEditingAccounts}
+      />
       <Container>
         <SectionTitle>Journal Entry</SectionTitle>
         <Gap level={1} />
@@ -600,9 +473,15 @@ const JournalEntry: React.FunctionComponent = () => {
                     <TradeImage
                       $src={imageSrc}
                       $editing={editing}
-                      onClick={() => editing && fileInputRef?.current?.click()}
+                      onClick={() => {
+                        if (editing) {
+                          fileInputRef?.current?.click();
+                        } else if (imageSrc) {
+                          setOpenJournalEntryImageModal(true);
+                        }
+                      }}
                     >
-                      {/* ✅ ONLY show when NO image */}
+                      {/* ONLY show when NO image */}
                       {!imageSrc && !editing && (
                         <IconContainer>
                           <PhotoIcon
@@ -615,7 +494,7 @@ const JournalEntry: React.FunctionComponent = () => {
                         </IconContainer>
                       )}
 
-                      {/* ✅ overlay when editing */}
+                      {/* overlay when editing */}
                       {editing && (
                         <IconContainer>
                           <AddPhotoAlternateIcon

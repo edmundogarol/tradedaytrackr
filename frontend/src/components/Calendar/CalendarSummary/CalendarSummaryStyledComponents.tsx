@@ -1,4 +1,3 @@
-import { devSrc } from "@utils/utils";
 import styled from "styled-components";
 
 export const Container = styled.div`
@@ -36,9 +35,8 @@ export const TileContainer = styled.div`
   }
 `;
 
-export const TradePreview = styled.div<{ $idx: number }>`
-  background-image: ${(props): string =>
-    `url('${devSrc(`trade${props.$idx + 1}.png`)}')`};
+export const TradePreview = styled.div<{ $src: string }>`
+  background-image: ${(props): string => `url('${props.$src}')`};
   height: 100%;
   width: 100%;
   background-size: cover;

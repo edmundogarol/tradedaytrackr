@@ -38,6 +38,7 @@ export interface ModalWrapperProps {
     style?: React.CSSProperties;
   };
   error?: string;
+  backdropClose?: () => void;
 }
 
 const ModalWrapper: React.FunctionComponent<ModalWrapperProps> = ({
@@ -52,9 +53,15 @@ const ModalWrapper: React.FunctionComponent<ModalWrapperProps> = ({
   saveButton,
   cancelButton,
   error,
+  backdropClose,
 }) => {
   return (
     <Modal
+      onClose={() => {
+        if (backdropClose) {
+          backdropClose();
+        }
+      }}
       open={open}
       style={modalStyles.modal}
       slotProps={{

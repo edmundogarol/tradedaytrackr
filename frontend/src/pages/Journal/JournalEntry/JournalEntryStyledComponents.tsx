@@ -44,15 +44,11 @@ export const TradeImage = styled.div<{ $src: string; $editing?: boolean }>`
   background-size: cover;
   background-position: center;
   position: relative;
-  ${({ $editing }): string =>
-    $editing
-      ? ` filter: brightness(70%);
-          &:hover {
-            filter: brightness(100%);
-            cursor: pointer;
-          }
-        `
-      : ``}
+  filter: brightness(90%);
+  &:hover {
+    filter: brightness(100%);
+    cursor: pointer;
+  }
   border-radius: 10px;
   display: flex;
   align-items: center;
