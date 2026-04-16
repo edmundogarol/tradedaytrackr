@@ -1,50 +1,77 @@
-import React from "react";
+import Button from "@components/Button/Button";
+import DropdownMultiselect from "@components/DropdownMultiselect/DropdownMultiselect";
 import Gap from "@components/Gap/Gap";
+import { IconTypeEnum } from "@components/Icon/IconInterfaces";
 import Page from "@components/Page/Page";
 import StatsSummary from "@components/Stats/StatsSummary/StatsSummary";
-import DropdownMultiselect from "@components/DropdownMultiselect/DropdownMultiselect";
+import type { EvaluationAccount } from "@interfaces/CustomTypes";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
-import Button from "@components/Button/Button";
-import { IconTypeEnum } from "@components/Icon/IconInterfaces";
+import useFundedAccountsDispatch from "@pages/FundedAccounts/hooks/useFundedAccountsDispatch";
+import useFundedAccountsState from "@pages/FundedAccounts/hooks/useFundedAccountsState";
+import useGetTradingAccountsHandler from "@pages/FundedAccounts/hooks/useGetTradingAccountsHandler";
+import useSettingsState from "@pages/Settings/hooks/useSettingsState";
+import useGetAccountTemplatesHandler from "@pages/Settings/Preferences/hooks/useGetAccountTemplatesHandler";
+import { uniqBy } from "lodash";
+import React, { useEffect } from "react";
+import AddEvaluationAccountsModal from "./AddEvaluationAccountModal/AddEvaluationAccountsModal";
+import AddTradingDayModal from "./AddEvaluationTradingDayModal/AddTradingDayModal";
+import ListItem from "./EvaluationAccountsListItem";
 import {
+  AccountHeader,
+  BufferHeader,
   Container,
+  DaysHeader,
   DropdownsSection,
   ListContainer,
   ListHeaders,
-  AccountHeader,
-  BufferHeader,
-  DaysHeader,
   PnLHeader,
   Title,
 } from "./EvaluationAccountsStyledComponents";
-import { useGetEvaluationAccountsStatsSummaryDetails } from "./hooks/useGetEvaluationAccountsStatsSummaryDetails";
-import useGetEvaluationAccountsList from "./hooks/useGetEvaluationAccountsList";
-import ListItem from "./EvaluationAccountsListItem";
-import { EvalProgressStatus } from "./hooks/useGetEvalProgressStatus";
 import styles from "./EvaluationAccountsStyles";
-import AddTradingDayModal from "./AddEvaluationTradingDayModal/AddTradingDayModal";
-import AddEvaluationAccountsModal from "./AddEvaluationAccountModal/AddEvaluationAccountsModal";
+import { EvalProgressStatus } from "./hooks/useGetEvalProgressStatus";
+import useGetEvaluationAccountsList from "./hooks/useGetEvaluationAccountsList";
+import { useGetEvaluationAccountsStatsSummaryDetails } from "./hooks/useGetEvaluationAccountsStatsSummaryDetails";
 
 const EvaluationAccounts: React.FunctionComponent = () => {
   const evaluationStatsSummaryDetails =
     useGetEvaluationAccountsStatsSummaryDetails();
-  const firmsList = [
-    "My Funded Futures",
-    "Apex",
-    "Bulenox",
-    "Alpha Futures",
-    "My Funded Futures",
-    "Apex",
-    "Bulenox",
-    "Alpha Futures",
-  ];
-  const accountTemplateList = [
-    "MFFU 50k Flex",
-    "MFFU 50k Rapid",
-    "Apex 50k",
-    "Bulenox 50k",
-    "Alpha Futures Zero 50k",
-  ];
+  const {
+    tradingAccounts,
+    deleteTradingAccountErrors,
+    createTradingAccountErrors,
+    firmFilter,
+    bufferFilter,
+  } = useFundedAccountsState();
+  const {
+    updateCreateTradingAccountModalOpen,
+    updateCreateTradingAccountErrors,
+    updateDeleteTradingAccountErrors,
+    updateFirmFilter,
+    updateBufferFilter,
+    updateAddTradeModalOpen,
+  } = useFundedAccountsDispatch();
+  const { accountTemplates } = useSettingsState();
+  const { getAccountTemplates } = useGetAccountTemplatesHandler();
+  const { getTradingAccounts } = useGetTradingAccountsHandler();
+  const firmsList = uniqBy(
+    tradingAccounts.map((account) => {
+      return {
+        name: account.accountType.firm,
+        value: account.accountType.firm,
+      };
+    }),
+    "value",
+  );
+
+  useEffect(() => {
+    if (tradingAccounts.length === 0) {
+      getTradingAccounts();
+    }
+    if (accountTemplates.length === 0) {
+      getAccountTemplates();
+    }
+  }, []);
+
   const bufferState = [
     EvalProgressStatus.Started,
     EvalProgressStatus.InProgress,
@@ -52,6 +79,7 @@ const EvaluationAccounts: React.FunctionComponent = () => {
     EvalProgressStatus.NearPass,
     EvalProgressStatus.Complete,
   ];
+
   const accountsList = useGetEvaluationAccountsList();
   const [modalOpen, setModalOpen] = React.useState<boolean>(false);
   const [addTradingDayOpen, setAddTradingDayOpen] =
@@ -63,7 +91,7 @@ const EvaluationAccounts: React.FunctionComponent = () => {
         setModalOpen={setAddTradingDayOpen}
       />
       <AddEvaluationAccountsModal
-        accountTemplates={accountTemplateList}
+        accountTemplates={[]}
         modalOpen={modalOpen}
         setModalOpen={setModalOpen}
         setAddTradingDayOpen={setAddTradingDayOpen}
@@ -82,7 +110,12 @@ const EvaluationAccounts: React.FunctionComponent = () => {
             icon={<FilterAltIcon style={{ color: "#c0c0c0" }} />}
           />
           <DropdownMultiselect
-            items={bufferState}
+            items={bufferState.map((status) => {
+              return {
+                name: status,
+                value: status,
+              };
+            })}
             title="Status"
             icon={<FilterAltIcon style={{ color: "#c0c0c0" }} />}
           />
@@ -102,13 +135,20 @@ const EvaluationAccounts: React.FunctionComponent = () => {
           <PnLHeader>Status</PnLHeader>
         </ListHeaders>
         <ListContainer>
-          {accountsList.map((account, index) => (
-            <ListItem
-              key={index}
-              {...account}
-              openAddTradingDayModal={setAddTradingDayOpen}
-            />
-          ))}
+          {tradingAccounts
+            .filter((account) => account.accountType.isEval)
+            .filter(
+              (account) =>
+                firmFilter.length === 0 ||
+                firmFilter.includes(account.accountType.firm),
+            )
+            .map((account, index) => (
+              <ListItem
+                key={index}
+                account={account as EvaluationAccount}
+                openAddTradingDayModal={setAddTradingDayOpen}
+              />
+            ))}
         </ListContainer>
       </Container>
     </Page>

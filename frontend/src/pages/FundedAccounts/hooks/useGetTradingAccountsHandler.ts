@@ -18,9 +18,9 @@ const useGetTradingAccountsHandler = (): GetTradingAccountHandler => {
       const { error, data } = await fetch();
 
       if (!!data) {
-        const tradingAccountsMapped = data
-          .map((tradingAccount) => mapApiToTradingAccount(tradingAccount))
-          .filter((account) => !account.accountType.isEval);
+        const tradingAccountsMapped = data.map((tradingAccount) =>
+          mapApiToTradingAccount(tradingAccount),
+        );
         updateTradingAccounts(tradingAccountsMapped);
       } else if (error) {
         updateTradingAccountsErrors(error);

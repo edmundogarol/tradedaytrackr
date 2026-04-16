@@ -85,6 +85,20 @@ export interface TradingAccount extends AccountTemplate {
   consistencyScore?: number;
 }
 
+export interface EvaluationAccount extends AccountTemplate {
+  accountBalance: number;
+  accountType: {
+    id: number;
+    name: string;
+    isEval: boolean;
+    firm: string;
+  };
+  dayValues: TradingDay[];
+  currentDayCount: number;
+  consistencyScore: number;
+  profitTarget: number;
+}
+
 export interface Trade {
   id: number;
   date: string;

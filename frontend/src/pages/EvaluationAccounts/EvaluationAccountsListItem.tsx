@@ -1,16 +1,14 @@
 import GlassTile from "@components/GlassTile/GlassTile";
-import LinearProgress, {
-  linearProgressClasses,
-} from "@mui/material/LinearProgress";
-import { firmLogoSrc, imageSrc } from "@utils/utils";
+import { formatter } from "@utils/utils";
 import React from "react";
-import styled from "styled-components";
 
 import AlertPopout from "@components/Alert/AlertPopout";
+import { Else, If } from "@components/If/If";
 import InfoPopout from "@components/InfoPopout/InfoPopout";
+import type { EvaluationAccount } from "@interfaces/CustomTypes";
 import { PageEnum } from "@interfaces/NavigationTypes";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
-import { color } from "@styles/colors";
+import { BorderLinearProgress } from "@styles/globalStyledComponents";
 import {
   AccountImage,
   AccountSubtitle,
@@ -34,81 +32,30 @@ import styles from "./EvaluationAccountsStyles";
 import useGetEvalProgressStatus from "./hooks/useGetEvalProgressStatus";
 
 export interface EvaluationAccountsListItemDetails {
-  id: number;
-  accountName: string;
-  accountSize: number;
-  accountBalance: number;
-  accountType: {
-    id: number;
-    name: string;
-  };
-  profitTarget: number;
-  firm: string;
-  firmMinDays?: number;
-  firmMinDayPnL?: number;
-  currentDayCount: number;
-  currentConsistencyScore: number;
-  dayValues: {
-    value: number;
-    day: string;
-  }[];
-  noGlow: boolean;
-  noShine: boolean;
-  minBuffer: number;
-  tileGlowPositive?: boolean | undefined;
+  account: EvaluationAccount;
   openAddTradingDayModal?: (open: boolean) => void;
 }
 
-const BorderLinearProgress = styled(LinearProgress)<{ $bufferPercent: number }>(
-  ({ $bufferPercent }) => ({
-    height: 10,
-    borderRadius: 5,
-    [`&.${linearProgressClasses.colorPrimary}`]: {
-      backgroundColor: "#404f5e",
-    },
-    [`& .${linearProgressClasses.bar}`]: {
-      borderRadius: 5,
-      backgroundColor: $bufferPercent > 60 ? color("SystemBlue5") : "#cf943b",
-    },
-  }),
-);
-
 const EvaluationAccountsListItem: React.FunctionComponent<
   EvaluationAccountsListItemDetails
-> = ({
-  id,
-  accountName,
-  accountSize,
-  accountBalance,
-  profitTarget,
-  firm,
-  firmMinDays,
-  currentDayCount,
-  currentConsistencyScore,
-  dayValues,
-  noGlow,
-  noShine,
-  minBuffer,
-  tileGlowPositive,
-  openAddTradingDayModal,
-}) => {
+> = ({ account, openAddTradingDayModal }) => {
+  const {
+    id,
+    name,
+    accountBalance,
+    accountSize,
+    image,
+    minTradingDays,
+    dayValues,
+    profitTarget,
+    consistencyScore,
+  } = account;
   const [alertNoRecord, setAlertNoRecord] = React.useState(false);
-  const formatter = Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  });
   const evalProgressStatus = useGetEvalProgressStatus();
   const progress = ((accountBalance - accountSize) / profitTarget) * 100;
   const navigation = useReactNavigation();
   return (
-    <GlassTile
-      positive={tileGlowPositive}
-      featureTile
-      minHeight={70}
-      noGlow={noGlow}
-      noShine={noShine}
-    >
+    <GlassTile positive featureTile minHeight={70} noGlow noShine>
       <AlertPopout
         open={alertNoRecord}
         message="This trade has no journal entry. Please add or link it to a journal entry to view details."
@@ -116,7 +63,7 @@ const EvaluationAccountsListItem: React.FunctionComponent<
         hideDuration={5000}
       />
       <ListItemContainer>
-        <AccountImage src={imageSrc(firmLogoSrc(firm))} />
+        <AccountImage $image={image || ""} />
         <AccountTitleContainer>
           <AccountTitle
             onClick={() =>
@@ -125,7 +72,7 @@ const EvaluationAccountsListItem: React.FunctionComponent<
               })
             }
           >
-            {accountName}
+            {name}
           </AccountTitle>
           <AccountSubtitle>
             Balance:
@@ -134,27 +81,32 @@ const EvaluationAccountsListItem: React.FunctionComponent<
             </AccountSubtitleHighlighted>
           </AccountSubtitle>
           <AccountTradingDaysComplete>
-            Consistency Score: {currentConsistencyScore}%
+            Consistency Score: {consistencyScore.toFixed(0)}%
             <InfoPopout
               infoDescription={`Your current consistency score based on the highest day PnL and account profit target`}
             />
           </AccountTradingDaysComplete>
         </AccountTitleContainer>
         <DaysContainer>
-          {dayValues.map((dayValue, idx) => (
+          {[...dayValues].reverse().map((dayValue, idx) => (
             <DaysItem key={idx}>
               <GlassTile
-                positive={dayValue.value > 0}
+                positive={dayValue.pnl > 0}
                 featureTile
                 minHeight={10}
                 minWidth={10}
                 padding={7}
               >
-                <DaysItemValue $positive={dayValue.value > 0}>
-                  {`${dayValue.value > 0 ? "+" : ""}${dayValue.value}`}
+                <DaysItemValue $positive={dayValue.pnl > 0}>
+                  {`${dayValue.pnl > 0 ? "+" : ""}${dayValue.pnl}`}
                 </DaysItemValue>
               </GlassTile>
-              <DaysItemSubtitle>{dayValue.day}</DaysItemSubtitle>
+              <If condition={!!dayValue.dayNumber}>
+                <DaysItemSubtitle>{dayValue.dayNumber}</DaysItemSubtitle>
+                <Else>
+                  <DaysItemSubtitle>-</DaysItemSubtitle>
+                </Else>
+              </If>
             </DaysItem>
           ))}
           <DaysItem>

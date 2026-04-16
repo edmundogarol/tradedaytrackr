@@ -30,11 +30,11 @@ export const useGetDrawerItems = (): Array<{
       {
         text: "Evaluation Accounts",
         icon: <StickyNote2Icon />,
-        // onClick: (): void => navigation.navigate(PageEnum.EvaluationAccounts),
-        onClick: (): void =>
-          updateSystemAlert({
-            message: "Evaluation Accounts Management Coming Soon!",
-          }),
+        onClick: (): void => navigation.navigate(PageEnum.EvaluationAccounts),
+        // onClick: (): void =>
+        //   updateSystemAlert({
+        //     message: "Evaluation Accounts Management Coming Soon!",
+        //   }),
       },
       {
         text: "Journal",

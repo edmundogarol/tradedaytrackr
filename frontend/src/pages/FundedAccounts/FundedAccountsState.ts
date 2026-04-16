@@ -1,10 +1,14 @@
-import type { Trade, TradingAccount } from "@interfaces/CustomTypes";
+import type {
+  EvaluationAccount,
+  Trade,
+  TradingAccount,
+} from "@interfaces/CustomTypes";
 import type { JournalEntry } from "@pages/Journal/JournalInterfaces";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import moment from "moment";
 
 export interface FundedAccountsState {
-  readonly tradingAccounts: TradingAccount[];
+  readonly tradingAccounts: (TradingAccount | EvaluationAccount)[];
   readonly selectedTradingAccount: TradingAccount;
   readonly currentTradingAccount: TradingAccount;
   readonly createTradingAccountModalOpen: boolean;

@@ -5,6 +5,7 @@ import Gap from "@components/Gap/Gap";
 import { IconTypeEnum } from "@components/Icon/IconInterfaces";
 import Page from "@components/Page/Page";
 import StatsSummary from "@components/Stats/StatsSummary/StatsSummary";
+import type { TradingAccount } from "@interfaces/CustomTypes";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import useSettingsState from "@pages/Settings/hooks/useSettingsState";
 import useGetAccountTemplatesHandler from "@pages/Settings/Preferences/hooks/useGetAccountTemplatesHandler";
@@ -146,6 +147,7 @@ const FundedAccounts: React.FunctionComponent = () => {
         </ListHeaders>
         <ListContainer>
           {tradingAccounts
+            .filter((account) => !account.accountType.isEval)
             .filter(
               (account) =>
                 firmFilter.length === 0 ||
@@ -180,7 +182,7 @@ const FundedAccounts: React.FunctionComponent = () => {
             .map((account, index) => (
               <ListItem
                 key={index}
-                account={account}
+                account={account as TradingAccount}
                 openAddTradingDayModal={updateAddTradeModalOpen}
               />
             ))}
