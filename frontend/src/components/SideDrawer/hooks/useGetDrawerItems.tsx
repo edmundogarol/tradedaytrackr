@@ -1,11 +1,12 @@
-import React from "react";
+import { PageEnum } from "@interfaces/NavigationTypes";
+import AssuredWorkloadIcon from "@mui/icons-material/AssuredWorkload";
 import HomeIcon from "@mui/icons-material/Home";
 import MenuBook from "@mui/icons-material/MenuBook";
-import AssuredWorkloadIcon from "@mui/icons-material/AssuredWorkload";
-import StickyNote2Icon from "@mui/icons-material/StickyNote2";
 import SpeedIcon from "@mui/icons-material/Speed";
+import StickyNote2Icon from "@mui/icons-material/StickyNote2";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
-import { PageEnum } from "@interfaces/NavigationTypes";
+import useSettingsDispatch from "@pages/Settings/hooks/useSettingsDispatch";
+import React from "react";
 
 export const useGetDrawerItems = (): Array<{
   text: string;
@@ -13,6 +14,7 @@ export const useGetDrawerItems = (): Array<{
   onClick: () => void;
 }> => {
   const navigation = useReactNavigation();
+  const { updateSystemAlert } = useSettingsDispatch();
   const drawerItems = React.useMemo(
     () => [
       {
@@ -38,7 +40,8 @@ export const useGetDrawerItems = (): Array<{
       {
         text: "Trade Stats",
         icon: <SpeedIcon />,
-        onClick: (): void => alert("Trade Stats Coming Soon!"),
+        onClick: (): void =>
+          updateSystemAlert({ message: "Trade Stats Coming Soon!" }),
       },
     ],
     [],

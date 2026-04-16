@@ -25,6 +25,8 @@ import ResetPassword from "@pages/ResetPassword/ResetPassword";
 import Account from "@pages/Settings/Account/Account";
 import Billing from "@pages/Settings/Billing/Billing";
 import Preferences from "@pages/Settings/Preferences/Preferences";
+import useSettingsDispatch from "@pages/Settings/hooks/useSettingsDispatch";
+import useSettingsState from "@pages/Settings/hooks/useSettingsState";
 import SignUp from "@pages/SignUp/SignUp";
 import { isNotEmptyString, setTimezone } from "@utils/utils";
 import React, { useEffect } from "react";
@@ -43,6 +45,8 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
   const verificationApiCall = useVerificationApiCall();
   useVerificationHandler(verificationApiCall);
   const { fetch: fetchCSRF } = useSetCSRFApiCall();
+  const { systemAlert } = useSettingsState();
+  const { updateSystemAlert } = useSettingsDispatch();
 
   useEffect(() => {
     if (!document.cookie.includes("csrftoken")) {
@@ -59,7 +63,12 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
   return (
     <>
       {loading && <LoadingPage />}
-
+      <AlertPopout
+        hideDuration={3000}
+        open={!!systemAlert.message}
+        message={systemAlert.message}
+        setPopoutOpen={() => updateSystemAlert({})}
+      />
       <AlertPopout
         hideDuration={4000}
         open={isNotEmptyString(verificationError)}

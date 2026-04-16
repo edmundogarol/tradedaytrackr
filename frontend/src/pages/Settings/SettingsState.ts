@@ -12,6 +12,7 @@ export interface SettingsState {
   readonly addTagModalOpen?: boolean;
   readonly addTagErrors?: { [key: string]: any };
   readonly templateRules: Rule[];
+  readonly systemAlert: { [key: string]: any };
 }
 
 export const initialState: SettingsState = {
@@ -45,6 +46,7 @@ export const initialState: SettingsState = {
   addTagModalOpen: false,
   addTagErrors: {},
   templateRules: [],
+  systemAlert: {},
 };
 
 type UpdateAccountTemplatesAction = PayloadAction<AccountTemplate[]>;
@@ -58,6 +60,7 @@ type UpdateAddAccountTemplateErrorsAction = PayloadAction<{
 }>;
 type UpdateAddTagErrorsAction = PayloadAction<{ [key: string]: any }>;
 type UpdateTemplateRulesAction = PayloadAction<Rule[]>;
+type UpdateSystemAlertAction = PayloadAction<{ [key: string]: any }>;
 
 export type SettingsAction =
   | UpdateAccountTemplatesAction
@@ -68,7 +71,8 @@ export type SettingsAction =
   | UpdateAddTagModalOpenAction
   | UpdateAddAccountTemplateErrorsAction
   | UpdateAddTagErrorsAction
-  | UpdateTemplateRulesAction;
+  | UpdateTemplateRulesAction
+  | UpdateSystemAlertAction;
 
 export const settingsSlice = createSlice({
   name: "settings",
@@ -110,6 +114,9 @@ export const settingsSlice = createSlice({
     updateTemplateRules: (state, action: UpdateTemplateRulesAction) => {
       state.templateRules = action.payload;
     },
+    updateSystemAlert: (state, action: UpdateSystemAlertAction) => {
+      state.systemAlert = action.payload;
+    },
   },
 });
 
@@ -123,6 +130,7 @@ export const {
   updateAccountTemplatesErrors,
   updateAddTagErrors,
   updateTemplateRules,
+  updateSystemAlert,
 } = settingsSlice.actions;
 
 export const settingsReducer = settingsSlice.reducer;

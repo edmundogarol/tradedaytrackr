@@ -10,6 +10,7 @@ import {
   updateAddTagModalOpen,
   updateSelectedAccountTemplate,
   updateSelectedTag,
+  updateSystemAlert,
   updateTags,
   updateTemplateRules,
 } from "../SettingsState";
@@ -24,6 +25,7 @@ interface SettingsDispatch {
   updateAccountTemplatesErrors(errors: { [key: string]: any }): void;
   updateAddTagErrors(errors: { [key: string]: any }): void;
   updateTemplateRules(templateRules: any[]): void;
+  updateSystemAlert(systemAlert: { [key: string]: any }): void;
 }
 
 export const useSettingsDispatch = (): SettingsDispatch => {
@@ -55,6 +57,9 @@ export const useSettingsDispatch = (): SettingsDispatch => {
     },
     updateTemplateRules(templateRules: any[]): void {
       dispatch(updateTemplateRules(templateRules));
+    },
+    updateSystemAlert(systemAlert: { [key: string]: any }): void {
+      dispatch(updateSystemAlert(systemAlert));
     },
   };
 };
