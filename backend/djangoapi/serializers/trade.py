@@ -25,6 +25,7 @@ class TradeSerializer(serializers.ModelSerializer):
         allow_null=True,
     )
     is_payout = serializers.SerializerMethodField()
+    is_eval = serializers.SerializerMethodField()
 
     class Meta:
         model = Trade
@@ -37,7 +38,11 @@ class TradeSerializer(serializers.ModelSerializer):
             "journal_entry",
             "journal_entry_id",
             "is_payout",
+            "is_eval",
         ]
+
+    def get_is_eval(self, obj):
+        return obj.account.template.is_evaluation
 
     def get_account(self, obj):
         return {
@@ -90,3 +95,22 @@ class TradeSerializer(serializers.ModelSerializer):
         validated_data["trading_day"] = trading_day
 
         return super().create(validated_data)
+
+
+class TradeLightSerializer(serializers.ModelSerializer):
+    account = serializers.SerializerMethodField()
+    is_eval = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Trade
+        fields = ["id", "account", "date_time", "pnl", "is_eval"]
+
+    def get_account(self, obj):
+        return {
+            "id": obj.account.id,
+            "name": obj.account.account_name,
+            "type": obj.account.template.name,
+        }
+
+    def get_is_eval(self, obj):
+        return obj.account.template.is_evaluation

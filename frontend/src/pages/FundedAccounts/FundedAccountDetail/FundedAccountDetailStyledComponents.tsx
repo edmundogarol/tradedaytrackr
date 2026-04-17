@@ -146,10 +146,15 @@ export const DayValue = styled.div`
   border-radius: 4px;
 `;
 
-export const PnL = styled.div<{ $positive: boolean }>`
+export const PnL = styled.div<{ $positive: boolean; $evalPnl?: boolean }>`
   color: ${(props): string =>
-    props.$positive ? color("SystemGreen") : color("SystemRed")};
+    props.$positive
+      ? props.$evalPnl
+        ? color("SystemTeal")
+        : color("SystemGreen")
+      : color("SystemRed")};
   font-size: 20px;
+  display: flex;
 `;
 
 export const PreviewDayValueContainer = styled.div`
@@ -171,6 +176,7 @@ export const ConsistencyContainer = styled.div`
   gap: 5px;
   flex: 1;
 `;
+
 export const ConsistencyScore = styled.span<{ $valid: boolean }>`
   color: ${(props): string =>
     props.$valid ? color("SystemGreen") : color("SystemRed")};

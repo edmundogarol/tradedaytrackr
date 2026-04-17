@@ -7,12 +7,14 @@ from backend.djangoapi.models.journal_entry import JournalEntry
 from backend.djangoapi.models.tag import Tag
 from backend.djangoapi.models.trade import Trade
 from backend.djangoapi.serializers.tag import TagSerializer
+from backend.djangoapi.utils.account import UserTimezoneDateTimeField
 
 logger = logging.getLogger(__name__)
 
 
 class JournalEntrySerializer(serializers.ModelSerializer):
     trade_ids = serializers.SerializerMethodField()
+    eval_trade_ids = serializers.SerializerMethodField()
     trade_ids_input = serializers.PrimaryKeyRelatedField(
         source="trades",
         many=True,
@@ -28,7 +30,10 @@ class JournalEntrySerializer(serializers.ModelSerializer):
     tag_objects = TagSerializer(source="tags", many=True, read_only=True)
 
     total_pnl = serializers.SerializerMethodField()
+    total_eval_pnl = serializers.SerializerMethodField()
     account_count = serializers.SerializerMethodField()
+    eval_account_count = serializers.SerializerMethodField()
+    date_time = UserTimezoneDateTimeField()
 
     class Meta:
         model = JournalEntry
@@ -37,17 +42,23 @@ class JournalEntrySerializer(serializers.ModelSerializer):
             "date_time",
             "instrument",
             "risk",
+            "eval_risk",
             "contracts",
+            "eval_contracts",
             "outcome",
+            "eval_outcome",
             "description",
             "image",
             "image_url",
             "tags",
             "tag_objects",
             "trade_ids",
+            "eval_trade_ids",
             "trade_ids_input",
             "total_pnl",
+            "total_eval_pnl",
             "account_count",
+            "eval_account_count",
         ]
 
     def get_image_url(self, obj):
@@ -71,13 +82,58 @@ class JournalEntrySerializer(serializers.ModelSerializer):
         return fields
 
     def get_trade_ids(self, obj):
-        return list(obj.trades.values_list("id", flat=True))
+        return list(
+            obj.trades.filter(account__template__is_evaluation=False).values_list(
+                "id", flat=True
+            )
+        )
+
+    def get_eval_trade_ids(self, obj):
+        return list(
+            obj.trades.filter(account__template__is_evaluation=True).values_list(
+                "id", flat=True
+            )
+        )
 
     def get_total_pnl(self, obj):
-        return obj.trades.aggregate(total=Sum("pnl"))["total"] or 0
+        return (
+            Trade.objects.filter(
+                journal_entry=obj,
+                account__template__is_evaluation=False,
+            )
+            .values("id")
+            .distinct()
+            .aggregate(total=Sum("pnl"))["total"]
+            or 0
+        )
+
+    def get_total_eval_pnl(self, obj):
+        return (
+            Trade.objects.filter(
+                journal_entry=obj,
+                account__template__is_evaluation=True,
+            )
+            .values("id")
+            .distinct()
+            .aggregate(total=Sum("pnl"))["total"]
+            or 0
+        )
 
     def get_account_count(self, obj):
-        return obj.trades.count()
+        return (
+            obj.trades.filter(account__template__is_evaluation=False)
+            .values("id")
+            .distinct()
+            .count()
+        )
+
+    def get_eval_account_count(self, obj):
+        return (
+            obj.trades.filter(account__template__is_evaluation=True)
+            .values("id")
+            .distinct()
+            .count()
+        )
 
     def validate_tags(self, value):
         if not isinstance(value, list):

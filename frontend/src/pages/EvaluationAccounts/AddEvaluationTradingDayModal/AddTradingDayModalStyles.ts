@@ -5,13 +5,18 @@ const styles = {
     display: "flex",
     alignItems: "center",
     color: "white",
-    maxWidth: 200,
     border: "none",
     backgroundColor: color("SystemBlue5"),
   } as React.CSSProperties,
   submitButton: {
     marginLeft: "auto",
   } as React.CSSProperties,
+  greenButton: {
+    backgroundColor: color("SystemGreen"),
+  } as React.CSSProperties,
+  dontLinkButton: {
+    backgroundColor: color("SystemRed"),
+  },
 };
 
 export default styles;

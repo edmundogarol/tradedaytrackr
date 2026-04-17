@@ -9,7 +9,10 @@ import InfoPopout from "@components/InfoPopout/InfoPopout";
 import Input from "@components/Input/Input";
 import Page from "@components/Page/Page";
 import SelectWrapper from "@components/Select/SelectWrapper";
-import type { TradingAccount } from "@interfaces/CustomTypes";
+import type {
+  EvaluationAccount,
+  TradingAccount,
+} from "@interfaces/CustomTypes";
 import { PageEnum } from "@interfaces/NavigationTypes";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
@@ -110,9 +113,8 @@ const FundedAccountDetail: React.FunctionComponent<
   } = useFundedAccountsDispatch();
   let [searchParams] = useSearchParams();
   const accountId = searchParams.get("id");
-  const [editingPayout, setEditingPayout] = useState(false);
   const [originalTradingAccountDetails, setOriginalTradingAccountDetails] =
-    useState<TradingAccount | null>(null);
+    useState<TradingAccount | EvaluationAccount | null>(null);
   const [payoutRecord, setPayoutRecord] = useState<boolean>(false);
   const navigation = useReactNavigation();
   const accountTemplateList = useGetFundedAccountTemplates();
@@ -609,9 +611,6 @@ const FundedAccountDetail: React.FunctionComponent<
                           <DaysItem
                             key={idx}
                             onClick={() => {
-                              if (trade.isPayout) {
-                                setEditingPayout(true);
-                              }
                               updateAddTradeModalOpen(true);
                               setPayoutRecord(false);
                               updateSelectedTrade(trade);

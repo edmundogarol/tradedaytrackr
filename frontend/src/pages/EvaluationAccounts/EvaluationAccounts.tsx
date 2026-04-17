@@ -83,15 +83,9 @@ const EvaluationAccounts: React.FunctionComponent = () => {
     EvalProgressStatus.Complete,
   ];
 
-  const [modalOpen, setModalOpen] = React.useState<boolean>(false);
-  const [addTradingDayOpen, setAddTradingDayOpen] =
-    React.useState<boolean>(false);
   return (
     <Page topBarShowMenu={true}>
-      <AddTradingDayModal
-        modalOpen={addTradingDayOpen}
-        setModalOpen={setAddTradingDayOpen}
-      />
+      <AddTradingDayModal />
       <AddEvaluationAccountsModal />
       <Container>
         <Title>Evaluation Accounts</Title>
@@ -177,7 +171,7 @@ const EvaluationAccounts: React.FunctionComponent = () => {
               <ListItem
                 key={index}
                 account={account as EvaluationAccount}
-                openAddTradingDayModal={setAddTradingDayOpen}
+                openAddTradingDayModal={updateAddTradeModalOpen}
               />
             ))}
         </ListContainer>

@@ -14,6 +14,7 @@ export interface JournalState {
   readonly selectedDateTradesErrors: { [key: string]: any };
   readonly deleteJournalEntryModalOpen: boolean;
   readonly deleteJournalEntryErrors: { [key: string]: any };
+  readonly fundedView?: boolean;
 }
 
 export const initialState: JournalState = {
@@ -41,6 +42,7 @@ export const initialState: JournalState = {
   selectedDateTradesErrors: {},
   deleteJournalEntryModalOpen: false,
   deleteJournalEntryErrors: {},
+  fundedView: true,
 };
 
 type UpdateJournalEntryAction = PayloadAction<JournalEntry>;
@@ -57,6 +59,7 @@ type UpdateDeleteJournalEntryErrorsAction = PayloadAction<{
   [key: string]: any;
 }>;
 type UpdateEditingJournalEntryAction = PayloadAction<boolean>;
+type UpdateFundedViewAction = PayloadAction<boolean>;
 
 export type JournalAction =
   | UpdateJournalEntryAction
@@ -67,7 +70,8 @@ export type JournalAction =
   | UpdateSelectedDateTradesErrorsAction
   | UpdateDeleteJournalEntryModalOpenAction
   | UpdateDeleteJournalEntryErrorsAction
-  | UpdateEditingJournalEntryAction;
+  | UpdateEditingJournalEntryAction
+  | UpdateFundedViewAction;
 
 export const journalSlice = createSlice({
   name: "journal",
@@ -115,6 +119,9 @@ export const journalSlice = createSlice({
     ) => {
       state.editingJournalEntry = action.payload;
     },
+    updateFundedView: (state, action: UpdateFundedViewAction) => {
+      state.fundedView = action.payload;
+    },
   },
 });
 
@@ -128,6 +135,7 @@ export const {
   updateDeleteJournalEntryModalOpen,
   updateDeleteJournalEntryErrors,
   updateEditingJournalEntry,
+  updateFundedView,
 } = journalSlice.actions;
 
 export const journalReducer = journalSlice.reducer;

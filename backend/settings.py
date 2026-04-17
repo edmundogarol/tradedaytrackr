@@ -165,7 +165,7 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.UserRateThrottle",
     ],
     "DEFAULT_THROTTLE_RATES": {
-        "user": "20/min",  # adjust to your needs
+        "user": "40/min",  # adjust to your needs
     },
 }
 

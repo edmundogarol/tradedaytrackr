@@ -5,6 +5,12 @@ export const JournalEntries = styled.div``;
 
 export const Entry = styled.div``;
 
+export const FiltersSwitchContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 20px;
+`;
+
 export const Description = styled.div`
   color: ${color("SystemLabel1")};
   font-size: 13px;

@@ -54,6 +54,7 @@ export const HorizontalSection = styled.div`
   display: flex;
   flex-direction: row;
   gap: 10px;
+  align-items: center;
 `;
 
 export const DropdownsSection = styled.div`

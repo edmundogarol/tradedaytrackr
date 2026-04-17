@@ -1,7 +1,7 @@
 import { css } from "styled-components";
 
 import moment from "moment-timezone";
-import { ICT_MACROS } from "./constants";
+import { ICT_SESSIONS } from "./constants";
 
 let CURRENT_TZ = "UTC"; // default fallback
 
@@ -180,7 +180,7 @@ export const decimalStringToInt = (
   return Math.round(num);
 };
 
-export const getICTMacroLabel = (dateTime: string): string | null => {
+export const getICTSessionLabel = (dateTime: string): string | null => {
   if (!dateTime) return null;
 
   // convert UTC → New York time
@@ -189,8 +189,8 @@ export const getICTMacroLabel = (dateTime: string): string | null => {
   const hour = nyTime.hour();
   const minute = nyTime.minute();
 
-  for (const macro of ICT_MACROS) {
-    const { open, close } = macro;
+  for (const session of ICT_SESSIONS) {
+    const { open, close } = session;
 
     const afterOpen =
       hour > open.hour || (hour === open.hour && minute >= open.minute);
@@ -199,9 +199,9 @@ export const getICTMacroLabel = (dateTime: string): string | null => {
       hour < close.hour || (hour === close.hour && minute <= close.minute);
 
     if (afterOpen && beforeClose) {
-      return macro.label;
+      return session.label;
     }
   }
 
-  return null; // no macro match
+  return null; // no session match
 };

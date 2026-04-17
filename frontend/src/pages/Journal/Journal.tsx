@@ -21,6 +21,7 @@ import {
 import {
   PageContainer as Container,
   DropdownsSection,
+  SectionText,
   SectionTitle,
 } from "@styles/globalStyledComponents";
 import { formatter, isNotEmptyString, m } from "@utils/utils";
@@ -28,7 +29,7 @@ import React, { useMemo, useState } from "react";
 
 import AlertPopout from "@components/Alert/AlertPopout";
 import ModalWrapper from "@components/Modal/Modal";
-import { Collapse } from "@mui/material";
+import { Collapse, FormControlLabel, Switch } from "@mui/material";
 import useJournalDispatch from "./hooks/useJournalDispatch";
 import useJournalEntriesApiCall from "./hooks/useJournalEntriesApiCall";
 import useJournalEntriesHandler from "./hooks/useJournalEntriesHandler";
@@ -36,6 +37,7 @@ import useJournalState from "./hooks/useJournalState";
 import {
   Description,
   EditContainer,
+  FiltersSwitchContainer,
   JournalEntries,
   TileTradeCount,
   TileTradeCountContainer,
@@ -44,8 +46,10 @@ import styles from "./JournalStyles";
 
 const Journal: React.FunctionComponent = () => {
   const navigation = useReactNavigation();
-  const { journalEntries, deleteJournalEntryErrors } = useJournalState();
-  const { updateDeleteJournalEntryErrors } = useJournalDispatch();
+  const { journalEntries, deleteJournalEntryErrors, fundedView } =
+    useJournalState();
+  const { updateDeleteJournalEntryErrors, updateFundedView } =
+    useJournalDispatch();
   const journalEntriesApiCall = useJournalEntriesApiCall();
   useJournalEntriesHandler(journalEntriesApiCall);
   const [sortByFilter, setSortByFilter] = useState("date");
@@ -110,13 +114,26 @@ const Journal: React.FunctionComponent = () => {
         <SectionTitle>Journal</SectionTitle>
         <Gap level={1} />
         <DropdownsSection>
-          <DropdownMultiselect
-            {...sortByOptions}
-            singleSelect
-            onSelect={(selected) => {
-              setSortByFilter(selected[0] as string);
-            }}
-          />
+          <FiltersSwitchContainer>
+            <DropdownMultiselect
+              {...sortByOptions}
+              singleSelect
+              onSelect={(selected) => {
+                setSortByFilter(selected[0] as string);
+              }}
+            />
+            <FormControlLabel
+              control={<Switch color="primary" checked={fundedView} />}
+              value={fundedView}
+              label={
+                <SectionText>
+                  {fundedView ? "Funded Stats" : "Eval Stats"}
+                </SectionText>
+              }
+              labelPlacement="end"
+              onChange={() => updateFundedView(!fundedView)}
+            />
+          </FiltersSwitchContainer>
           <Button
             onClick={() =>
               navigation.navigate(PageEnum.JournalEntry, {
@@ -132,6 +149,12 @@ const Journal: React.FunctionComponent = () => {
         </DropdownsSection>
         <JournalEntries>
           {filteredJournalEntries.map((entry, index) => {
+            const activePnL = fundedView
+              ? entry.totalPnl
+              : entry.totalEvalPnl || 0;
+            const activeAccountCount = fundedView
+              ? entry.accountCount
+              : entry.evalAccountCount || 0;
             return (
               <GlassTile
                 key={index}
@@ -142,9 +165,7 @@ const Journal: React.FunctionComponent = () => {
                 noGlow={true}
                 overlay={
                   <TileTradeCountContainer>
-                    {/* <InfoPopout infoDescription="2x Apex, 4x Mffu"> */}
-                    <TileTradeCount className="trade-count">{`x${entry.accountCount} acc`}</TileTradeCount>
-                    {/* </InfoPopout> */}
+                    <TileTradeCount className="trade-count">{`x${activeAccountCount} acc`}</TileTradeCount>
                   </TileTradeCountContainer>
                 }
               >
@@ -187,14 +208,20 @@ const Journal: React.FunctionComponent = () => {
                     {entry.description}
                   </Description>
                   <PnL
-                    $positive={entry.totalPnl >= 0}
+                    $evalPnl={!fundedView}
+                    $positive={activePnL >= 0}
                     onClick={() => {
                       navigation.navigate(PageEnum.JournalEntry, {
                         id: entry.id,
                       });
                     }}
                   >
-                    {formatter.format(entry.totalPnl)}
+                    {activeAccountCount > 0 ? formatter.format(activePnL) : ""}
+                    {activeAccountCount === 0 ? (
+                      <InfoPopout
+                        infoDescription={`No ${fundedView ? "funded" : "evaluation"} trades`}
+                      />
+                    ) : null}
                   </PnL>
                   <InfoPopout infoDescription="Edit Details">
                     <EditContainer>

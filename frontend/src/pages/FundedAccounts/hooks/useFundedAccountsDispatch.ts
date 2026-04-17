@@ -1,4 +1,8 @@
-import type { Trade, TradingAccount } from "@interfaces/CustomTypes";
+import type {
+  EvaluationAccount,
+  Trade,
+  TradingAccount,
+} from "@interfaces/CustomTypes";
 import type { Dispatch } from "react";
 import { useDispatch } from "react-redux";
 import type { FundedAccountsAction } from "../FundedAccountsState";
@@ -34,7 +38,9 @@ interface FundedAccountsDispatch {
   updateSelectedTrade: (trade: Trade) => void;
   updateAddTradeModalOpen: (open: boolean) => void;
   updateAddTradeErrors: (errors: { [key: string]: any }) => void;
-  updateCurrentTradingAccount: (tradingAccount: TradingAccount) => void;
+  updateCurrentTradingAccount: (
+    tradingAccount: TradingAccount | EvaluationAccount,
+  ) => void;
   updateCurrentTradingAccountErrors: (errors: { [key: string]: any }) => void;
   updateEditingFields: (fields: {
     editingAccountBalance?: boolean;
@@ -79,8 +85,10 @@ const useFundedAccountsDispatch = (): FundedAccountsDispatch => {
     updateAddTradeErrors(errors: { [key: string]: any }): void {
       dispatch(updateAddTradeErrors(errors));
     },
-    updateCurrentTradingAccount(tradingAccount: TradingAccount): void {
-      dispatch(updateCurrentTradingAccount(tradingAccount));
+    updateCurrentTradingAccount(
+      tradingAccount: TradingAccount | EvaluationAccount,
+    ): void {
+      dispatch(updateCurrentTradingAccount(tradingAccount as any));
     },
     updateCurrentTradingAccountErrors(errors: { [key: string]: any }): void {
       dispatch(updateCurrentTradingAccountErrors(errors));

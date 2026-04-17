@@ -15,15 +15,18 @@ import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
 import PhotoIcon from "@mui/icons-material/Photo";
+import { FormControlLabel, Switch } from "@mui/material";
 import {
   PageContainer as Container,
+  HorizontalSection,
   Section,
+  SectionText,
   SectionTitle,
   SubsectionHeader,
 } from "@styles/globalStyledComponents";
 import {
   formatter,
-  getICTMacroLabel,
+  getICTSessionLabel,
   isNotEmptyString,
   m,
   sanitizeTag,
@@ -89,6 +92,7 @@ const JournalEntry: React.FunctionComponent = () => {
     journalErrors,
     journalEntries,
     editingJournalEntry: editing,
+    fundedView,
   } = useJournalState();
   const {
     updateJournalEntry,
@@ -96,6 +100,7 @@ const JournalEntry: React.FunctionComponent = () => {
     updateJournalErrors,
     updateDeleteJournalEntryModalOpen,
     updateEditingJournalEntry,
+    updateFundedView,
   } = useJournalDispatch();
   let [searchParams] = useSearchParams();
   const journalEntryId = searchParams.get("id");
@@ -107,30 +112,33 @@ const JournalEntry: React.FunctionComponent = () => {
   const [currentTagInput, setCurrentTagInput] = useState("");
   const { getJournalEntry } = useGetJournalEntryHandler();
   const { getTradesByDate } = useGetTradesByDateHandler();
-  const saveDisabled =
-    journalEntry.contracts <= 0 ||
-    journalEntry.risk <= 0 ||
-    journalEntry.instrument === "";
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [journalEntryImage, setJournalEntryImage] = useState<File | null>(null);
 
   useEffect(() => {
+    // Fetch journal entry from id
     if (journalEntry.id === 0 && searchParams.get("id") !== "new") {
       getJournalEntry(parseInt(searchParams.get("id") || "0"));
     }
   }, [searchParams, journalEntry]);
 
   useEffect(() => {
-    const currentEntry = journalEntries.find(
-      (entry) => entry.id === parseInt(searchParams.get("id") || "0"),
-    );
+    // Creating new journal entry
     if (searchParams.get("id") === "new") {
       updateJournalEntry(initialState.journalEntry);
       return;
     }
+
+    const currentEntry = journalEntries.find(
+      (entry) => entry.id === parseInt(searchParams.get("id") || "0"),
+    );
     if (currentEntry) {
       updateJournalEntry(currentEntry);
       setOriginalJournalEntry(currentEntry);
+    } else {
+      // If journal entry is not found (e.g. after deletion), reset to initial state
+      updateJournalEntry(initialState.journalEntry);
+      updateJournalErrors({});
     }
 
     updateDetectedTrades(availableAccountTradesOnDateMock);
@@ -154,12 +162,6 @@ const JournalEntry: React.FunctionComponent = () => {
     }
   }, [journalEntry.imageUrl]);
 
-  const detectedTradesPnL = useMemo(() => {
-    return selectedDateTrades
-      .filter((trade) => journalEntry?.tradeIds?.includes(trade.id))
-      .reduce((total, trade) => total + Number(trade.pnl), 0);
-  }, [selectedDateTrades, journalEntry?.tradeIds]);
-
   const { createJournalEntry, loading: creatingJournalEntry } =
     useCreateJournalEntryHandler();
 
@@ -178,6 +180,38 @@ const JournalEntry: React.FunctionComponent = () => {
     return "";
   }, [journalEntryImage, journalEntry.imageUrl]);
 
+  const activeRisk = fundedView ? journalEntry.risk : journalEntry.evalRisk;
+  const activeContracts = fundedView
+    ? journalEntry.contracts
+    : journalEntry.evalContracts;
+  const activeOutcome = fundedView
+    ? journalEntry.outcome
+    : journalEntry.evalOutcome;
+  const activePnL = fundedView
+    ? journalEntry.totalPnl
+    : journalEntry.totalEvalPnl;
+  const activeTradeIds = fundedView
+    ? journalEntry.tradeIds
+    : journalEntry.evalTradeIds;
+
+  const detectedTradesPnL = useMemo(() => {
+    if (selectedDateTrades.length === 0) {
+      return activePnL as number;
+    }
+    return selectedDateTrades
+      .filter((trade) => activeTradeIds?.includes(trade.id))
+      .reduce((total, trade) => total + Number(trade.pnl), 0);
+  }, [
+    selectedDateTrades,
+    activeTradeIds,
+    journalEntry.totalPnl,
+    journalEntry.totalEvalPnl,
+  ]);
+
+  const saveDisabled =
+    journalEntry.contracts <= 0 ||
+    journalEntry.risk <= 0 ||
+    journalEntry.instrument === "";
   return (
     <Page topBarShowMenu={true}>
       <AlertPopout
@@ -209,8 +243,20 @@ const JournalEntry: React.FunctionComponent = () => {
         setEditingAccounts={setEditingAccounts}
       />
       <Container>
-        <SectionTitle>Journal Entry</SectionTitle>
-        <Gap level={1} />
+        <HorizontalSection>
+          <SectionTitle>Journal Entry</SectionTitle>
+          <FormControlLabel
+            control={<Switch color="primary" checked={fundedView} />}
+            value={fundedView}
+            label={
+              <SectionText>
+                {fundedView ? "Funded Stats" : "Eval Stats"}
+              </SectionText>
+            }
+            labelPlacement="end"
+            onChange={() => updateFundedView(!fundedView)}
+          />
+        </HorizontalSection>
         <EntryInfoContainer>
           <EntryDetails>
             <GlassTile
@@ -251,10 +297,10 @@ const JournalEntry: React.FunctionComponent = () => {
                     <TradeSubtitleEditing
                       onClick={() => setEditingAccounts(true)}
                     >
-                      {`${journalEntry.tradeIds.length} Accounts`}
+                      {`${activeTradeIds?.length || 0} Accounts`}
                     </TradeSubtitleEditing>
                     <Else>
-                      <TradeSubtitle>{`${journalEntry.tradeIds.length} Accounts`}</TradeSubtitle>
+                      <TradeSubtitle>{`${activeTradeIds?.length || 0} Accounts`}</TradeSubtitle>
                     </Else>
                   </If>
                   <TagInputContainer>
@@ -468,6 +514,7 @@ const JournalEntry: React.FunctionComponent = () => {
                 </TradeInfo>
                 <FormError error={journalErrors?.trade_ids} />
                 <FormError error={journalErrors?.risk} />
+                <FormError error={journalErrors?.eval_risk} />
                 <TradeCapture>
                   <div>
                     <TradeImage
@@ -533,12 +580,17 @@ const JournalEntry: React.FunctionComponent = () => {
                             darkMode
                             type="number"
                             onChange={(e) =>
-                              updateJournalEntry({
-                                ...journalEntry,
-                                risk: parseInt(e.target.value),
-                              })
+                              fundedView
+                                ? updateJournalEntry({
+                                    ...journalEntry,
+                                    risk: parseInt(e.target.value),
+                                  })
+                                : updateJournalEntry({
+                                    ...journalEntry,
+                                    evalRisk: parseInt(e.target.value),
+                                  })
                             }
-                            value={journalEntry.risk}
+                            value={activeRisk}
                             style={styles.input}
                             suggestions={[
                               {
@@ -551,9 +603,7 @@ const JournalEntry: React.FunctionComponent = () => {
                           />
                         </SummaryItemValue>
                         <Else>
-                          <SummaryItemValue>
-                            ${journalEntry.risk}
-                          </SummaryItemValue>
+                          <SummaryItemValue>${activeRisk}</SummaryItemValue>
                         </Else>
                       </If>
                     </SummaryItem>
@@ -570,18 +620,23 @@ const JournalEntry: React.FunctionComponent = () => {
                             darkMode
                             type="number"
                             onChange={(e) =>
-                              updateJournalEntry({
-                                ...journalEntry,
-                                contracts: parseInt(e.target.value),
-                              })
+                              fundedView
+                                ? updateJournalEntry({
+                                    ...journalEntry,
+                                    contracts: parseInt(e.target.value),
+                                  })
+                                : updateJournalEntry({
+                                    ...journalEntry,
+                                    evalContracts: parseInt(e.target.value),
+                                  })
                             }
-                            value={journalEntry.contracts}
+                            value={activeContracts}
                             style={styles.input}
                           />
                         </SummaryItemValue>
                         <Else>
                           <SummaryItemValue>
-                            x{journalEntry.contracts}
+                            x{activeContracts}
                           </SummaryItemValue>
                         </Else>
                       </If>
@@ -594,33 +649,40 @@ const JournalEntry: React.FunctionComponent = () => {
                             darkMode
                             type="number"
                             onChange={(e) =>
-                              updateJournalEntry({
-                                ...journalEntry,
-                                outcome: parseInt(e.target.value),
-                              })
+                              fundedView
+                                ? updateJournalEntry({
+                                    ...journalEntry,
+                                    outcome: parseInt(e.target.value),
+                                  })
+                                : updateJournalEntry({
+                                    ...journalEntry,
+                                    evalOutcome: parseInt(e.target.value),
+                                  })
                             }
-                            value={journalEntry.outcome}
+                            value={activeOutcome}
                             style={styles.input}
                           />
                         </SummaryItemValue>
                         <Else>
                           <SummaryItemValue
-                            $isPositive={journalEntry.outcome >= 0}
+                            $isPositive={(activeOutcome as number) >= 0}
                           >
-                            {formatter.format(journalEntry.outcome)}
+                            {formatter.format(activeOutcome as number)}
                           </SummaryItemValue>
                         </Else>
                       </If>
                     </SummaryItem>
                     <SummaryItem>
                       <SummaryItemTitle>RR</SummaryItemTitle>
-                      <SummaryItemValue $isPositive={journalEntry.outcome >= 0}>
+                      <SummaryItemValue
+                        $isPositive={(activeOutcome as number) >= 0}
+                      >
                         {Number.isFinite(
-                          journalEntry.outcome / journalEntry.risk,
+                          (activeOutcome as number) / (activeRisk as number),
                         )
-                          ? (journalEntry.outcome / journalEntry.risk).toFixed(
-                              2,
-                            )
+                          ? (
+                              (activeOutcome as number) / (activeRisk as number)
+                            ).toFixed(2)
                           : "N/A"}
                       </SummaryItemValue>
                     </SummaryItem>
@@ -753,23 +815,26 @@ const JournalEntry: React.FunctionComponent = () => {
                   <SummaryItem>
                     <SummaryItemTitle>Total Contracts</SummaryItemTitle>
                     <SummaryItemValue>
-                      {`x${journalEntry.tradeIds.length === 0 ? journalEntry.contracts : journalEntry.contracts * journalEntry.tradeIds.length}`}
+                      {`x${(activeTradeIds || []).length === 0 ? activeContracts : (activeContracts as number) * (activeTradeIds || []).length}`}
                       <SummaryItemValueSubtext>
-                        {`[${journalEntry.tradeIds.length} Accounts]`}
+                        {`[${(activeTradeIds || []).length} Accounts]`}
                       </SummaryItemValueSubtext>
                     </SummaryItemValue>
                   </SummaryItem>
                   <SummaryItem>
                     <SummaryItemTitle>Session</SummaryItemTitle>
                     <SummaryItemValue>
-                      {getICTMacroLabel(journalEntry.dateTime)}
+                      {getICTSessionLabel(journalEntry.dateTime)}
                     </SummaryItemValue>
                   </SummaryItem>
                   <SummaryItem>
                     <SummaryItemTitle>Total PnL</SummaryItemTitle>
                     <SummaryItemPnL
-                      $isPositive={journalEntry.totalPnl >= 0}
-                    >{`${formatter.format(editing ? detectedTradesPnL : journalEntry.totalPnl)}`}</SummaryItemPnL>
+                      $isPositive={
+                        (editing ? detectedTradesPnL : (activePnL as number)) >=
+                        0
+                      }
+                    >{`${formatter.format(editing ? detectedTradesPnL : (activePnL as number))}`}</SummaryItemPnL>
                   </SummaryItem>
                 </SummarySection>
               </SummaryTitleInfoContainer>

@@ -8,6 +8,8 @@ import InfoPopout from "@components/InfoPopout/InfoPopout";
 import type { EvaluationAccount } from "@interfaces/CustomTypes";
 import { PageEnum } from "@interfaces/NavigationTypes";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
+import { DaysItemSubtitle } from "@pages/FundedAccounts/FundedAccountsStyledComponents";
+import useFundedAccountsDispatch from "@pages/FundedAccounts/hooks/useFundedAccountsDispatch";
 import { BorderLinearProgress } from "@styles/globalStyledComponents";
 import {
   AccountImage,
@@ -22,7 +24,6 @@ import {
   BufferText,
   DaysContainer,
   DaysItem,
-  DaysItemSubtitle,
   DaysItemValue,
   ListItemContainer,
   Status,
@@ -51,6 +52,7 @@ const EvaluationAccountsListItem: React.FunctionComponent<
     consistencyScore,
   } = account;
   const [alertNoRecord, setAlertNoRecord] = React.useState(false);
+  const { updateCurrentTradingAccount } = useFundedAccountsDispatch();
   const evalProgressStatus = useGetEvalProgressStatus();
   const progress = ((accountBalance - accountSize) / profitTarget) * 100;
   const navigation = useReactNavigation();
@@ -121,7 +123,7 @@ const EvaluationAccountsListItem: React.FunctionComponent<
                 $positive={true}
                 onClick={() => {
                   openAddTradingDayModal && openAddTradingDayModal(true);
-                  console.log("open add trading day modal");
+                  updateCurrentTradingAccount(account);
                 }}
               >
                 {"+"}

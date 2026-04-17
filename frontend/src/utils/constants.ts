@@ -52,53 +52,35 @@ export const TIMEZONE_OPTIONS = [
   { label: "GMT+13 — Fiji", value: "Pacific/Fiji" },
 ];
 
-export const ICT_MACROS = [
+export const ICT_SESSIONS = [
   {
-    key: "london",
-    label: "London Open",
-    open: { hour: 2, minute: 33 },
-    close: { hour: 3, minute: 0 },
+    key: "asia",
+    label: "Asia Session",
+    open: { hour: 20, minute: 0 },
+    close: { hour: 0, minute: 0 }, // next day
   },
   {
-    key: "london2",
-    label: "London Continuation",
-    open: { hour: 4, minute: 3 },
-    close: { hour: 4, minute: 30 },
+    key: "london",
+    label: "London Session",
+    open: { hour: 2, minute: 0 },
+    close: { hour: 5, minute: 0 },
   },
   {
     key: "nyAm",
-    label: "NY AM 1",
-    open: { hour: 8, minute: 50 },
-    close: { hour: 9, minute: 10 },
-  },
-  {
-    key: "nyAm2",
-    label: "NY AM 2",
-    open: { hour: 9, minute: 50 },
-    close: { hour: 10, minute: 10 },
-  },
-  {
-    key: "nyAm3",
-    label: "NY AM 3",
-    open: { hour: 10, minute: 50 },
-    close: { hour: 11, minute: 10 },
+    label: "New York AM",
+    open: { hour: 9, minute: 30 },
+    close: { hour: 11, minute: 0 },
   },
   {
     key: "nyLunch",
-    label: "NY Lunch",
-    open: { hour: 11, minute: 50 },
-    close: { hour: 12, minute: 10 },
+    label: "New York Lunch",
+    open: { hour: 12, minute: 0 },
+    close: { hour: 13, minute: 0 },
   },
   {
     key: "nyPm",
-    label: "NY PM",
-    open: { hour: 13, minute: 10 },
-    close: { hour: 13, minute: 40 },
-  },
-  {
-    key: "nyLast",
-    label: "NY Power Hour",
-    open: { hour: 15, minute: 15 },
-    close: { hour: 15, minute: 45 },
+    label: "New York PM",
+    open: { hour: 13, minute: 30 },
+    close: { hour: 16, minute: 0 },
   },
 ];

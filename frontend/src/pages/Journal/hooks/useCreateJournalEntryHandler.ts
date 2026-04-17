@@ -1,6 +1,6 @@
 import { PageEnum } from "@interfaces/NavigationTypes";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
-import { appendIfDefined, resizeImage } from "@utils/utils";
+import { appendIfDefined, keysToCamel, resizeImage } from "@utils/utils";
 import { useCallback } from "react";
 import type { JournalEntry } from "../JournalInterfaces";
 import useCreateJournalEntryApiCall from "./useCreateJournalEntryApiCall";
@@ -17,7 +17,7 @@ interface CreateJournalEntryHandler {
 
 const useCreateJournalEntryHandler = (): CreateJournalEntryHandler => {
   const { fetch, loading } = useCreateJournalEntryApiCall();
-  const { journalEntry } = useJournalState();
+  const { journalEntry, fundedView } = useJournalState();
   const { updateJournalEntry, updateJournalErrors, updateEditingJournalEntry } =
     useJournalDispatch();
   const navigation = useReactNavigation();
@@ -34,6 +34,9 @@ const useCreateJournalEntryHandler = (): CreateJournalEntryHandler => {
         appendIfDefined(formData, "risk", journalEntry.risk);
         appendIfDefined(formData, "contracts", journalEntry.contracts);
         appendIfDefined(formData, "outcome", journalEntry.outcome);
+        appendIfDefined(formData, "eval_risk", journalEntry.evalRisk);
+        appendIfDefined(formData, "eval_contracts", journalEntry.evalContracts);
+        appendIfDefined(formData, "eval_outcome", journalEntry.evalOutcome);
         appendIfDefined(formData, "instrument", journalEntry.instrument);
         appendIfDefined(formData, "description", journalEntry.description);
         if (journalEntryImage) {
@@ -48,13 +51,16 @@ const useCreateJournalEntryHandler = (): CreateJournalEntryHandler => {
         journalEntry.tradeIds.forEach((id) => {
           formData.append("trade_ids_input", String(id));
         });
+        (journalEntry.evalTradeIds || []).forEach((id) => {
+          formData.append("trade_ids_input", String(id));
+        });
 
         const { error, data } = await fetch({
           data: formData,
         });
 
         if (!!data && data.id) {
-          updateJournalEntry(data);
+          updateJournalEntry(keysToCamel(data));
           navigation.navigate(PageEnum.Journal);
           updateJournalErrors({
             detail: "Journal entry created successfully!",

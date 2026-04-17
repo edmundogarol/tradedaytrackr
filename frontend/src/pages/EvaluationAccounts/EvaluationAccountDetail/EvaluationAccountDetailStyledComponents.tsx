@@ -1,5 +1,4 @@
 import { color } from "@styles/colors";
-import { devSrc } from "@utils/utils";
 import styled from "styled-components";
 
 export const HeaderContainer = styled.div`
@@ -65,7 +64,7 @@ export const BufferHeader = styled.div`
 `;
 
 export const PnLHeader = styled.div`
-  flex: 1;
+  flex: 1.4;
   display: flex;
   justify-content: center;
   @media (max-width: 799px) {
@@ -97,22 +96,6 @@ export const TradeDay = styled.div`
   z-index: 10;
   gap: 10px;
   justify-content: space-between;
-`;
-
-export const TradePreview = styled.div<{ $idx: number }>`
-  background-image: ${(props): string =>
-    `url('${devSrc(`trade${props.$idx + 1}.png`)}')`};
-  height: 100%;
-  width: 100%;
-  background-size: cover;
-  z-index: 1;
-  border-radius: 2px;
-  opacity: 0.8;
-
-  &:hover {
-    opacity: 1;
-    cursor: pointer;
-  }
 `;
 
 export const DayValue = styled.div`
@@ -154,14 +137,12 @@ export const ConsistencyContainer = styled.div`
   gap: 5px;
   flex: 1;
 `;
-export const ConsistencyScore = styled.span`
-  color: ${color("SystemBlue5")};
-`;
+
 export const ConsistencyLabel = styled.span`
   display: flex;
   color: ${color("SystemLabel1")};
   font-size: 12px;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
 `;

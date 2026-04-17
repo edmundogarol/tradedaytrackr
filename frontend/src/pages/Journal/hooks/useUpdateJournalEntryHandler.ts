@@ -1,5 +1,5 @@
 import environmentConfig from "@utils/environmentConfig";
-import { appendIfDefined, resizeImage } from "@utils/utils";
+import { appendIfDefined, keysToCamel, resizeImage } from "@utils/utils";
 import { useCallback } from "react";
 import type { JournalEntry } from "../JournalInterfaces";
 import useJournalDispatch from "./useJournalDispatch";
@@ -16,7 +16,7 @@ interface UpdateJournalEntryHandler {
 
 const useUpdateJournalEntryHandler = (): UpdateJournalEntryHandler => {
   const { fetch, loading } = useUpdateJournalEntryApiCall();
-  const { journalEntry } = useJournalState();
+  const { journalEntry, fundedView } = useJournalState();
   const { updateJournalEntry, updateJournalErrors, updateEditingJournalEntry } =
     useJournalDispatch();
 
@@ -33,6 +33,9 @@ const useUpdateJournalEntryHandler = (): UpdateJournalEntryHandler => {
         appendIfDefined(formData, "risk", journalEntry.risk);
         appendIfDefined(formData, "contracts", journalEntry.contracts);
         appendIfDefined(formData, "outcome", journalEntry.outcome);
+        appendIfDefined(formData, "eval_risk", journalEntry.evalRisk);
+        appendIfDefined(formData, "eval_contracts", journalEntry.evalContracts);
+        appendIfDefined(formData, "eval_outcome", journalEntry.evalOutcome);
         appendIfDefined(formData, "instrument", journalEntry.instrument);
         appendIfDefined(formData, "description", journalEntry.description);
         if (journalEntryImage) {
@@ -47,6 +50,9 @@ const useUpdateJournalEntryHandler = (): UpdateJournalEntryHandler => {
         journalEntry.tradeIds.forEach((id) => {
           formData.append("trade_ids_input", String(id));
         });
+        (journalEntry.evalTradeIds || []).forEach((id) => {
+          formData.append("trade_ids_input", String(id));
+        });
 
         const { error, data } = await fetch({
           url: `${environmentConfig.HOST}/api/journal-entries/${journalEntry.id}/`,
@@ -54,13 +60,12 @@ const useUpdateJournalEntryHandler = (): UpdateJournalEntryHandler => {
         });
 
         if (!!data && data.id) {
-          updateJournalEntry(data);
+          updateJournalEntry(keysToCamel(data));
           updateJournalErrors({
             detail: "Journal entry updated successfully!",
           });
           updateEditingJournalEntry(false);
-        } else if (error) {
-          updateJournalErrors(error);
+        } else {
         }
       },
       [loading, journalEntry],

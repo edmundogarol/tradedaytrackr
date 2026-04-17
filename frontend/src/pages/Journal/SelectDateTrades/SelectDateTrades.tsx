@@ -28,8 +28,12 @@ const SelectDateTrades: React.FunctionComponent<SelectDateTradesProps> = ({
   setEditingAccounts,
   detectedTradesPnL,
 }) => {
-  const { journalEntry, selectedDateTrades } = useJournalState();
+  const { journalEntry, selectedDateTrades, fundedView } = useJournalState();
   const { updateJournalEntry } = useJournalDispatch();
+
+  const activeTradeIds = fundedView
+    ? journalEntry.tradeIds
+    : journalEntry.evalTradeIds || [];
 
   return (
     <Modal
@@ -38,48 +42,76 @@ const SelectDateTrades: React.FunctionComponent<SelectDateTradesProps> = ({
       title="Select Accounts Trades"
       onClose={() => {
         setEditingAccounts(false);
-        updateJournalEntry({
-          ...journalEntry,
-          tradeIds: journalEntry.tradeIds,
-        });
+        if (fundedView) {
+          updateJournalEntry({
+            ...journalEntry,
+            tradeIds: journalEntry.tradeIds,
+          });
+        } else {
+          updateJournalEntry({
+            ...journalEntry,
+            evalTradeIds: journalEntry.evalTradeIds,
+          });
+        }
       }}
     >
       <TradesDetectedContainer>
         {`${selectedDateTrades.length} trades detected for ${m(journalEntry.dateTime).format("MMM DD")}`}
       </TradesDetectedContainer>
       <TradesDetectedContainer>
-        {selectedDateTrades.map((trade) => {
-          return (
-            <TradesDetectedTrade key={trade.id}>
-              <Checkbox
-                sx={{ color: "#a9b1c2" }}
-                checked={journalEntry.tradeIds.includes(trade.id)}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    updateJournalEntry({
-                      ...journalEntry,
-                      tradeIds: [...journalEntry.tradeIds, trade.id],
-                    });
-                  } else {
-                    updateJournalEntry({
-                      ...journalEntry,
-                      tradeIds: journalEntry.tradeIds.filter(
-                        (id) => id !== trade.id,
-                      ),
-                    });
-                  }
-                }}
-              />
-              <div>{trade.account.name}</div>
-              <TradesDetectedTime>
-                {m(trade.date).format("hh:mm A")}
-              </TradesDetectedTime>
-              <TradesDetectedPnL
-                $positive={trade.pnl !== null && trade.pnl >= 0}
-              >{`$${decimalStringToInt(trade.pnl || 0)}`}</TradesDetectedPnL>
-            </TradesDetectedTrade>
-          );
-        })}
+        {selectedDateTrades
+          .filter((trade) => (fundedView ? !trade.isEval : trade.isEval))
+          .map((trade) => {
+            return (
+              <TradesDetectedTrade key={trade.id}>
+                <Checkbox
+                  sx={{ color: "#a9b1c2" }}
+                  checked={activeTradeIds.includes(trade.id)}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      if (fundedView) {
+                        updateJournalEntry({
+                          ...journalEntry,
+                          tradeIds: [...journalEntry.tradeIds, trade.id],
+                        });
+                      } else {
+                        updateJournalEntry({
+                          ...journalEntry,
+                          evalTradeIds: [
+                            ...(journalEntry.evalTradeIds || []),
+                            trade.id,
+                          ],
+                        });
+                      }
+                    } else {
+                      if (fundedView) {
+                        updateJournalEntry({
+                          ...journalEntry,
+                          tradeIds: journalEntry.tradeIds.filter(
+                            (id) => id !== trade.id,
+                          ),
+                        });
+                      } else {
+                        updateJournalEntry({
+                          ...journalEntry,
+                          evalTradeIds: (
+                            journalEntry.evalTradeIds || []
+                          ).filter((id) => id !== trade.id),
+                        });
+                      }
+                    }
+                  }}
+                />
+                <div>{trade.account.name}</div>
+                <TradesDetectedTime>
+                  {m(trade.date).format("hh:mm A")}
+                </TradesDetectedTime>
+                <TradesDetectedPnL
+                  $positive={trade.pnl !== null && trade.pnl >= 0}
+                >{`$${decimalStringToInt(trade.pnl || 0)}`}</TradesDetectedPnL>
+              </TradesDetectedTrade>
+            );
+          })}
       </TradesDetectedContainer>
       <TradesDetectedPnLTotal>
         {`Total selected PnL: `}

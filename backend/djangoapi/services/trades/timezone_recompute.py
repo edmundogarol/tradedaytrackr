@@ -15,7 +15,7 @@ def recompute_user_timezone(user):
 
     accounts = user.trading_accounts.prefetch_related("trades").all()
 
-    # 🔥 disable signal
+    # disable signal
     post_save.disconnect(update_account_on_trade_save, sender=Trade)
 
     try:
@@ -32,12 +32,12 @@ def recompute_user_timezone(user):
                     trade.trading_day = trading_day
                     trade.save(update_fields=["trading_day"])
 
-            # 🔥 clean empty days
+            # clean empty days
             TradingDay.objects.filter(account=account, trades__isnull=True).delete()
 
-            # 🔥 recompute ONCE
+            # recompute ONCE
             recompute_all_trading_days(account)
 
     finally:
-        # 🔥 re-enable signal
+        # re-enable signal
         post_save.connect(update_account_on_trade_save, sender=Trade)

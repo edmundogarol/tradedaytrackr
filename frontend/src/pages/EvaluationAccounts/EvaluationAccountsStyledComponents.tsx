@@ -19,6 +19,7 @@ export const Title = styled.h1`
   text-transform: uppercase;
   letter-spacing: 2px;
   margin-bottom: 5px;
+  flex: 4.9;
 `;
 
 export const DropdownsSection = styled.div`
@@ -180,10 +181,6 @@ export const DaysItemValue = styled.span<{
   min-width: 25px;
   text-align: center;
   cursor: pointer;
-`;
-
-export const DaysItemSubtitle = styled.span`
-  color: #989898;
 `;
 
 export const BufferContainer = styled.div`

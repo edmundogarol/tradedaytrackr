@@ -1,10 +1,10 @@
-from django.db.models import Count, DecimalField, Sum, Value
-from django.db.models.functions import Coalesce
+from django.db.models import Prefetch
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from backend.djangoapi.models.journal_entry import JournalEntry
+from backend.djangoapi.models.trade import Trade
 from backend.djangoapi.serializers.journal_entry import JournalEntrySerializer
 from backend.djangoapi.serializers.journal_entry_list import JournalEntryListSerializer
 
@@ -15,13 +15,12 @@ class JournalEntryViewSet(ModelViewSet):
     def get_queryset(self):
         qs = JournalEntry.objects.filter(user=self.request.user)
 
-        qs = qs.annotate(
-            total_pnl=Coalesce(
-                Sum("trades__pnl"),
-                Value(0),
-                output_field=DecimalField(),
+        qs = qs.prefetch_related(
+            Prefetch(
+                "trades",
+                queryset=Trade.objects.select_related("account", "account__template"),
             ),
-            trade_count=Count("trades"),
+            "tags",
         )
 
         qs = qs.prefetch_related(

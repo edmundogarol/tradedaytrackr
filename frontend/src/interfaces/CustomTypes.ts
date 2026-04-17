@@ -110,6 +110,7 @@ export interface Trade {
   };
   journalEntry: JournalEntry | null;
   isPayout?: boolean;
+  isEval?: boolean;
 }
 
 export interface TradingDay {
