@@ -13,6 +13,7 @@ export interface JournalEntry {
   description: string;
   image: string;
   imageUrl: string;
+  trades: number[];
   tradeIds: number[];
   evalTradeIds?: number[];
   totalPnl: number;

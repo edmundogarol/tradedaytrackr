@@ -1,6 +1,10 @@
 import GlassTile from "@components/GlassTile/GlassTile";
 import { PageEnum } from "@interfaces/NavigationTypes";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
+import useJournalEntriesApiCall from "@pages/Journal/hooks/useJournalEntriesApiCall";
+import useJournalEntriesHandler from "@pages/Journal/hooks/useJournalEntriesHandler";
+import useJournalState from "@pages/Journal/hooks/useJournalState";
+import { m } from "@utils/utils";
 import React from "react";
 import {
   Container,
@@ -29,33 +33,38 @@ const CalendarSummary: React.FunctionComponent<CalendarSummaryProps> = ({
   count,
 }) => {
   const navigation = useReactNavigation();
+  const { journalEntries } = useJournalState();
+  const journalEntriesApiCall = useJournalEntriesApiCall();
+  useJournalEntriesHandler(journalEntriesApiCall);
+
   return (
     <Container>
-      {Array.from({ length: count }).map((_, index) => {
-        const randomPnL = (Math.random() * 1000 - 500).toFixed(2);
-        const randomTradeCount = Math.floor(Math.random() * 1) + 1;
-        const positivePnL = parseFloat(randomPnL) >= 0;
+      {journalEntries.map((journalEntry, index) => {
         return (
           <TileContainer
             key={index}
             onClick={() =>
               navigation.navigate(PageEnum.JournalEntry, {
-                id: index + 1,
+                id: journalEntry.id,
               })
             }
           >
             <GlassTile
               key={index}
-              positive={positivePnL}
+              positive={journalEntry.totalPnl >= 0}
               overlay={
                 <TileDate>
-                  <TileDateText>Dec {index + 1}</TileDateText>
-                  <TileAccs>{`x${index} Accs`}</TileAccs>
+                  <TileDateText>
+                    {m(journalEntry.dateTime).format("MMM D")}
+                  </TileDateText>
+                  <TileAccs>{`x${journalEntry.accountCount} Accs`}</TileAccs>
                   <TileInfo>
-                    <TilePnL $positive={positivePnL}>${randomPnL}</TilePnL>
+                    <TilePnL $positive={journalEntry.totalPnl >= 0}>
+                      ${journalEntry.totalPnl}
+                    </TilePnL>
                     <TileTradeCount className="trade-count">
-                      {`${randomTradeCount} trade${
-                        randomTradeCount !== 1 ? "s" : ""
+                      {`${journalEntry.trades?.length} trade${
+                        journalEntry.trades?.length !== 1 ? "s" : ""
                       }`}
                     </TileTradeCount>
                   </TileInfo>
@@ -63,7 +72,7 @@ const CalendarSummary: React.FunctionComponent<CalendarSummaryProps> = ({
               }
             >
               <TradePreviewOverlay>
-                <TradePreview $idx={index} />
+                <TradePreview $src={journalEntry.imageUrl} />
               </TradePreviewOverlay>
             </GlassTile>
           </TileContainer>

@@ -1,7 +1,7 @@
 import environmentConfig from "@utils/environmentConfig";
 import { keysToCamel } from "@utils/utils";
 import { useCallback } from "react";
-import useGenerateDraftAIApiCall from "./useGenerateDraftAIApiCall";
+import useGetJournalEntryApiCall from "./useGetJournalEntryApiCall";
 import useJournalDispatch from "./useJournalDispatch";
 import useJournalState from "./useJournalState";
 
@@ -13,7 +13,7 @@ interface GetJournalEntryHandlerProps {
 const useGetJournalEntryHandler = (): GetJournalEntryHandlerProps => {
   const { updateJournalEntry, updateJournalErrors } = useJournalDispatch();
   const { journalEntry } = useJournalState();
-  const { fetch, loading } = useGenerateDraftAIApiCall();
+  const { fetch, loading } = useGetJournalEntryApiCall();
 
   return {
     getJournalEntry: useCallback(

@@ -1,23 +1,23 @@
-import React from "react";
-import Gap from "@components/Gap/Gap";
-import Page from "@components/Page/Page";
 import CalendarSummary, {
   CalendarSummaryCount,
 } from "@components/Calendar/CalendarSummary/CalendarSummary";
+import Gap from "@components/Gap/Gap";
+import Page from "@components/Page/Page";
 import StatsSummary from "@components/Stats/StatsSummary/StatsSummary";
 import useGetDashboardStatsSummaryDetails from "@pages/Dashboard/FundingOverview/hooks/useGetDashboardStatsSummaryDetails";
-import UpcomingPayoutDetails from "./UpcomingPayoutDetails/UpcomingPayoutDetails";
+import React from "react";
 import {
-  Container,
   CalendarContainer,
-  SectionHeader,
-  JournalEntriesContainer,
+  Container,
   DashboardContentOtherContainer,
-  TopSection,
+  JournalEntriesContainer,
   LeftContainer,
   RightContainer,
+  SectionHeader,
+  TopSection,
 } from "./DashboardStyledComponents";
 import FundingOverview from "./FundingOverview/FundingOverview";
+import UpcomingPayoutDetails from "./UpcomingPayoutDetails/UpcomingPayoutDetails";
 
 const Dashboard: React.FunctionComponent = () => {
   const dashboardStatsSummaryDetails = useGetDashboardStatsSummaryDetails();
