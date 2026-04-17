@@ -1,5 +1,5 @@
 import environmentConfig from "@utils/environmentConfig";
-import { appendIfDefined, keysToCamel, resizeImage } from "@utils/utils";
+import { appendIfDefined, keysToCamel } from "@utils/utils";
 import { useCallback } from "react";
 import type { JournalEntry } from "../JournalInterfaces";
 import useJournalDispatch from "./useJournalDispatch";
@@ -40,8 +40,7 @@ const useUpdateJournalEntryHandler = (): UpdateJournalEntryHandler => {
         appendIfDefined(formData, "description", journalEntry.description);
         if (journalEntryImage) {
           if (journalEntryImage instanceof File) {
-            const resized = await resizeImage(journalEntryImage, 800);
-            formData.append("image", resized);
+            formData.append("image", journalEntryImage);
           }
         }
         journalEntry.tags.forEach((tag) => {
@@ -54,7 +53,7 @@ const useUpdateJournalEntryHandler = (): UpdateJournalEntryHandler => {
           formData.append("trade_ids_input", String(id));
         });
 
-        const { error, data } = await fetch({
+        const { data } = await fetch({
           url: `${environmentConfig.HOST}/api/journal-entries/${journalEntry.id}/`,
           data: formData,
         });

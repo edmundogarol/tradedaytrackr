@@ -1,6 +1,6 @@
 import { PageEnum } from "@interfaces/NavigationTypes";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
-import { appendIfDefined, keysToCamel, resizeImage } from "@utils/utils";
+import { appendIfDefined, keysToCamel } from "@utils/utils";
 import { useCallback } from "react";
 import type { JournalEntry } from "../JournalInterfaces";
 import useCreateJournalEntryApiCall from "./useCreateJournalEntryApiCall";
@@ -41,8 +41,7 @@ const useCreateJournalEntryHandler = (): CreateJournalEntryHandler => {
         appendIfDefined(formData, "description", journalEntry.description);
         if (journalEntryImage) {
           if (journalEntryImage instanceof File) {
-            const resized = await resizeImage(journalEntryImage, 800);
-            formData.append("image", resized);
+            formData.append("image", journalEntryImage);
           }
         }
         journalEntry.tags.forEach((tag) => {

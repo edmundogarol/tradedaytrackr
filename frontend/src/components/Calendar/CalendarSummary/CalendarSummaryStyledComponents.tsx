@@ -43,42 +43,11 @@ export const TradePreview = styled.div<{ $src: string }>`
   z-index: 1;
   opacity: 0.65;
   border-radius: 2px;
-
-  mask-image: linear-gradient(
-    to right,
-    transparent -11%,
-    black 20%,
-    black 74%,
-    transparent 115%
-  );
-
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent -11%,
-    black 20%,
-    black 74%,
-    transparent 115%
-  );
 `;
 
 export const TradePreviewOverlay = styled.div`
   height: 100%;
   width: 100%;
-  mask-image: linear-gradient(
-    to top,
-    transparent -14%,
-    black 36%,
-    black 67%,
-    transparent 108%
-  );
-
-  -webkit-mask-image: linear-gradient(
-    to top,
-    transparent -14%,
-    black 36%,
-    black 67%,
-    transparent 108%
-  );
 `;
 
 export const CalendarSummaryTileBoxGlow = styled.div<{ $positive?: boolean }>`
@@ -173,16 +142,18 @@ export const TileDate = styled.span`
 `;
 
 export const TileAccs = styled.span`
-  padding: 10px;
   align-items: start;
   justify-content: start;
-  position: absolute;
   z-index: 1;
-  right: 0;
   color: white;
   font-size: 12px;
-  padding: unset;
-  padding-right: 5px;
+  text-shadow: 1px 1px 5px black;
+  position: absolute;
+  right: 8px;
+  background: #0000003d;
+  border-top-left-radius: 2px;
+  padding: 3px;
+  margin: 2px;
 `;
 
 export const TileDateText = styled.p`
@@ -217,16 +188,31 @@ export const TileDay = styled.span`
 
 export const TilePnL = styled.span<{ $positive?: boolean }>`
   font-size: 16px;
-
   ${(props): string =>
     props.$positive ? ` color: #a8ffa8;` : `color: #ffa7a7;`}
   ${(props): string =>
     props.$positive
       ? `   text-shadow: 1px 1px 1px black;`
       : `  text-shadow: 1px 1px 1px black;`}
+        font-size: 14px;
+  text-shadow: 1px 1px 5px black;
+  margin: 0;
+  position: absolute;
+  background: #0000003d;
+  border-top-left-radius: 2px;
+  padding: 3px;
+  margin: 2px;
 `;
 
 export const TileTradeCount = styled.span`
-  font-size: 12px;
-  color: #c9c9c9;
+  font-size: 14px;
+  color: white;
+  text-shadow: 1px 1px 5px black;
+  margin: 0;
+  position: absolute;
+  right: 0;
+  background: #0000003d;
+  border-top-left-radius: 2px;
+  padding: 3px;
+  margin: 2px;
 `;
