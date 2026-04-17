@@ -61,6 +61,7 @@ const FundedAccounts: React.FunctionComponent = () => {
     createTradingAccountErrors,
     firmFilter,
     bufferFilter,
+    currentTradingAccountErrors,
   } = useFundedAccountsState();
   const {
     updateCreateTradingAccountModalOpen,
@@ -69,6 +70,7 @@ const FundedAccounts: React.FunctionComponent = () => {
     updateFirmFilter,
     updateBufferFilter,
     updateAddTradeModalOpen,
+    updateCurrentTradingAccountErrors,
   } = useFundedAccountsDispatch();
   const { accountTemplates } = useSettingsState();
   const { getAccountTemplates } = useGetAccountTemplatesHandler();
@@ -101,6 +103,12 @@ const FundedAccounts: React.FunctionComponent = () => {
         hideDuration={3000}
         open={!!deleteTradingAccountErrors.detail}
         setPopoutOpen={() => updateDeleteTradingAccountErrors({})}
+      />
+      <AlertPopout
+        message={currentTradingAccountErrors.detail}
+        hideDuration={3000}
+        open={!!currentTradingAccountErrors.detail}
+        setPopoutOpen={() => updateCurrentTradingAccountErrors({})}
       />
       <AlertPopout
         message={createTradingAccountErrors.detail}

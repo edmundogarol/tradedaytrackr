@@ -5,10 +5,12 @@ import { useCallback } from "react";
 import { initialState } from "../FundedAccountsState";
 import useDeleteTradingAccountApiCall from "./useDeleteTradingAccountApiCall";
 import useFundedAccountsDispatch from "./useFundedAccountsDispatch";
+import useFundedAccountsState from "./useFundedAccountsState";
+import useGetArchivedTradingAccountsHandler from "./useGetArchivedTradingAccountsHandler";
 import useGetTradingAccountsHandler from "./useGetTradingAccountsHandler";
 
 interface DeleteTradingAccountHandler {
-  deleteTradingAccount: (id: string) => Promise<void>;
+  deleteTradingAccount: (id: string, redirect: PageEnum) => Promise<void>;
   loading: boolean;
 }
 
@@ -19,11 +21,13 @@ const useDeleteTradingAccountHandler = (): DeleteTradingAccountHandler => {
     updateDeletingTradingAccountModalOpen,
     updateDeleteTradingAccountErrors,
   } = useFundedAccountsDispatch();
+  const { currentTradingAccount } = useFundedAccountsState();
   const { getTradingAccounts } = useGetTradingAccountsHandler();
+  const { getArchivedTradingAccounts } = useGetArchivedTradingAccountsHandler();
   const navigation = useReactNavigation();
   return {
     deleteTradingAccount: useCallback(
-      async (id: string) => {
+      async (id: string, redirect: PageEnum) => {
         const { error } = await fetch({
           url: `${environmentConfig.HOST}/api/trading-accounts/${id}/`,
         });
@@ -33,16 +37,19 @@ const useDeleteTradingAccountHandler = (): DeleteTradingAccountHandler => {
             error: (error as any)?.message || "Something went wrong",
           });
         } else {
+          if (redirect === PageEnum.Preferences) {
+            getArchivedTradingAccounts(1);
+          }
           getTradingAccounts();
           updateDeleteTradingAccountErrors({
             detail: "Trading account deleted successfully",
           });
           updateDeletingTradingAccountModalOpen(false);
           updateSelectedTradingAccount(initialState.selectedTradingAccount);
-          navigation.navigate(PageEnum.FundedAccounts);
+          navigation.navigate(redirect);
         }
       },
-      [loading],
+      [loading, currentTradingAccount.id],
     ),
     loading,
   };

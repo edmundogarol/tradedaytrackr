@@ -119,7 +119,7 @@ const DeleteTradeModal: React.FunctionComponent = () => {
       </GlassTile>
       <Gap level={1} />
       <SectionText>
-        {selectedTrade?.journalEntry?.accountCount > 0
+        {(selectedTrade?.journalEntry?.accountCount as number) > 0
           ? "This trade is linked to a journal entry - and could affect the entry's final details. "
           : ""}
         {`Are you sure you want to delete this ${selectedTrade.isPayout ? "payout" : "trade"}?`}

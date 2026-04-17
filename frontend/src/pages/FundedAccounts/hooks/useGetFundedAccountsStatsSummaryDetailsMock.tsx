@@ -63,6 +63,12 @@ export const useGetFundedAccountsStatsSummaryDetails =
       ).length;
     }, [filteredTradingAccounts]);
 
+    const accountsWithBuffersBuiltAbove80 = useMemo(() => {
+      return filteredTradingAccounts.filter(
+        (account) => account.bufferPercent > 80,
+      ).length;
+    }, [filteredTradingAccounts]);
+
     const withdrawablePnL = useMemo(() => {
       return filteredTradingAccounts.reduce(
         (total, account) => total + Number(account.withdrawableAmount),
@@ -110,7 +116,7 @@ export const useGetFundedAccountsStatsSummaryDetails =
         tileValueColor: "#ffffff",
         tileTitle: "Account Buffers Built",
         tileSubtitle: {
-          content: "4 above 80%",
+          content: `${accountsWithBuffersBuiltAbove80} above 80%`,
         },
         tileIcon: (
           <HardwareIcon style={styles.featureIconStyle(40, "#b2deb2")} />

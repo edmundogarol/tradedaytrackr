@@ -1,3 +1,4 @@
+import AlertPopout from "@components/Alert/AlertPopout";
 import Button from "@components/Button/Button";
 import DropdownMultiselect from "@components/DropdownMultiselect/DropdownMultiselect";
 import Gap from "@components/Gap/Gap";
@@ -40,16 +41,16 @@ const EvaluationAccounts: React.FunctionComponent = () => {
     createTradingAccountErrors,
     evalFirmFilter,
     evalStatusFilter,
+    currentTradingAccountErrors,
   } = useFundedAccountsState();
   const {
     updateCreateTradingAccountModalOpen,
     updateCreateTradingAccountErrors,
     updateDeleteTradingAccountErrors,
-    updateFirmFilter,
-    updateBufferFilter,
     updateAddTradeModalOpen,
     updateEvalStatusFilter,
     updateEvalFirmFilter,
+    updateCurrentTradingAccountErrors,
   } = useFundedAccountsDispatch();
   const { accountTemplates } = useSettingsState();
   const { getAccountTemplates } = useGetAccountTemplatesHandler();
@@ -85,6 +86,24 @@ const EvaluationAccounts: React.FunctionComponent = () => {
 
   return (
     <Page topBarShowMenu={true}>
+      <AlertPopout
+        message={deleteTradingAccountErrors.detail}
+        hideDuration={3000}
+        open={!!deleteTradingAccountErrors.detail}
+        setPopoutOpen={() => updateDeleteTradingAccountErrors({})}
+      />
+      <AlertPopout
+        message={currentTradingAccountErrors.detail}
+        hideDuration={3000}
+        open={!!currentTradingAccountErrors.detail}
+        setPopoutOpen={() => updateCurrentTradingAccountErrors({})}
+      />
+      <AlertPopout
+        message={createTradingAccountErrors.detail}
+        hideDuration={3000}
+        open={!!createTradingAccountErrors.detail}
+        setPopoutOpen={() => updateCreateTradingAccountErrors({})}
+      />
       <AddTradingDayModal />
       <AddEvaluationAccountsModal />
       <Container>

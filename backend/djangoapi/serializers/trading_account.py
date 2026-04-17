@@ -123,6 +123,7 @@ class TradingAccountSerializer(serializers.ModelSerializer):
             "withdrawable_amount",
             "consistency_score",
             "consistency",
+            "is_archived",
         ]
         extra_kwargs = {
             "account_balance": {"required": False},

@@ -30,6 +30,11 @@ export interface FundedAccountsState {
   readonly selectedDateJournalEntries: JournalEntry[];
   readonly deleteTradeModalOpen: boolean;
   readonly deleteTradeErrors: { [key: string]: any };
+  readonly archivedTradingAccounts: (TradingAccount | EvaluationAccount)[];
+  readonly archivedTradingAccountsErrors?: { [key: string]: any };
+  readonly archivedTradingAccountsNextPage?: string;
+  readonly archivedTradingAccountsItemCount?: number;
+  readonly archivingAccountModalOpen: boolean;
 }
 
 const initialAccount: TradingAccount = {
@@ -62,6 +67,7 @@ const initialAccount: TradingAccount = {
     isEval: false,
     firm: "",
   },
+  isArchived: false,
 };
 
 export const initialState: FundedAccountsState = {
@@ -100,6 +106,11 @@ export const initialState: FundedAccountsState = {
   selectedDateJournalEntries: [],
   deleteTradeModalOpen: false,
   deleteTradeErrors: {},
+  archivedTradingAccounts: [],
+  archivedTradingAccountsErrors: {},
+  archivedTradingAccountsNextPage: undefined,
+  archivedTradingAccountsItemCount: 0,
+  archivingAccountModalOpen: false,
 };
 
 type UpdateTradingAccountsAction = PayloadAction<TradingAccount[]>;
@@ -132,6 +143,17 @@ type UpdateDeleteTradeModalOpenAction = PayloadAction<boolean>;
 type UpdateDeleteTradeErrorsAction = PayloadAction<{ [key: string]: any }>;
 type UpdateEvalFirmFilterAction = PayloadAction<string[]>;
 type UpdateEvalStatusFilterAction = PayloadAction<string[]>;
+type UpdateArchivedTradingAccountsAction = PayloadAction<
+  (TradingAccount | EvaluationAccount)[]
+>;
+type UpdateArchivedTradingAccountsErrorsAction = PayloadAction<{
+  [key: string]: any;
+}>;
+type UpdateArchivedTradingAccountsNextPageAction = PayloadAction<
+  string | undefined
+>;
+type UpdateArchivedTradingAccountsItemCountAction = PayloadAction<number>;
+type UpdateArchivingAccountModalOpenAction = PayloadAction<boolean>;
 
 export type FundedAccountsAction =
   | UpdateTradingAccountsAction
@@ -153,7 +175,13 @@ export type FundedAccountsAction =
   | UpdateDeleteTradeModalOpenAction
   | UpdateDeleteTradeErrorsAction
   | UpdateEvalFirmFilterAction
-  | UpdateEvalStatusFilterAction;
+  | UpdateEvalStatusFilterAction
+  | UpdateArchivedTradingAccountsAction
+  | UpdateArchivedTradingAccountsErrorsAction
+  | UpdateArchivedTradingAccountsNextPageAction
+  | UpdateArchivedTradingAccountsItemCountAction
+  | UpdateArchivingAccountModalOpenAction;
+
 export const fundedAccountsSlice = createSlice({
   name: "fundedAccounts",
   initialState,
@@ -253,6 +281,36 @@ export const fundedAccountsSlice = createSlice({
     updateEvalStatusFilter: (state, action: UpdateEvalStatusFilterAction) => {
       state.evalStatusFilter = action.payload;
     },
+    updateArchivedTradingAccounts: (
+      state,
+      action: UpdateArchivedTradingAccountsAction,
+    ) => {
+      state.archivedTradingAccounts = action.payload;
+    },
+    updateArchivedTradingAccountsErrors: (
+      state,
+      action: UpdateArchivedTradingAccountsErrorsAction,
+    ) => {
+      state.archivedTradingAccountsErrors = action.payload;
+    },
+    updateArchivedTradingAccountsNextPage: (
+      state,
+      action: UpdateArchivedTradingAccountsNextPageAction,
+    ) => {
+      state.archivedTradingAccountsNextPage = action.payload;
+    },
+    updateArchivedTradingAccountsItemCount: (
+      state,
+      action: UpdateArchivedTradingAccountsItemCountAction,
+    ) => {
+      state.archivedTradingAccountsItemCount = action.payload;
+    },
+    updateArchivingAccountModalOpen: (
+      state,
+      action: UpdateArchivingAccountModalOpenAction,
+    ) => {
+      state.archivingAccountModalOpen = action.payload;
+    },
   },
 });
 
@@ -277,6 +335,11 @@ export const {
   updateDeleteTradeErrors,
   updateEvalFirmFilter,
   updateEvalStatusFilter,
+  updateArchivedTradingAccounts,
+  updateArchivedTradingAccountsErrors,
+  updateArchivedTradingAccountsNextPage,
+  updateArchivedTradingAccountsItemCount,
+  updateArchivingAccountModalOpen,
 } = fundedAccountsSlice.actions;
 
 export const fundedAccountsReducer = fundedAccountsSlice.reducer;

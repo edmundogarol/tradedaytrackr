@@ -130,13 +130,14 @@ export const AccountTitleContainer = styled.div`
   flex: 1;
 `;
 
-export const AccountTitle = styled.span`
+export const AccountTitle = styled.span<{ $archived?: boolean }>`
   font-size: 16px;
   color: #b5b5b5;
-  cursor: pointer;
-  pointer-events: auto;
+  cursor: ${({ $archived }): string => ($archived ? "default" : "pointer")};
+  pointer-events: ${({ $archived }): string => ($archived ? "none" : "auto")};
   &:hover {
-    text-decoration: underline;
+    text-decoration: ${({ $archived }): string =>
+      $archived ? "none" : "underline"};
   }
 `;
 

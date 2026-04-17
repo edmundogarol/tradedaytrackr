@@ -16,6 +16,13 @@ import { HorizontalSection, SectionText } from "@styles/globalStyledComponents";
 import { isNotEmptyString } from "@utils/utils";
 import React from "react";
 
+export interface ModalWrapperButtonProps {
+  text: string;
+  loading?: boolean;
+  onClick: () => void;
+  style?: React.CSSProperties;
+}
+
 export interface ModalWrapperProps {
   title?: string;
   children?: React.ReactNode;
@@ -25,18 +32,8 @@ export interface ModalWrapperProps {
   style?: React.CSSProperties;
   contentContainerStyle?: React.CSSProperties;
   confirmText?: string | React.ReactNode;
-  saveButton?: {
-    text: string;
-    loading?: boolean;
-    onClick: () => void;
-    style?: React.CSSProperties;
-  };
-  cancelButton?: {
-    text: string;
-    loading?: boolean;
-    onClick: () => void;
-    style?: React.CSSProperties;
-  };
+  saveButton?: ModalWrapperButtonProps;
+  cancelButton?: ModalWrapperButtonProps;
   error?: string;
   backdropClose?: () => void;
 }

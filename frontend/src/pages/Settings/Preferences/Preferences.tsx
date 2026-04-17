@@ -5,19 +5,36 @@ import GlassTile from "@components/GlassTile/GlassTile";
 import { GlassTileChildrenWrapper } from "@components/GlassTile/GlassTileStyledComponents";
 import InfoPopout from "@components/InfoPopout/InfoPopout";
 import Page from "@components/Page/Page";
+import type {
+  EvaluationAccount,
+  TradingAccount,
+} from "@interfaces/CustomTypes";
 import ArticleIcon from "@mui/icons-material/Article";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
+import InventoryIcon from "@mui/icons-material/Inventory";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import EvaluationAccountsListItem from "@pages/EvaluationAccounts/EvaluationAccountsListItem";
+import FundedAccountsListItem from "@pages/FundedAccounts/FundedAccountsListItem";
+import { ListContainer } from "@pages/FundedAccounts/FundedAccountsStyledComponents";
+import useFundedAccountsState from "@pages/FundedAccounts/hooks/useFundedAccountsState";
 import { BUTTON_WIDTH } from "@styles/constants";
 import {
   PageContainer as Container,
+  Section,
   SectionText,
   SectionTitle,
   Table,
   TableField,
   TableItem,
 } from "@styles/globalStyledComponents";
+
+import { PageEnum } from "@interfaces/NavigationTypes";
+import { Pagination } from "@mui/material";
+import ArchiveAccountModal from "@pages/FundedAccounts/ArchiveAccountModal/ArchiveAccountModal";
+import DeleteTradingAccountModal from "@pages/FundedAccounts/DeleteTradingAccountModal/DeleteTradingAccountModal";
+import useFundedAccountsDispatch from "@pages/FundedAccounts/hooks/useFundedAccountsDispatch";
+import useGetArchivedTradingAccountsHandler from "@pages/FundedAccounts/hooks/useGetArchivedTradingAccountsHandler";
 import { decimalStringToInt, formatter } from "@utils/utils";
 import React, { useEffect, useState } from "react";
 import { initialState } from "../SettingsState";
@@ -47,10 +64,19 @@ const Preferences: React.FunctionComponent = () => {
   } = useSettingsDispatch();
   const { accountTemplates, tags, addAccountTemplateErrors, addTagErrors } =
     useSettingsState();
+  const { updateDeleteTradingAccountErrors } = useFundedAccountsDispatch();
+  const {
+    archivedTradingAccounts,
+    archivedTradingAccountsItemCount,
+    deleteTradingAccountErrors,
+  } = useFundedAccountsState();
   const { getAccountTemplates } = useGetAccountTemplatesHandler();
   const [deleteTemplateModalOpen, setDeleteTemplateModalOpen] = useState(false);
   const [deleteTagModalOpen, setDeleteTagModalOpen] = useState(false);
   const { getTags } = useGetTagsHandler();
+  const { getArchivedTradingAccounts } = useGetArchivedTradingAccountsHandler();
+  const [archivedTradingAccountsPage, setArchivedTradingAccountsPage] =
+    useState(1);
 
   useEffect(() => {
     if (accountTemplates.length === 0) {
@@ -58,6 +84,9 @@ const Preferences: React.FunctionComponent = () => {
     }
     if (tags.length === 0) {
       getTags();
+    }
+    if (archivedTradingAccounts.length === 0) {
+      getArchivedTradingAccounts(archivedTradingAccountsPage);
     }
   }, []);
 
@@ -72,6 +101,12 @@ const Preferences: React.FunctionComponent = () => {
 
   return (
     <Page topBarShowMenu={true}>
+      <AlertPopout
+        hideDuration={3000}
+        open={deleteTradingAccountErrors?.detail}
+        message={deleteTradingAccountErrors?.detail}
+        setPopoutOpen={() => updateDeleteTradingAccountErrors({})}
+      />
       <AlertPopout
         hideDuration={3000}
         open={addAccountTemplateErrors?.detail}
@@ -92,6 +127,8 @@ const Preferences: React.FunctionComponent = () => {
         deleteTagModalOpen={deleteTagModalOpen}
         setDeleteTagModalOpen={setDeleteTagModalOpen}
       />
+      <ArchiveAccountModal unarchive />
+      <DeleteTradingAccountModal redirect={PageEnum.Preferences} />
       <AddTagModal />
       <AddAccountTemplateModal />
       <Container>
@@ -342,6 +379,59 @@ const Preferences: React.FunctionComponent = () => {
           </GlassTile>
         </TagsSection>
         <Gap level={1} />
+        <Section>
+          <GlassTile
+            featureTile
+            minHeight={10}
+            minWidth={10}
+            padding={7}
+            noGlow={true}
+          >
+            <GlassTileChildrenWrapper>
+              <SubsectionHeaderWrapper>
+                <InventoryIcon style={{ color: "white", marginRight: 5 }} />
+                Archived Accounts
+              </SubsectionHeaderWrapper>
+              <SectionContainer>
+                <ListContainer>
+                  {archivedTradingAccounts.map((account, index) =>
+                    !account.accountType.isEval ? (
+                      <FundedAccountsListItem
+                        archived
+                        key={index}
+                        account={account as TradingAccount}
+                        openAddTradingDayModal={() => {}}
+                      />
+                    ) : (
+                      <EvaluationAccountsListItem
+                        archived
+                        key={index}
+                        account={account as EvaluationAccount}
+                        openAddTradingDayModal={() => {}}
+                      />
+                    ),
+                  )}
+                </ListContainer>
+                <Pagination
+                  color={"primary"}
+                  page={archivedTradingAccountsPage}
+                  sx={{
+                    "& .MuiPaginationItem-root": { color: "white" },
+                  }}
+                  count={
+                    !!archivedTradingAccountsItemCount
+                      ? Math.ceil(archivedTradingAccountsItemCount / 10)
+                      : 1
+                  }
+                  onChange={(e, page) => {
+                    setArchivedTradingAccountsPage(page);
+                    getArchivedTradingAccounts(page);
+                  }}
+                />
+              </SectionContainer>
+            </GlassTileChildrenWrapper>
+          </GlassTile>
+        </Section>
       </Container>
     </Page>
   );

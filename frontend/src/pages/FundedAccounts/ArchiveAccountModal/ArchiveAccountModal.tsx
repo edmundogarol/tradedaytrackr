@@ -1,14 +1,8 @@
-import Button from "@components/Button/Button";
-import FormError from "@components/Error/FormError/FormError";
-import Gap from "@components/Gap/Gap";
 import GlassTile from "@components/GlassTile/GlassTile";
 import { Else, If } from "@components/If/If";
 import InfoPopout from "@components/InfoPopout/InfoPopout";
 import ModalWrapper from "@components/Modal/Modal";
-import type { PageEnum } from "@interfaces/NavigationTypes";
 import { AccountTradingDaysComplete } from "@pages/EvaluationAccounts/EvaluationAccountsStyledComponents";
-import { color } from "@styles/colors";
-import { HorizontalSection, SectionText } from "@styles/globalStyledComponents";
 import { formatter } from "@utils/utils";
 import React from "react";
 import {
@@ -23,39 +17,49 @@ import {
   DaysItemValue,
   ListItemContainer,
 } from "../FundedAccountsStyledComponents";
-import useDeleteTradingAccountHandler from "../hooks/useDeleteTradingAccountHandler";
+import useArchiveTradingAccountHandler from "../hooks/useArchiveTradingAccountHandler";
 import useFundedAccountsDispatch from "../hooks/useFundedAccountsDispatch";
 import useFundedAccountsState from "../hooks/useFundedAccountsState";
-
-interface DeleteTradingAccountModalProps {
-  redirect: PageEnum;
+interface ArchiveAccountModalProps {
+  unarchive?: boolean;
 }
-const DeleteTradingAccountModal: React.FunctionComponent<
-  DeleteTradingAccountModalProps
-> = ({ redirect }) => {
+
+const ArchiveAccountModal: React.FunctionComponent<
+  ArchiveAccountModalProps
+> = ({ unarchive }) => {
   const {
     currentTradingAccount,
-    deletingTradingAccountModalOpen,
-    deleteTradingAccountErrors,
+    currentTradingAccountErrors,
+    archivingAccountModalOpen,
   } = useFundedAccountsState();
-  const {
-    updateDeletingTradingAccountModalOpen,
-    updateDeleteTradingAccountErrors,
-  } = useFundedAccountsDispatch();
-  const { deleteTradingAccount } = useDeleteTradingAccountHandler();
+  const { updateArchivingAccountModalOpen } = useFundedAccountsDispatch();
+  const { archiveTradingAccount, loading: archiveLoading } =
+    useArchiveTradingAccountHandler();
 
   return (
     <ModalWrapper
-      onClose={() => updateDeleteTradingAccountErrors({})}
-      open={deletingTradingAccountModalOpen}
-      setOpen={updateDeletingTradingAccountModalOpen}
-      title="Delete Trading Account"
+      open={archivingAccountModalOpen}
+      onClose={() => updateArchivingAccountModalOpen(false)}
+      title={
+        unarchive ? "Unarchive Trading Account" : "Archive Trading Account"
+      }
+      setOpen={updateArchivingAccountModalOpen}
+      confirmText={
+        unarchive
+          ? "Are you sure you want to unarchive this account? This will move it back to your active accounts list."
+          : "Are you sure you want to archive this account? This will remove it from your active accounts list. You can still view archived accounts and their details in the Archived Accounts section, and you can unarchive the account from there if needed."
+      }
+      saveButton={{
+        text: unarchive ? "Unarchive" : "Archive",
+        onClick: () => archiveTradingAccount(),
+        loading: archiveLoading,
+      }}
+      error={currentTradingAccountErrors?.error}
+      cancelButton={{
+        text: "Cancel",
+        onClick: () => updateArchivingAccountModalOpen(false),
+      }}
     >
-      <SectionText>
-        Are you sure you want to delete this trading account? All associated
-        data will be permanently removed.
-      </SectionText>
-      <Gap level={2} />
       <ListItemContainer>
         <AccountImage $image={currentTradingAccount.image || ""} />
         <AccountTitleContainer>
@@ -101,29 +105,8 @@ const DeleteTradingAccountModal: React.FunctionComponent<
             ))}
         </DaysContainer>
       </ListItemContainer>
-      <Gap level={2} />
-      <If condition={!!deleteTradingAccountErrors.error}>
-        <FormError error={deleteTradingAccountErrors?.error} />
-        <Gap level={2} />
-      </If>
-      <HorizontalSection>
-        <Button
-          text={"Permanently Delete"}
-          style={{ backgroundColor: color("SystemRed") }}
-          onClick={() =>
-            deleteTradingAccount(currentTradingAccount.id.toString(), redirect)
-          }
-        />
-        <Button
-          text={"Cancel"}
-          onClick={() => {
-            updateDeletingTradingAccountModalOpen(false);
-            updateDeleteTradingAccountErrors({});
-          }}
-        />
-      </HorizontalSection>
     </ModalWrapper>
   );
 };
 
-export default DeleteTradingAccountModal;
+export default ArchiveAccountModal;

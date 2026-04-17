@@ -22,6 +22,7 @@ export const AccountName = styled.p`
   font-weight: 400;
   align-items: center;
   display: flex;
+  flex: 3;
 `;
 
 export const AccountDetailContainer = styled.div`

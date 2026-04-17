@@ -1,21 +1,28 @@
-import GlassTile from "@components/GlassTile/GlassTile";
-import { formatter } from "@utils/utils";
-import React from "react";
-
 import AlertPopout from "@components/Alert/AlertPopout";
+import GlassTile from "@components/GlassTile/GlassTile";
 import { Else, If } from "@components/If/If";
 import InfoPopout from "@components/InfoPopout/InfoPopout";
 import type { EvaluationAccount } from "@interfaces/CustomTypes";
 import { PageEnum } from "@interfaces/NavigationTypes";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import InventoryIcon from "@mui/icons-material/Inventory";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
-import { DaysItemSubtitle } from "@pages/FundedAccounts/FundedAccountsStyledComponents";
+import {
+  AccountTitle,
+  DaysItemSubtitle,
+} from "@pages/FundedAccounts/FundedAccountsStyledComponents";
 import useFundedAccountsDispatch from "@pages/FundedAccounts/hooks/useFundedAccountsDispatch";
-import { BorderLinearProgress } from "@styles/globalStyledComponents";
+import {
+  BorderLinearProgress,
+  HorizontalSection,
+  SectionText,
+} from "@styles/globalStyledComponents";
+import { formatter } from "@utils/utils";
+import React from "react";
 import {
   AccountImage,
   AccountSubtitle,
   AccountSubtitleHighlighted,
-  AccountTitle,
   AccountTitleContainer,
   AccountTradingDaysComplete,
   BufferAmount,
@@ -35,11 +42,12 @@ import useGetEvalProgressStatus from "./hooks/useGetEvalProgressStatus";
 export interface EvaluationAccountsListItemDetails {
   account: EvaluationAccount;
   openAddTradingDayModal?: (open: boolean) => void;
+  archived?: boolean;
 }
 
 const EvaluationAccountsListItem: React.FunctionComponent<
   EvaluationAccountsListItemDetails
-> = ({ account, openAddTradingDayModal }) => {
+> = ({ account, openAddTradingDayModal, archived }) => {
   const {
     id,
     name,
@@ -52,7 +60,11 @@ const EvaluationAccountsListItem: React.FunctionComponent<
     consistencyScore,
   } = account;
   const [alertNoRecord, setAlertNoRecord] = React.useState(false);
-  const { updateCurrentTradingAccount } = useFundedAccountsDispatch();
+  const {
+    updateDeletingTradingAccountModalOpen,
+    updateCurrentTradingAccount,
+    updateArchivingAccountModalOpen,
+  } = useFundedAccountsDispatch();
   const evalProgressStatus = useGetEvalProgressStatus();
   const progress = ((accountBalance - accountSize) / profitTarget) * 100;
   const navigation = useReactNavigation();
@@ -68,10 +80,13 @@ const EvaluationAccountsListItem: React.FunctionComponent<
         <AccountImage $image={image || ""} />
         <AccountTitleContainer>
           <AccountTitle
+            $archived={archived}
             onClick={() =>
-              navigation.navigate(PageEnum.EvaluationAccountDetail, {
-                id,
-              })
+              archived
+                ? null
+                : navigation.navigate(PageEnum.EvaluationAccountDetail, {
+                    id,
+                  })
             }
           >
             {name}
@@ -90,6 +105,9 @@ const EvaluationAccountsListItem: React.FunctionComponent<
           </AccountTradingDaysComplete>
         </AccountTitleContainer>
         <DaysContainer>
+          {archived && dayValues.length === 0 ? (
+            <SectionText>No trading days recorded</SectionText>
+          ) : null}
           {[...dayValues].reverse().map((dayValue, idx) => (
             <DaysItem key={idx}>
               <GlassTile
@@ -111,26 +129,28 @@ const EvaluationAccountsListItem: React.FunctionComponent<
               </If>
             </DaysItem>
           ))}
-          <DaysItem>
-            <GlassTile
-              positive={true}
-              featureTile
-              minHeight={10}
-              minWidth={10}
-              padding={7}
-            >
-              <DaysItemValue
-                $positive={true}
-                onClick={() => {
-                  openAddTradingDayModal && openAddTradingDayModal(true);
-                  updateCurrentTradingAccount(account);
-                }}
+          <If condition={!archived}>
+            <DaysItem>
+              <GlassTile
+                positive={true}
+                featureTile
+                minHeight={10}
+                minWidth={10}
+                padding={7}
               >
-                {"+"}
-              </DaysItemValue>
-            </GlassTile>
-            <DaysItemSubtitle>{"Add"}</DaysItemSubtitle>
-          </DaysItem>
+                <DaysItemValue
+                  $positive={true}
+                  onClick={() => {
+                    openAddTradingDayModal && openAddTradingDayModal(true);
+                    updateCurrentTradingAccount(account);
+                  }}
+                >
+                  {"+"}
+                </DaysItemValue>
+              </GlassTile>
+              <DaysItemSubtitle>{"Add"}</DaysItemSubtitle>
+            </DaysItem>
+          </If>
         </DaysContainer>
         <BufferContainer>
           <BufferText>
@@ -154,6 +174,38 @@ const EvaluationAccountsListItem: React.FunctionComponent<
             )}
           </Status>
         </StatusContainer>
+        <If condition={archived}>
+          <HorizontalSection>
+            <InfoPopout infoDescription="Unarchive this account">
+              <InventoryIcon
+                style={{
+                  color: "white",
+                  height: 18,
+                  display: "flex",
+                  alignSelf: "center",
+                }}
+                onClick={() => {
+                  updateArchivingAccountModalOpen(true);
+                  updateCurrentTradingAccount(account);
+                }}
+              />
+            </InfoPopout>
+            <InfoPopout infoDescription="Delete this account">
+              <DeleteOutlineIcon
+                style={{
+                  color: "white",
+                  height: 20,
+                  display: "flex",
+                  alignSelf: "center",
+                }}
+                onClick={() => {
+                  updateDeletingTradingAccountModalOpen(true);
+                  updateCurrentTradingAccount(account);
+                }}
+              />
+            </InfoPopout>
+          </HorizontalSection>
+        </If>
       </ListItemContainer>
     </GlassTile>
   );

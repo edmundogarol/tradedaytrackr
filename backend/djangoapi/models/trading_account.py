@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 from backend.djangoapi.querysets.trading_account_queryset import TradingAccountQuerySet
 
@@ -17,6 +18,18 @@ class TradingAccount(models.Model):
     account_balance = models.DecimalField(max_digits=12, decimal_places=2)
     baseline_balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+    is_archived = models.BooleanField(default=False)
+    archived_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ["-created_at"]
+
+    def archive(self):
+        self.is_archived = True
+        self.archived_at = timezone.now()
+        self.save(update_fields=["is_archived", "archived_at"])
+
+    def unarchive(self):
+        self.is_archived = False
+        self.archived_at = None
+        self.save(update_fields=["is_archived", "archived_at"])

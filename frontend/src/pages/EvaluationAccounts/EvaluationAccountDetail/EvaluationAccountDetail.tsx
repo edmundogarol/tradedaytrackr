@@ -10,6 +10,7 @@ import Page from "@components/Page/Page";
 import SelectWrapper from "@components/Select/SelectWrapper";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
+import InventoryIcon from "@mui/icons-material/Inventory";
 import {
   AccountSubtitle,
   AccountSubtitleHighlighted,
@@ -31,6 +32,7 @@ import type {
 } from "@interfaces/CustomTypes";
 import { PageEnum } from "@interfaces/NavigationTypes";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
+import ArchiveAccountModal from "@pages/FundedAccounts/ArchiveAccountModal/ArchiveAccountModal";
 import DeleteTradeModal from "@pages/FundedAccounts/DeleteTradeModal/DeleteTradeModal";
 import DeleteTradingAccountModal from "@pages/FundedAccounts/DeleteTradingAccountModal/DeleteTradingAccountModal";
 import {
@@ -110,6 +112,7 @@ const EvaluationAccountDetail: React.FunctionComponent<
     updateSelectedTrade,
     updateDeleteTradeModalOpen,
     updateDeleteTradeErrors,
+    updateArchivingAccountModalOpen,
   } = useFundedAccountsDispatch();
   let [searchParams] = useSearchParams();
   const accountId = searchParams.get("id");
@@ -148,8 +151,6 @@ const EvaluationAccountDetail: React.FunctionComponent<
     }
   }, [tradingAccounts, accountId, addTradeModalOpen]);
 
-  console.log({ currentTradingAccount });
-
   const accountProgress =
     ((currentTradingAccount?.accountBalance -
       currentTradingAccount?.accountSize) /
@@ -181,8 +182,9 @@ const EvaluationAccountDetail: React.FunctionComponent<
         open={!!currentTradingAccountErrors?.detail}
         setPopoutOpen={() => updateCurrentTradingAccountErrors({})}
       />
+      <ArchiveAccountModal />
       <AddTradingDayModal />
-      <DeleteTradingAccountModal />
+      <DeleteTradingAccountModal redirect={PageEnum.EvaluationAccounts} />
       <DeleteTradeModal />
       <Container>
         <ListHeaders>
@@ -214,16 +216,28 @@ const EvaluationAccountDetail: React.FunctionComponent<
                         }}
                       />
                     </AccountName>
-                    <DeleteOutlineIcon
-                      style={{
-                        height: 20,
-                        display: "flex",
-                        alignContent: "center",
-                      }}
-                      onClick={() =>
-                        updateDeletingTradingAccountModalOpen(true)
-                      }
-                    />
+                    <InfoPopout infoDescription="Archive this account">
+                      <InventoryIcon
+                        style={{
+                          height: 18,
+                          display: "flex",
+                          alignSelf: "center",
+                        }}
+                        onClick={() => updateArchivingAccountModalOpen(true)}
+                      />
+                    </InfoPopout>
+                    <InfoPopout infoDescription="Delete this account">
+                      <DeleteOutlineIcon
+                        style={{
+                          height: 20,
+                          display: "flex",
+                          alignSelf: "center",
+                        }}
+                        onClick={() =>
+                          updateDeletingTradingAccountModalOpen(true)
+                        }
+                      />
+                    </InfoPopout>
                   </AccountNameDeleteContainer>
                   <Else>
                     <AccountName>

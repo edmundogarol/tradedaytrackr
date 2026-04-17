@@ -7,6 +7,12 @@ logger = logging.getLogger(__name__)
 
 
 class TradingAccountQuerySet(models.QuerySet):
+    def active(self):
+        return self.filter(is_archived=False)
+
+    def archived(self):
+        return self.filter(is_archived=True)
+
     def funded(self):
         return self.filter(template__is_evaluation=False)
 

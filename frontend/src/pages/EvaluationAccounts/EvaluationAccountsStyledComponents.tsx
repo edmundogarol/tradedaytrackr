@@ -129,18 +129,6 @@ export const AccountTitleContainer = styled.div`
   flex: 1;
 `;
 
-export const AccountTitle = styled.span`
-  font-size: 16px;
-  color: #b5b5b5;
-  font-size: 16px;
-  color: #b5b5b5;
-  cursor: pointer;
-  pointer-events: auto;
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
 export const AccountSubtitle = styled.span`
   font-size: 14px;
   color: #989898;

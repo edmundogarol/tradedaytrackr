@@ -7,10 +7,13 @@ import { Else, If } from "@components/If/If";
 import InfoPopout from "@components/InfoPopout/InfoPopout";
 import type { TradingAccount } from "@interfaces/CustomTypes";
 import { PageEnum } from "@interfaces/NavigationTypes";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import InventoryIcon from "@mui/icons-material/Inventory";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
 import {
   BorderLinearProgress,
   HorizontalSection,
+  SectionText,
 } from "@styles/globalStyledComponents";
 import {
   AccountImage,
@@ -39,11 +42,12 @@ import useFundedAccountsDispatch from "./hooks/useFundedAccountsDispatch";
 export interface FundedAccountsListItemDetails {
   account: TradingAccount;
   openAddTradingDayModal?: (open: boolean) => void;
+  archived?: boolean;
 }
 
 const FundedAccountsListItem: React.FunctionComponent<
   FundedAccountsListItemDetails
-> = ({ account, openAddTradingDayModal }) => {
+> = ({ account, openAddTradingDayModal, archived }) => {
   const {
     id,
     name,
@@ -63,7 +67,11 @@ const FundedAccountsListItem: React.FunctionComponent<
   const navigation = useReactNavigation();
   const [alertNoRecord, setAlertNoRecord] = useState(false);
 
-  const { updateCurrentTradingAccount } = useFundedAccountsDispatch();
+  const {
+    updateCurrentTradingAccount,
+    updateArchivingAccountModalOpen,
+    updateDeletingTradingAccountModalOpen,
+  } = useFundedAccountsDispatch();
   return (
     <GlassTile positive featureTile minHeight={70} noGlow noShine>
       <AlertPopout
@@ -76,10 +84,13 @@ const FundedAccountsListItem: React.FunctionComponent<
         <AccountImage $image={image || ""} />
         <AccountTitleContainer>
           <AccountTitle
+            $archived={archived}
             onClick={() =>
-              navigation.navigate(PageEnum.FundedAccountDetail, {
-                id,
-              })
+              archived
+                ? null
+                : navigation.navigate(PageEnum.FundedAccountDetail, {
+                    id,
+                  })
             }
           >
             {name}
@@ -100,6 +111,9 @@ const FundedAccountsListItem: React.FunctionComponent<
           </AccountTradingDaysComplete>
         </AccountTitleContainer>
         <DaysContainer>
+          {archived && dayValues.length === 0 ? (
+            <SectionText>No trading days recorded</SectionText>
+          ) : null}
           {[...dayValues].reverse().map((dayValue, idx) => (
             <DaysItem key={idx}>
               <GlassTile
@@ -121,26 +135,28 @@ const FundedAccountsListItem: React.FunctionComponent<
               </If>
             </DaysItem>
           ))}
-          <DaysItem>
-            <GlassTile
-              positive={true}
-              featureTile
-              minHeight={10}
-              minWidth={10}
-              padding={7}
-            >
-              <DaysItemValue
-                $positive={true}
-                onClick={() => {
-                  openAddTradingDayModal && openAddTradingDayModal(true);
-                  updateCurrentTradingAccount(account);
-                }}
+          <If condition={!archived}>
+            <DaysItem>
+              <GlassTile
+                positive={true}
+                featureTile
+                minHeight={10}
+                minWidth={10}
+                padding={7}
               >
-                {"+"}
-              </DaysItemValue>
-            </GlassTile>
-            <DaysItemSubtitle>{"Add"}</DaysItemSubtitle>
-          </DaysItem>
+                <DaysItemValue
+                  $positive={true}
+                  onClick={() => {
+                    openAddTradingDayModal && openAddTradingDayModal(true);
+                    updateCurrentTradingAccount(account);
+                  }}
+                >
+                  {"+"}
+                </DaysItemValue>
+              </GlassTile>
+              <DaysItemSubtitle>{"Add"}</DaysItemSubtitle>
+            </DaysItem>
+          </If>
         </DaysContainer>
         <BufferContainer>
           <BufferText>
@@ -183,6 +199,38 @@ const FundedAccountsListItem: React.FunctionComponent<
             {formatter.format(postPayoutBuffer)}
           </PnLWithdrawable>
         </PnLContainer>
+        <If condition={archived}>
+          <HorizontalSection>
+            <InfoPopout infoDescription="Unarchive this account">
+              <InventoryIcon
+                style={{
+                  color: "white",
+                  height: 18,
+                  display: "flex",
+                  alignSelf: "center",
+                }}
+                onClick={() => {
+                  updateArchivingAccountModalOpen(true);
+                  updateCurrentTradingAccount(account);
+                }}
+              />
+            </InfoPopout>
+            <InfoPopout infoDescription="Delete this account">
+              <DeleteOutlineIcon
+                style={{
+                  color: "white",
+                  height: 20,
+                  display: "flex",
+                  alignSelf: "center",
+                }}
+                onClick={() => {
+                  updateDeletingTradingAccountModalOpen(true);
+                  updateCurrentTradingAccount(account);
+                }}
+              />
+            </InfoPopout>
+          </HorizontalSection>
+        </If>
       </ListItemContainer>
     </GlassTile>
   );

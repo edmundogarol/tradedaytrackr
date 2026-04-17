@@ -62,6 +62,7 @@ export interface AccountTemplate {
   maxPayoutRequest?: number;
   rules?: Rule[] | string[];
   withdrawalSplit?: number;
+  isArchived: boolean;
 }
 
 export interface TradingAccount extends AccountTemplate {

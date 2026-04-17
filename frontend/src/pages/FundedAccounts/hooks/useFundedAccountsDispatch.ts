@@ -9,6 +9,11 @@ import type { FundedAccountsAction } from "../FundedAccountsState";
 import {
   updateAddTradeErrors,
   updateAddTradeModalOpen,
+  updateArchivedTradingAccounts,
+  updateArchivedTradingAccountsErrors,
+  updateArchivedTradingAccountsItemCount,
+  updateArchivedTradingAccountsNextPage,
+  updateArchivingAccountModalOpen,
   updateBufferFilter,
   updateCreateTradingAccountErrors,
   updateCreateTradingAccountModalOpen,
@@ -56,6 +61,11 @@ interface FundedAccountsDispatch {
   updateDeleteTradeErrors: (errors: { [key: string]: any }) => void;
   updateEvalFirmFilter: (filter: string[]) => void;
   updateEvalStatusFilter: (filter: string[]) => void;
+  updateArchivedTradingAccounts: (tradingAccounts: TradingAccount[]) => void;
+  updateArchivedTradingAccountsErrors: (errors: { [key: string]: any }) => void;
+  updateArchivedTradingAccountsNextPage: (nextPage: string | undefined) => void;
+  updateArchivedTradingAccountsItemCount: (itemCount: number) => void;
+  updateArchivingAccountModalOpen: (open: boolean) => void;
 }
 
 const useFundedAccountsDispatch = (): FundedAccountsDispatch => {
@@ -126,6 +136,21 @@ const useFundedAccountsDispatch = (): FundedAccountsDispatch => {
     },
     updateEvalStatusFilter(filter: string[]): void {
       dispatch(updateEvalStatusFilter(filter));
+    },
+    updateArchivedTradingAccounts(tradingAccounts: TradingAccount[]): void {
+      dispatch(updateArchivedTradingAccounts(tradingAccounts));
+    },
+    updateArchivedTradingAccountsErrors(errors: { [key: string]: any }): void {
+      dispatch(updateArchivedTradingAccountsErrors(errors));
+    },
+    updateArchivedTradingAccountsNextPage(nextPage: string | undefined): void {
+      dispatch(updateArchivedTradingAccountsNextPage(nextPage));
+    },
+    updateArchivedTradingAccountsItemCount(itemCount: number): void {
+      dispatch(updateArchivedTradingAccountsItemCount(itemCount));
+    },
+    updateArchivingAccountModalOpen(open: boolean): void {
+      dispatch(updateArchivingAccountModalOpen(open));
     },
   };
 };
