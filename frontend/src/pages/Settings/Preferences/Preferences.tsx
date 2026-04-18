@@ -101,6 +101,9 @@ const Preferences: React.FunctionComponent = () => {
     }
   }, [addAccountTemplateErrors, addTagErrors]);
 
+  useEffect(() => {
+    getArchivedTradingAccounts(archivedTradingAccountsPage);
+  }, [archivedTradingAccountsPage]);
   return (
     <Page topBarShowMenu={true}>
       <AlertPopout
@@ -440,7 +443,6 @@ const Preferences: React.FunctionComponent = () => {
                     }
                     onChange={(e, page) => {
                       setArchivedTradingAccountsPage(page);
-                      getArchivedTradingAccounts(page);
                     }}
                   />
                 </If>

@@ -139,12 +139,18 @@ export interface Rule {
 
 export interface Payout {
   id: number;
-  account: number;
+  account: {
+    id: number;
+    name: string;
+  };
   amount: number;
-  payout_date: string;
-  balance_before: number;
-  balance_after: number;
-  created_at: string;
+  payoutDate: string;
+  balanceBefore: number;
+  balanceAfter: number;
+  createdAt: string;
+  tradingDaysInCycle: number;
+  cycleStart: string;
+  cycleEnd: string;
 }
 
 export interface DashboardSummaries {

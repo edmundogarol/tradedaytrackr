@@ -1,4 +1,5 @@
 import Gap from "@components/Gap/Gap";
+import { If } from "@components/If/If";
 import { color } from "@styles/colors";
 import React from "react";
 import { BeatLoader } from "react-spinners";
@@ -18,15 +19,17 @@ const LoadingContent: React.FunctionComponent<LoadingContentProps> = ({
     <div
       style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
     >
-      {children}
-      <Gap level={2} />
-      <BeatLoader
-        color={color("SystemBackground1")}
-        loading={loading}
-        size={size || 150}
-        aria-label="Loading Spinner"
-        data-testid="loader"
-      />
+      <If condition={loading}>
+        {children}
+        <Gap level={2} />
+        <BeatLoader
+          color={color("SystemBackground1")}
+          loading={loading}
+          size={size || 150}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+        />
+      </If>
     </div>
   );
 };

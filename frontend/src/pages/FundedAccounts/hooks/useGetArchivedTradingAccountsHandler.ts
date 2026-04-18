@@ -1,3 +1,4 @@
+import environmentConfig from "@utils/environmentConfig";
 import { set } from "lodash";
 import { useCallback } from "react";
 import useFundedAccountsDispatch from "./useFundedAccountsDispatch";
@@ -27,7 +28,11 @@ const useGetArchivedTradingAccountsHandler =
         async (page: number) => {
           const options = {};
           if (page > 1 && archivedTradingAccountsNextPage) {
-            set(options, "url", archivedTradingAccountsNextPage.toString());
+            set(
+              options,
+              "url",
+              `${environmentConfig.HOST}/api/trading-accounts-archived/?page=${page}`,
+            );
           }
 
           const { error, data } = await fetch(options);

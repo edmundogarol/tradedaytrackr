@@ -2,6 +2,7 @@ import LinearProgress, {
   linearProgressClasses,
 } from "@mui/material/LinearProgress";
 import styled, { css } from "styled-components";
+import { CONTAINER_PADDING_SMALL } from "./constants";
 
 export const Label = styled.label`
   font-family: "Arial", sans-serif;
@@ -36,6 +37,12 @@ export const SubsectionHeader = styled.div`
   z-index: 11;
   align-self: flex-start;
   border-bottom: 1px solid #88888870;
+`;
+
+export const SubsectionHeaderWrapper = styled(SubsectionHeader)`
+  padding: ${CONTAINER_PADDING_SMALL}px;
+  display: flex;
+  align-items: center;
 `;
 
 export const Section = styled.div`
