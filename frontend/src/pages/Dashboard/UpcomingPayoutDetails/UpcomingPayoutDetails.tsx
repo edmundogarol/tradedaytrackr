@@ -48,7 +48,13 @@ const UpcomingPayoutDetails: React.FunctionComponent = () => {
             <HeaderNote>
               <HeaderNoteText>
                 {"Due in"}
-                <HeaderNoteTextHighlighted>5</HeaderNoteTextHighlighted>
+                <HeaderNoteTextHighlighted
+                  $closeToPayout={
+                    dashboardSummaries.upcomingPayout.daysRemaining <= 2
+                  }
+                >
+                  {dashboardSummaries.upcomingPayout.daysRemaining}
+                </HeaderNoteTextHighlighted>
                 {"days"}
               </HeaderNoteText>
             </HeaderNote>
@@ -70,7 +76,7 @@ const UpcomingPayoutDetails: React.FunctionComponent = () => {
             <FeatureContentProgressBarDrilldownContainer>
               <FeatureContentProgressBarContainer>
                 <FeatureContentProgressBarLabel>
-                  3
+                  {dashboardSummaries.upcomingPayout.daysCompleted || 0}
                 </FeatureContentProgressBarLabel>
                 <BorderLinearProgress
                   $bufferPercent={100}
@@ -89,7 +95,7 @@ const UpcomingPayoutDetails: React.FunctionComponent = () => {
                       !checked ? setChecked(!checked) : setChecked(checked)
                     }
                   >
-                    {8}
+                    {dashboardSummaries.upcomingPayout.minDays}
                   </Collapse>
                   <FeatureContentProgressBarDrilldownSubtextHighlighted>
                     <Collapse
@@ -114,7 +120,7 @@ const UpcomingPayoutDetails: React.FunctionComponent = () => {
                         !checked ? setChecked(checked) : setChecked(!checked)
                       }
                     >
-                      {"Apex: Min 8 days"}
+                      {`${dashboardSummaries.upcomingPayout.firmName}: Min ${dashboardSummaries.upcomingPayout.minDays} days`}
                     </Collapse>
                     <If condition={!checked}>
                       <ChevronLeftIcon

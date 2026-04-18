@@ -152,6 +152,7 @@ export interface DashboardSummaries {
     projectedDate: string;
     daysCompleted: number;
     minDays: number;
+    firmName?: string;
     daysRemaining: number;
   };
   currentStats: {
@@ -170,7 +171,11 @@ export interface DashboardSummaries {
     total: number;
   };
   buffer: {
-    current: number;
-    target: number;
+    groups: {
+      accountCount: number;
+      bufferLeft: number;
+      minBuffer: number;
+      firms: string[];
+    }[];
   };
 }

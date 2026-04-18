@@ -1,13 +1,13 @@
-import React from "react";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import { GlowingIconWrapper } from "@components/GlassTile/GlassTileStyledComponents";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import Button from "@mui/material/Button";
+import React from "react";
 import {
-  SectionContainer,
-  SectionContent,
   ContentValue,
   ContentValueContainer,
   ContentValueHighlighted,
+  SectionContainer,
+  SectionContent,
   SectionTitle,
 } from "./FundingOverviewStyledComponents";
 import styles from "./FundingOverviewStyles";
@@ -16,6 +16,7 @@ export interface FundingOverviewSectionProps {
   title: string;
   icon: React.ReactNode;
   highlightedValue: string;
+  highlightedValuePositive?: boolean;
   subtext: string;
   buttonAction?: () => void;
   footer?: React.ReactNode;
@@ -23,16 +24,26 @@ export interface FundingOverviewSectionProps {
 
 const FundingOverviewSection: React.FunctionComponent<
   FundingOverviewSectionProps
-> = ({ title, icon, highlightedValue, subtext, buttonAction, footer }) => {
+> = ({
+  title,
+  icon,
+  highlightedValue,
+  highlightedValuePositive = true,
+  subtext,
+  buttonAction,
+  footer,
+}) => {
   return (
     <SectionContainer>
       <SectionTitle>{title}</SectionTitle>
       <SectionContent>
-        <GlowingIconWrapper $positive $size={30}>
+        <GlowingIconWrapper $positive={highlightedValuePositive} $size={30}>
           {icon}
         </GlowingIconWrapper>
         <ContentValueContainer>
-          <ContentValueHighlighted>{highlightedValue}</ContentValueHighlighted>
+          <ContentValueHighlighted $positive={highlightedValuePositive}>
+            {highlightedValue}
+          </ContentValueHighlighted>
           <ContentValue>{subtext}</ContentValue>
         </ContentValueContainer>
         <Button style={styles.button} onClick={buttonAction}>

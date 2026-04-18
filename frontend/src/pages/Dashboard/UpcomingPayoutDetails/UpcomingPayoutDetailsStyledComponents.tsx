@@ -45,7 +45,7 @@ export const FeatureContentContainer = styled.div`
 `;
 
 export const FeatureContentValue = styled.h1`
-  color: #75f271;
+  color: ${color("SystemLightGreen")};
   margin: 0;
   margin-bottom: -10px;
   display: flex;
@@ -149,9 +149,12 @@ export const HeaderNoteText = styled.p`
   z-index: 1;
 `;
 
-export const HeaderNoteTextHighlighted = styled.span`
+export const HeaderNoteTextHighlighted = styled.span<{
+  $closeToPayout?: boolean;
+}>`
   margin: 5px;
   font-size: large;
-  color: #df7e7e;
+  color: ${({ $closeToPayout }): string =>
+    $closeToPayout ? color("SystemGreen") : color("SystemRed")};
   font-weight: 600;
 `;

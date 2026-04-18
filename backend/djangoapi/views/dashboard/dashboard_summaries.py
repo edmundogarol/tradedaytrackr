@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from django.db.models import Count, F
+from django.db.models import Count, F, Q
 from django.utils import timezone
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -8,7 +8,6 @@ from rest_framework.views import APIView
 
 from backend.djangoapi.models.trade import Trade
 from backend.djangoapi.models.trading_account import TradingAccount
-from backend.djangoapi.models.trading_day import TradingDay
 
 
 class DashboardSummariesView(APIView):
@@ -47,42 +46,55 @@ class DashboardSummariesView(APIView):
         # =========================
         # WITHDRAWABLE PNL
         # =========================
-        withdrawable = 0
-        for acc in funded_accounts:
-            withdrawable += getattr(acc, "withdrawable_amount", 0)
-
-        # =========================
-        # DAYS TO PAYOUT
-        # =========================
-        trading_days = TradingDay.objects.filter(
-            account__in=funded_accounts,
-            is_valid_day=True,
-        )
-
-        current_day_count = trading_days.aggregate(max_day=Count("id"))["max_day"] or 0
-
-        min_days_required = (
-            funded_accounts.first().template.min_trading_days
-            if funded_accounts.exists()
-            else 0
-        )
-
-        days_to_payout = max(min_days_required - current_day_count, 0)
+        withdrawable = sum(acc.get_withdrawable_amount() for acc in funded_accounts)
 
         # =========================
         # UPCOMING PAYOUT
         # =========================
-        expected_payout = withdrawable
+        expected_payout_now = sum(
+            acc.get_expected_withdrawable_now() for acc in funded_accounts
+        )
 
-        projected_date = timezone.now() + timedelta(days=days_to_payout)
+        # =========================
+        # DAYS TO PAYOUT
+        # =========================
+        today = timezone.now().date()
+
+        eligible_accounts = [
+            acc for acc in funded_accounts if acc.get_expected_withdrawable_now() > 0
+        ]
+
+        if eligible_accounts:
+            reference_account = max(
+                eligible_accounts, key=lambda acc: acc.get_withdrawable_amount()
+            )
+            projected_date = today
+        else:
+            if funded_accounts.exists():
+                reference_account = min(
+                    funded_accounts, key=lambda acc: acc.get_days_remaining()
+                )
+                projected_date = today + timedelta(
+                    days=reference_account.get_days_remaining()
+                )
+            else:
+                reference_account = None
+                projected_date = today
 
         # =========================
         # WIN RATE
         # =========================
-        trades = Trade.objects.filter(account__in=funded_accounts)
+        recent_trades_qs = Trade.objects.filter(account__in=funded_accounts).order_by(
+            "-date_time"
+        )[:50]
 
-        total_trades = trades.count()
-        winning_trades = trades.filter(pnl__gt=0).count()
+        stats = recent_trades_qs.aggregate(
+            total=Count("id"),
+            wins=Count("id", filter=Q(pnl__gt=0)),
+        )
+
+        total_trades = stats["total"] or 0
+        winning_trades = stats["wins"] or 0
 
         win_rate = (winning_trades / total_trades * 100) if total_trades else 0
 
@@ -91,33 +103,94 @@ class DashboardSummariesView(APIView):
         # =========================
         active_pas = funded_accounts.count()
 
-        near_payout = funded_accounts.filter(account_balance__gt=0).count()
+        near_payout = sum(
+            1
+            for acc in funded_accounts
+            if acc.get_days_remaining() <= 2 and acc.get_withdrawable_amount() > 0
+        )
 
         # =========================
         # BUFFER
         # =========================
-        total_buffer = 0
-        total_buffer_target = 0
+
+        accounts_with_buffer = []
 
         for acc in funded_accounts:
-            total_buffer += max(acc.account_balance - acc.template.account_size, 0)
-            total_buffer_target += acc.template.min_buffer or 0
+            current_buffer = max(acc.account_balance - acc.template.account_size, 0)
+            min_buffer = acc.template.min_buffer or 0
+
+            buffer_left = max(min_buffer - current_buffer, 0)
+
+            # ignore already completed accounts (optional)
+            if buffer_left == 0:
+                continue
+
+            accounts_with_buffer.append(
+                {
+                    "account": acc,
+                    "buffer_left": buffer_left,
+                    "min_buffer": min_buffer,
+                    "firm": acc.template.firm,
+                }
+            )
+
+        accounts_with_buffer.sort(key=lambda x: x["buffer_left"])
+
+        GROUP_THRESHOLD = 300  # tweak this
+
+        groups = []
+
+        for item in accounts_with_buffer:
+            placed = False
+
+            for group in groups:
+                if abs(group["buffer_left"] - item["buffer_left"]) <= GROUP_THRESHOLD:
+                    group["accounts"].append(item)
+                    placed = True
+                    break
+
+            if not placed:
+                groups.append(
+                    {
+                        "buffer_left": item["buffer_left"],
+                        "min_buffer": item["min_buffer"],
+                        "accounts": [item],
+                    }
+                )
+
+        buffer_groups = []
+
+        for group in groups:
+            buffer_groups.append(
+                {
+                    "buffer_left": round(group["buffer_left"], 2),
+                    "min_buffer": group["min_buffer"],
+                    "account_count": len(group["accounts"]),
+                    "firms": list(set(acc["firm"] for acc in group["accounts"])),
+                }
+            )
 
         # =========================
         # RESPONSE
         # =========================
+        days_completed = reference_account.get_current_day_count()
+        min_days_required = reference_account.template.min_trading_days or 0
+        days_remaining = reference_account.get_days_remaining()
+        firm_name = reference_account.template.name if reference_account else None
+
         return Response(
             {
                 "upcoming_payout": {
-                    "expected": round(expected_payout, 2),
+                    "expected": round(expected_payout_now, 2),
                     "projected_date": projected_date,
-                    "days_completed": current_day_count,
+                    "days_completed": days_completed,
                     "min_days": min_days_required,
-                    "days_remaining": days_to_payout,
+                    "firm_name": firm_name,
+                    "days_remaining": days_remaining,
                 },
                 "current_stats": {
                     "withdrawable_pnl": round(withdrawable, 2),
-                    "days_to_payout": days_to_payout,
+                    "days_to_payout": days_remaining,
                     "active_pas": active_pas,
                     "near_payout": near_payout,
                     "win_rate": round(win_rate, 2),
@@ -131,8 +204,7 @@ class DashboardSummariesView(APIView):
                     "total": total_evals,
                 },
                 "buffer": {
-                    "current": round(total_buffer, 2),
-                    "target": round(total_buffer_target, 2),
+                    "groups": buffer_groups,
                 },
             }
         )

@@ -1,4 +1,3 @@
-from django.db.models import Sum
 from rest_framework import serializers
 
 from backend.djangoapi.models.trading_account import TradingAccount
@@ -175,122 +174,17 @@ class TradingAccountSerializer(serializers.ModelSerializer):
 
         return min(round(progress, 2), 100)
 
-    def get_current_day_count(self, obj):
-        day_numbers = obj.trading_days.filter(is_valid_day=True).values_list(
-            "day_number", flat=True
-        )
-
-        return max((d for d in day_numbers if d is not None), default=0)
-
     def get_withdrawable_amount(self, obj):
-        template = obj.template
-        balance = obj.account_balance
-
-        min_req = template.min_payout_request or 0
-        max_req = template.max_payout_request
-
-        has_static_rule = template.rules.filter(
-            name="MFFU $100 MLL after Payout #1"
-        ).exists()
-
-        # STATIC RULE
-        if has_static_rule:
-            floor = 50100
-
-            # HARD CONSTRAINT
-            max_safe = balance - floor
-
-            if max_safe <= 0:
-                return 0
-
-            # APPLY SPLIT (ON SAFE AMOUNT)
-            if template.withdrawal_split:
-                max_safe = (max_safe * template.withdrawal_split) / 100
-
-            # APPLY MAX CAP
-            if template.max_payout_request:
-                max_safe = min(max_safe, template.max_payout_request)
-
-            # APPLY MIN REQUIREMENT
-            if max_safe < (template.min_payout_request or 0):
-                return 0
-
-            return round(max_safe, 2)
-
-        account_size = template.account_size
-        min_buffer = template.min_buffer or 0
-        min_req = template.min_payout_request or 0
-        max_req = template.max_payout_request
-        split = template.withdrawal_split
-
-        profit = balance - account_size
-
-        if profit <= 0:
-            return 0
-
-        # constraint 1: withdrawal split
-        max_by_split = profit
-        if split or split != 0:
-            max_by_split = (profit * split) / 100
-
-        # constraint 2: buffer
-        max_by_buffer = balance - (account_size + min_buffer)
-
-        # final available = stricter constraint
-        available = min(max_by_split, max_by_buffer)
-
-        if available <= 0:
-            return 0
-
-        if available < min_req:
-            return 0
-
-        if max_req:
-            available = min(available, max_req)
-
-        return round(available, 2)
+        return obj.get_withdrawable_amount()
 
     def get_post_payout_buffer(self, obj):
-        template = obj.template
-        balance = obj.account_balance
-
-        withdrawable = self.get_withdrawable_amount(obj)
-
-        has_static_rule = template.rules.filter(
-            name="MFFU $100 MLL after Payout #1"
-        ).exists()
-
-        if has_static_rule:
-            floor = 50100
-            post_balance = balance - withdrawable
-
-            buffer_after = post_balance - floor
-
-            return round(max(buffer_after, 0), 2)
-
-        # NORMAL
-        account_size = template.account_size
-
-        profit = balance - account_size
-        remaining_profit = profit - withdrawable
-
-        return round(max(remaining_profit, 0), 2)
+        return obj.get_post_payout_buffer()
 
     def get_consistency_score(self, obj):
-        days = obj.trading_days.annotate(pnl=Sum("trades__pnl"))
-        pnls = [day.pnl for day in days if day.pnl is not None]
+        return round(obj.get_consistency_score(), 2)
 
-        if not pnls:
-            return 0
-
-        total_profit = sum(pnls)
-        if total_profit == 0:
-            return 0
-
-        largest_day = max(pnls)
-        score = (largest_day / total_profit) * 100
-
-        return round(score, 2)
+    def get_current_day_count(self, obj):
+        return obj.get_current_day_count()
 
     def validate_account_balance(self, value):
         if value < 0:

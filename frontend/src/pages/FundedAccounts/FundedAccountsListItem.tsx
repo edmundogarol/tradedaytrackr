@@ -63,6 +63,7 @@ const FundedAccountsListItem: React.FunctionComponent<
     currentDayCount,
     withdrawableAmount,
     postPayoutBuffer,
+    consistencyScore,
   } = account;
   const navigation = useReactNavigation();
   const [alertNoRecord, setAlertNoRecord] = useState(false);
@@ -195,8 +196,8 @@ const FundedAccountsListItem: React.FunctionComponent<
             </If>
           </HorizontalSection>
           <PnLWithdrawable $positive={withdrawableAmount > 0}>
-            <PnLWithdrawableText>Post-Payout Buffer:</PnLWithdrawableText>
-            {formatter.format(postPayoutBuffer)}
+            <PnLWithdrawableText>Consistency Score:</PnLWithdrawableText>%
+            {Number(consistencyScore).toFixed(0)}
           </PnLWithdrawable>
         </PnLContainer>
         <If condition={archived}>

@@ -54,7 +54,7 @@ export const ContentValue = styled.span`
   font-size: 14px;
 `;
 
-export const ContentValueHighlighted = styled.span`
-  color: #95d395;
+export const ContentValueHighlighted = styled.span<{ $positive?: boolean }>`
+  color: ${({ $positive }): string => ($positive ? "#95d395" : "#a8a8a8")};
   font-size: 20px;
 `;

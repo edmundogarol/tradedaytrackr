@@ -63,8 +63,7 @@ const initialSummaries: DashboardSummaries = {
     total: 0,
   },
   buffer: {
-    current: 0,
-    target: 0,
+    groups: [],
   },
 };
 

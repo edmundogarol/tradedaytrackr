@@ -5,6 +5,8 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import useFundedAccountsState from "@pages/FundedAccounts/hooks/useFundedAccountsState";
+import { color } from "@styles/colors";
+import { formatter } from "@utils/utils";
 
 export const useGetDashboardStatsSummaryDetails =
   (): StatsSummaryTileDetails[] => {
@@ -15,8 +17,10 @@ export const useGetDashboardStatsSummaryDetails =
         tileValueColor: "#7bb75d",
         tileTitle: "Withdrawable PnL",
         tileSubtitle: {
-          highlighted: "$123",
-          content: "tomorrow",
+          highlighted: formatter.format(
+            dashboardSummaries.currentStats.withdrawablePnl,
+          ),
+          content: "",
         },
         tileShinePositive: true,
         infoDescription:
@@ -24,38 +28,45 @@ export const useGetDashboardStatsSummaryDetails =
         tileIcon: <CreditCardIcon style={styles.iconStyle(60)} />,
       },
       {
-        tileValue: "5",
-        tileValueColor: "#ff7171",
+        tileValue: dashboardSummaries.currentStats.daysToPayout.toString(),
+        tileValueColor:
+          dashboardSummaries.currentStats.daysToPayout < 3
+            ? color("SystemGreen")
+            : color("SystemRed"),
         tileTitle: "Days to Payout",
         tileSubtitle: {
-          content: "Min: 10 days",
+          content: `Min: ${dashboardSummaries.upcomingPayout.minDays} days`,
         },
-        tileShinePositive: false,
+        tileShinePositive: dashboardSummaries.currentStats.daysToPayout < 3,
         infoDescription:
           "Number of days remaining until the next payout is available.",
         tileIcon: <DateRangeIcon style={styles.iconStyle(60)} />,
       },
       {
-        tileValue: "10",
+        tileValue: dashboardSummaries.currentStats.activePas.toString(),
         tileShinePositive: true,
         tileValueColor: "#ffffff",
         tileTitle: "Active PAs",
         tileSubtitle: {
-          content: "2 near payout",
+          content: `${dashboardSummaries.currentStats.nearPayout} near payout`,
         },
-        infoDescription: "Number of active funded accounts.",
+        infoDescription:
+          "Number of active funded accounts that have met consistency and min trading days requirements.",
         tileIcon: <AutoAwesomeMotionIcon style={styles.iconStyle(60)} />,
       },
       {
-        tileValue: "75%",
-        tileValueColor: "#7bb75d",
+        tileValue: `${dashboardSummaries.currentStats.winRate.toFixed(0)}%`,
+        tileValueColor:
+          dashboardSummaries.currentStats.winRate >= 50
+            ? color("SystemGreen")
+            : color("SystemRed"),
         tileTitle: "Win Rate",
         tileSubtitle: {
-          content: "Past 20 trades",
+          content: "Past 50 trades",
         },
-        tileShinePositive: true,
+        tileShinePositive: dashboardSummaries.currentStats.winRate >= 50,
         infoDescription:
-          "Percentage of winning trades out of the last 20 trades.",
+          "Percentage of winning trades out of the last 50 trades.",
         tileIcon: <CheckCircleOutlineIcon style={styles.iconStyle(60)} />,
       },
     ];
