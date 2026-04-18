@@ -32,6 +32,7 @@ export interface LoginState {
   readonly passwordFormErrors: { [key: string]: any };
   readonly timezoneErrors: { [key: string]: any };
   readonly timezoneUpdateModalOpen: boolean;
+  readonly seedingDemoData?: boolean;
 }
 
 export const initialState: LoginState = {
@@ -86,6 +87,7 @@ export const initialState: LoginState = {
   passwordFormErrors: {},
   timezoneErrors: {},
   timezoneUpdateModalOpen: false,
+  seedingDemoData: false,
 };
 
 type UpdateUserAction = PayloadAction<User>;
@@ -117,6 +119,7 @@ type UpdatePasswordFormErrorsAction = PayloadAction<{ [key: string]: any }>;
 type UpdateTimezoneAction = PayloadAction<string>;
 type UpdateTimezoneErrorsAction = PayloadAction<{ [key: string]: any }>;
 type UpdateTimezoneUpdateModalOpenAction = PayloadAction<boolean>;
+type UpdateSeedingDemoDataAction = PayloadAction<boolean>;
 
 export type LoginAction =
   | UpdateUserAction
@@ -138,7 +141,8 @@ export type LoginAction =
   | UpdatePasswordFormErrorsAction
   | UpdateTimezoneAction
   | UpdateTimezoneErrorsAction
-  | UpdateTimezoneUpdateModalOpenAction;
+  | UpdateTimezoneUpdateModalOpenAction
+  | UpdateSeedingDemoDataAction;
 
 export const loginSlice = createSlice({
   name: "login",
@@ -225,6 +229,9 @@ export const loginSlice = createSlice({
     ) => {
       state.timezoneUpdateModalOpen = action.payload;
     },
+    updateSeedingDemoData: (state, action: UpdateSeedingDemoDataAction) => {
+      state.seedingDemoData = action.payload;
+    },
   },
 });
 
@@ -249,6 +256,7 @@ export const {
   updateTimezone,
   updateTimezoneErrors,
   updateTimezoneUpdateModalOpen,
+  updateSeedingDemoData,
 } = loginSlice.actions;
 export const loginReducer = loginSlice.reducer;
 

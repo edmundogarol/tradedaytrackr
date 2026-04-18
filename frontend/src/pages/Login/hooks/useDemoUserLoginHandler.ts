@@ -9,13 +9,19 @@ interface UseDemoUserLoginHandlerProps {
 }
 
 const useDemoUserLoginHandler = (): UseDemoUserLoginHandlerProps => {
-  const { updateUser, updateEmailPreferences, updateIsHydrated } =
-    useLoginDispatch();
+  const {
+    updateUser,
+    updateEmailPreferences,
+    updateIsHydrated,
+    updateSeedingDemoData,
+  } = useLoginDispatch();
   const { user: userState } = useLoginState();
   const { fetch, loading } = useLoginSubmitApiCall();
 
   return {
     loginDemoUser: useCallback(async () => {
+      updateSeedingDemoData(true);
+
       const { error, data } = await fetch({
         data: {
           email: "demo@user.com",
@@ -40,6 +46,7 @@ const useDemoUserLoginHandler = (): UseDemoUserLoginHandlerProps => {
           ...data.user,
           logged_in: data.logged_in,
         });
+        updateSeedingDemoData(false);
       } else {
         updateUser({ ...userState, logged_in: false });
       }
