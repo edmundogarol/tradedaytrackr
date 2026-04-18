@@ -2,6 +2,7 @@ import { PageEnum } from "@interfaces/NavigationTypes";
 import AssuredWorkloadIcon from "@mui/icons-material/AssuredWorkload";
 import HomeIcon from "@mui/icons-material/Home";
 import MenuBook from "@mui/icons-material/MenuBook";
+import PaymentsIcon from "@mui/icons-material/Payments";
 import SpeedIcon from "@mui/icons-material/Speed";
 import StickyNote2Icon from "@mui/icons-material/StickyNote2";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
@@ -31,6 +32,11 @@ export const useGetDrawerItems = (): Array<{
         text: "Evaluation Accounts",
         icon: <StickyNote2Icon />,
         onClick: (): void => navigation.navigate(PageEnum.EvaluationAccounts),
+      },
+      {
+        text: "Payout Tracking",
+        icon: <PaymentsIcon />,
+        onClick: (): void => navigation.navigate(PageEnum.PayoutTracking),
       },
       {
         text: "Journal",

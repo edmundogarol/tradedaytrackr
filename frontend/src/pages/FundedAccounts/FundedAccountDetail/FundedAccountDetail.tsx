@@ -11,6 +11,7 @@ import Page from "@components/Page/Page";
 import SelectWrapper from "@components/Select/SelectWrapper";
 import type {
   EvaluationAccount,
+  Trade,
   TradingAccount,
 } from "@interfaces/CustomTypes";
 import { PageEnum } from "@interfaces/NavigationTypes";
@@ -34,6 +35,7 @@ import AddTradingDayModal from "../AddTradingDayModal/AddTradingDayModal";
 import ArchiveAccountModal from "../ArchiveAccountModal/ArchiveAccountModal";
 import DeleteTradeModal from "../DeleteTradeModal/DeleteTradeModal";
 import DeleteTradingAccountModal from "../DeleteTradingAccountModal/DeleteTradingAccountModal";
+import { initialState } from "../FundedAccountsState";
 import {
   AccountImage,
   AccountSubtitle,
@@ -556,6 +558,12 @@ const FundedAccountDetail: React.FunctionComponent<
             onClick={(): void => {
               updateAddTradeModalOpen(true);
               setPayoutRecord(false);
+              updateSelectedTrade({
+                ...initialState.selectedTrade,
+                account: {
+                  id: currentTradingAccount.id,
+                },
+              } as Trade);
             }}
           />
         </TradingDaysHeaderContainer>

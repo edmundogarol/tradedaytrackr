@@ -20,6 +20,7 @@ import useLoginCheckHandler from "@pages/Login/hooks/useLoginCheckHandler";
 import useLoginDispatch from "@pages/Login/hooks/useLoginDispatch";
 import useLoginState from "@pages/Login/hooks/useLoginState";
 import useSetCSRFApiCall from "@pages/Login/hooks/useSetCSRFApiCall";
+import Payouts from "@pages/Payouts/Payouts";
 import ConfirmPassword from "@pages/ResetPassword/ConfirmPassword/ConfirmPassword";
 import ResetPassword from "@pages/ResetPassword/ResetPassword";
 import Account from "@pages/Settings/Account/Account";
@@ -116,6 +117,7 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
           />
           <Route path={PageEnum.Journal} element={<Journal />} />
           <Route path={PageEnum.JournalEntry} element={<JournalEntry />} />
+          <Route path={PageEnum.PayoutTracking} element={<Payouts />} />
           <Route path={PageEnum.AccountSettings} element={<Account />} />
           <Route path={PageEnum.Preferences} element={<Preferences />} />
           <Route path={PageEnum.Billing} element={<Billing />} />

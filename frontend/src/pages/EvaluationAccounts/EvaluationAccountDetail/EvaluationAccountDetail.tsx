@@ -28,6 +28,7 @@ import { useSearchParams } from "react-router";
 import AlertPopout from "@components/Alert/AlertPopout";
 import type {
   EvaluationAccount,
+  Trade,
   TradingAccount,
 } from "@interfaces/CustomTypes";
 import { PageEnum } from "@interfaces/NavigationTypes";
@@ -42,6 +43,7 @@ import {
   TradeJournalPnL,
   TradePreview,
 } from "@pages/FundedAccounts/FundedAccountDetail/FundedAccountDetailStyledComponents";
+import { initialState } from "@pages/FundedAccounts/FundedAccountsState";
 import { DaysItemSubtitle } from "@pages/FundedAccounts/FundedAccountsStyledComponents";
 import useFundedAccountsDispatch from "@pages/FundedAccounts/hooks/useFundedAccountsDispatch";
 import useFundedAccountsState from "@pages/FundedAccounts/hooks/useFundedAccountsState";
@@ -525,6 +527,12 @@ const EvaluationAccountDetail: React.FunctionComponent<
             style={styles.addButton.button}
             onClick={(): void => {
               updateAddTradeModalOpen(true);
+              updateSelectedTrade({
+                ...initialState.selectedTrade,
+                account: {
+                  id: currentTradingAccount.id,
+                },
+              } as Trade);
             }}
           />
         </TradingDaysHeaderContainer>

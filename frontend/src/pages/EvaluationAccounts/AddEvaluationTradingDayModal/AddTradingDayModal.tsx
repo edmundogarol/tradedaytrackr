@@ -132,6 +132,10 @@ const AddTradingDayModal: React.FunctionComponent = () => {
       setOpen={updateAddTradeModalOpen}
       onClose={() => {
         updateAddTradeErrors({});
+        updateSelectedTrade({
+          ...initialState.selectedTrade,
+          account: selectedTrade.account,
+        });
       }}
     >
       <Gap level={1} />
