@@ -60,27 +60,32 @@ class DashboardSummariesView(APIView):
         # =========================
         today = timezone.now().date()
 
-        eligible_accounts = [
-            acc for acc in funded_accounts if acc.get_expected_withdrawable_now() > 0
+        candidates = [
+            acc
+            for acc in funded_accounts
+            if acc.get_withdrawable_amount() > 0  # buffer met
         ]
 
-        if eligible_accounts:
+        if candidates:
+            # pick closest by days (highest progress)
             reference_account = max(
-                eligible_accounts, key=lambda acc: acc.get_withdrawable_amount()
+                candidates, key=lambda acc: acc.get_current_day_count()
             )
-            projected_date = today
-        else:
-            if funded_accounts.exists():
-                reference_account = min(
-                    funded_accounts, key=lambda acc: acc.get_days_remaining()
-                )
-                projected_date = today + timedelta(
-                    days=reference_account.get_days_remaining()
-                )
-            else:
-                reference_account = None
-                projected_date = today
 
+            avg_trade = reference_account.get_average_trade()
+
+            expected_payout_now = (
+                reference_account.get_withdrawable_amount() + avg_trade
+            )
+
+            days_remaining = reference_account.get_days_remaining()
+
+            projected_date = today + timedelta(days=days_remaining)
+
+        else:
+            projected_date = None
+            reference_account = None
+            days_remaining = 0
         # =========================
         # WIN RATE
         # =========================
@@ -117,6 +122,10 @@ class DashboardSummariesView(APIView):
 
         for acc in funded_accounts:
             current_buffer = max(acc.account_balance - acc.template.account_size, 0)
+
+            if current_buffer == 0:
+                continue
+
             min_buffer = acc.template.min_buffer or 0
 
             buffer_left = max(min_buffer - current_buffer, 0)

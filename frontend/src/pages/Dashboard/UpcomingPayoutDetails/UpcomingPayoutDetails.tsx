@@ -67,10 +67,10 @@ const UpcomingPayoutDetails: React.FunctionComponent = () => {
                 {formatter.format(
                   dashboardSummaries.upcomingPayout.expected || 0,
                 )}
-                <FeatureContentSubtext>Expected</FeatureContentSubtext>
+                <FeatureContentSubtext>Available</FeatureContentSubtext>
               </FeatureContentValue>
               <FeatureContentSubtitle>
-                {`Projected Payout Date: ${!!dashboardSummaries.upcomingPayout.projectedDate ? m(dashboardSummaries.upcomingPayout.projectedDate).format("MMM D") : "N/A"}`}
+                {`Next Projected Payout Date: ${!!dashboardSummaries.upcomingPayout.projectedDate ? m(dashboardSummaries.upcomingPayout.projectedDate).format("MMM D") : "N/A"}`}
               </FeatureContentSubtitle>
             </div>
             <FeatureContentProgressBarDrilldownContainer>
@@ -81,7 +81,11 @@ const UpcomingPayoutDetails: React.FunctionComponent = () => {
                 <BorderLinearProgress
                   $bufferPercent={100}
                   variant="determinate"
-                  value={100}
+                  value={
+                    (dashboardSummaries.upcomingPayout.daysCompleted /
+                      dashboardSummaries.upcomingPayout.minDays) *
+                    100
+                  }
                   style={styles.progressBar}
                 />
               </FeatureContentProgressBarContainer>

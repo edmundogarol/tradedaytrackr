@@ -144,9 +144,6 @@ class TradingAccount(models.Model):
         if not self.is_consistency_met():
             return 0
 
-        if not self.is_min_days_met():
-            return 0
-
         return withdrawable
 
     def get_post_payout_buffer(self):
@@ -177,3 +174,11 @@ class TradingAccount(models.Model):
         current = self.get_current_day_count()
         required = self.template.min_trading_days or 0
         return max(required - current, 0)
+
+    def get_average_trade(self):
+        trades = self.trades.order_by("-date_time")[:10]
+
+        if not trades:
+            return 0
+
+        return sum(t.pnl for t in trades) / len(trades)
