@@ -149,10 +149,11 @@ export const AccountSubtitle = styled.div`
   align-items: center;
 `;
 
-export const AccountTradingDaysComplete = styled.span`
+export const AccountTradingDaysComplete = styled.span<{ $eligible: boolean }>`
   font-size: 14px;
-  color: #989898;
+  color: ${({ $eligible }): string => ($eligible ? "#a9d1a9" : "#989898")};
   display: flex;
+  margin-right: 5px;
 `;
 
 export const AccountSubtitleHighlighted = styled.span`
@@ -180,6 +181,7 @@ export const DaysItem = styled.div`
     top: -5px;
     height: 15px;
     width: 15px;
+    color: #d1d1d1;
   }
 `;
 

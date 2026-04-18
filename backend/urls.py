@@ -32,6 +32,7 @@ from backend.djangoapi.views.trades.payout import (
     RecordPayoutView,
     UpdatePayoutView,
 )
+from backend.djangoapi.views.trades.payout_list import PayoutListView
 from backend.djangoapi.views.trades.trade import TradeViewSet
 from backend.djangoapi.views.trades.trade_by_date import TradesByDateView
 from backend.djangoapi.views.tradingAccount.rule import RuleViewSet
@@ -90,6 +91,7 @@ urlpatterns = [
     path("health/", health_check),
     path("api/user/refresh-currency/", RefreshConversionRateView.as_view()),
     path("api/dashboard/summaries/", DashboardSummariesView.as_view()),
+    path("api/payouts/list/", PayoutListView.as_view()),
     path(
         "api/payouts/",
         RecordPayoutView.as_view(),

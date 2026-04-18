@@ -121,6 +121,7 @@ export interface TradingDay {
   pnl: number;
   dayNumber?: number;
   trades: Trade[];
+  hasPayout: boolean;
 }
 
 export interface Tag {

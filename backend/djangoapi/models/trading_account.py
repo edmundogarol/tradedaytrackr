@@ -95,10 +95,16 @@ class TradingAccount(models.Model):
         return round(available, 2)
 
     def get_current_day_count(self):
-        day_numbers = self.trading_days.filter(is_valid_day=True).values_list(
-            "day_number", flat=True
-        )
-        return max((d for d in day_numbers if d is not None), default=0)
+        last_payout = self.payouts.order_by("-payout_date").first()
+
+        trading_days = self.trading_days.filter(is_valid_day=True)
+
+        if last_payout:
+            trading_days = trading_days.filter(
+                trades__date_time__gt=last_payout.payout_date
+            ).distinct()
+
+        return trading_days.aggregate(max_day=models.Max("day_number"))["max_day"] or 0
 
     def get_consistency_score(self):
         day_pnls = (

@@ -9,6 +9,7 @@ import type { TradingAccount } from "@interfaces/CustomTypes";
 import { PageEnum } from "@interfaces/NavigationTypes";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import InventoryIcon from "@mui/icons-material/Inventory";
+import LocalParkingIcon from "@mui/icons-material/LocalParking";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
 import {
   BorderLinearProgress,
@@ -102,10 +103,13 @@ const FundedAccountsListItem: React.FunctionComponent<
               {formatter.format(accountBalance)}
             </AccountSubtitleHighlighted>
           </AccountSubtitle>
-          <AccountTradingDaysComplete>
-            {`Eligible Days: ${currentDayCount ?? "N/A"}/${
-              minTradingDays ?? "N/A"
-            }`}
+          <AccountTradingDaysComplete
+            $eligible={currentDayCount >= Number(minTradingDays)}
+          >
+            <AccountTradingDaysComplete $eligible={false}>
+              {`Eligible Days:`}
+            </AccountTradingDaysComplete>
+            {`${currentDayCount ?? "N/A"}/${minTradingDays ?? "N/A"}`}
             <InfoPopout
               infoDescription={`This account requires a minimum of ${minTradingDays} eligible trading days before payout.`}
             />
@@ -133,6 +137,9 @@ const FundedAccountsListItem: React.FunctionComponent<
                 <Else>
                   <DaysItemSubtitle>-</DaysItemSubtitle>
                 </Else>
+              </If>
+              <If condition={dayValue.hasPayout}>
+                <LocalParkingIcon className="payout-icon" />
               </If>
             </DaysItem>
           ))}
@@ -182,7 +189,8 @@ const FundedAccountsListItem: React.FunctionComponent<
             <PnLValue
               $withdrawable={
                 accountBalance - accountSize > minBuffer &&
-                withdrawableAmount >= minPayoutRequest
+                withdrawableAmount >= minPayoutRequest &&
+                currentDayCount >= Number(minTradingDays)
               }
             >
               {withdrawableAmount > 0

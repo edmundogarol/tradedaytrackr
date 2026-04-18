@@ -20,6 +20,7 @@ class TradingDaySerializer(serializers.ModelSerializer):
     pnl = serializers.SerializerMethodField()
     trades = serializers.SerializerMethodField()
     created_at = UserTimezoneDateTimeField(read_only=True)
+    has_payout = serializers.SerializerMethodField()
 
     class Meta:
         model = TradingDay
@@ -33,6 +34,7 @@ class TradingDaySerializer(serializers.ModelSerializer):
             "is_valid_day",
             "created_at",
             "trades",
+            "has_payout",
         ]
         read_only_fields = ["is_valid_day"]
 
@@ -83,6 +85,15 @@ class TradingDaySerializer(serializers.ModelSerializer):
 
     def get_pnl(self, obj):
         return getattr(obj, "pnl", 0) or 0
+
+    def get_has_payout(self, obj):
+        user_tz = pytz.timezone(obj.account.user.timezone)
+
+        payouts = Payout.objects.filter(account=obj.account)
+
+        return any(
+            p.payout_date.astimezone(user_tz).date() == obj.date for p in payouts
+        )
 
     def validate_day_number(self, value):
         if value <= 0:

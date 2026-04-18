@@ -44,31 +44,23 @@ def seed_demo_trade_days(user):
 
         is_flex = "Flex" in template.name
         is_mffu = "MyFundedFutures" in template.name
-        is_apex_funded = "Apex" in template.name and not template.is_evaluation
-        is_apex_eval = "Apex" in template.name and template.is_evaluation
 
-        if is_mffu and is_flex:
-            day_pnls = [slight_variation(x * multiplier) for x in mffu_base]
+        cycles = random.randint(3, 4)
+        trades_per_cycle = random.randint(5, 7)
 
-        elif is_mffu:
-            day_pnls = [slight_variation(x * multiplier) for x in mffu_base]
+        day_pnls = []
 
-        elif is_apex_funded:
-            base = [600, -400, 900, 300, -250]
-            day_pnls = [vary(x * multiplier) for x in base]
-
-        elif is_apex_eval:
-            day_pnls = [500, -300, 700, 400, -200]
-
-        else:
-            day_pnls = [100, 150, -50, 200, 120]
+        for _ in range(cycles):
+            for _ in range(trades_per_cycle):
+                pnl = random.randint(-300, 800)  # realistic spread
+                day_pnls.append(pnl)
 
         shared_day_times = []
 
         random.seed(999)  # stable across runs
 
         for i in range(len(day_pnls)):
-            # 🔥 mix of safe + boundary-breaking times
+            # mix of safe + boundary-breaking times
             hour = random.choice(
                 [
                     9,
