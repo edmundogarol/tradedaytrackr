@@ -65,12 +65,12 @@ const UpcomingPayoutDetails: React.FunctionComponent = () => {
             <div>
               <FeatureContentValue>
                 {formatter.format(
-                  dashboardSummaries.upcomingPayout.expected || 1123,
+                  dashboardSummaries.upcomingPayout.expected || 0,
                 )}
                 <FeatureContentSubtext>Expected</FeatureContentSubtext>
               </FeatureContentValue>
               <FeatureContentSubtitle>
-                {`Projected Payout Date: ${m(dashboardSummaries.upcomingPayout.projectedDate).format("MMM D")}`}
+                {`Projected Payout Date: ${!!dashboardSummaries.upcomingPayout.projectedDate ? m(dashboardSummaries.upcomingPayout.projectedDate).format("MMM D") : "N/A"}`}
               </FeatureContentSubtitle>
             </div>
             <FeatureContentProgressBarDrilldownContainer>

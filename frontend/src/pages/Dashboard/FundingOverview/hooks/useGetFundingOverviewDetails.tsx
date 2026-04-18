@@ -88,8 +88,12 @@ export const useGetFundingOverviewDetails =
           />
         ),
         highlightedValuePositive: currentBufferProgress > 60,
-        highlightedValue: `${formatter.format(bufferGroups[activeStep]?.minBuffer - bufferGroups[activeStep]?.bufferLeft)} / ${formatter.format(bufferGroups[activeStep]?.minBuffer)}`,
-        subtext: `on ${bufferGroups[activeStep]?.accountCount} ${bufferGroups[activeStep]?.firms.join(", ")} accounts`,
+        highlightedValue: !!bufferGroups[activeStep]
+          ? `${formatter.format(bufferGroups[activeStep]?.minBuffer - bufferGroups[activeStep]?.bufferLeft)} / ${formatter.format(bufferGroups[activeStep]?.minBuffer)}`
+          : "N/A",
+        subtext: !!bufferGroups[activeStep]
+          ? `on ${bufferGroups[activeStep]?.accountCount} ${bufferGroups[activeStep]?.firms.join(", ")} accounts`
+          : "",
         buttonAction: (): void => {
           navigation.navigate(PageEnum.FundedAccounts);
         },

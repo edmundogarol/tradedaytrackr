@@ -173,10 +173,17 @@ class DashboardSummariesView(APIView):
         # =========================
         # RESPONSE
         # =========================
-        days_completed = reference_account.get_current_day_count()
-        min_days_required = reference_account.template.min_trading_days or 0
-        days_remaining = reference_account.get_days_remaining()
-        firm_name = reference_account.template.name if reference_account else None
+        if reference_account:
+            days_completed = reference_account.get_current_day_count()
+            min_days_required = reference_account.template.min_trading_days or 0
+            days_remaining = reference_account.get_days_remaining()
+            firm_name = reference_account.template.name if reference_account else None
+        else:
+            days_completed = 0
+            min_days_required = 0
+            days_remaining = 0
+            firm_name = None
+            projected_date = None
 
         return Response(
             {
