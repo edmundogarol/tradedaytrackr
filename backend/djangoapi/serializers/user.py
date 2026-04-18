@@ -180,3 +180,23 @@ class UpdateUserSerializer(UserValidationSerializer):
 
         instance.save()
         return instance
+
+
+class UserCurrencySerializer(serializers.ModelSerializer):
+    days_since_update = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = [
+            "preferred_currency",
+            "conversion_rate",
+            "conversion_last_updated",
+            "days_since_update",
+        ]
+
+    def get_days_since_update(self, obj):
+        if not obj.conversion_last_updated:
+            return None
+
+        delta = timezone.now() - obj.conversion_last_updated
+        return delta.days

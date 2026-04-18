@@ -30,9 +30,27 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_ip = models.GenericIPAddressField(null=True, blank=True)
     timezone = models.CharField(max_length=50, default="UTC")
 
+    preferred_currency = models.CharField(max_length=3, default="USD")
+    conversion_rate = models.DecimalField(
+        max_digits=12,
+        decimal_places=6,
+        null=True,
+        blank=True,
+        help_text="USD -> preferred_currency rate",
+    )
+    conversion_last_updated = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
     USERNAME_FIELD = "email"
 
     objects = UserManager()
 
     def __str__(self):
         return self.email
+
+    def update_conversion_rate(self, rate):
+        self.conversion_rate = rate
+        self.conversion_last_updated = timezone.now()
+        self.save(update_fields=["conversion_rate", "conversion_last_updated"])

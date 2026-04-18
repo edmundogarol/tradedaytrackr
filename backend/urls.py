@@ -8,6 +8,7 @@ from rest_framework_swagger.views import get_swagger_view
 
 from backend.djangoapi import views
 from backend.djangoapi.views import csrf
+from backend.djangoapi.views.account.currency import RefreshConversionRateView
 from backend.djangoapi.views.account.reset_password import (
     RequestPasswordResetViewSet,
     SubmitPasswordResetViewSet,
@@ -87,6 +88,7 @@ router.register(r"trades", TradeViewSet, basename="trades")
 urlpatterns = [
     path("docs/", schema_view),
     path("health/", health_check),
+    path("api/user/refresh-currency/", RefreshConversionRateView.as_view()),
     path("api/dashboard/summaries/", DashboardSummariesView.as_view()),
     path(
         "api/payouts/",
