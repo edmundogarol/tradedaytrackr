@@ -1,15 +1,14 @@
-import React from "react";
 import GlassTile from "@components/GlassTile/GlassTile";
-import PaidIcon from "@mui/icons-material/Paid";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { GlowingIconWrapper } from "@components/GlassTile/GlassTileStyledComponents";
-import LinearProgress, {
-  linearProgressClasses,
-} from "@mui/material/LinearProgress";
-import styled from "styled-components";
-import Collapse from "@mui/material/Collapse";
 import { Else, If } from "@components/If/If";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import PaidIcon from "@mui/icons-material/Paid";
+import Collapse from "@mui/material/Collapse";
+import useFundedAccountsState from "@pages/FundedAccounts/hooks/useFundedAccountsState";
+import { BorderLinearProgress } from "@styles/globalStyledComponents";
+import { formatter, m } from "@utils/utils";
+import React from "react";
 import {
   Container,
   Feature,
@@ -32,20 +31,9 @@ import {
 } from "./UpcomingPayoutDetailsStyledComponents";
 import styles from "./UpcomingPayoutDetailsStyles";
 
-const BorderLinearProgress = styled(LinearProgress)(() => ({
-  height: 10,
-  borderRadius: 5,
-  [`&.${linearProgressClasses.colorPrimary}`]: {
-    backgroundColor: "#404f5e",
-  },
-  [`& .${linearProgressClasses.bar}`]: {
-    borderRadius: 5,
-    backgroundColor: "#86c169",
-  },
-}));
-
 const UpcomingPayoutDetails: React.FunctionComponent = () => {
   const [checked, setChecked] = React.useState(false);
+  const { dashboardSummaries } = useFundedAccountsState();
 
   return (
     <Container>
@@ -70,11 +58,13 @@ const UpcomingPayoutDetails: React.FunctionComponent = () => {
           <FeatureContentContainer>
             <div>
               <FeatureContentValue>
-                $1,250.00
+                {formatter.format(
+                  dashboardSummaries.upcomingPayout.expected || 1123,
+                )}
                 <FeatureContentSubtext>Expected</FeatureContentSubtext>
               </FeatureContentValue>
               <FeatureContentSubtitle>
-                Projected Payout Date: Dec 7
+                {`Projected Payout Date: ${m(dashboardSummaries.upcomingPayout.projectedDate).format("MMM D")}`}
               </FeatureContentSubtitle>
             </div>
             <FeatureContentProgressBarDrilldownContainer>
@@ -83,8 +73,9 @@ const UpcomingPayoutDetails: React.FunctionComponent = () => {
                   3
                 </FeatureContentProgressBarLabel>
                 <BorderLinearProgress
+                  $bufferPercent={100}
                   variant="determinate"
-                  value={30}
+                  value={100}
                   style={styles.progressBar}
                 />
               </FeatureContentProgressBarContainer>

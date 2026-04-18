@@ -37,7 +37,7 @@ export const Container = styled.div<{
 export const ChildrenContainer = styled.div`
   flex: 1;
   width: 100%;
-  max-width: 1200px;
+  /* max-width: 1200px; */ // Make mobile responsive by removing max width
 
   display: flex;
   flex-direction: column;

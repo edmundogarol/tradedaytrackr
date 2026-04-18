@@ -1,7 +1,9 @@
 import { color } from "@styles/colors";
 import styled from "styled-components";
 
-export const JournalEntries = styled.div``;
+export const JournalEntries = styled.div`
+  height: 100%;
+`;
 
 export const Entry = styled.div``;
 

@@ -1,4 +1,5 @@
 import type {
+  DashboardSummaries,
   EvaluationAccount,
   Trade,
   TradingAccount,
@@ -19,6 +20,7 @@ import {
   updateCreateTradingAccountModalOpen,
   updateCurrentTradingAccount,
   updateCurrentTradingAccountErrors,
+  updateDashboardSummaries,
   updateDeleteTradeErrors,
   updateDeleteTradeModalOpen,
   updateDeleteTradingAccountErrors,
@@ -66,6 +68,7 @@ interface FundedAccountsDispatch {
   updateArchivedTradingAccountsNextPage: (nextPage: string | undefined) => void;
   updateArchivedTradingAccountsItemCount: (itemCount: number) => void;
   updateArchivingAccountModalOpen: (open: boolean) => void;
+  updateDashboardSummaries: (summaries: DashboardSummaries) => void;
 }
 
 const useFundedAccountsDispatch = (): FundedAccountsDispatch => {
@@ -151,6 +154,9 @@ const useFundedAccountsDispatch = (): FundedAccountsDispatch => {
     },
     updateArchivingAccountModalOpen(open: boolean): void {
       dispatch(updateArchivingAccountModalOpen(open));
+    },
+    updateDashboardSummaries(summaries: DashboardSummaries): void {
+      dispatch(updateDashboardSummaries(summaries));
     },
   };
 };

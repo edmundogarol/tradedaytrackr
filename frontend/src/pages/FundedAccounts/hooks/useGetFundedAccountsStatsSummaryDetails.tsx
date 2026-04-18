@@ -5,9 +5,9 @@ import AssuredWorkloadIcon from "@mui/icons-material/AssuredWorkload";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import HardwareIcon from "@mui/icons-material/Hardware";
+import useFundedAccountsState from "@pages/FundedAccounts/hooks/useFundedAccountsState";
 import { formatter } from "@utils/utils";
 import { useMemo } from "react";
-import useFundedAccountsState from "./useFundedAccountsState";
 
 export const useGetFundedAccountsStatsSummaryDetails =
   (): StatsSummaryTileDetails[] => {

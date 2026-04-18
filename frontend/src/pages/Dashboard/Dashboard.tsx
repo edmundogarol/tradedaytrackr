@@ -1,11 +1,9 @@
-import CalendarSummary, {
-  CalendarSummaryCount,
-} from "@components/Calendar/CalendarSummary/CalendarSummary";
+import CalendarSummary from "@components/Calendar/CalendarSummary/CalendarSummary";
 import Gap from "@components/Gap/Gap";
 import Page from "@components/Page/Page";
 import StatsSummary from "@components/Stats/StatsSummary/StatsSummary";
 import useGetDashboardStatsSummaryDetails from "@pages/Dashboard/FundingOverview/hooks/useGetDashboardStatsSummaryDetails";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   CalendarContainer,
   Container,
@@ -18,9 +16,16 @@ import {
 } from "./DashboardStyledComponents";
 import FundingOverview from "./FundingOverview/FundingOverview";
 import UpcomingPayoutDetails from "./UpcomingPayoutDetails/UpcomingPayoutDetails";
+import useGetDashboardSummariesHandler from "./hooks/useGetDashboardSummariesHandler";
 
 const Dashboard: React.FunctionComponent = () => {
   const dashboardStatsSummaryDetails = useGetDashboardStatsSummaryDetails();
+  const { getDashboardSummaries } = useGetDashboardSummariesHandler();
+
+  useEffect(() => {
+    getDashboardSummaries();
+  }, []);
+
   return (
     <Page topBarShowMenu={true}>
       <Container>
@@ -55,11 +60,9 @@ const Dashboard: React.FunctionComponent = () => {
             ]}
             height={300}
           /> */}
-          <CalendarSummary count={CalendarSummaryCount.TEN_DAYS} />
+          <CalendarSummary />
         </CalendarContainer>
-        <DashboardContentOtherContainer>
-          {/* <PNLDailyChart /> */}
-        </DashboardContentOtherContainer>
+        <DashboardContentOtherContainer></DashboardContentOtherContainer>
       </Container>
     </Page>
   );

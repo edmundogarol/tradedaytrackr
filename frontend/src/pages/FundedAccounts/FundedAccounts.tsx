@@ -7,6 +7,7 @@ import Page from "@components/Page/Page";
 import StatsSummary from "@components/Stats/StatsSummary/StatsSummary";
 import type { TradingAccount } from "@interfaces/CustomTypes";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import useGetFundedAccountsStatsSummaryDetails from "@pages/FundedAccounts/hooks/useGetFundedAccountsStatsSummaryDetails";
 import useSettingsState from "@pages/Settings/hooks/useSettingsState";
 import useGetAccountTemplatesHandler from "@pages/Settings/Preferences/hooks/useGetAccountTemplatesHandler";
 import { SectionTitle } from "@styles/globalStyledComponents";
@@ -28,7 +29,6 @@ import {
 import styles from "./FundedAccountsStyles";
 import useFundedAccountsDispatch from "./hooks/useFundedAccountsDispatch";
 import useFundedAccountsState from "./hooks/useFundedAccountsState";
-import useGetFundedAccountsStatsSummaryDetails from "./hooks/useGetFundedAccountsStatsSummaryDetailsMock";
 import useGetTradingAccountsHandler from "./hooks/useGetTradingAccountsHandler";
 
 const FundedAccounts: React.FunctionComponent = () => {

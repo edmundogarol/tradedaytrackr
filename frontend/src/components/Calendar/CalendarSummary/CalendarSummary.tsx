@@ -1,9 +1,12 @@
 import GlassTile from "@components/GlassTile/GlassTile";
+import { If } from "@components/If/If";
+import InfoPopout from "@components/InfoPopout/InfoPopout";
 import { PageEnum } from "@interfaces/NavigationTypes";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
 import useJournalEntriesApiCall from "@pages/Journal/hooks/useJournalEntriesApiCall";
 import useJournalEntriesHandler from "@pages/Journal/hooks/useJournalEntriesHandler";
 import useJournalState from "@pages/Journal/hooks/useJournalState";
+import { HorizontalSection, SectionText } from "@styles/globalStyledComponents";
 import { m } from "@utils/utils";
 import React from "react";
 import {
@@ -14,31 +17,27 @@ import {
   TileDateText,
   TileInfo,
   TilePnL,
-  TileTradeCount,
   TradePreview,
   TradePreviewOverlay,
 } from "./CalendarSummaryStyledComponents";
 
-export enum CalendarSummaryCount {
-  FIVE_DAYS = 5,
-  TEN_DAYS = 10,
-  TWENTY_DAYS = 20,
-}
-
-interface CalendarSummaryProps {
-  count: CalendarSummaryCount;
-}
-
-const CalendarSummary: React.FunctionComponent<CalendarSummaryProps> = ({
-  count,
-}) => {
+const CalendarSummary: React.FunctionComponent = () => {
   const navigation = useReactNavigation();
   const { journalEntries } = useJournalState();
   const journalEntriesApiCall = useJournalEntriesApiCall();
   useJournalEntriesHandler(journalEntriesApiCall);
 
+  const emptyActivity = journalEntries.length === 0;
   return (
-    <Container>
+    <Container
+      style={emptyActivity ? { display: "flex", justifyContent: "center" } : {}}
+    >
+      <If condition={journalEntries.length === 0}>
+        <HorizontalSection>
+          <SectionText>No recent activity.</SectionText>
+          <InfoPopout infoDescription="Create journal entries to see them here." />
+        </HorizontalSection>
+      </If>
       {journalEntries.map((journalEntry, index) => {
         return (
           <TileContainer
@@ -62,11 +61,11 @@ const CalendarSummary: React.FunctionComponent<CalendarSummaryProps> = ({
                     <TilePnL $positive={journalEntry.totalPnl >= 0}>
                       ${journalEntry.totalPnl}
                     </TilePnL>
-                    <TileTradeCount className="trade-count">
+                    {/* <TileTradeCount className="trade-count">
                       {`${journalEntry.trades?.length} trade${
                         journalEntry.trades?.length !== 1 ? "s" : ""
                       }`}
-                    </TileTradeCount>
+                    </TileTradeCount> */}
                   </TileInfo>
                 </TileDate>
               }

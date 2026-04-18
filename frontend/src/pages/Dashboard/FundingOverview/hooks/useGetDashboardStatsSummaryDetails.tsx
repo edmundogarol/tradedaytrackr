@@ -1,12 +1,14 @@
-import CreditCardIcon from "@mui/icons-material/CreditCard";
-import DateRangeIcon from "@mui/icons-material/DateRange";
-import AutoAwesomeMotionIcon from "@mui/icons-material/AutoAwesomeMotion";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import type { StatsSummaryTileDetails } from "@components/Stats/StatsSummary/StatsSummary";
 import styles from "@components/Stats/StatsSummary/StatsSummaryStyles";
+import AutoAwesomeMotionIcon from "@mui/icons-material/AutoAwesomeMotion";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import CreditCardIcon from "@mui/icons-material/CreditCard";
+import DateRangeIcon from "@mui/icons-material/DateRange";
+import useFundedAccountsState from "@pages/FundedAccounts/hooks/useFundedAccountsState";
 
 export const useGetDashboardStatsSummaryDetails =
   (): StatsSummaryTileDetails[] => {
+    const { dashboardSummaries } = useFundedAccountsState();
     return [
       {
         tileValue: "$",

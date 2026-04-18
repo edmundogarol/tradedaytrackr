@@ -21,6 +21,7 @@ import useFundedAccountsState from "@pages/FundedAccounts/hooks/useFundedAccount
 import { BUTTON_WIDTH } from "@styles/constants";
 import {
   PageContainer as Container,
+  HorizontalSection,
   Section,
   SectionText,
   SectionTitle,
@@ -29,6 +30,7 @@ import {
   TableItem,
 } from "@styles/globalStyledComponents";
 
+import { If } from "@components/If/If";
 import { PageEnum } from "@interfaces/NavigationTypes";
 import { Pagination } from "@mui/material";
 import ArchiveAccountModal from "@pages/FundedAccounts/ArchiveAccountModal/ArchiveAccountModal";
@@ -392,6 +394,16 @@ const Preferences: React.FunctionComponent = () => {
                 <InventoryIcon style={{ color: "white", marginRight: 5 }} />
                 Archived Accounts
               </SubsectionHeaderWrapper>
+              <Gap level={1} />
+              <HorizontalSection>
+                <SectionText>
+                  {
+                    "These accounts have been archived and are no longer active."
+                  }
+                </SectionText>
+                <InfoPopout infoDescription="You can unarchive an account to make it active again." />
+              </HorizontalSection>
+              <Gap level={1} />
               <SectionContainer>
                 <ListContainer>
                   {archivedTradingAccounts.map((account, index) =>
@@ -412,22 +424,26 @@ const Preferences: React.FunctionComponent = () => {
                     ),
                   )}
                 </ListContainer>
-                <Pagination
-                  color={"primary"}
-                  page={archivedTradingAccountsPage}
-                  sx={{
-                    "& .MuiPaginationItem-root": { color: "white" },
-                  }}
-                  count={
-                    !!archivedTradingAccountsItemCount
-                      ? Math.ceil(archivedTradingAccountsItemCount / 10)
-                      : 1
-                  }
-                  onChange={(e, page) => {
-                    setArchivedTradingAccountsPage(page);
-                    getArchivedTradingAccounts(page);
-                  }}
-                />
+                <If
+                  condition={(archivedTradingAccountsItemCount as number) > 10}
+                >
+                  <Pagination
+                    color={"primary"}
+                    page={archivedTradingAccountsPage}
+                    sx={{
+                      "& .MuiPaginationItem-root": { color: "white" },
+                    }}
+                    count={
+                      !!archivedTradingAccountsItemCount
+                        ? Math.ceil(archivedTradingAccountsItemCount / 10)
+                        : 1
+                    }
+                    onChange={(e, page) => {
+                      setArchivedTradingAccountsPage(page);
+                      getArchivedTradingAccounts(page);
+                    }}
+                  />
+                </If>
               </SectionContainer>
             </GlassTileChildrenWrapper>
           </GlassTile>

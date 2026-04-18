@@ -21,6 +21,7 @@ import {
 import {
   PageContainer as Container,
   DropdownsSection,
+  HorizontalSection,
   SectionText,
   SectionTitle,
 } from "@styles/globalStyledComponents";
@@ -28,6 +29,7 @@ import { formatter, isNotEmptyString, m } from "@utils/utils";
 import React, { useMemo, useState } from "react";
 
 import AlertPopout from "@components/Alert/AlertPopout";
+import { If } from "@components/If/If";
 import ModalWrapper from "@components/Modal/Modal";
 import { Collapse, FormControlLabel, Switch } from "@mui/material";
 import useJournalDispatch from "./hooks/useJournalDispatch";
@@ -148,6 +150,15 @@ const Journal: React.FunctionComponent = () => {
           />
         </DropdownsSection>
         <JournalEntries>
+          <If condition={journalEntries.length === 0}>
+            <Gap level={5} />
+            <HorizontalSection
+              style={{ justifyContent: "center", height: "100%" }}
+            >
+              <SectionText>No journal entries.</SectionText>
+              <InfoPopout infoDescription="Create journal entries to see them here." />
+            </HorizontalSection>
+          </If>
           {filteredJournalEntries.map((entry, index) => {
             const activePnL = fundedView
               ? entry.totalPnl

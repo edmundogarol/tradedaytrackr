@@ -1,4 +1,5 @@
 import type {
+  DashboardSummaries,
   EvaluationAccount,
   Trade,
   TradingAccount,
@@ -35,7 +36,37 @@ export interface FundedAccountsState {
   readonly archivedTradingAccountsNextPage?: string;
   readonly archivedTradingAccountsItemCount?: number;
   readonly archivingAccountModalOpen: boolean;
+  readonly dashboardSummaries: DashboardSummaries;
 }
+
+const initialSummaries: DashboardSummaries = {
+  upcomingPayout: {
+    expected: 0,
+    projectedDate: "",
+    daysCompleted: 0,
+    minDays: 0,
+    daysRemaining: 0,
+  },
+  currentStats: {
+    withdrawablePnl: 0,
+    daysToPayout: 0,
+    activePas: 0,
+    nearPayout: false,
+    winRate: 0,
+  },
+  fundingOverview: {
+    totalActiveFunding: 0,
+    firms: {},
+  },
+  evaluations: {
+    passed: 0,
+    total: 0,
+  },
+  buffer: {
+    current: 0,
+    target: 0,
+  },
+};
 
 const initialAccount: TradingAccount = {
   id: 0,
@@ -111,6 +142,7 @@ export const initialState: FundedAccountsState = {
   archivedTradingAccountsNextPage: undefined,
   archivedTradingAccountsItemCount: 0,
   archivingAccountModalOpen: false,
+  dashboardSummaries: initialSummaries,
 };
 
 type UpdateTradingAccountsAction = PayloadAction<TradingAccount[]>;
@@ -154,6 +186,7 @@ type UpdateArchivedTradingAccountsNextPageAction = PayloadAction<
 >;
 type UpdateArchivedTradingAccountsItemCountAction = PayloadAction<number>;
 type UpdateArchivingAccountModalOpenAction = PayloadAction<boolean>;
+type UpdateDashboardSummariesAction = PayloadAction<DashboardSummaries>;
 
 export type FundedAccountsAction =
   | UpdateTradingAccountsAction
@@ -180,7 +213,8 @@ export type FundedAccountsAction =
   | UpdateArchivedTradingAccountsErrorsAction
   | UpdateArchivedTradingAccountsNextPageAction
   | UpdateArchivedTradingAccountsItemCountAction
-  | UpdateArchivingAccountModalOpenAction;
+  | UpdateArchivingAccountModalOpenAction
+  | UpdateDashboardSummariesAction;
 
 export const fundedAccountsSlice = createSlice({
   name: "fundedAccounts",
@@ -311,6 +345,12 @@ export const fundedAccountsSlice = createSlice({
     ) => {
       state.archivingAccountModalOpen = action.payload;
     },
+    updateDashboardSummaries: (
+      state,
+      action: UpdateDashboardSummariesAction,
+    ) => {
+      state.dashboardSummaries = action.payload;
+    },
   },
 });
 
@@ -340,6 +380,7 @@ export const {
   updateArchivedTradingAccountsNextPage,
   updateArchivedTradingAccountsItemCount,
   updateArchivingAccountModalOpen,
+  updateDashboardSummaries,
 } = fundedAccountsSlice.actions;
 
 export const fundedAccountsReducer = fundedAccountsSlice.reducer;

@@ -21,6 +21,7 @@ from backend.djangoapi.views.account.verify_account import (
 from backend.djangoapi.views.ai.drafting import GenerateDraftView
 from backend.djangoapi.views.ai.strategy import DetectStrategyView
 from backend.djangoapi.views.ai.tagging import AutoTagView
+from backend.djangoapi.views.dashboard.dashboard_summaries import DashboardSummariesView
 from backend.djangoapi.views.journal.journal_entry import JournalEntryViewSet
 from backend.djangoapi.views.journal.journal_entry_by_date import (
     JournalEntriesByDateView,
@@ -86,6 +87,7 @@ router.register(r"trades", TradeViewSet, basename="trades")
 urlpatterns = [
     path("docs/", schema_view),
     path("health/", health_check),
+    path("api/dashboard/summaries/", DashboardSummariesView.as_view()),
     path(
         "api/payouts/",
         RecordPayoutView.as_view(),

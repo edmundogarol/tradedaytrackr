@@ -145,3 +145,32 @@ export interface Payout {
   balance_after: number;
   created_at: string;
 }
+
+export interface DashboardSummaries {
+  upcomingPayout: {
+    expected: number;
+    projectedDate: string;
+    daysCompleted: number;
+    minDays: number;
+    daysRemaining: number;
+  };
+  currentStats: {
+    withdrawablePnl: number;
+    daysToPayout: number;
+    activePas: number;
+    nearPayout: boolean;
+    winRate: number;
+  };
+  fundingOverview: {
+    totalActiveFunding: number;
+    firms: { [firmName: string]: number };
+  };
+  evaluations: {
+    passed: number;
+    total: number;
+  };
+  buffer: {
+    current: number;
+    target: number;
+  };
+}
