@@ -1,5 +1,9 @@
 import random
+from datetime import timedelta
 from decimal import Decimal
+
+import pytz
+from django.utils import timezone
 
 from backend.djangoapi.models.payout import Payout
 from backend.djangoapi.models.trade import Trade
@@ -110,3 +114,43 @@ def seed_demo_payouts(user):
         # -----------------------------------
         recompute_account_balance(account)
         recompute_all_trading_days(account)
+
+
+def seed_historical_payouts(user):
+    accounts = user.trading_accounts.select_related("template").all()
+    now = timezone.now().astimezone(pytz.UTC)
+
+    for account in accounts:
+        template = account.template
+
+        # skip eval accounts
+        if template.is_evaluation:
+            continue
+
+        # create 3–6 historical payouts
+        num_payouts = random.randint(3, 6)
+
+        for i in range(num_payouts):
+            # random month in past (1–6 months ago)
+            months_back = random.randint(1, 6)
+
+            payout_date = now - timedelta(days=30 * months_back)
+
+            # random realistic payout amount
+            base = Decimal(template.min_payout_request or 200)
+            variation = Decimal(random.randint(200, 1500))
+
+            amount = base + variation
+
+            if template.max_payout_request and template.max_payout_request > 0:
+                amount = min(amount, template.max_payout_request)
+
+            Payout.objects.create(
+                account=account,
+                amount=amount,
+                payout_date=payout_date,
+                balance_before=account.account_balance,
+                balance_after=account.account_balance,  # no balance mutation
+                trading_days_in_cycle=random.randint(5, 10),
+                total_pnl_in_cycle=amount,
+            )

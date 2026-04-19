@@ -82,9 +82,12 @@ const UpcomingPayoutDetails: React.FunctionComponent = () => {
                   $bufferPercent={100}
                   variant="determinate"
                   value={
-                    (dashboardSummaries.upcomingPayout.daysCompleted /
-                      dashboardSummaries.upcomingPayout.minDays) *
-                    100
+                    dashboardSummaries.upcomingPayout.daysCompleted >
+                    dashboardSummaries.upcomingPayout.minDays
+                      ? 100
+                      : (dashboardSummaries.upcomingPayout.daysCompleted /
+                          dashboardSummaries.upcomingPayout.minDays) *
+                        100
                   }
                   style={styles.progressBar}
                 />

@@ -28,6 +28,7 @@ from backend.djangoapi.views.journal.journal_entry_by_date import (
     JournalEntriesByDateView,
 )
 from backend.djangoapi.views.journal.tag import TagViewSet
+from backend.djangoapi.views.payout.monthly_pnl import MonthlyPnLView
 from backend.djangoapi.views.trades.payout import (
     RecordPayoutView,
     UpdatePayoutView,
@@ -90,6 +91,7 @@ urlpatterns = [
     path("docs/", schema_view),
     path("health/", health_check),
     path("api/user/refresh-currency/", RefreshConversionRateView.as_view()),
+    path("api/monthly-pnl/", MonthlyPnLView.as_view()),
     path("api/dashboard/summaries/", DashboardSummariesView.as_view()),
     path("api/payouts/list/", PayoutListView.as_view()),
     path(
