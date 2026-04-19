@@ -2,6 +2,7 @@ import InfoOutlineIcon from "@mui/icons-material/InfoOutlined";
 import Paper from "@mui/material/Paper";
 import Popper from "@mui/material/Popper";
 import Typography from "@mui/material/Typography";
+import { color } from "@styles/colors";
 import { useState } from "react";
 import { Container } from "./InfoPopoutStyledComponents";
 import styles from "./InfoPopoutStyles";
@@ -47,7 +48,7 @@ const InfoPopout: React.FC<InfoPopoutProps> = ({
           <InfoOutlineIcon
             style={{
               ...styles.infoIconStyle,
-              color: warning ? "orange" : "inherit",
+              color: warning ? "orange" : color("SystemGrey1"),
             }}
           />
         )}
