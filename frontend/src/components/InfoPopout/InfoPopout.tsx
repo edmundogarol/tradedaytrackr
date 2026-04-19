@@ -12,6 +12,7 @@ export interface InfoPopoutProps {
   children?: React.ReactNode;
   containerStyle?: React.CSSProperties;
   warning?: boolean;
+  childrenContainerStyle?: React.CSSProperties;
 }
 
 const InfoPopout: React.FC<InfoPopoutProps> = ({
@@ -19,6 +20,7 @@ const InfoPopout: React.FC<InfoPopoutProps> = ({
   children,
   containerStyle,
   warning,
+  childrenContainerStyle,
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
@@ -40,7 +42,7 @@ const InfoPopout: React.FC<InfoPopoutProps> = ({
       <span
         onMouseEnter={(e) => setAnchorEl(e.currentTarget)}
         onMouseLeave={() => setAnchorEl(null)}
-        style={styles.infoIconContainer}
+        style={{ ...styles.infoIconContainer, ...childrenContainerStyle }}
       >
         {children ? (
           children

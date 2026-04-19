@@ -15,7 +15,6 @@ import {
   HorizontalSection,
   PageContainer,
   Section,
-  SectionText,
   SectionTitle,
   SubsectionHeaderWrapper,
   Table,
@@ -30,6 +29,8 @@ import useGetPayoutsHandler from "./hooks/useGetPayoutsHandler";
 import usePayoutsDispatch from "./hooks/usePayoutsDispatch";
 import usePayoutsState from "./hooks/usePayoutsState";
 import useUpdateCurrencyHandler from "./hooks/useUpdateCurrencyHandler";
+import { LocalCurrencyLabel } from "./PayoutsStyledComponents";
+import styles from "./PayoutsStyles";
 
 const Payouts: React.FunctionComponent = () => {
   const {
@@ -82,13 +83,7 @@ const Payouts: React.FunctionComponent = () => {
         <HorizontalSection>
           <SectionTitle>Payout Tracking</SectionTitle>
           <HorizontalSection>
-            <SectionText
-              style={{
-                width: 200,
-                justifyContent: "flex-end",
-                display: "flex",
-              }}
-            >
+            <LocalCurrencyLabel>
               {loading ? <Loading size={20} /> : `Local Currency: `}
               <If
                 condition={m(conversion_last_updated).isBefore(
@@ -100,9 +95,9 @@ const Payouts: React.FunctionComponent = () => {
                   infoDescription="Conversion rate last updated more than 7 days ago."
                 />
               </If>
-            </SectionText>
+            </LocalCurrencyLabel>
             <SelectWrapper
-              style={{ maxWidth: 200 }}
+              style={styles.currencySelector}
               items={sortedCurrencies}
               onSelect={(selected) => updateCurrency(selected)}
               selectedValue={preferred_currency}
@@ -114,7 +109,7 @@ const Payouts: React.FunctionComponent = () => {
         <Section>
           <HorizontalSection $scrollable={true} ref={scrollRef}>
             {[...monthlySummaries].reverse().map((summary, idx) => (
-              <div style={{ minWidth: 100, height: 100 }} key={idx}>
+              <div style={styles.monthTile} key={idx}>
                 <GlassTile
                   featureTile
                   minHeight={10}
@@ -138,11 +133,23 @@ const Payouts: React.FunctionComponent = () => {
                       <PnL
                         $positive
                         $neutral={true}
-                        style={{ fontSize: 10, fontWeight: 400 }}
+                        style={{
+                          fontSize: 10,
+                          fontWeight: 400,
+                        }}
                       >
-                        {!summary.totalPayout
-                          ? "-"
-                          : localCurrencyFormatter(summary.totalPayout)}
+                        <InfoPopout
+                          childrenContainerStyle={styles.localPnlContainer}
+                          infoDescription={
+                            !summary.totalPayout
+                              ? "-"
+                              : localCurrencyFormatter(summary.totalPayout)
+                          }
+                        >
+                          {!summary.totalPayout
+                            ? "-"
+                            : localCurrencyFormatter(summary.totalPayout)}
+                        </InfoPopout>
                       </PnL>
                     </SectionTitle>
                   </GlassTileChildrenWrapper>
@@ -162,7 +169,7 @@ const Payouts: React.FunctionComponent = () => {
           >
             <GlassTileChildrenWrapper>
               <SubsectionHeaderWrapper>
-                <HistoryIcon style={{ color: "white", marginRight: 5 }} />
+                <HistoryIcon style={styles.sectionIcon} />
                 Payout History
               </SubsectionHeaderWrapper>
               <Gap level={1} />
