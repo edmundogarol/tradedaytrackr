@@ -1,5 +1,6 @@
 import { css } from "styled-components";
 
+import useLoginState from "@pages/Login/hooks/useLoginState";
 import moment from "moment-timezone";
 import { ICT_SESSIONS } from "./constants";
 
@@ -204,4 +205,31 @@ export const getICTSessionLabel = (dateTime: string): string | null => {
   }
 
   return null; // no session match
+};
+
+export const useFormatterWithCurrency = (): {
+  format: (amount: number) => string;
+} => {
+  const {
+    user: { conversion_rate, preferred_currency },
+  } = useLoginState();
+
+  const formatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: preferred_currency,
+    maximumFractionDigits: 0,
+  });
+
+  const convert = (amount: number): number => {
+    if (!conversion_rate) return amount;
+    return amount * conversion_rate;
+  };
+
+  const format = (amount: number): string => {
+    return formatter.format(convert(amount));
+  };
+
+  return {
+    format,
+  };
 };

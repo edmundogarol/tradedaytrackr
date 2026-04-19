@@ -146,13 +146,19 @@ export const DayValue = styled.div`
   border-radius: 4px;
 `;
 
-export const PnL = styled.div<{ $positive: boolean; $evalPnl?: boolean }>`
+export const PnL = styled.div<{
+  $positive: boolean;
+  $evalPnl?: boolean;
+  $neutral?: boolean;
+}>`
   color: ${(props): string =>
-    props.$positive
-      ? props.$evalPnl
-        ? color("SystemTeal")
-        : color("SystemGreen")
-      : color("SystemRed")};
+    props.$neutral
+      ? color("SystemLabel1")
+      : props.$positive
+        ? props.$evalPnl
+          ? color("SystemTeal")
+          : color("SystemGreen")
+        : color("SystemRed")};
   font-size: 20px;
   display: flex;
 `;

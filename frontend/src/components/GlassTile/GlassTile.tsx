@@ -10,6 +10,7 @@ import {
 interface GlassTileProps {
   overlay?: React.ReactNode;
   positive?: boolean;
+  neutral?: boolean;
   children?: React.ReactNode;
   featureTile?: boolean;
   leftAlign?: boolean;
@@ -35,6 +36,7 @@ const GlassTile: React.FunctionComponent<GlassTileProps> = ({
   noShine = false,
   noGlassEffect = false,
   containerStyle,
+  neutral,
 }) => {
   return (
     <Container
@@ -52,7 +54,11 @@ const GlassTile: React.FunctionComponent<GlassTileProps> = ({
         <Shine />
       </If>
       <If condition={!noGlow}>
-        <BoxGlow $positive={positive} $featureTile={featureTile} />
+        <BoxGlow
+          $neutral={neutral}
+          $positive={positive}
+          $featureTile={featureTile}
+        />
       </If>
       {children}
     </Container>

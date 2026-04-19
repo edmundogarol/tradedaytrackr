@@ -67,6 +67,7 @@ export const Container = styled.div<{
 export const BoxGlow = styled.div<{
   $positive?: boolean;
   $featureTile?: boolean;
+  $neutral?: boolean;
 }>`
   position: absolute;
   height: 100%;
@@ -115,6 +116,27 @@ export const BoxGlow = styled.div<{
             transparent 75%
           );
         `}
+
+    ${(props): string =>
+      props.$neutral
+        ? `
+        background-image:
+          radial-gradient(
+            60% 100% at 50% 0%,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0) 35%,
+            rgba(255, 255, 255, 0) 55%,
+            transparent 75%
+          ),
+          radial-gradient(
+            60% 100% at 50% 100%,
+            rgba(255, 255, 255, 0.85) 0%,
+            rgba(255, 255, 255, 0.5) 35%,
+            rgba(255, 255, 255, 0.2) 55%,
+            transparent 75%
+          );
+        `
+        : ""}
 
     background-repeat: no-repeat;
     background-size: 100% ${(props): number => (props.$featureTile ? 9 : 4)}%;

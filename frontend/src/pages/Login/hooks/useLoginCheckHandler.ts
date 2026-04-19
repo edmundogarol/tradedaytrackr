@@ -9,7 +9,6 @@ import useLoginState from "./useLoginState";
 
 const useLoginCheckHandler = ({
   data,
-  loading,
   error,
 }: AxiosFetchWrapperResponse<
   LoginCheckApiCallData,

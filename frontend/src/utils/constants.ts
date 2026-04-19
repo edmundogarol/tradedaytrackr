@@ -84,3 +84,49 @@ export const ICT_SESSIONS = [
     close: { hour: 16, minute: 0 },
   },
 ];
+
+export const currencyOptions = [
+  { name: "USD", value: "USD", label: "USD - US Dollar" },
+  { name: "EUR", value: "EUR", label: "EUR - Euro" },
+  { name: "GBP", value: "GBP", label: "GBP - British Pound" },
+  { name: "JPY", value: "JPY", label: "JPY - Japanese Yen" },
+  { name: "AUD", value: "AUD", label: "AUD - Australian Dollar" },
+  { name: "CAD", value: "CAD", label: "CAD - Canadian Dollar" },
+  { name: "CHF", value: "CHF", label: "CHF - Swiss Franc" },
+  { name: "CNY", value: "CNY", label: "CNY - Chinese Yuan" },
+  { name: "HKD", value: "HKD", label: "HKD - Hong Kong Dollar" },
+  { name: "NZD", value: "NZD", label: "NZD - New Zealand Dollar" },
+  { name: "SEK", value: "SEK", label: "SEK - Swedish Krona" },
+  { name: "NOK", value: "NOK", label: "NOK - Norwegian Krone" },
+  { name: "DKK", value: "DKK", label: "DKK - Danish Krone" },
+
+  { name: "SGD", value: "SGD", label: "SGD - Singapore Dollar" },
+  { name: "KRW", value: "KRW", label: "KRW - South Korean Won" },
+  { name: "INR", value: "INR", label: "INR - Indian Rupee" },
+  { name: "PHP", value: "PHP", label: "PHP - Philippine Peso" },
+  { name: "THB", value: "THB", label: "THB - Thai Baht" },
+  { name: "MYR", value: "MYR", label: "MYR - Malaysian Ringgit" },
+  { name: "IDR", value: "IDR", label: "IDR - Indonesian Rupiah" },
+  { name: "VND", value: "VND", label: "VND - Vietnamese Dong" },
+
+  { name: "ZAR", value: "ZAR", label: "ZAR - South African Rand" },
+  { name: "NGN", value: "NGN", label: "NGN - Nigerian Naira" },
+  { name: "EGP", value: "EGP", label: "EGP - Egyptian Pound" },
+
+  { name: "BRL", value: "BRL", label: "BRL - Brazilian Real" },
+  { name: "MXN", value: "MXN", label: "MXN - Mexican Peso" },
+  { name: "ARS", value: "ARS", label: "ARS - Argentine Peso" },
+  { name: "CLP", value: "CLP", label: "CLP - Chilean Peso" },
+  { name: "COP", value: "COP", label: "COP - Colombian Peso" },
+
+  { name: "AED", value: "AED", label: "AED - UAE Dirham" },
+  { name: "SAR", value: "SAR", label: "SAR - Saudi Riyal" },
+  { name: "QAR", value: "QAR", label: "QAR - Qatari Riyal" },
+  { name: "KWD", value: "KWD", label: "KWD - Kuwaiti Dinar" },
+
+  { name: "TRY", value: "TRY", label: "TRY - Turkish Lira" },
+  { name: "RUB", value: "RUB", label: "RUB - Russian Ruble" },
+  { name: "PLN", value: "PLN", label: "PLN - Polish Zloty" },
+  { name: "CZK", value: "CZK", label: "CZK - Czech Koruna" },
+  { name: "HUF", value: "HUF", label: "HUF - Hungarian Forint" },
+];

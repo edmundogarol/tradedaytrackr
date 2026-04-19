@@ -10,12 +10,14 @@ export interface InfoPopoutProps {
   infoDescription: string;
   children?: React.ReactNode;
   containerStyle?: React.CSSProperties;
+  warning?: boolean;
 }
 
 const InfoPopout: React.FC<InfoPopoutProps> = ({
   infoDescription,
   children,
   containerStyle,
+  warning,
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
@@ -39,7 +41,16 @@ const InfoPopout: React.FC<InfoPopoutProps> = ({
         onMouseLeave={() => setAnchorEl(null)}
         style={styles.infoIconContainer}
       >
-        {children ? children : <InfoOutlineIcon style={styles.infoIconStyle} />}
+        {children ? (
+          children
+        ) : (
+          <InfoOutlineIcon
+            style={{
+              ...styles.infoIconStyle,
+              color: warning ? "orange" : "inherit",
+            }}
+          />
+        )}
       </span>
     </Container>
   );

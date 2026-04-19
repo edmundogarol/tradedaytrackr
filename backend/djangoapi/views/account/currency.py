@@ -24,3 +24,28 @@ class RefreshConversionRateView(APIView):
         user.update_conversion_rate(rate)
 
         return Response(UserCurrencySerializer(user).data)
+
+
+class UpdateCurrencyView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        currency = request.data.get("currency")
+
+        if not currency:
+            return Response({"error": "Currency required"}, status=400)
+
+        try:
+            rate = fetch_usd_conversion_rate(currency)
+        except Exception:
+            return Response(
+                {"error": "Failed to fetch conversion rate"},
+                status=500,
+            )
+
+        user = request.user
+        user.update_conversion_rate(rate)
+        user.preferred_currency = currency
+        user.save(update_fields=["preferred_currency"])
+
+        return Response({"success": True})

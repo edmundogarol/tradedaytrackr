@@ -34,6 +34,9 @@ export interface User {
     unsubscribe_all?: boolean;
   };
   timezone?: string;
+  preferred_currency?: string;
+  conversion_rate?: number;
+  conversion_last_updated?: string;
 }
 
 export interface UserPasswordUpdateData {
@@ -151,6 +154,12 @@ export interface Payout {
   tradingDaysInCycle: number;
   cycleStart: string;
   cycleEnd: string;
+}
+
+export interface PayoutMonthlySummary {
+  month: string;
+  totalPayout: number;
+  payoutsCount: number;
 }
 
 export interface DashboardSummaries {

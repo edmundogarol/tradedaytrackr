@@ -40,10 +40,6 @@ class LoginViewSet(APIView):
         ip_data = visitor_ip_address(request)
 
         if str(self.request.user) != "AnonymousUser":
-            logger.info(
-                "Authenticated session detected.",
-                extra={"user_id": request.user.id},
-            )
             user = User.objects.get(email=self.request.user)
             user.last_ip = ip_data["ip"] if ip_data["valid"] else None
             user.save()

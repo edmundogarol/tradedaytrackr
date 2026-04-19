@@ -57,11 +57,18 @@ export const SectionText = styled.span`
   font-size: 14px;
 `;
 
-export const HorizontalSection = styled.div`
+export const HorizontalSection = styled.div<{ $scrollable?: boolean }>`
   display: flex;
   flex-direction: row;
   gap: 10px;
   align-items: center;
+  ${({ $scrollable = false }): string =>
+    $scrollable
+      ? `
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  `
+      : ""}
 `;
 
 export const DropdownsSection = styled.div`
