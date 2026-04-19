@@ -1,28 +1,53 @@
-import type { AxiosFetchWrapperResponse } from "@hooks/useAxiosFetch";
+import environmentConfig from "@utils/environmentConfig";
 import { keysToCamel } from "@utils/utils";
-import { useEffect } from "react";
+import { set } from "lodash";
+import { useCallback } from "react";
 import useJournalDispatch from "./useJournalDispatch";
-import type { JournalEntriesApiCallResponse } from "./useJournalEntriesApiCall";
+import useJournalEntriesApiCall from "./useJournalEntriesApiCall";
 
-const useJournalEntriesHandler = ({
-  data,
-  loading,
-  error,
-}: AxiosFetchWrapperResponse<JournalEntriesApiCallResponse>): void => {
-  const { updateJournalEntries } = useJournalDispatch();
+interface JournalEntriesHandler {
+  getJournalEntries: (pageNumber: number) => Promise<void>;
+  loading: boolean;
+}
 
-  useEffect(() => {
-    if (!data && !error) return;
+const useJournalEntriesHandler = (): JournalEntriesHandler => {
+  const { fetch, loading } = useJournalEntriesApiCall();
+  const {
+    updateJournalEntries,
+    updateJournalEntriesItemCount,
+    updateJournalEntriesNextPage,
+    updateJournalEntriesPrevPage,
+    updateJournalEntriesErrors,
+  } = useJournalDispatch();
 
-    if (error) {
-      console.log("Journal entries fetch error", error);
-      return;
-    }
+  return {
+    getJournalEntries: useCallback(
+      async (pageNumber: number) => {
+        const options = {};
+        if (pageNumber > 1) {
+          set(
+            options,
+            "url",
+            `${environmentConfig.HOST}/api/journal-entries/?page=${pageNumber}`,
+          );
+        }
 
-    if (data) {
-      updateJournalEntries(keysToCamel(data.results));
-    }
-  }, [data, error]);
+        const { error, data } = await fetch(options);
+
+        if (!!data) {
+          updateJournalEntries(keysToCamel(data.results));
+          updateJournalEntriesItemCount(data.count);
+          updateJournalEntriesErrors({});
+          updateJournalEntriesNextPage(data.next);
+          updateJournalEntriesPrevPage(data.previous);
+        } else if (error) {
+          updateJournalEntriesErrors(error);
+        }
+      },
+      [loading],
+    ),
+    loading,
+  };
 };
 
 export default useJournalEntriesHandler;

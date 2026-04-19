@@ -62,6 +62,16 @@ const styles = {
       backgroundColor: color("SystemBlue5"),
     } as React.CSSProperties,
   },
+  previewContainer: {
+    display: "block",
+    textAlign: "center",
+    width: "100%",
+  } as React.CSSProperties,
+  previewIcon: {
+    color: "#aaa",
+    height: 50,
+    width: 50,
+  } as React.CSSProperties,
 };
 
 export default styles;

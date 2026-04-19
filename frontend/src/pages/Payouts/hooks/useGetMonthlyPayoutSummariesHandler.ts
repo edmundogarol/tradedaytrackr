@@ -4,7 +4,6 @@ import { set } from "lodash";
 import { useCallback } from "react";
 import useGetMonthlyPayoutSummariesApiCall from "./useGetMonthlyPayoutSummariesApiCall";
 import usePayoutsDispatch from "./usePayoutsDispatch";
-import usePayoutsState from "./usePayoutsState";
 
 interface GetMonthlyPayoutSummariesHandler {
   getMonthlyPayoutSummaries: (pageNumber: number) => Promise<void>;
@@ -14,7 +13,6 @@ interface GetMonthlyPayoutSummariesHandler {
 const useGetMonthlyPayoutSummariesHandler =
   (): GetMonthlyPayoutSummariesHandler => {
     const { fetch, loading } = useGetMonthlyPayoutSummariesApiCall();
-    const { nextPage } = usePayoutsState();
     const {
       updateMonthlySummaries,
       updateMonthlySummariesErrors,
@@ -25,7 +23,7 @@ const useGetMonthlyPayoutSummariesHandler =
       getMonthlyPayoutSummaries: useCallback(
         async (pageNumber: number) => {
           const options = {};
-          if (pageNumber > 1 && nextPage) {
+          if (pageNumber > 1) {
             set(
               options,
               "url",

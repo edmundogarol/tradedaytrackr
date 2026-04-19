@@ -10,6 +10,11 @@ import {
   updateEditingJournalEntry,
   updateFundedView,
   updateJournalEntries,
+  updateJournalEntriesCurrentPage,
+  updateJournalEntriesErrors,
+  updateJournalEntriesItemCount,
+  updateJournalEntriesNextPage,
+  updateJournalEntriesPrevPage,
   updateJournalEntry,
   updateJournalErrors,
   updateSelectedDateTrades,
@@ -31,6 +36,13 @@ interface JournalDispatch {
   }): void;
   updateEditingJournalEntry(editingJournalEntry: boolean): void;
   updateFundedView(fundedView: boolean): void;
+  updateJournalEntriesCurrentPage(journalEntriesCurrentPage: number): void;
+  updateJournalEntriesItemCount(journalEntriesItemCount: number): void;
+  updateJournalEntriesNextPage(journalEntriesNextPage: string | null): void;
+  updateJournalEntriesPrevPage(journalEntriesPrevPage: string | null): void;
+  updateJournalEntriesErrors(journalEntriesErrors: {
+    [key: string]: any;
+  }): void;
 }
 
 export const useJournalDispatch = (): JournalDispatch => {
@@ -71,6 +83,23 @@ export const useJournalDispatch = (): JournalDispatch => {
     },
     updateFundedView(fundedView: boolean): void {
       dispatch(updateFundedView(fundedView));
+    },
+    updateJournalEntriesCurrentPage(journalEntriesCurrentPage: number): void {
+      dispatch(updateJournalEntriesCurrentPage(journalEntriesCurrentPage));
+    },
+    updateJournalEntriesItemCount(journalEntriesItemCount: number): void {
+      dispatch(updateJournalEntriesItemCount(journalEntriesItemCount));
+    },
+    updateJournalEntriesNextPage(journalEntriesNextPage: string | null): void {
+      dispatch(updateJournalEntriesNextPage(journalEntriesNextPage));
+    },
+    updateJournalEntriesPrevPage(journalEntriesPrevPage: string | null): void {
+      dispatch(updateJournalEntriesPrevPage(journalEntriesPrevPage));
+    },
+    updateJournalEntriesErrors(journalEntriesErrors: {
+      [key: string]: any;
+    }): void {
+      dispatch(updateJournalEntriesErrors(journalEntriesErrors));
     },
   };
 };

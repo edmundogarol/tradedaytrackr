@@ -10,6 +10,8 @@ import Page from "@components/Page/Page";
 import SelectWrapper from "@components/Select/SelectWrapper";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
+import PhotoIcon from "@mui/icons-material/Photo";
+
 import InventoryIcon from "@mui/icons-material/Inventory";
 import {
   AccountSubtitle,
@@ -553,7 +555,17 @@ const EvaluationAccountDetail: React.FunctionComponent<
                 >
                   <TradeDay>
                     <PreviewDayValueContainer>
-                      <TradePreviewContainer>
+                      <TradePreviewContainer
+                        onClick={() =>
+                          !!tradeWithJournalEntry?.journalEntry?.id
+                            ? navigation.navigate(PageEnum.JournalEntry, {
+                                id:
+                                  tradeWithJournalEntry?.journalEntry?.id.toString() ||
+                                  "",
+                              })
+                            : null
+                        }
+                      >
                         {!!tradeWithJournalEntry?.journalEntry ? (
                           <If
                             condition={
@@ -561,16 +573,25 @@ const EvaluationAccountDetail: React.FunctionComponent<
                               !!tradeWithJournalEntry?.journalEntry
                             }
                           >
-                            <TradePreview
-                              $src={tradeWithJournalEntry?.journalEntry?.image}
-                              onClick={() =>
-                                navigation.navigate(PageEnum.JournalEntry, {
-                                  id:
-                                    tradeWithJournalEntry?.journalEntry?.id.toString() ||
-                                    "",
-                                })
+                            <If
+                              condition={
+                                !!tradeWithJournalEntry?.journalEntry.imageUrl
                               }
-                            />
+                            >
+                              <TradePreview
+                                $src={
+                                  tradeWithJournalEntry?.journalEntry.imageUrl
+                                }
+                              />
+                              <Else>
+                                <TradePreview
+                                  $src=""
+                                  style={styles.previewContainer}
+                                >
+                                  <PhotoIcon style={styles.previewIcon} />
+                                </TradePreview>
+                              </Else>
+                            </If>
                             <TradeJournalPnL
                               $positive={
                                 tradeWithJournalEntry?.journalEntry?.totalPnl >

@@ -10,6 +10,11 @@ export interface JournalState {
   readonly editingJournalEntry: boolean;
   readonly detectedTrades: Trade[];
   readonly journalEntries: JournalEntry[];
+  readonly journalEntriesCurrentPage: number;
+  readonly journalEntriesItemCount: number;
+  readonly journalEntriesNextPage?: string | null;
+  readonly journalEntriesPrevPage?: string | null;
+  readonly journalEntriesErrors?: { [key: string]: any };
   readonly selectedDateTrades: Trade[];
   readonly selectedDateTradesErrors: { [key: string]: any };
   readonly deleteJournalEntryModalOpen: boolean;
@@ -36,6 +41,11 @@ export const initialState: JournalState = {
     accounts: [],
   },
   journalEntries: [],
+  journalEntriesCurrentPage: 1,
+  journalEntriesItemCount: 0,
+  journalEntriesNextPage: null,
+  journalEntriesPrevPage: null,
+  journalEntriesErrors: {},
   journalErrors: {},
   editingJournalEntry: false,
   detectedTrades: [],
@@ -61,6 +71,11 @@ type UpdateDeleteJournalEntryErrorsAction = PayloadAction<{
 }>;
 type UpdateEditingJournalEntryAction = PayloadAction<boolean>;
 type UpdateFundedViewAction = PayloadAction<boolean>;
+type UpdateJournalEntriesCurrentPageAction = PayloadAction<number>;
+type UpdateJournalEntriesItemCountAction = PayloadAction<number>;
+type UpdateJournalEntriesNextPageAction = PayloadAction<string | null>;
+type UpdateJournalEntriesPrevPageAction = PayloadAction<string | null>;
+type UpdateJournalEntriesErrorsAction = PayloadAction<{ [key: string]: any }>;
 
 export type JournalAction =
   | UpdateJournalEntryAction
@@ -72,7 +87,12 @@ export type JournalAction =
   | UpdateDeleteJournalEntryModalOpenAction
   | UpdateDeleteJournalEntryErrorsAction
   | UpdateEditingJournalEntryAction
-  | UpdateFundedViewAction;
+  | UpdateFundedViewAction
+  | UpdateJournalEntriesCurrentPageAction
+  | UpdateJournalEntriesItemCountAction
+  | UpdateJournalEntriesNextPageAction
+  | UpdateJournalEntriesPrevPageAction
+  | UpdateJournalEntriesErrorsAction;
 
 export const journalSlice = createSlice({
   name: "journal",
@@ -123,6 +143,36 @@ export const journalSlice = createSlice({
     updateFundedView: (state, action: UpdateFundedViewAction) => {
       state.fundedView = action.payload;
     },
+    updateJournalEntriesCurrentPage: (
+      state,
+      action: UpdateJournalEntriesCurrentPageAction,
+    ) => {
+      state.journalEntriesCurrentPage = action.payload;
+    },
+    updateJournalEntriesItemCount: (
+      state,
+      action: UpdateJournalEntriesItemCountAction,
+    ) => {
+      state.journalEntriesItemCount = action.payload;
+    },
+    updateJournalEntriesNextPage: (
+      state,
+      action: UpdateJournalEntriesNextPageAction,
+    ) => {
+      state.journalEntriesNextPage = action.payload;
+    },
+    updateJournalEntriesPrevPage: (
+      state,
+      action: UpdateJournalEntriesPrevPageAction,
+    ) => {
+      state.journalEntriesPrevPage = action.payload;
+    },
+    updateJournalEntriesErrors: (
+      state,
+      action: UpdateJournalEntriesErrorsAction,
+    ) => {
+      state.journalEntriesErrors = action.payload;
+    },
   },
 });
 
@@ -137,6 +187,11 @@ export const {
   updateDeleteJournalEntryErrors,
   updateEditingJournalEntry,
   updateFundedView,
+  updateJournalEntriesCurrentPage,
+  updateJournalEntriesItemCount,
+  updateJournalEntriesNextPage,
+  updateJournalEntriesPrevPage,
+  updateJournalEntriesErrors,
 } = journalSlice.actions;
 
 export const journalReducer = journalSlice.reducer;

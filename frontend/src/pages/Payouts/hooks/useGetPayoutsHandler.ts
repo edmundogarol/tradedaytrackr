@@ -4,7 +4,6 @@ import { set } from "lodash";
 import { useCallback } from "react";
 import useGetPayoutsApiCall from "./useGetPayoutsApiCall";
 import usePayoutsDispatch from "./usePayoutsDispatch";
-import usePayoutsState from "./usePayoutsState";
 
 interface GetPayoutsHandler {
   getPayouts: (pageNumber: number) => Promise<void>;
@@ -13,7 +12,6 @@ interface GetPayoutsHandler {
 
 const useGetPayoutsHandler = (): GetPayoutsHandler => {
   const { fetch, loading } = useGetPayoutsApiCall();
-  const { nextPage } = usePayoutsState();
   const {
     updatePayouts,
     updatePayoutsErrors,
@@ -24,7 +22,7 @@ const useGetPayoutsHandler = (): GetPayoutsHandler => {
     getPayouts: useCallback(
       async (pageNumber: number) => {
         const options = {};
-        if (pageNumber > 1 && nextPage) {
+        if (pageNumber > 1) {
           set(
             options,
             "url",

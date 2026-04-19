@@ -1,4 +1,5 @@
 from django.db.models import Prefetch
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -9,8 +10,16 @@ from backend.djangoapi.serializers.journal_entry import JournalEntrySerializer
 from backend.djangoapi.serializers.journal_entry_list import JournalEntryListSerializer
 
 
+# Used for testing
+class JournalEntryPagination(PageNumberPagination):
+    page_size = 3  # test value
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
 class JournalEntryViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
+    # pagination_class = JournalEntryPagination
 
     def get_queryset(self):
         qs = JournalEntry.objects.filter(user=self.request.user)

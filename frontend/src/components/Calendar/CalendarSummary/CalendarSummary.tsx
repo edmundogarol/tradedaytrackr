@@ -1,14 +1,14 @@
 import GlassTile from "@components/GlassTile/GlassTile";
-import { If } from "@components/If/If";
+import { Else, If } from "@components/If/If";
 import InfoPopout from "@components/InfoPopout/InfoPopout";
 import { PageEnum } from "@interfaces/NavigationTypes";
+import PhotoIcon from "@mui/icons-material/Photo";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
-import useJournalEntriesApiCall from "@pages/Journal/hooks/useJournalEntriesApiCall";
 import useJournalEntriesHandler from "@pages/Journal/hooks/useJournalEntriesHandler";
 import useJournalState from "@pages/Journal/hooks/useJournalState";
 import { HorizontalSection, SectionText } from "@styles/globalStyledComponents";
 import { m } from "@utils/utils";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Container,
   TileAccs,
@@ -20,18 +20,21 @@ import {
   TradePreview,
   TradePreviewOverlay,
 } from "./CalendarSummaryStyledComponents";
+import styles from "./CalendarSummaryStyles";
 
 const CalendarSummary: React.FunctionComponent = () => {
   const navigation = useReactNavigation();
   const { journalEntries } = useJournalState();
-  const journalEntriesApiCall = useJournalEntriesApiCall();
-  useJournalEntriesHandler(journalEntriesApiCall);
+  const { getJournalEntries } = useJournalEntriesHandler();
 
   const emptyActivity = journalEntries.length === 0;
+
+  useEffect(() => {
+    getJournalEntries(1);
+  }, []);
+
   return (
-    <Container
-      style={emptyActivity ? { display: "flex", justifyContent: "center" } : {}}
-    >
+    <Container style={emptyActivity ? styles.emptyPage : {}}>
       <If condition={journalEntries.length === 0}>
         <HorizontalSection>
           <SectionText>No recent activity.</SectionText>
@@ -64,14 +67,21 @@ const CalendarSummary: React.FunctionComponent = () => {
                     {/* <TileTradeCount className="trade-count">
                       {`${journalEntry.trades?.length} trade${
                         journalEntry.trades?.length !== 1 ? "s" : ""
-                      }`}
+                      }`} 
                     </TileTradeCount> */}
                   </TileInfo>
                 </TileDate>
               }
             >
               <TradePreviewOverlay>
-                <TradePreview $src={journalEntry.imageUrl} />
+                <If condition={!!journalEntry.imageUrl}>
+                  <TradePreview $src={journalEntry.imageUrl} />
+                  <Else>
+                    <TradePreview $src="" style={styles.previewContainer}>
+                      <PhotoIcon style={styles.previewIcon} />
+                    </TradePreview>
+                  </Else>
+                </If>
               </TradePreviewOverlay>
             </GlassTile>
           </TileContainer>

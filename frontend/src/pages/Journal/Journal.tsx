@@ -7,6 +7,8 @@ import InfoPopout from "@components/InfoPopout/InfoPopout";
 import Page from "@components/Page/Page";
 import { PageEnum } from "@interfaces/NavigationTypes";
 import EditIcon from "@mui/icons-material/Edit";
+import PhotoIcon from "@mui/icons-material/Photo";
+
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
 import {
@@ -26,14 +28,13 @@ import {
   SectionTitle,
 } from "@styles/globalStyledComponents";
 import { formatter, isNotEmptyString, m } from "@utils/utils";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import AlertPopout from "@components/Alert/AlertPopout";
-import { If } from "@components/If/If";
+import { Else, If } from "@components/If/If";
 import ModalWrapper from "@components/Modal/Modal";
-import { Collapse, FormControlLabel, Switch } from "@mui/material";
+import { Collapse, FormControlLabel, Pagination, Switch } from "@mui/material";
 import useJournalDispatch from "./hooks/useJournalDispatch";
-import useJournalEntriesApiCall from "./hooks/useJournalEntriesApiCall";
 import useJournalEntriesHandler from "./hooks/useJournalEntriesHandler";
 import useJournalState from "./hooks/useJournalState";
 import {
@@ -48,12 +49,21 @@ import styles from "./JournalStyles";
 
 const Journal: React.FunctionComponent = () => {
   const navigation = useReactNavigation();
-  const { journalEntries, deleteJournalEntryErrors, fundedView } =
-    useJournalState();
-  const { updateDeleteJournalEntryErrors, updateFundedView } =
-    useJournalDispatch();
-  const journalEntriesApiCall = useJournalEntriesApiCall();
-  useJournalEntriesHandler(journalEntriesApiCall);
+  const {
+    journalEntries,
+    deleteJournalEntryErrors,
+    fundedView,
+    journalEntriesErrors,
+    journalEntriesCurrentPage,
+    journalEntriesItemCount,
+  } = useJournalState();
+  const {
+    updateDeleteJournalEntryErrors,
+    updateFundedView,
+    updateJournalEntriesErrors,
+    updateJournalEntriesCurrentPage,
+  } = useJournalDispatch();
+  const { getJournalEntries } = useJournalEntriesHandler();
   const [sortByFilter, setSortByFilter] = useState("date");
   const [tilePreviewHovered, setTilePreviewHovered] = useState<number | null>(
     null,
@@ -88,6 +98,10 @@ const Journal: React.FunctionComponent = () => {
     });
   }, [journalEntries, sortByFilter]);
 
+  useEffect(() => {
+    getJournalEntries(journalEntriesCurrentPage);
+  }, [journalEntriesCurrentPage]);
+
   return (
     <Page topBarShowMenu={true}>
       <ModalWrapper
@@ -111,6 +125,12 @@ const Journal: React.FunctionComponent = () => {
         hideDuration={4000}
         open={isNotEmptyString(deleteJournalEntryErrors?.detail)}
         message={deleteJournalEntryErrors?.detail}
+      />
+      <AlertPopout
+        setPopoutOpen={() => updateJournalEntriesErrors({})}
+        hideDuration={4000}
+        open={isNotEmptyString(journalEntriesErrors?.detail)}
+        message={journalEntriesErrors?.detail}
       />
       <Container>
         <SectionTitle>Journal</SectionTitle>
@@ -182,20 +202,32 @@ const Journal: React.FunctionComponent = () => {
               >
                 <TradeDay>
                   <PreviewDayValueContainer>
-                    <TradePreviewContainer>
-                      <TradePreview
-                        $src={entry.imageUrl}
-                        onMouseEnter={() => setTilePreviewHovered(entry.id)}
-                        onClick={() => {
-                          navigation.navigate(PageEnum.JournalEntry, {
-                            id: entry.id,
-                          });
-                        }}
-                      />
+                    <TradePreviewContainer
+                      onClick={() => {
+                        navigation.navigate(PageEnum.JournalEntry, {
+                          id: entry.id,
+                        });
+                      }}
+                    >
+                      <If condition={!!entry.imageUrl}>
+                        <TradePreview
+                          $src={entry.imageUrl}
+                          onMouseEnter={() => setTilePreviewHovered(entry.id)}
+                        />
+                        <Else>
+                          <PhotoIcon
+                            style={{
+                              color: "#aaa",
+                              height: 50,
+                              width: 50,
+                            }}
+                          />
+                        </Else>
+                      </If>
                     </TradePreviewContainer>
                     <Collapse
                       orientation="horizontal"
-                      in={tilePreviewHovered === entry.id}
+                      in={tilePreviewHovered === entry.id && !!entry.imageUrl}
                     >
                       <VisibilityOutlinedIcon
                         style={{ color: "#e0e0e0a6" }}
@@ -251,6 +283,25 @@ const Journal: React.FunctionComponent = () => {
             );
           })}
         </JournalEntries>
+        <If condition={journalEntriesItemCount > 10}>
+          <Gap level={1} />
+          <Pagination
+            color={"primary"}
+            page={journalEntriesCurrentPage}
+            sx={{
+              "& .MuiPaginationItem-root": { color: "white" },
+            }}
+            count={
+              !!journalEntriesItemCount
+                ? Math.ceil(journalEntriesItemCount / 10)
+                : 1
+            }
+            onChange={(e, page) => {
+              updateJournalEntriesCurrentPage(page);
+            }}
+          />
+          <Gap level={1} />
+        </If>
       </Container>
     </Page>
   );
