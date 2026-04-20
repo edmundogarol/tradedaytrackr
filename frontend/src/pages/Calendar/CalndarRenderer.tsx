@@ -1,0 +1,127 @@
+import type { CalendarDay } from "@interfaces/CustomTypes";
+import { formatter } from "@utils/utils";
+import moment from "moment";
+import React, { useMemo } from "react";
+import {
+  CalendarGrid,
+  DayCell,
+  DayHeaderCell,
+} from "./CalendarStyledComponents";
+import useCalendarState from "./hooks/useCalendarState";
+
+const CalendarRenderer: React.FunctionComponent = () => {
+  const { calendarSummary } = useCalendarState();
+  const today = moment();
+  const startOfMonth = today.clone().startOf("month");
+  const endOfMonth = today.clone().endOf("month");
+
+  const dataMap = useMemo(() => {
+    const map: Record<string, CalendarDay> = {};
+    calendarSummary.daily.forEach((d) => {
+      map[d.date] = d;
+    });
+    return map;
+  }, [calendarSummary]);
+
+  const weeks = useMemo(() => {
+    const result: (moment.Moment | null)[][] = [];
+    let week: (moment.Moment | null)[] = [];
+
+    const startDay = startOfMonth.day();
+
+    // leading nulls
+    for (let i = 0; i < startDay; i++) {
+      week.push(null);
+    }
+
+    let current = startOfMonth.clone();
+
+    while (current.isSameOrBefore(endOfMonth)) {
+      week.push(current.clone());
+
+      if (week.length === 7) {
+        result.push(week);
+        week = [];
+      }
+
+      current.add(1, "day");
+    }
+
+    // trailing nulls
+    if (week.length > 0) {
+      while (week.length < 7) {
+        week.push(null);
+      }
+      result.push(week);
+    }
+
+    return result;
+  }, [startOfMonth, endOfMonth]);
+
+  return (
+    <CalendarGrid>
+      {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Week Total"].map(
+        (d) => (
+          <DayHeaderCell key={d}>{d}</DayHeaderCell>
+        ),
+      )}
+
+      {weeks.flatMap((week, weekIdx) => {
+        let weeklyTotal = 0;
+
+        const weekCells = week.map((day, idx) => {
+          if (!day) return <div key={`${weekIdx}-${idx}`} />;
+
+          const key = day.format("YYYY-MM-DD");
+          const entry = dataMap[key];
+
+          const pnl = entry?.pnl || 0;
+          weeklyTotal += pnl;
+
+          const bg =
+            pnl > 0
+              ? "rgba(0, 200, 0, 0.15)"
+              : pnl < 0
+                ? "rgba(255, 0, 0, 0.15)"
+                : "transparent";
+
+          return (
+            <DayCell $bg={bg} key={key}>
+              <div style={{ fontSize: 12, opacity: 0.7 }}>{day.date()}</div>
+
+              {entry && (
+                <div style={{ fontSize: 11 }}>
+                  <div style={{ color: pnl >= 0 ? "#4caf50" : "#ff5252" }}>
+                    {pnl >= 0 ? "+" : ""}
+                    {formatter.format(pnl)}
+                  </div>
+                  <div style={{ opacity: 0.6 }}>{entry.trades} trades</div>
+                </div>
+              )}
+            </DayCell>
+          );
+        });
+
+        // Weekly summary cell
+        const weeklyCell = (
+          <DayCell key={`week-total-${weekIdx}`}>
+            <div style={{ fontSize: 12, opacity: 0.7 }}>Σ</div>
+            <div
+              style={{
+                fontSize: 12,
+                color: weeklyTotal >= 0 ? "#4caf50" : "#ff5252",
+              }}
+            >
+              {weeklyTotal >= 0 ? "+" : ""}
+              {formatter.format(weeklyTotal)}
+            </div>
+          </DayCell>
+        );
+
+        return [...weekCells, weeklyCell];
+      })}
+    </CalendarGrid>
+  );
+};
+
+export default CalendarRenderer;

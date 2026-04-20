@@ -12,6 +12,20 @@ from backend.djangoapi.services.trades.trade_day import (
 )
 
 
+def ensure_weekday(dt):
+    # 0 = Monday, 6 = Sunday
+    while dt.weekday() >= 5:  # Sat(5), Sun(6)
+        dt += timedelta(days=1)
+    return dt
+
+
+def get_previous_weekday(dt):
+    dt -= timedelta(days=1)
+    while dt.weekday() >= 5:
+        dt -= timedelta(days=1)
+    return dt
+
+
 def seed_demo_trade_days(user):
     accounts = user.trading_accounts.select_related("template").all()
     base_date = timezone.now().astimezone(pytz.UTC)
@@ -41,9 +55,6 @@ def seed_demo_trade_days(user):
         def vary(value):
             noise = random.uniform(-0.15, 0.15)
             return int(value * (1 + noise))
-
-        is_flex = "Flex" in template.name
-        is_mffu = "MyFundedFutures" in template.name
 
         cycles = random.randint(3, 4)
         trades_per_cycle = random.randint(5, 7)
@@ -82,15 +93,15 @@ def seed_demo_trade_days(user):
 
             shared_day_times.append((hour, minute, second))
 
+        current_date = ensure_weekday(base_date)
+
         for idx, pnl in enumerate(day_pnls):
-            if is_mffu and is_flex:
-                date = base_date - timedelta(days=len(day_pnls) - idx - 1)
-            else:
-                date = base_date - timedelta(days=len(day_pnls) - idx)
+            if idx != 0:
+                current_date = get_previous_weekday(current_date)
 
             hour, minute, second = shared_day_times[idx]
 
-            local_date = date.astimezone(user_tz)
+            local_date = current_date.astimezone(user_tz)
             local_dt = local_date.replace(
                 hour=hour,
                 minute=minute,

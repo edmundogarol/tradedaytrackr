@@ -1,3 +1,4 @@
+import { calendarReducer } from "@pages/Calendar/CalendarState";
 import { fundedAccountsReducer } from "@pages/FundedAccounts/FundedAccountsState";
 import { journalReducer } from "@pages/Journal/JournalState";
 import { loginReducer } from "@pages/Login/LoginState";
@@ -19,6 +20,7 @@ export default configureStore({
     settings: settingsReducer,
     fundedAccounts: fundedAccountsReducer,
     payouts: payoutsReducer,
+    calendar: calendarReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware(defaultMiddlewareConfig),

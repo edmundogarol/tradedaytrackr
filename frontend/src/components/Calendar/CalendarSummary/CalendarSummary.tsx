@@ -24,7 +24,7 @@ import styles from "./CalendarSummaryStyles";
 
 const CalendarSummary: React.FunctionComponent = () => {
   const navigation = useReactNavigation();
-  const { journalEntries } = useJournalState();
+  const { journalEntries, fundedView } = useJournalState();
   const { getJournalEntries } = useJournalEntriesHandler();
 
   const emptyActivity = journalEntries.length === 0;
@@ -62,7 +62,10 @@ const CalendarSummary: React.FunctionComponent = () => {
                   <TileAccs>{`x${journalEntry.accountCount} Accs`}</TileAccs>
                   <TileInfo>
                     <TilePnL $positive={journalEntry.totalPnl >= 0}>
-                      ${journalEntry.totalPnl}
+                      $
+                      {fundedView
+                        ? journalEntry.totalPnl
+                        : journalEntry.totalEvalPnl}
                     </TilePnL>
                     {/* <TileTradeCount className="trade-count">
                       {`${journalEntry.trades?.length} trade${

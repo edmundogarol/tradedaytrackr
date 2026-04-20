@@ -34,6 +34,7 @@ from backend.djangoapi.views.journal.tag import TagViewSet
 from backend.djangoapi.views.payout.monthly_payout_summaries import (
     MonthlyPayoutSummariesView,
 )
+from backend.djangoapi.views.trades.calendar import CalendarSummaryView
 from backend.djangoapi.views.trades.payout import (
     RecordPayoutView,
     UpdatePayoutView,
@@ -95,6 +96,7 @@ router.register(r"trades", TradeViewSet, basename="trades")
 urlpatterns = [
     path("docs/", schema_view),
     path("health/", health_check),
+    path("api/calendar-summary/", CalendarSummaryView.as_view()),
     path("api/user/currency/", UpdateCurrencyView.as_view()),
     path("api/user/refresh-currency/", RefreshConversionRateView.as_view()),
     path("api/monthly-payout-summaries/", MonthlyPayoutSummariesView.as_view()),

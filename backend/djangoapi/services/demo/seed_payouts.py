@@ -11,6 +11,19 @@ from backend.djangoapi.services.trades.account_balance import recompute_account_
 from backend.djangoapi.services.trades.trade_day import recompute_all_trading_days
 
 
+def ensure_weekday_backward(dt):
+    while dt.weekday() >= 5:
+        dt -= timedelta(days=1)
+    return dt
+
+
+def ensure_weekday(dt):
+    # 0 = Monday, 6 = Sunday
+    while dt.weekday() >= 5:  # Sat(5), Sun(6)
+        dt += timedelta(days=1)
+    return dt
+
+
 def seed_demo_payouts(user):
     accounts = user.trading_accounts.select_related("template").all()
 
@@ -77,7 +90,7 @@ def seed_demo_payouts(user):
             # -----------------------------------
             # PAYOUT DATE = LAST TRADE IN CYCLE
             # -----------------------------------
-            payout_date = cycle_trades[-1].date_time
+            payout_date = ensure_weekday_backward(cycle_trades[-1].date_time)
 
             # -----------------------------------
             # CREATE PAYOUT
@@ -135,6 +148,8 @@ def seed_historical_payouts(user):
             months_back = random.randint(1, 6)
 
             payout_date = now - timedelta(days=30 * months_back)
+            payout_date -= timedelta(days=random.randint(0, 5))
+            payout_date = ensure_weekday_backward(payout_date)
 
             # random realistic payout amount
             base = Decimal(template.min_payout_request or 200)

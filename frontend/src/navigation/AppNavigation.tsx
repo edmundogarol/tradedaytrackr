@@ -4,6 +4,7 @@ import PageNotFound from "@components/PageNotFound/PageNotFound";
 import useVerificationApiCall from "@hooks/account/useVerificationApiCall";
 import useVerificationHandler from "@hooks/account/useVerificationHandler";
 import { PageEnum } from "@interfaces/NavigationTypes";
+import Calendar from "@pages/Calendar/Calendar";
 import Dashboard from "@pages/Dashboard/Dashboard";
 import EvaluationAccountDetail from "@pages/EvaluationAccounts/EvaluationAccountDetail/EvaluationAccountDetail";
 import EvaluationAccounts from "@pages/EvaluationAccounts/EvaluationAccounts";
@@ -118,6 +119,7 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
           <Route path={PageEnum.Journal} element={<Journal />} />
           <Route path={PageEnum.JournalEntry} element={<JournalEntry />} />
           <Route path={PageEnum.PayoutTracking} element={<Payouts />} />
+          <Route path={PageEnum.Calendar} element={<Calendar />} />
           <Route path={PageEnum.AccountSettings} element={<Account />} />
           <Route path={PageEnum.Preferences} element={<Preferences />} />
           <Route path={PageEnum.Billing} element={<Billing />} />

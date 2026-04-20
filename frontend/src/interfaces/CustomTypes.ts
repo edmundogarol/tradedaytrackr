@@ -195,3 +195,21 @@ export interface DashboardSummaries {
     }[];
   };
 }
+
+export interface CalendarDay {
+  date: string;
+  pnl: number;
+  trades: number;
+  journals: number;
+}
+
+export interface CalendarWeek {
+  weekStart: string;
+  pnl: number;
+}
+
+export interface CalendarSummary {
+  daily: CalendarDay[];
+  weekly: CalendarWeek[];
+  monthlyTotal: number;
+}

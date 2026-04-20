@@ -13,6 +13,7 @@ export enum PageEnum {
   EvaluationAccountDetail = "/evaluationAccountDetail",
   TradeStats = "/tradeStats",
   PayoutTracking = "/payouts",
+  Calendar = "/calendar",
   AccountSettings = "/accountSettings",
   Preferences = "/preferences",
   Billing = "/billing",

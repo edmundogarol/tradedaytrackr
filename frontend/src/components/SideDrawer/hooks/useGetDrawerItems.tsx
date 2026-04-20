@@ -1,5 +1,6 @@
 import { PageEnum } from "@interfaces/NavigationTypes";
 import AssuredWorkloadIcon from "@mui/icons-material/AssuredWorkload";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import HomeIcon from "@mui/icons-material/Home";
 import MenuBook from "@mui/icons-material/MenuBook";
 import PaymentsIcon from "@mui/icons-material/Payments";
@@ -32,6 +33,11 @@ export const useGetDrawerItems = (): Array<{
         text: "Evaluation Accounts",
         icon: <StickyNote2Icon />,
         onClick: (): void => navigation.navigate(PageEnum.EvaluationAccounts),
+      },
+      {
+        text: "PnL Calendar",
+        icon: <CalendarMonthIcon />,
+        onClick: (): void => navigation.navigate(PageEnum.Calendar),
       },
       {
         text: "Payout Tracking",
