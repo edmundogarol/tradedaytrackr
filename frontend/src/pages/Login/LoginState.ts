@@ -45,6 +45,7 @@ export const initialState: LoginState = {
     phone: "",
     birth_date: "",
     logged_in: false,
+    is_demo: false,
     is_staff: false,
     is_verified: false,
     email_preferences: {
