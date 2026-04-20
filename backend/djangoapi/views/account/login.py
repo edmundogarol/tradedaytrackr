@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from backend.djangoapi.serializers import UserSerializer
-from backend.djangoapi.services.demo import reset_demo_user
+from backend.djangoapi.services.demo.reset_demo_user import reset_demo_user
 from backend.djangoapi.utils import visitor_ip_address
 
 logger = logging.getLogger(__name__)
