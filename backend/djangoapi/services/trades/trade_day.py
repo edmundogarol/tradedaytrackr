@@ -1,22 +1,12 @@
-from django.db.models import Sum
+from django.db.models import Min, Sum
 
 from backend.djangoapi.models.payout import Payout
 from backend.djangoapi.models.trading_day import TradingDay
 
 
 def is_valid_trading_day(template, pnl):
-    """
-    Determines if a trading day is valid.
-
-    Eval accounts:
-        - Always valid (for now, until rules are introduced)
-
-    Funded accounts:
-        - Must meet minimum day pnl
-    """
     if template.is_evaluation:
         return True
-
     return pnl >= (template.min_day_pnl or 0)
 
 
@@ -59,8 +49,11 @@ def get_or_create_trading_day(account, date):
 
 def recompute_all_trading_days(account):
     trading_days = (
-        TradingDay.objects.annotate(pnl=Sum("trades__pnl"))
-        .filter(account=account)
+        TradingDay.objects.filter(account=account)
+        .annotate(
+            pnl=Sum("trades__pnl"),
+            first_trade_time=Min("trades__date_time"),
+        )
         .order_by("date", "id")
     )
 
@@ -71,33 +64,30 @@ def recompute_all_trading_days(account):
     payout_index = 0
     current_payout = payouts[payout_index] if payouts else None
 
+    updates = []
+
     for td in trading_days:
-        fields_to_update = ["day_number", "is_valid_day"]
-
         crossed_payout = False
+        first_trade_time = td.first_trade_time
 
-        # --- Get first trade (if exists) ---
-        first_trade = None
-        if td.trades.exists():
-            first_trade = td.trades.order_by("date_time").first()
-
-            # --- Handle payout crossing ---
-            while current_payout and first_trade.date_time > current_payout.payout_date:
-                crossed_payout = True
-                payout_index += 1
-                current_payout = (
-                    payouts[payout_index] if payout_index < len(payouts) else None
-                )
+        # Handle payout crossing
+        while (
+            current_payout
+            and first_trade_time
+            and first_trade_time > current_payout.payout_date
+        ):
+            crossed_payout = True
+            payout_index += 1
+            current_payout = (
+                payouts[payout_index] if payout_index < len(payouts) else None
+            )
 
         if crossed_payout:
             current_day_number = 1
 
         pnl = td.pnl or 0
-
-        # --- VALIDATION LOGIC ---
         is_valid = is_valid_trading_day(template, pnl)
 
-        # --- DAY NUMBER LOGIC ---
         if is_valid:
             td.day_number = current_day_number
             current_day_number += 1
@@ -105,5 +95,7 @@ def recompute_all_trading_days(account):
             td.day_number = None
 
         td.is_valid_day = is_valid
+        updates.append(td)
 
-        td.save(update_fields=fields_to_update)
+    if updates:
+        TradingDay.objects.bulk_update(updates, ["day_number", "is_valid_day"])
