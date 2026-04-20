@@ -1,5 +1,6 @@
 import GlassTile from "@components/GlassTile/GlassTile";
 import Page from "@components/Page/Page";
+import CloseIcon from "@mui/icons-material/Close";
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import DoneOutlineIcon from "@mui/icons-material/Done";
 
@@ -78,19 +79,42 @@ const Billing: React.FunctionComponent<BillingProps> = () => {
                           <DoneOutlineIcon
                             style={{ color: "#4caf50", fontSize: 18 }}
                           />
-                          Basic Journal Entries
+                          View Dashboard Preview
                         </PlanDetailsItem>
+
                         <PlanDetailsItem>
                           <DoneOutlineIcon
                             style={{ color: "#4caf50", fontSize: 18 }}
                           />
-                          Limited data storage
+                          Explore UI & Features
                         </PlanDetailsItem>
+
                         <PlanDetailsItem>
-                          <DoneOutlineIcon
-                            style={{ color: "#4caf50", fontSize: 18 }}
+                          <CloseIcon
+                            style={{ color: "#ff5252", fontSize: 18 }}
                           />
-                          Community Support
+                          No Trade Tracking
+                        </PlanDetailsItem>
+
+                        <PlanDetailsItem>
+                          <CloseIcon
+                            style={{ color: "#ff5252", fontSize: 18 }}
+                          />
+                          No Payout Tracking
+                        </PlanDetailsItem>
+
+                        <PlanDetailsItem>
+                          <CloseIcon
+                            style={{ color: "#ff5252", fontSize: 18 }}
+                          />
+                          No Journal Entries
+                        </PlanDetailsItem>
+
+                        <PlanDetailsItem>
+                          <CloseIcon
+                            style={{ color: "#ff5252", fontSize: 18 }}
+                          />
+                          No Data Saved
                         </PlanDetailsItem>
                       </PlanLeftContainer>
                       <If condition={!activeMembership}>
@@ -138,12 +162,12 @@ const Billing: React.FunctionComponent<BillingProps> = () => {
                           />
                           Priority support
                         </PlanDetailsItem>
-                        {/* <PlanDetailsItem>
+                        <PlanDetailsItem>
                           <DoneOutlineIcon
                             style={{ color: "#4caf50", fontSize: 18 }}
                           />
                           Advanced analytics
-                        </PlanDetailsItem> */}
+                        </PlanDetailsItem>
                       </PlanLeftContainer>
                       <If condition={activeMembership}>
                         <PlanRightContainer>

@@ -10,6 +10,7 @@ import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import useFundedAccountsDispatch from "@pages/FundedAccounts/hooks/useFundedAccountsDispatch";
 import useFundedAccountsState from "@pages/FundedAccounts/hooks/useFundedAccountsState";
 import useGetTradingAccountsHandler from "@pages/FundedAccounts/hooks/useGetTradingAccountsHandler";
+import useLoginState from "@pages/Login/hooks/useLoginState";
 import useSettingsState from "@pages/Settings/hooks/useSettingsState";
 import useGetAccountTemplatesHandler from "@pages/Settings/Preferences/hooks/useGetAccountTemplatesHandler";
 import { uniqBy } from "lodash";
@@ -33,6 +34,7 @@ import { EvalProgressStatus } from "./hooks/useGetEvalProgressStatus";
 import { useGetEvaluationAccountsStatsSummaryDetails } from "./hooks/useGetEvaluationAccountsStatsSummaryDetails";
 
 const EvaluationAccounts: React.FunctionComponent = () => {
+  const { user } = useLoginState();
   const evaluationStatsSummaryDetails =
     useGetEvaluationAccountsStatsSummaryDetails();
   const {
@@ -134,6 +136,8 @@ const EvaluationAccounts: React.FunctionComponent = () => {
             icon={<FilterAltIcon style={{ color: "#c0c0c0" }} />}
           />
           <Button
+            disabled={!user?.membership_active}
+            disabledBlock={!user?.membership_active}
             onClick={(): void => {
               updateCreateTradingAccountModalOpen(true);
             }}

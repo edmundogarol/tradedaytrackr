@@ -36,6 +36,7 @@ export interface ModalWrapperProps {
   cancelButton?: ModalWrapperButtonProps;
   error?: string;
   backdropClose?: () => void;
+  hideCloseIcon?: boolean;
 }
 
 const ModalWrapper: React.FunctionComponent<ModalWrapperProps> = ({
@@ -51,6 +52,7 @@ const ModalWrapper: React.FunctionComponent<ModalWrapperProps> = ({
   cancelButton,
   error,
   backdropClose,
+  hideCloseIcon = false,
 }) => {
   return (
     <Modal
@@ -73,15 +75,17 @@ const ModalWrapper: React.FunctionComponent<ModalWrapperProps> = ({
         <Header>
           <ModalTitle>{title}</ModalTitle>
           <CloseContainer>
-            <CancelIcon
-              style={modalStyles.closeButton}
-              onClick={(): void => {
-                setOpen(false);
-                if (onClose) {
-                  onClose();
-                }
-              }}
-            />
+            <If condition={!hideCloseIcon}>
+              <CancelIcon
+                style={modalStyles.closeButton}
+                onClick={(): void => {
+                  setOpen(false);
+                  if (onClose) {
+                    onClose();
+                  }
+                }}
+              />
+            </If>
           </CloseContainer>
         </Header>
         <Content style={contentContainerStyle}>

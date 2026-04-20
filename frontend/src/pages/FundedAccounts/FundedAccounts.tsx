@@ -8,6 +8,7 @@ import StatsSummary from "@components/Stats/StatsSummary/StatsSummary";
 import type { TradingAccount } from "@interfaces/CustomTypes";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import useGetFundedAccountsStatsSummaryDetails from "@pages/FundedAccounts/hooks/useGetFundedAccountsStatsSummaryDetails";
+import useLoginState from "@pages/Login/hooks/useLoginState";
 import useSettingsState from "@pages/Settings/hooks/useSettingsState";
 import useGetAccountTemplatesHandler from "@pages/Settings/Preferences/hooks/useGetAccountTemplatesHandler";
 import { SectionTitle } from "@styles/globalStyledComponents";
@@ -32,6 +33,7 @@ import useFundedAccountsState from "./hooks/useFundedAccountsState";
 import useGetTradingAccountsHandler from "./hooks/useGetTradingAccountsHandler";
 
 const FundedAccounts: React.FunctionComponent = () => {
+  const { user } = useLoginState();
   const fundedStatsSummaryDetails = useGetFundedAccountsStatsSummaryDetails();
   const bufferState = [
     {
@@ -139,6 +141,8 @@ const FundedAccounts: React.FunctionComponent = () => {
             icon={<FilterAltIcon style={{ color: "#c0c0c0" }} />}
           />
           <Button
+            disabled={!user?.membership_active}
+            disabledBlock={!user?.membership_active}
             text={"Add Funded"}
             iconType={IconTypeEnum.MaterialIcons}
             iconLeft={"add"}

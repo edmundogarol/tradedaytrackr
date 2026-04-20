@@ -5,7 +5,7 @@ export enum PageEnum {
   ResetPasswordConfirmation = "/confirmResetPassword",
   PageNotFound = "/pageNotFound",
   Dashboard = "/dashboard",
-  Journal = "/journal",
+  Journal = "/journalList",
   JournalEntry = "/journalEntry",
   FundedAccounts = "/fundedAccounts",
   EvaluationAccounts = "/evaluationAccounts",

@@ -1,5 +1,6 @@
 import AlertPopout from "@components/Alert/AlertPopout";
 import LoadingPage from "@components/Loading/LoadingPage";
+import ModalWrapper from "@components/Modal/Modal";
 import PageNotFound from "@components/PageNotFound/PageNotFound";
 import useVerificationApiCall from "@hooks/account/useVerificationApiCall";
 import useVerificationHandler from "@hooks/account/useVerificationHandler";
@@ -30,9 +31,10 @@ import Preferences from "@pages/Settings/Preferences/Preferences";
 import useSettingsDispatch from "@pages/Settings/hooks/useSettingsDispatch";
 import useSettingsState from "@pages/Settings/hooks/useSettingsState";
 import SignUp from "@pages/SignUp/SignUp";
+import { SectionText } from "@styles/globalStyledComponents";
 import { isNotEmptyString, setTimezone } from "@utils/utils";
 import React, { useEffect } from "react";
-import { Navigate, Route, Routes } from "react-router";
+import { Link, Navigate, Route, Routes } from "react-router";
 import RequireAuth from "./RequireAuth";
 import checkAuth from "./hooks/checkAuth";
 
@@ -62,9 +64,52 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
     }
   }, [user?.timezone]);
 
+  const noMembershipBlockRoutes = [
+    PageEnum.Dashboard,
+    PageEnum.AccountSettings,
+    PageEnum.Billing,
+    PageEnum.FundedAccounts,
+    PageEnum.EvaluationAccounts,
+    PageEnum.PayoutTracking,
+    PageEnum.Calendar,
+    PageEnum.Journal,
+  ];
+  const isOnNoMembershipBlockRoute = noMembershipBlockRoutes.some((route) =>
+    window.location.pathname.includes(route),
+  );
+  const modalBlockerOpen =
+    user.logged_in &&
+    !user.is_demo &&
+    !user?.membership_active &&
+    !isOnNoMembershipBlockRoute;
+
   return (
     <>
       {loading && <LoadingPage />}
+      <ModalWrapper
+        hideCloseIcon
+        open={modalBlockerOpen}
+        setOpen={() => {}}
+        title="Membership Required"
+      >
+        <SectionText>
+          Please activate your membership to access all features. Or explore
+          features through the Demo Account login.
+        </SectionText>
+        <SectionText>
+          <Link
+            style={{
+              color: "#bfbfbf",
+              textDecoration: "underline",
+              cursor: "pointer",
+              marginLeft: 5,
+            }}
+            to={PageEnum.Billing}
+          >
+            Manage your subscription
+          </Link>
+        </SectionText>
+      </ModalWrapper>
       <AlertPopout
         hideDuration={3000}
         open={!!systemAlert.message}
