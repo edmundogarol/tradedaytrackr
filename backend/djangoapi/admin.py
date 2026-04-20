@@ -15,6 +15,7 @@ class UserAdmin(admin.ModelAdmin):
         "last_ip",
         "is_verified",
         "date_joined",
+        "last_login",
     ]
     search_fields = ["email", "first_name", "last_name"]
 
