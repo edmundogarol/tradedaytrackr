@@ -14,6 +14,7 @@ export const initialState: CalendarState = {
     daily: [],
     weekly: [],
     monthlyTotal: 0,
+    evalMonthlyTotal: 0,
   },
   calendarSummaryErrors: {},
 };

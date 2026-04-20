@@ -24,9 +24,11 @@ export interface CalendarPickerProps {
   value?: moment.Moment | null;
   onChange?: (date: any) => void;
   showPicker: boolean;
-  onSaveCallback?: () => void;
+  onSaveCallback?: (selectedDate?: Moment | null) => void;
   inline?: boolean;
   showSaveButton?: boolean;
+  hideTimePicker?: boolean;
+  views?: ("year" | "month" | "day")[];
 }
 
 const CalendarPicker: React.FC<CalendarPickerProps> = ({
@@ -37,6 +39,8 @@ const CalendarPicker: React.FC<CalendarPickerProps> = ({
   onSaveCallback,
   inline = false,
   showSaveButton = true,
+  hideTimePicker = false,
+  views = ["year", "month", "day"],
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [selectedDate, setSelectedDate] = useState<Moment | null>(null);
@@ -52,6 +56,7 @@ const CalendarPicker: React.FC<CalendarPickerProps> = ({
   const renderPicker = (): JSX.Element => (
     <LocalizationProvider dateAdapter={AdapterMoment}>
       <DateCalendar
+        views={views}
         value={selectedDate}
         onChange={(newValue: Moment | null) => {
           setSelectedDate(newValue);
@@ -60,25 +65,27 @@ const CalendarPicker: React.FC<CalendarPickerProps> = ({
           }
         }}
       />
-      <TimePicker
-        value={selectedDate}
-        onChange={(newValue: Moment | null) => {
-          setSelectedDate(newValue);
-          if (onChange) {
-            onChange(newValue);
-          }
-        }}
-        sx={{
-          "& .MuiPickersSectionList-root": {
-            fontSize: 15,
-          },
-        }}
-      />
+      <If condition={!hideTimePicker}>
+        <TimePicker
+          value={selectedDate}
+          onChange={(newValue: Moment | null) => {
+            setSelectedDate(newValue);
+            if (onChange) {
+              onChange(newValue);
+            }
+          }}
+          sx={{
+            "& .MuiPickersSectionList-root": {
+              fontSize: 15,
+            },
+          }}
+        />
+      </If>
       <If condition={showSaveButton}>
         <Button
           onClick={() => {
             if (onSaveCallback) {
-              onSaveCallback();
+              onSaveCallback(selectedDate);
             }
             onChange?.(selectedDate ? selectedDate.toDate() : null);
           }}
@@ -110,7 +117,7 @@ const CalendarPicker: React.FC<CalendarPickerProps> = ({
                 <CloseIconContainer
                   onClick={() => {
                     if (onSaveCallback) {
-                      onSaveCallback();
+                      onSaveCallback(selectedDate);
                     }
                     onChange?.(value ? value.toDate() : null);
                   }}

@@ -1,5 +1,5 @@
 from collections import defaultdict
-from datetime import timedelta
+from datetime import datetime, timedelta
 from decimal import Decimal
 
 from django.db.models import Count, Sum
@@ -19,10 +19,24 @@ class CalendarSummaryView(APIView):
     def get(self, request):
         user = request.user
 
-        now = timezone.now()
+        # ---------------------------
+        # DATE PARAM (optional)
+        # ---------------------------
+        date_param = request.query_params.get("date")
+
+        try:
+            if date_param:
+                now = datetime.fromisoformat(date_param)
+                now = timezone.make_aware(now, timezone.get_current_timezone())
+            else:
+                now = timezone.now()
+        except Exception:
+            return Response(
+                {"detail": "Invalid date format. Use YYYY-MM-DD"}, status=400
+            )
+
         start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
-        # next month
         if now.month == 12:
             end_of_month = now.replace(year=now.year + 1, month=1, day=1)
         else:

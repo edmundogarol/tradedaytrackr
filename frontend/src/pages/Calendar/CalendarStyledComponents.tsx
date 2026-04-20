@@ -33,3 +33,14 @@ export const DayCell = styled.div<{ $bg?: string }>`
   justify-content: space-between;
   color: ${color("SystemWhite")};
 `;
+
+export const MonthlySelectorContainer = styled(SectionText)`
+  &:hover {
+    cursor: pointer;
+    filter: brightness(1.2);
+  }
+  align-items: center;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+`;

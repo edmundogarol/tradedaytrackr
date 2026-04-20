@@ -1,4 +1,5 @@
 import type { CalendarDay } from "@interfaces/CustomTypes";
+import useJournalState from "@pages/Journal/hooks/useJournalState";
 import { formatter } from "@utils/utils";
 import moment from "moment";
 import React, { useMemo } from "react";
@@ -9,9 +10,16 @@ import {
 } from "./CalendarStyledComponents";
 import useCalendarState from "./hooks/useCalendarState";
 
-const CalendarRenderer: React.FunctionComponent = () => {
+interface CalendarRendererProps {
+  date?: moment.Moment;
+}
+
+const CalendarRenderer: React.FunctionComponent<CalendarRendererProps> = ({
+  date,
+}) => {
   const { calendarSummary } = useCalendarState();
-  const today = moment();
+  const { fundedView } = useJournalState();
+  const today = date || moment();
   const startOfMonth = today.clone().startOf("month");
   const endOfMonth = today.clone().endOf("month");
 
@@ -21,7 +29,7 @@ const CalendarRenderer: React.FunctionComponent = () => {
       map[d.date] = d;
     });
     return map;
-  }, [calendarSummary]);
+  }, [calendarSummary, date]);
 
   const weeks = useMemo(() => {
     const result: (moment.Moment | null)[][] = [];
@@ -56,7 +64,7 @@ const CalendarRenderer: React.FunctionComponent = () => {
     }
 
     return result;
-  }, [startOfMonth, endOfMonth]);
+  }, [startOfMonth, endOfMonth, calendarSummary, date]);
 
   return (
     <CalendarGrid>
@@ -75,7 +83,7 @@ const CalendarRenderer: React.FunctionComponent = () => {
           const key = day.format("YYYY-MM-DD");
           const entry = dataMap[key];
 
-          const pnl = entry?.pnl || 0;
+          const pnl = fundedView ? entry?.pnl || 0 : entry?.evalPnl || 0;
           weeklyTotal += pnl;
 
           const bg =
@@ -95,7 +103,9 @@ const CalendarRenderer: React.FunctionComponent = () => {
                     {pnl >= 0 ? "+" : ""}
                     {formatter.format(pnl)}
                   </div>
-                  <div style={{ opacity: 0.6 }}>{entry.trades} trades</div>
+                  <div style={{ opacity: 0.6 }}>
+                    {fundedView ? entry.trades : entry.evalTrades} trades
+                  </div>
                 </div>
               )}
             </DayCell>

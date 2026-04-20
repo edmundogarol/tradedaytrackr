@@ -199,17 +199,21 @@ export interface DashboardSummaries {
 export interface CalendarDay {
   date: string;
   pnl: number;
+  evalPnl: number;
   trades: number;
+  evalTrades: number;
   journals: number;
 }
 
 export interface CalendarWeek {
   weekStart: string;
   pnl: number;
+  evalPnl: number;
 }
 
 export interface CalendarSummary {
   daily: CalendarDay[];
   weekly: CalendarWeek[];
   monthlyTotal: number;
+  evalMonthlyTotal: number;
 }
