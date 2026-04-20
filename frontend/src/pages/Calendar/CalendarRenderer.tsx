@@ -1,6 +1,11 @@
+import { If } from "@components/If/If";
+import InfoPopout from "@components/InfoPopout/InfoPopout";
 import type { CalendarDay } from "@interfaces/CustomTypes";
+import { PageEnum } from "@interfaces/NavigationTypes";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import useReactNavigation from "@navigation/hooks/useReactNavigation";
 import useJournalState from "@pages/Journal/hooks/useJournalState";
-import { formatter } from "@utils/utils";
+import { formatter, m } from "@utils/utils";
 import moment from "moment";
 import React, { useMemo } from "react";
 import {
@@ -17,6 +22,7 @@ interface CalendarRendererProps {
 const CalendarRenderer: React.FunctionComponent<CalendarRendererProps> = ({
   date,
 }) => {
+  const navigation = useReactNavigation();
   const { calendarSummary } = useCalendarState();
   const { fundedView } = useJournalState();
   const today = date || moment();
@@ -80,7 +86,7 @@ const CalendarRenderer: React.FunctionComponent<CalendarRendererProps> = ({
         const weekCells = week.map((day, idx) => {
           if (!day) return <div key={`${weekIdx}-${idx}`} />;
 
-          const key = day.format("YYYY-MM-DD");
+          const key = m(day).format("YYYY-MM-DD");
           const entry = dataMap[key];
 
           const pnl = fundedView ? entry?.pnl || 0 : entry?.evalPnl || 0;
@@ -93,8 +99,29 @@ const CalendarRenderer: React.FunctionComponent<CalendarRendererProps> = ({
                 ? "rgba(255, 0, 0, 0.15)"
                 : "transparent";
 
+          const journalEntry = entry?.journalEntries?.[0];
+          const journalPnl = fundedView
+            ? journalEntry?.totalPnl
+            : journalEntry?.totalEvalPnl;
+          const journalAccountCount = fundedView
+            ? journalEntry?.accountCount
+            : journalEntry?.evalAccountCount;
           return (
             <DayCell $bg={bg} key={key}>
+              <If condition={entry?.journals > 0}>
+                <InfoPopout
+                  infoDescription={`Journal Entry on ${day.format("MMM D, YYYY")} - ${formatter.format(journalPnl as number)} [${journalAccountCount} accounts]`}
+                >
+                  <VisibilityOutlinedIcon
+                    style={{ color: "#e0e0e0a6" }}
+                    onClick={() =>
+                      navigation.navigate(PageEnum.JournalEntry, {
+                        id: entry.journalEntries[0].id,
+                      })
+                    }
+                  />
+                </InfoPopout>
+              </If>
               <div style={{ fontSize: 12, opacity: 0.7 }}>{day.date()}</div>
 
               {entry && (

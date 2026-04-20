@@ -32,6 +32,18 @@ export const DayCell = styled.div<{ $bg?: string }>`
   flex-direction: column;
   justify-content: space-between;
   color: ${color("SystemWhite")};
+  position: relative;
+
+  svg {
+    position: absolute;
+    right: 7px;
+    height: 20px;
+    z-index: 20;
+    &:hover {
+      cursor: pointer;
+      filter: brightness(1.2);
+    }
+  }
 `;
 
 export const MonthlySelectorContainer = styled(SectionText)`

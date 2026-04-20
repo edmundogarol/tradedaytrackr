@@ -23,9 +23,9 @@ import {
 import { formatter, m } from "@utils/utils";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
+import CalendarRenderer from "./CalendarRenderer";
 import { MonthlySelectorContainer } from "./CalendarStyledComponents";
 import styles from "./CalendarStyles";
-import CalendarRenderer from "./CalndarRenderer";
 import useCalendarDispatch from "./hooks/useCalendarDispatch";
 import useCalendarState from "./hooks/useCalendarState";
 import useGetCalendarSummaryHandler from "./hooks/useGetCalendarSummaryHandler";

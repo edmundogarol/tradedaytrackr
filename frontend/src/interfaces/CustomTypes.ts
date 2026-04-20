@@ -203,6 +203,9 @@ export interface CalendarDay {
   trades: number;
   evalTrades: number;
   journals: number;
+  journalEntries: JournalEntry[];
+  accountCount: number;
+  evalAccountCount: number;
 }
 
 export interface CalendarWeek {

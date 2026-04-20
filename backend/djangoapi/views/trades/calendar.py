@@ -2,7 +2,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 from decimal import Decimal
 
-from django.db.models import Count, Sum
+from django.db.models import Count, Q, Sum
 from django.db.models.functions import TruncDate
 from django.utils import timezone
 from rest_framework.permissions import IsAuthenticated
@@ -57,6 +57,7 @@ class CalendarSummaryView(APIView):
             .annotate(
                 total_pnl=Sum("pnl"),
                 total_trades=Count("id"),
+                account_count=Count("account", distinct=True),
             )
         )
 
@@ -75,6 +76,7 @@ class CalendarSummaryView(APIView):
             .annotate(
                 total_pnl=Sum("pnl"),
                 total_trades=Count("id"),
+                account_count=Count("account", distinct=True),
             )
         )
 
@@ -88,8 +90,32 @@ class CalendarSummaryView(APIView):
                 date_time__lt=end_of_month,
             )
             .annotate(day=TruncDate("date_time"))
-            .values("day")
-            .annotate(total_journals=Count("id"))
+            .annotate(
+                total_pnl=Sum(
+                    "trades__pnl",
+                    filter=Q(trades__account__template__is_evaluation=False),
+                ),
+                total_eval_pnl=Sum(
+                    "trades__pnl",
+                    filter=Q(trades__account__template__is_evaluation=True),
+                ),
+                account_count=Count(
+                    "trades__id",
+                    filter=Q(trades__account__template__is_evaluation=False),
+                ),
+                eval_account_count=Count(
+                    "trades__id",
+                    filter=Q(trades__account__template__is_evaluation=True),
+                ),
+            )
+            .values(
+                "id",
+                "day",
+                "total_pnl",
+                "total_eval_pnl",
+                "account_count",
+                "eval_account_count",
+            )
         )
 
         # ---------------------------
@@ -100,8 +126,11 @@ class CalendarSummaryView(APIView):
                 "pnl": Decimal("0"),
                 "trades": 0,
                 "journals": 0,
+                "journal_entries": [],
                 "eval_pnl": Decimal("0"),
                 "eval_trades": 0,
+                "account_count": 0,
+                "eval_account_count": 0,
             }
         )
 
@@ -110,17 +139,30 @@ class CalendarSummaryView(APIView):
             day = str(t["day"])
             daily_map[day]["pnl"] = t["total_pnl"] or Decimal("0")
             daily_map[day]["trades"] = t["total_trades"]
+            daily_map[day]["account_count"] = t["account_count"]
 
         # eval
         for t in eval_trades:
             day = str(t["day"])
             daily_map[day]["eval_pnl"] = t["total_pnl"] or Decimal("0")
             daily_map[day]["eval_trades"] = t["total_trades"]
+            daily_map[day]["eval_account_count"] = t["account_count"]
 
         # journals
         for j in journals:
             day = str(j["day"])
-            daily_map[day]["journals"] = j["total_journals"]
+
+            daily_map[day]["journal_entries"].append(
+                {
+                    "id": j["id"],
+                    "total_pnl": round(j["total_pnl"] or 0, 2),
+                    "total_eval_pnl": round(j["total_eval_pnl"] or 0, 2),
+                    "account_count": j["account_count"] or 0,
+                    "eval_account_count": j["eval_account_count"] or 0,
+                }
+            )
+
+            daily_map[day]["journals"] += 1
 
         # ---------------------------
         # WEEKLY AGGREGATION
@@ -152,8 +194,11 @@ class CalendarSummaryView(APIView):
                 "pnl": round(values["pnl"], 2),
                 "trades": values["trades"],
                 "journals": values["journals"],
+                "journal_entries": values["journal_entries"],
                 "eval_pnl": round(values["eval_pnl"], 2),
                 "eval_trades": values["eval_trades"],
+                "account_count": values["account_count"],
+                "eval_account_count": values["eval_account_count"],
             }
             for day, values in daily_map.items()
         ]
