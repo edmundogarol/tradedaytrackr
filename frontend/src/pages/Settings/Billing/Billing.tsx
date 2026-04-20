@@ -142,31 +142,42 @@ const Billing: React.FunctionComponent<BillingProps> = () => {
                           <DoneOutlineIcon
                             style={{ color: "#4caf50", fontSize: 18 }}
                           />
-                          Advanced journal entries
+                          Full Trade Tracking Across All Accounts
                         </PlanDetailsItem>
+
                         <PlanDetailsItem>
                           <DoneOutlineIcon
                             style={{ color: "#4caf50", fontSize: 18 }}
                           />
-                          Tag history management
+                          Real-Time Payout Eligibility Tracking
                         </PlanDetailsItem>
+
                         <PlanDetailsItem>
                           <DoneOutlineIcon
                             style={{ color: "#4caf50", fontSize: 18 }}
                           />
-                          Increased data storage
+                          Account Rule Tracking (Min Days, Consistency, Buffers)
                         </PlanDetailsItem>
+
                         <PlanDetailsItem>
                           <DoneOutlineIcon
                             style={{ color: "#4caf50", fontSize: 18 }}
                           />
-                          Priority support
+                          Payout History & Cycle Breakdown
                         </PlanDetailsItem>
+
                         <PlanDetailsItem>
                           <DoneOutlineIcon
                             style={{ color: "#4caf50", fontSize: 18 }}
                           />
-                          Advanced analytics
+                          Journal Entries Linked to Trades & Performance
+                        </PlanDetailsItem>
+
+                        <PlanDetailsItem>
+                          <DoneOutlineIcon
+                            style={{ color: "#4caf50", fontSize: 18 }}
+                          />
+                          Multi-Account Dashboard & Progress Tracking
                         </PlanDetailsItem>
                       </PlanLeftContainer>
                       <If condition={activeMembership}>
