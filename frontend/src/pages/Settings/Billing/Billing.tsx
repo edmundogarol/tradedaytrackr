@@ -138,12 +138,12 @@ const Billing: React.FunctionComponent<BillingProps> = () => {
                           />
                           Priority support
                         </PlanDetailsItem>
-                        <PlanDetailsItem>
+                        {/* <PlanDetailsItem>
                           <DoneOutlineIcon
                             style={{ color: "#4caf50", fontSize: 18 }}
                           />
                           Advanced analytics
-                        </PlanDetailsItem>
+                        </PlanDetailsItem> */}
                       </PlanLeftContainer>
                       <If condition={activeMembership}>
                         <PlanRightContainer>
@@ -152,14 +152,9 @@ const Billing: React.FunctionComponent<BillingProps> = () => {
                       </If>
                     </PlanDetails>
                   </PlanTile>
-                  <PlanTile $backgroundColor="#366283">
+                  {/* <PlanTile $backgroundColor="#366283">
                     <PlanHeader>
                       <PlanLeftContainer>Elite</PlanLeftContainer>
-                      {/* <PlanRightContainer>
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                          $ <span>0</span> / month
-                        </div>
-                      </PlanRightContainer> */}
                     </PlanHeader>
                     <PlanDetails>
                       <PlanLeftContainer>
@@ -183,7 +178,7 @@ const Billing: React.FunctionComponent<BillingProps> = () => {
                         </PlanDetailsItem>
                       </PlanLeftContainer>
                     </PlanDetails>
-                  </PlanTile>
+                  </PlanTile> */}
                 </PlansContainer>
                 <SectionText>
                   Manage your account subscription through Whop.

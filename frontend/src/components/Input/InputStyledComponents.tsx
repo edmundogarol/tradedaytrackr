@@ -201,4 +201,5 @@ export const ListItem = styled.div<{
               background-color: #3e52722e;
             }
           `}
+  text-transform: capitalize;
 `;

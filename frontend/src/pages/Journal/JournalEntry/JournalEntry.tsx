@@ -16,6 +16,8 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
 import PhotoIcon from "@mui/icons-material/Photo";
 import { FormControlLabel, Switch } from "@mui/material";
+import useSettingsState from "@pages/Settings/hooks/useSettingsState";
+import useGetTagsHandler from "@pages/Settings/Preferences/hooks/useGetTagsHandler";
 import {
   PageContainer as Container,
   HorizontalSection,
@@ -114,6 +116,8 @@ const JournalEntry: React.FunctionComponent = () => {
   const { getTradesByDate } = useGetTradesByDateHandler();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [journalEntryImage, setJournalEntryImage] = useState<File | null>(null);
+  const { tags } = useSettingsState();
+  const { getTags } = useGetTagsHandler();
 
   useEffect(() => {
     // Fetch journal entry from id
@@ -212,6 +216,12 @@ const JournalEntry: React.FunctionComponent = () => {
     journalEntry.contracts <= 0 ||
     journalEntry.risk <= 0 ||
     journalEntry.instrument === "";
+
+  useEffect(() => {
+    if (tags.length === 0) {
+      getTags();
+    }
+  }, []);
   return (
     <Page topBarShowMenu={true}>
       <AlertPopout
@@ -344,42 +354,19 @@ const JournalEntry: React.FunctionComponent = () => {
                           value={currentTagInput}
                           style={styles.tagInput}
                           inputContainerStyle={styles.tagInputContainer}
-                          suggestions={[
-                            {
-                              description: "Momentum",
-                            },
-                            {
-                              description: "Reaction",
-                            },
-                            {
-                              description: "50% Block",
-                            },
-                            {
-                              description: "Premium",
-                            },
-                            {
-                              description: "Discount",
-                            },
-                            {
-                              description: "IFVG",
-                            },
-                            {
-                              description: "Long",
-                            },
-                            {
-                              description: "Short",
-                            },
-                          ].filter(
-                            (s) =>
-                              journalEntry.tags.every(
-                                (tag) =>
-                                  tag.name.toLowerCase() !==
-                                  s.description.toLowerCase(),
-                              ) &&
-                              s.description
-                                .toLowerCase()
-                                .includes(currentTagInput.toLowerCase()),
-                          )}
+                          suggestions={tags
+                            .map((tag) => ({ description: tag.name }))
+                            .filter(
+                              (s) =>
+                                journalEntry.tags.every(
+                                  (tag) =>
+                                    tag.name.toLowerCase() !==
+                                    s.description.toLowerCase(),
+                                ) &&
+                                s.description
+                                  .toLowerCase()
+                                  .includes(currentTagInput.toLowerCase()),
+                            )}
                         />
                         <InfoPopout
                           infoDescription={
