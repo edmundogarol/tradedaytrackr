@@ -23,7 +23,7 @@ export const Container = styled.div<{
     ${(props): string =>
         props?.$backgroundColor?.$light
           ? props?.$backgroundColor?.$light
-          : color("SystemBackground2")}
+          : color("SystemBackground3")}
       100%
   );
 

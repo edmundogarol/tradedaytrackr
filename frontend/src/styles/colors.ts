@@ -12,6 +12,7 @@ export type ColorKey =
   | "SystemBackground"
   | "SystemBackground1"
   | "SystemBackground2"
+  | "SystemBackground3"
   | "SystemBackgroundFundeds"
   | "SystemBackgroundFundeds2"
   | "SystemGrey1"
@@ -42,6 +43,7 @@ const colorsMap = {
   SystemBackground: "#121822",
   SystemBackground1: "#f2f2f2",
   SystemBackground2: "#304261",
+  SystemBackground3: "#1d283b",
   SystemBackgroundFundeds: "#122213",
   SystemBackgroundFundeds2: "#1b3b24",
   SystemGrey1: "#cecece",

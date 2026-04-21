@@ -42,7 +42,13 @@ const Landing: React.FunctionComponent = () => {
   };
 
   return (
-    <Page sideDrawer={false}>
+    <Page
+      sideDrawer={false}
+      backgroundColor={{
+        light: color("SystemBackground3"),
+        dark: color("SystemBackground"),
+      }}
+    >
       <LoginButton
         text="Log in"
         onClick={() => navigation.navigate(PageEnum.Login)}
