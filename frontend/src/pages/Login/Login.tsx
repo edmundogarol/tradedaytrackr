@@ -7,6 +7,7 @@ import LoadingContent from "@components/Loading/LoadingContent";
 import Page from "@components/Page/Page";
 import { PageEnum } from "@interfaces/NavigationTypes";
 import { linkToUrl } from "@navigation/hooks/link";
+import useReactNavigation from "@navigation/hooks/useReactNavigation";
 import { SectionText } from "@styles/globalStyledComponents";
 import React, { useEffect, useState } from "react";
 import useLoginDispatch from "./hooks/useLoginDispatch";
@@ -30,7 +31,8 @@ import useLoginSubmitHandler from "./hooks/useLoginSubmitHandler";
 import { updateResetPasswordForm } from "./LoginState";
 
 const Login: React.FunctionComponent = () => {
-  const { user, loginForm, loginFormErrors, seedingDemoData } = useLoginState();
+  const { user, loginForm, loginFormErrors, seedingDemoData, isHydrated } =
+    useLoginState();
   const {
     updateLoginForm,
     updateResetPasswordFormSent,
@@ -40,11 +42,18 @@ const Login: React.FunctionComponent = () => {
   const { login, loading } = useLoginSubmitHandler();
   const [shineDone, setShineDone] = useState(false);
   const { loginDemoUser, loading: demoLoading } = useDemoUserLoginHandler();
+  const navigation = useReactNavigation();
 
   useEffect(() => {
     const timer = setTimeout(() => setShineDone(true), 1500);
     return (): void => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (isHydrated && user.logged_in) {
+      navigation.navigate(PageEnum.Dashboard);
+    }
+  }, [isHydrated, user.logged_in]);
 
   useCheckLoginFormErrors();
 
@@ -110,7 +119,11 @@ const Login: React.FunctionComponent = () => {
                   {"Forgot Password?"}
                 </ForgotPasswordLink>
                 <Gap level={1} />
-                <LoginButton loading={loading} text={"Login"} onClick={login} />
+                <LoginButton
+                  loading={loading}
+                  text={"Log In"}
+                  onClick={login}
+                />
                 <Gap level={1} />
                 <LoginButton
                   loading={demoLoading}

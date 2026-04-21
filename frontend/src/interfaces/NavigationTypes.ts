@@ -1,4 +1,5 @@
 export enum PageEnum {
+  Landing = "/landing",
   Login = "/login",
   SignUp = "/signUp",
   ResetPassword = "/resetPassword",
@@ -39,6 +40,7 @@ export type AuthenticatedStackNavigatorParams = {
 };
 
 export type UnauthenticatedStackNavigatorParams = {
+  [PageEnum.Landing]: undefined;
   [PageEnum.Login]: undefined;
   [PageEnum.SignUp]: undefined;
   [PageEnum.ResetPassword]: undefined;

@@ -17,6 +17,7 @@ import PrivacyPolicy from "@pages/Info/PrivacyPolicy";
 import TermsOfService from "@pages/Info/TermsOfService";
 import Journal from "@pages/Journal/Journal";
 import JournalEntry from "@pages/Journal/JournalEntry/JournalEntry";
+import Login from "@pages/Login/Login";
 import useLoginCheckApiCall from "@pages/Login/hooks/useLoginCheckApiCall";
 import useLoginCheckHandler from "@pages/Login/hooks/useLoginCheckHandler";
 import useLoginDispatch from "@pages/Login/hooks/useLoginDispatch";
@@ -74,6 +75,8 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
     PageEnum.Calendar,
     PageEnum.Journal,
     PageEnum.PageNotFound,
+    PageEnum.Landing,
+    PageEnum.Login,
   ];
   const isOnNoMembershipBlockRoute = noMembershipBlockRoutes.some((route) =>
     window.location.pathname.includes(route),
@@ -132,9 +135,10 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
       <Routes>
         {/* Public routes */}
         <Route
-          path={PageEnum.Login}
+          path={PageEnum.Landing}
           element={checkAuth({ user, isHydrated })}
         />
+        <Route path={PageEnum.Login} element={<Login />} />
         <Route path={PageEnum.SignUp} element={<SignUp />} />
         <Route path={PageEnum.ResetPassword} element={<ResetPassword />} />
         <Route
@@ -176,7 +180,7 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
             user.logged_in ? (
               <Navigate to={PageEnum.Dashboard} replace />
             ) : (
-              <Navigate to={PageEnum.Login} replace />
+              <Navigate to={PageEnum.Landing} replace />
             )
           }
         />
