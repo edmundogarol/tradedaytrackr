@@ -1,9 +1,9 @@
-import React from "react";
-import { If } from "@components/If/If";
-import TopBar from "@components/TopBar/TopBar";
 import BottomBar from "@components/BottomBar/BottomBar";
+import { If } from "@components/If/If";
 import SideDrawer from "@components/SideDrawer/SideDrawer";
+import TopBar from "@components/TopBar/TopBar";
 import { color } from "@styles/colors";
+import React from "react";
 import { ChildrenContainer, Container } from "./PageStyledComponents";
 
 export interface PageProps {
