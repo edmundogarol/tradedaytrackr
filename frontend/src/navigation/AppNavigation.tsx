@@ -73,6 +73,7 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
     PageEnum.PayoutTracking,
     PageEnum.Calendar,
     PageEnum.Journal,
+    PageEnum.PageNotFound,
   ];
   const isOnNoMembershipBlockRoute = noMembershipBlockRoutes.some((route) =>
     window.location.pathname.includes(route),
