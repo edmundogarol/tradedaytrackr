@@ -130,7 +130,7 @@ const Landing: React.FunctionComponent = () => {
               <ImageFeature
                 src={imageSrc("funding-overview-recent-activity.png")}
               />
-              <ImageFeature src={imageSrc("funded-accounts.png")} />
+              <ImageFeature src={imageSrc("funded-accounts.png")} $glow />
               <ImageFeature src={imageSrc("account-templates-tags.png")} />
             </ImageSection>
           </HeroLeftSection>

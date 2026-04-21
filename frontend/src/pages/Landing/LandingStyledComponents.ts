@@ -122,11 +122,21 @@ export const ImageSection = styled(HorizontalSection)`
   width: 95%;
 `;
 
-export const ImageFeature = styled.img`
+export const ImageFeature = styled.img<{ $glow?: boolean }>`
   border-radius: 5px;
   width: 30%;
   height: auto;
   max-width: 350px;
+
+  filter: ${(props): string =>
+    props.$glow ? "drop-shadow(0px 412px 111px #374e77)" : "none"};
+
+  ${(props): string =>
+    props.$glow
+      ? `
+      z-index: 1;
+  `
+      : "z-index: 2;"}
 `;
 
 export const HeroFooterSection = styled(HorizontalSection)`
@@ -139,9 +149,11 @@ export const HeroFooterSection = styled(HorizontalSection)`
     to right,
     transparent 0%,
     #33384061 15%,
-    #33384061 85%,
+    #00000061 85%,
     transparent 100%
   );
+  z-index: 2;
+  position: relative;
 `;
 
 export const FooterHeader = styled(SectionText)`
