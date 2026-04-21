@@ -126,6 +126,7 @@ export const ImageFeature = styled.img`
   border-radius: 5px;
   width: 30%;
   height: auto;
+  max-width: 350px;
 `;
 
 export const HeroFooterSection = styled(HorizontalSection)`
