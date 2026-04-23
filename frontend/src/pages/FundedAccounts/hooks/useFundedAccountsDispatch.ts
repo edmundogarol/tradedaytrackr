@@ -18,6 +18,7 @@ import {
   updateBufferFilter,
   updateCreateTradingAccountErrors,
   updateCreateTradingAccountModalOpen,
+  updateCurrentDayValuesPage,
   updateCurrentTradingAccount,
   updateCurrentTradingAccountErrors,
   updateDashboardSummaries,
@@ -69,6 +70,7 @@ interface FundedAccountsDispatch {
   updateArchivedTradingAccountsItemCount: (itemCount: number) => void;
   updateArchivingAccountModalOpen: (open: boolean) => void;
   updateDashboardSummaries: (summaries: DashboardSummaries) => void;
+  updateCurrentDayValuesPage: (page: number) => void;
 }
 
 const useFundedAccountsDispatch = (): FundedAccountsDispatch => {
@@ -157,6 +159,9 @@ const useFundedAccountsDispatch = (): FundedAccountsDispatch => {
     },
     updateDashboardSummaries(summaries: DashboardSummaries): void {
       dispatch(updateDashboardSummaries(summaries));
+    },
+    updateCurrentDayValuesPage(page: number): void {
+      dispatch(updateCurrentDayValuesPage(page));
     },
   };
 };

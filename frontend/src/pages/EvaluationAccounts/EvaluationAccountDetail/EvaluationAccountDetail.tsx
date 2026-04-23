@@ -34,6 +34,7 @@ import type {
   TradingAccount,
 } from "@interfaces/CustomTypes";
 import { PageEnum } from "@interfaces/NavigationTypes";
+import Pagination from "@mui/material/Pagination";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
 import ArchiveAccountModal from "@pages/FundedAccounts/ArchiveAccountModal/ArchiveAccountModal";
 import DeleteTradeModal from "@pages/FundedAccounts/DeleteTradeModal/DeleteTradeModal";
@@ -50,6 +51,7 @@ import { DaysItemSubtitle } from "@pages/FundedAccounts/FundedAccountsStyledComp
 import useFundedAccountsDispatch from "@pages/FundedAccounts/hooks/useFundedAccountsDispatch";
 import useFundedAccountsState from "@pages/FundedAccounts/hooks/useFundedAccountsState";
 import useGetTradingAccountDetailHandler from "@pages/FundedAccounts/hooks/useGetTradingAccountDetailHandler";
+import useGetTradingDaysHandler from "@pages/FundedAccounts/hooks/useGetTradingDaysHandler";
 import useUpdateTradingAccountHandler from "@pages/FundedAccounts/hooks/useUpdateTradingAccountHandler";
 import useGetFundedAccountTemplates from "@pages/Settings/hooks/useGetFundedAccountTemplates";
 import useGetAccountTemplatesHandler from "@pages/Settings/Preferences/hooks/useGetAccountTemplatesHandler";
@@ -105,6 +107,7 @@ const EvaluationAccountDetail: React.FunctionComponent<
     addTradeErrors,
     deleteTradeErrors,
     addTradeModalOpen,
+    currentDayValuesPage,
   } = useFundedAccountsState();
   const {
     updateCurrentTradingAccount,
@@ -117,6 +120,7 @@ const EvaluationAccountDetail: React.FunctionComponent<
     updateDeleteTradeModalOpen,
     updateDeleteTradeErrors,
     updateArchivingAccountModalOpen,
+    updateCurrentDayValuesPage,
   } = useFundedAccountsDispatch();
   let [searchParams] = useSearchParams();
   const accountId = searchParams.get("id");
@@ -129,6 +133,7 @@ const EvaluationAccountDetail: React.FunctionComponent<
   const { getTradingAccount } = useGetTradingAccountDetailHandler();
   const hasFetched = useRef(false);
   const evalProgressStatus = useGetEvalProgressStatus();
+  const { getTradingDays } = useGetTradingDaysHandler();
 
   useEffect(() => {
     if (hasFetched.current) return;
@@ -160,6 +165,13 @@ const EvaluationAccountDetail: React.FunctionComponent<
       currentTradingAccount?.accountSize) /
       (currentTradingAccount?.profitTarget || 1)) *
     100;
+
+  useEffect(() => {
+    if (currentTradingAccount.id !== 0) {
+      getTradingDays(currentDayValuesPage);
+    }
+  }, [currentDayValuesPage]);
+
   return (
     <Page topBarShowMenu={true}>
       <AlertPopout
@@ -698,6 +710,28 @@ const EvaluationAccountDetail: React.FunctionComponent<
                 </GlassTile>
               );
             })}
+            <If
+              condition={currentTradingAccount?.dayValuesNextPage?.includes(
+                "page",
+              )}
+            >
+              <Pagination
+                color={"primary"}
+                page={currentDayValuesPage}
+                sx={{
+                  "& .MuiPaginationItem-root": { color: "white" },
+                  zIndex: 21,
+                }}
+                count={
+                  !!currentTradingAccount.dayValuesCount
+                    ? Math.ceil(currentTradingAccount.dayValuesCount / 10)
+                    : 1
+                }
+                onChange={(e, page) => {
+                  updateCurrentDayValuesPage(page);
+                }}
+              />
+            </If>
           </TradingDaysContainer>
         </GlassTile>
       </Container>

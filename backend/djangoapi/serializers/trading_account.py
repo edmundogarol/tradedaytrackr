@@ -81,6 +81,8 @@ class TradingAccountSerializer(serializers.ModelSerializer):
     )
 
     day_values = serializers.SerializerMethodField()
+    day_values_next_page = serializers.SerializerMethodField()
+    day_values_count = serializers.SerializerMethodField()
     buffer_percent = serializers.SerializerMethodField()
     current_day_count = serializers.SerializerMethodField()
     post_payout_buffer = serializers.SerializerMethodField()
@@ -114,6 +116,8 @@ class TradingAccountSerializer(serializers.ModelSerializer):
             "min_trading_days",
             "min_day_pnl",
             "day_values",
+            "day_values_next_page",
+            "day_values_count",
             "current_day_count",
             "min_payout_request",
             "max_payout_request",
@@ -131,11 +135,39 @@ class TradingAccountSerializer(serializers.ModelSerializer):
     def get_name(self, obj):
         return obj.account_name
 
+    def _get_days_qs(self, obj):
+        if not hasattr(self, "_days_qs_cache"):
+            self._days_qs_cache = {}
+
+        if obj.id not in self._days_qs_cache:
+            qs = obj.trading_days.all().order_by("-date").prefetch_related("trades")
+
+            count = qs.count()
+
+            self._days_qs_cache[obj.id] = qs
+            self._day_values_count_map = getattr(self, "_day_values_count_map", {})
+            self._day_values_has_next_map = getattr(
+                self, "_day_values_has_next_map", {}
+            )
+
+            self._day_values_count_map[obj.id] = count
+            self._day_values_has_next_map[obj.id] = count > 5
+
+        return self._days_qs_cache[obj.id]
+
     def get_day_values(self, obj):
-        latest_days = (
-            obj.trading_days.all().order_by("-date").prefetch_related("trades")[:5]
-        )
-        return TradingDaySerializer(latest_days, many=True, context=self.context).data
+        qs = self._get_days_qs(obj)
+        return TradingDaySerializer(qs[:5], many=True, context=self.context).data
+
+    def get_day_values_count(self, obj):
+        self._get_days_qs(obj)
+        return self._day_values_count_map.get(obj.id, 0)
+
+    def get_day_values_next_page(self, obj):
+        self._get_days_qs(obj)
+        if self._day_values_has_next_map.get(obj.id, False):
+            return f"/api/trading-days/?account_id={obj.id}&page=2"
+        return None
 
     def get_image(self, obj):
         request = self.context.get("request")

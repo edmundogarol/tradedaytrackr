@@ -42,6 +42,7 @@ from backend.djangoapi.views.trades.payout import (
 from backend.djangoapi.views.trades.payout_list import PayoutListView
 from backend.djangoapi.views.trades.trade import TradeViewSet
 from backend.djangoapi.views.trades.trade_by_date import TradesByDateView
+from backend.djangoapi.views.trades.trade_day import TradingDayViewSet
 from backend.djangoapi.views.tradingAccount.rule import RuleViewSet
 from backend.djangoapi.views.tradingAccount.trading_account import (
     TradingAccountArchivedViewSet,
@@ -92,6 +93,7 @@ router.register(
 router.register(r"tags", TagViewSet, basename="tags")
 router.register(r"rules", RuleViewSet, basename="rules")
 router.register(r"trades", TradeViewSet, basename="trades")
+router.register(r"trading-days", TradingDayViewSet, basename="trading-days")
 
 urlpatterns = [
     path("docs/", schema_view),

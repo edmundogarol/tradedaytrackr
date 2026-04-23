@@ -37,6 +37,7 @@ export interface FundedAccountsState {
   readonly archivedTradingAccountsItemCount?: number;
   readonly archivingAccountModalOpen: boolean;
   readonly dashboardSummaries: DashboardSummaries;
+  readonly currentDayValuesPage: number;
 }
 
 const initialSummaries: DashboardSummaries = {
@@ -67,7 +68,7 @@ const initialSummaries: DashboardSummaries = {
   },
 };
 
-const initialAccount: TradingAccount = {
+const initialAccount: TradingAccount | EvaluationAccount = {
   id: 0,
   name: "",
   firm: undefined,
@@ -87,6 +88,7 @@ const initialAccount: TradingAccount = {
   accountBalance: 0,
   bufferPercent: 0,
   dayValues: [],
+  dayValuesNextPage: undefined,
   currentDayCount: 0,
   postPayoutBuffer: 0,
   withdrawableAmount: 0,
@@ -142,6 +144,7 @@ export const initialState: FundedAccountsState = {
   archivedTradingAccountsItemCount: 0,
   archivingAccountModalOpen: false,
   dashboardSummaries: initialSummaries,
+  currentDayValuesPage: 1,
 };
 
 type UpdateTradingAccountsAction = PayloadAction<TradingAccount[]>;
@@ -186,6 +189,7 @@ type UpdateArchivedTradingAccountsNextPageAction = PayloadAction<
 type UpdateArchivedTradingAccountsItemCountAction = PayloadAction<number>;
 type UpdateArchivingAccountModalOpenAction = PayloadAction<boolean>;
 type UpdateDashboardSummariesAction = PayloadAction<DashboardSummaries>;
+type UpdateCurrentDayValuesPageAction = PayloadAction<number>;
 
 export type FundedAccountsAction =
   | UpdateTradingAccountsAction
@@ -213,7 +217,8 @@ export type FundedAccountsAction =
   | UpdateArchivedTradingAccountsNextPageAction
   | UpdateArchivedTradingAccountsItemCountAction
   | UpdateArchivingAccountModalOpenAction
-  | UpdateDashboardSummariesAction;
+  | UpdateDashboardSummariesAction
+  | UpdateCurrentDayValuesPageAction;
 
 export const fundedAccountsSlice = createSlice({
   name: "fundedAccounts",
@@ -350,6 +355,12 @@ export const fundedAccountsSlice = createSlice({
     ) => {
       state.dashboardSummaries = action.payload;
     },
+    updateCurrentDayValuesPage: (
+      state,
+      action: UpdateCurrentDayValuesPageAction,
+    ) => {
+      state.currentDayValuesPage = action.payload;
+    },
   },
 });
 
@@ -380,6 +391,7 @@ export const {
   updateArchivedTradingAccountsItemCount,
   updateArchivingAccountModalOpen,
   updateDashboardSummaries,
+  updateCurrentDayValuesPage,
 } = fundedAccountsSlice.actions;
 
 export const fundedAccountsReducer = fundedAccountsSlice.reducer;

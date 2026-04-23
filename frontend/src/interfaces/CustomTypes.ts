@@ -67,6 +67,8 @@ export interface AccountTemplate {
   rules?: Rule[] | string[];
   withdrawalSplit?: number;
   isArchived: boolean;
+  dayValuesNextPage?: string | null;
+  dayValuesCount?: number;
 }
 
 export interface TradingAccount extends AccountTemplate {

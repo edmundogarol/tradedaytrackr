@@ -21,6 +21,7 @@ import PhotoIcon from "@mui/icons-material/Photo";
 
 import InventoryIcon from "@mui/icons-material/Inventory";
 import LocalParkingIcon from "@mui/icons-material/LocalParking";
+import Pagination from "@mui/material/Pagination";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
 import { AccountTradingDaysComplete } from "@pages/EvaluationAccounts/EvaluationAccountsStyledComponents";
 import useGetFundedAccountTemplates from "@pages/Settings/hooks/useGetFundedAccountTemplates";
@@ -60,6 +61,7 @@ import {
 import useFundedAccountsDispatch from "../hooks/useFundedAccountsDispatch";
 import useFundedAccountsState from "../hooks/useFundedAccountsState";
 import useGetTradingAccountDetailHandler from "../hooks/useGetTradingAccountDetailHandler";
+import useGetTradingDaysHandler from "../hooks/useGetTradingDaysHandler";
 import useUpdateTradingAccountHandler from "../hooks/useUpdateTradingAccountHandler";
 import {
   AccountDetailContainer,
@@ -105,6 +107,7 @@ const FundedAccountDetail: React.FunctionComponent<
     addTradeErrors,
     deleteTradeErrors,
     addTradeModalOpen,
+    currentDayValuesPage,
   } = useFundedAccountsState();
   const {
     updateCurrentTradingAccount,
@@ -117,6 +120,7 @@ const FundedAccountDetail: React.FunctionComponent<
     updateDeleteTradeModalOpen,
     updateDeleteTradeErrors,
     updateArchivingAccountModalOpen,
+    updateCurrentDayValuesPage,
   } = useFundedAccountsDispatch();
   let [searchParams] = useSearchParams();
   const accountId = searchParams.get("id");
@@ -129,6 +133,7 @@ const FundedAccountDetail: React.FunctionComponent<
   const { updateTradingAccount } = useUpdateTradingAccountHandler();
   const { getTradingAccount } = useGetTradingAccountDetailHandler();
   const hasFetched = useRef(false);
+  const { getTradingDays } = useGetTradingDaysHandler();
 
   useEffect(() => {
     if (hasFetched.current) return;
@@ -154,6 +159,12 @@ const FundedAccountDetail: React.FunctionComponent<
       setOriginalTradingAccountDetails(selectedAccount);
     }
   }, [tradingAccounts, accountId, addTradeModalOpen]);
+
+  useEffect(() => {
+    if (currentTradingAccount.id !== 0) {
+      getTradingDays(currentDayValuesPage);
+    }
+  }, [currentDayValuesPage]);
 
   return (
     <Page topBarShowMenu={true}>
@@ -733,6 +744,28 @@ const FundedAccountDetail: React.FunctionComponent<
                 </GlassTile>
               );
             })}
+            <If
+              condition={currentTradingAccount?.dayValuesNextPage?.includes(
+                "page",
+              )}
+            >
+              <Pagination
+                color={"primary"}
+                page={currentDayValuesPage}
+                sx={{
+                  "& .MuiPaginationItem-root": { color: "white" },
+                  zIndex: 21,
+                }}
+                count={
+                  !!currentTradingAccount.dayValuesCount
+                    ? Math.ceil(currentTradingAccount.dayValuesCount / 10)
+                    : 1
+                }
+                onChange={(e, page) => {
+                  updateCurrentDayValuesPage(page);
+                }}
+              />
+            </If>
           </TradingDaysContainer>
         </GlassTile>
       </Container>
