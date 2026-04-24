@@ -281,6 +281,33 @@ const AddAccountTemplateModal: React.FunctionComponent<
               },
             ]}
           />
+          <If condition={selectedAccountTemplate.isEval}>
+            <Input
+              positiveOnly
+              error={addAccountTemplateErrors?.max_drawdown}
+              value={decimalStringToInt(selectedAccountTemplate.maxDrawdown)}
+              onChange={(e) =>
+                updateSelectedAccountTemplate({
+                  ...selectedAccountTemplate,
+                  maxDrawdown: Number(e.target.value),
+                })
+              }
+              onSuggestionClick={(value) => {
+                updateSelectedAccountTemplate({
+                  ...selectedAccountTemplate,
+                  maxDrawdown: Number(value),
+                });
+              }}
+              type="number"
+              placeholder="Max Drawdown (e.g. $2,000)"
+              label="Max Drawdown"
+              suggestions={[
+                {
+                  description: "2000",
+                },
+              ]}
+            />
+          </If>
           <If condition={!selectedAccountTemplate.isEval}>
             <Input
               positiveOnly
