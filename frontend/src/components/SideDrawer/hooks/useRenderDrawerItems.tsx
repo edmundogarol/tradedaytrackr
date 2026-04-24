@@ -1,4 +1,4 @@
-import styles from "@components/Stats/StatsSummary/StatsSummaryStyles";
+import styles from "@components/InfoPopout/InfoPopoutStyles";
 import {
   List,
   ListItem,
@@ -9,6 +9,8 @@ import {
   Popper,
   Typography,
 } from "@mui/material";
+import useSettingsState from "@pages/Settings/hooks/useSettingsState";
+import { color } from "@styles/colors";
 import React, { useState } from "react";
 
 interface UseRenderDrawerItemsProps {
@@ -20,6 +22,7 @@ interface UseRenderDrawerItemsProps {
 }
 
 const useRenderDrawerItems = ({ drawerItems }: UseRenderDrawerItemsProps) => {
+  const { drawerOpen } = useSettingsState();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
@@ -53,31 +56,38 @@ const useRenderDrawerItems = ({ drawerItems }: UseRenderDrawerItemsProps) => {
                 {
                   minWidth: 0,
                   justifyContent: "center",
+                  color: color("SystemLabel1"),
                 },
                 {
                   mr: "auto",
                 },
               ]}
             >
-              <Popper
-                anchorEl={anchorEl}
-                open={activeIndex === index}
-                placement="right-start"
-                sx={{ zIndex: 1500 }}
-              >
-                <Paper style={styles.paperStyle}>
-                  <Typography sx={styles.contentStyle}>{text}</Typography>
-                </Paper>
-              </Popper>
-
+              {!drawerOpen ? (
+                <Popper
+                  anchorEl={anchorEl}
+                  open={activeIndex === index}
+                  placement="right-start"
+                  sx={{ zIndex: 1500 }}
+                >
+                  <Paper style={styles.paperStyle}>
+                    <Typography sx={styles.contentStyle}>{text}</Typography>
+                  </Paper>
+                </Popper>
+              ) : null}
               {icon}
             </ListItemIcon>
             <ListItemText
               primary={text}
               sx={[
                 {
-                  opacity: 0,
+                  opacity: drawerOpen ? 1 : 0,
                   marginLeft: 1,
+                  "& .MuiTypography-root": {
+                    fontSize: 14,
+                    color: color("SystemLabel1"),
+                    fontWeight: 100,
+                  },
                 },
               ]}
             />

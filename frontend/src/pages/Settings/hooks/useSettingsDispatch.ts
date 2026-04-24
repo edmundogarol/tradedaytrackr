@@ -8,6 +8,7 @@ import {
   updateAddAccountModalOpen,
   updateAddTagErrors,
   updateAddTagModalOpen,
+  updateDrawerOpen,
   updateSelectedAccountTemplate,
   updateSelectedTag,
   updateSystemAlert,
@@ -26,6 +27,7 @@ interface SettingsDispatch {
   updateAddTagErrors(errors: { [key: string]: any }): void;
   updateTemplateRules(templateRules: any[]): void;
   updateSystemAlert(systemAlert: { [key: string]: any }): void;
+  updateDrawerOpen(isOpen: boolean): void;
 }
 
 export const useSettingsDispatch = (): SettingsDispatch => {
@@ -60,6 +62,9 @@ export const useSettingsDispatch = (): SettingsDispatch => {
     },
     updateSystemAlert(systemAlert: { [key: string]: any }): void {
       dispatch(updateSystemAlert(systemAlert));
+    },
+    updateDrawerOpen(isOpen: boolean): void {
+      dispatch(updateDrawerOpen(isOpen));
     },
   };
 };

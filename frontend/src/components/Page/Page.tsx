@@ -2,6 +2,7 @@ import BottomBar from "@components/BottomBar/BottomBar";
 import { If } from "@components/If/If";
 import SideDrawer from "@components/SideDrawer/SideDrawer";
 import TopBar from "@components/TopBar/TopBar";
+import useSettingsState from "@pages/Settings/hooks/useSettingsState";
 import { color } from "@styles/colors";
 import React from "react";
 import { ChildrenContainer, Container } from "./PageStyledComponents";
@@ -26,8 +27,10 @@ const Page: React.FunctionComponent<PageProps> = ({
   sideDrawer = true,
   backgroundColor,
 }) => {
+  const { drawerOpen } = useSettingsState();
   return (
     <Container
+      $drawerOpen={drawerOpen}
       $withSideDrawer={sideDrawer}
       $backgroundColor={{
         $light: backgroundColor?.light || color("SystemBackground2"),

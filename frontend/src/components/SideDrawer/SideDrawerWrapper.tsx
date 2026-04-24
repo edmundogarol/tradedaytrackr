@@ -1,8 +1,10 @@
-import { styled } from "@mui/material/styles";
 import MuiDrawer from "@mui/material/Drawer";
-import type { Theme, CSSObject } from "@mui/material/styles";
+import type { CSSObject, Theme } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
+import { color } from "@styles/colors";
 
-const drawerWidth = 240;
+export const drawerWidth = 200;
+export const closedDrawerWidth = 64;
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
@@ -11,6 +13,11 @@ const openedMixin = (theme: Theme): CSSObject => ({
     duration: theme.transitions.duration.enteringScreen,
   }),
   overflowX: "hidden",
+  background: `linear-gradient(
+    0deg,
+    ${color("SystemBackground")} 35%,
+    ${color("SystemBackground2")} 100%
+  )`,
 });
 
 const closedMixin = (theme: Theme): CSSObject => ({
@@ -19,10 +26,15 @@ const closedMixin = (theme: Theme): CSSObject => ({
     duration: theme.transitions.duration.leavingScreen,
   }),
   overflowX: "hidden",
-  width: `calc(${theme.spacing(7)} + 1px)`,
+  width: `calc(${closedDrawerWidth}px + 1px)`,
   [theme.breakpoints.up("sm")]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
+    width: `calc(${closedDrawerWidth}px + 1px)`,
   },
+  background: `linear-gradient(
+    0deg,
+    ${color("SystemBackground")} 35%,
+    ${color("SystemBackground2")} 100%
+  )`,
 });
 
 const SideDrawerWrapper = styled(MuiDrawer, {

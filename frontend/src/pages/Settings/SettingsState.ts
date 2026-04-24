@@ -13,6 +13,7 @@ export interface SettingsState {
   readonly addTagErrors?: { [key: string]: any };
   readonly templateRules: Rule[];
   readonly systemAlert: { [key: string]: any };
+  readonly drawerOpen: boolean;
 }
 
 export const initialState: SettingsState = {
@@ -33,6 +34,7 @@ export const initialState: SettingsState = {
     profitTarget: undefined,
     consistency: undefined,
     rules: [],
+    isArchived: false,
   },
   selectedTag: {
     id: 0,
@@ -47,6 +49,7 @@ export const initialState: SettingsState = {
   addTagErrors: {},
   templateRules: [],
   systemAlert: {},
+  drawerOpen: true,
 };
 
 type UpdateAccountTemplatesAction = PayloadAction<AccountTemplate[]>;
@@ -61,6 +64,7 @@ type UpdateAddAccountTemplateErrorsAction = PayloadAction<{
 type UpdateAddTagErrorsAction = PayloadAction<{ [key: string]: any }>;
 type UpdateTemplateRulesAction = PayloadAction<Rule[]>;
 type UpdateSystemAlertAction = PayloadAction<{ [key: string]: any }>;
+type UpdateDrawerOpenAction = PayloadAction<boolean>;
 
 export type SettingsAction =
   | UpdateAccountTemplatesAction
@@ -72,7 +76,8 @@ export type SettingsAction =
   | UpdateAddAccountTemplateErrorsAction
   | UpdateAddTagErrorsAction
   | UpdateTemplateRulesAction
-  | UpdateSystemAlertAction;
+  | UpdateSystemAlertAction
+  | UpdateDrawerOpenAction;
 
 export const settingsSlice = createSlice({
   name: "settings",
@@ -117,6 +122,9 @@ export const settingsSlice = createSlice({
     updateSystemAlert: (state, action: UpdateSystemAlertAction) => {
       state.systemAlert = action.payload;
     },
+    updateDrawerOpen: (state, action: UpdateDrawerOpenAction) => {
+      state.drawerOpen = action.payload;
+    },
   },
 });
 
@@ -131,6 +139,7 @@ export const {
   updateAddTagErrors,
   updateTemplateRules,
   updateSystemAlert,
+  updateDrawerOpen,
 } = settingsSlice.actions;
 
 export const settingsReducer = settingsSlice.reducer;

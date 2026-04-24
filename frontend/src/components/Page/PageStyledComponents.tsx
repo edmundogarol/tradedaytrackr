@@ -1,8 +1,13 @@
+import {
+  closedDrawerWidth,
+  drawerWidth,
+} from "@components/SideDrawer/SideDrawerWrapper";
 import { color } from "@styles/colors";
 import { CONTAINER_PADDING_LARGE } from "@styles/constants";
 import styled from "styled-components";
 
 export const Container = styled.div<{
+  $drawerOpen?: boolean;
   $withSideDrawer?: boolean;
   $backgroundColor?: {
     $light: string;
@@ -27,11 +32,12 @@ export const Container = styled.div<{
       100%
   );
 
-  ${({ $withSideDrawer }): string =>
+  transition: padding-left 0.25s ease;
+
+  padding-left: ${({ $withSideDrawer, $drawerOpen }): string =>
     $withSideDrawer
-      ? ` padding-left: calc(64px + 1px);
-    `
-      : ""}
+      ? `${($drawerOpen ? drawerWidth : closedDrawerWidth) + 1}px`
+      : `0px`};
 `;
 
 export const ChildrenContainer = styled.div`
