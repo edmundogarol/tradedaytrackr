@@ -10,4 +10,5 @@ export interface StoreState {
   settings: SettingsState;
   payouts: PayoutsState;
   calendar: CalendarState;
+  reports: any;
 }

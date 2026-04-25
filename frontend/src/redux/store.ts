@@ -3,6 +3,7 @@ import { fundedAccountsReducer } from "@pages/FundedAccounts/FundedAccountsState
 import { journalReducer } from "@pages/Journal/JournalState";
 import { loginReducer } from "@pages/Login/LoginState";
 import { payoutsReducer } from "@pages/Payouts/PayoutsState";
+import { reportsReducer } from "@pages/Reports/ReportsState";
 import { settingsReducer } from "@pages/Settings/SettingsState";
 import { configureStore } from "@reduxjs/toolkit";
 
@@ -21,6 +22,7 @@ export default configureStore({
     fundedAccounts: fundedAccountsReducer,
     payouts: payoutsReducer,
     calendar: calendarReducer,
+    reports: reportsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware(defaultMiddlewareConfig),

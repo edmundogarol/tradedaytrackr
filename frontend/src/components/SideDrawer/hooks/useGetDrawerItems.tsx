@@ -1,22 +1,19 @@
 import { PageEnum } from "@interfaces/NavigationTypes";
+import AssessmentIcon from "@mui/icons-material/Assessment";
 import AssuredWorkloadIcon from "@mui/icons-material/AssuredWorkload";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import HomeIcon from "@mui/icons-material/Home";
 import MenuBook from "@mui/icons-material/MenuBook";
 import PaymentsIcon from "@mui/icons-material/Payments";
-import SpeedIcon from "@mui/icons-material/Speed";
 import StickyNote2Icon from "@mui/icons-material/StickyNote2";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
-import useSettingsDispatch from "@pages/Settings/hooks/useSettingsDispatch";
 import React from "react";
-
 export const useGetDrawerItems = (): Array<{
   text: string;
   icon: React.ReactElement;
   onClick: () => void;
 }> => {
   const navigation = useReactNavigation();
-  const { updateSystemAlert } = useSettingsDispatch();
   const drawerItems = React.useMemo(
     () => [
       {
@@ -50,10 +47,9 @@ export const useGetDrawerItems = (): Array<{
         onClick: (): void => navigation.navigate(PageEnum.Journal),
       },
       {
-        text: "Trade Stats",
-        icon: <SpeedIcon />,
-        onClick: (): void =>
-          updateSystemAlert({ message: "Trade Stats Coming Soon!" }),
+        text: "Reports",
+        icon: <AssessmentIcon />,
+        onClick: (): void => navigation.navigate(PageEnum.Reports),
       },
     ],
     [],
