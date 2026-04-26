@@ -22,7 +22,7 @@ const useGetReportHandler = (): GetReportHandler => {
   return {
     getReport: useCallback(async () => {
       const { error, data } = await fetch({
-        url: `${environmentConfig.HOST}/api/calendar-summary/?start=${start}&end=${end}&type=${type}`,
+        url: `${environmentConfig.HOST}/api/reports/?start=${start}&end=${end}&type=${type}`,
       });
 
       if (!!data) {

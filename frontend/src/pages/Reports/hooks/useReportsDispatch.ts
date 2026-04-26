@@ -1,42 +1,36 @@
 import type { Dispatch } from "react";
 import { useDispatch } from "react-redux";
+import type { ReportData } from "../ReportsInterface";
 import type { ReportDataType } from "../ReportsState";
 import {
+  updateReportCoverage,
   updateReportData,
   updateReportDataErrors,
   type ReportsAction,
 } from "../ReportsState";
 
 interface ReportsDispatch {
-  updateReportData: ({
-    data,
-    start,
-    end,
-    type,
-  }: {
-    data: any;
-    start: string;
-    end: string;
-    type: ReportDataType;
-  }) => void;
+  updateReportData: (data: ReportData) => void;
+  updateReportCoverage: (
+    start: string,
+    end: string,
+    type: ReportDataType,
+  ) => void;
   updateReportDataErrors: (errors: { [key: string]: any }) => void;
 }
 
 export const useReportsDispatch = (): ReportsDispatch => {
   const dispatch: Dispatch<ReportsAction> = useDispatch();
   return {
-    updateReportData: ({
-      data,
-      start,
-      end,
-      type,
-    }: {
-      data: any;
-      start: string;
-      end: string;
-      type: ReportDataType;
-    }): void => {
-      dispatch(updateReportData({ data, start, end, type }));
+    updateReportData: (data: ReportData): void => {
+      dispatch(updateReportData(data));
+    },
+    updateReportCoverage: (
+      start: string,
+      end: string,
+      type: ReportDataType,
+    ): void => {
+      dispatch(updateReportCoverage({ start, end, type }));
     },
     updateReportDataErrors: (errors: { [key: string]: any }): void => {
       dispatch(updateReportDataErrors({ errors }));

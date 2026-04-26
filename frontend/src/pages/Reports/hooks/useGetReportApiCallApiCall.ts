@@ -1,23 +1,9 @@
 import type { AxiosFetchWrapperResponse } from "@hooks/useAxiosFetch";
 import useAxiosFetch from "@hooks/useAxiosFetch";
-import type {
-  EvaluationAccount,
-  Trade,
-  TradingAccount,
-} from "@interfaces/CustomTypes";
-import type { JournalEntry } from "@pages/Journal/JournalInterfaces";
-
-type GetReportApiCallData =
-  | JournalEntry[]
-  | Trade[]
-  | TradingAccount[]
-  | EvaluationAccount[];
+import type { ReportData } from "../ReportsInterface";
 
 interface GetReportApiCallResponse {
-  data: GetReportApiCallData;
-  start: string;
-  end: string;
-  type: string;
+  data: ReportData;
 }
 
 interface GetReportApiCallErrors {
@@ -33,7 +19,7 @@ const useGetReportApiCall = (): AxiosFetchWrapperResponse<
   const { fetch, data, loading, error } = useAxiosFetch<
     GetReportApiCallResponse,
     GetReportApiCallErrors
-  >(`report/`, {
+  >(`reports/`, {
     method: "GET",
   });
 

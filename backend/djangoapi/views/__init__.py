@@ -2,6 +2,7 @@ from .account import LoginViewSet, LogoutViewSet, UserViewSet, user
 from .ai.tagging import AutoTagView
 from .dashboard.dashboard_summaries import DashboardSummariesView
 from .journal.journal_entry import JournalEntryViewSet
+from .reports.report import ReportView
 from .trades.trade import TradeViewSet
 from .tradingAccount.trading_account import (
     TradingAccountArchivedViewSet,

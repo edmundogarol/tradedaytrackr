@@ -1,0 +1,65 @@
+import { HorizontalSection } from "@styles/globalStyledComponents";
+import ReportStatCard from "./ReportStatCard";
+
+interface StatsBarProps {
+  data: {
+    totalPnl: number;
+    pnlPercentage?: number;
+    winRate: number;
+    totalTrades: number;
+    profitFactor: number;
+    expectancy: number;
+    avgWin: number;
+    avgLoss: number;
+  };
+}
+
+const ReportsStatsBar = ({ data }: StatsBarProps): React.ReactElement => {
+  const wins = Math.round(data.winRate * data.totalTrades);
+  const losses = data.totalTrades - wins;
+
+  return (
+    <HorizontalSection style={{ overflow: "scroll" }}>
+      <ReportStatCard
+        title="Total PnL"
+        value={`$${data.totalPnl.toLocaleString()}`}
+        subValue={data.pnlPercentage ? `${data.pnlPercentage}%` : undefined}
+        positive={data.totalPnl >= 0}
+        showChart
+      />
+
+      <ReportStatCard
+        title="Win Rate"
+        value={`${Math.round(data.winRate * 100)}%`}
+        positive={data.winRate >= 0.5}
+        subValue={`${wins}W / ${losses}L`}
+      />
+
+      <ReportStatCard
+        title="Profit Factor"
+        positive={data.profitFactor >= 1}
+        value={data.profitFactor.toFixed(2)}
+      />
+
+      <ReportStatCard
+        title="Expectancy"
+        positive={data.expectancy >= 0}
+        value={`$${data.expectancy.toFixed(2)}`}
+        subValue="Avg per trade"
+      />
+
+      <ReportStatCard
+        title="Total Trades"
+        value={data.totalTrades.toString()}
+        subValue="100% of trades"
+      />
+
+      <ReportStatCard
+        title="Avg Win / Avg Loss"
+        value={`$${data.avgWin.toFixed(2)} / $${data.avgLoss.toFixed(2)}`}
+      />
+    </HorizontalSection>
+  );
+};
+
+export default ReportsStatsBar;
