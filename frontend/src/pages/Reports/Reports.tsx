@@ -68,7 +68,9 @@ const Reports: React.FunctionComponent = () => {
           <SectionTitle>{getReportRangeTitle()}</SectionTitle>
           <DateFilter
             selectedRangeType={reportSelectedRangeType}
-            onDateChange={(start, end) => {
+            onDateChange={(start, end, rangeType) => {
+              if (!start || !end) return;
+
               updateReportCoverage({
                 start: start?.format("YYYY-MM-DD") || "",
                 end: end?.format("YYYY-MM-DD") || "",

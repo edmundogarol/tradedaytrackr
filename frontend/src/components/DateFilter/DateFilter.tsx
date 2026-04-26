@@ -1,5 +1,6 @@
-import { Box, Button, Stack } from "@mui/material";
+import { Button } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
+import { HorizontalSection } from "@styles/globalStyledComponents";
 import type { Moment } from "moment";
 import moment from "moment";
 import type { JSX } from "react";
@@ -10,7 +11,11 @@ export type RangeType = "today" | "week" | "month" | "custom";
 
 interface DateFilterProps {
   selectedRangeType?: RangeType;
-  onDateChange?: (start: Moment | null, end: Moment | null) => void;
+  onDateChange?: (
+    start: Moment | null,
+    end: Moment | null,
+    rangeType: RangeType,
+  ) => void;
 }
 
 const DateFilter = ({
@@ -18,7 +23,6 @@ const DateFilter = ({
   onDateChange,
 }: DateFilterProps): JSX.Element => {
   const [rangeType, setRangeType] = useState<RangeType>(selectedRangeType);
-
   const [start, setStart] = useState<Moment | null>(null);
   const [end, setEnd] = useState<Moment | null>(null);
 
@@ -53,62 +57,61 @@ const DateFilter = ({
 
     if (start && end && start.isAfter(end)) return;
 
-    onDateChange(start, end);
-  }, [start, end, onDateChange]);
+    onDateChange(start, end, rangeType);
+  }, [start, end, rangeType, onDateChange]);
 
   const handlePreset = (type: RangeType): void => {
     setRangeType(type);
   };
 
   return (
-    <Box>
-      <Stack direction="row" spacing={1}>
-        <Button
-          sx={rangeType === "today" ? styles.buttonSelected : styles.button}
-          onClick={() => handlePreset("today")}
-        >
-          Today
-        </Button>
+    <HorizontalSection>
+      <Button
+        sx={rangeType === "today" ? styles.buttonSelected : styles.button}
+        onClick={() => handlePreset("today")}
+      >
+        Today
+      </Button>
 
-        <Button
-          sx={rangeType === "week" ? styles.buttonSelected : styles.button}
-          onClick={() => handlePreset("week")}
-        >
-          This Week
-        </Button>
+      <Button
+        sx={rangeType === "week" ? styles.buttonSelected : styles.button}
+        onClick={() => handlePreset("week")}
+      >
+        This Week
+      </Button>
 
-        <Button
-          sx={rangeType === "month" ? styles.buttonSelected : styles.button}
-          onClick={() => handlePreset("month")}
-        >
-          This Month
-        </Button>
+      <Button
+        sx={rangeType === "month" ? styles.buttonSelected : styles.button}
+        onClick={() => handlePreset("month")}
+      >
+        This Month
+      </Button>
 
-        <Button
-          sx={rangeType === "custom" ? styles.buttonSelected : styles.button}
-          onClick={() => handlePreset("custom")}
-        >
-          Custom
-        </Button>
-      </Stack>
+      <Button
+        sx={rangeType === "custom" ? styles.buttonSelected : styles.button}
+        onClick={() => handlePreset("custom")}
+      >
+        Custom
+      </Button>
 
       {rangeType === "custom" && (
-        <Stack direction="row" spacing={2} mt={2}>
+        <>
           <DatePicker
+            slotProps={styles.input}
             label="Start"
             value={start}
             onChange={(newValue) => setStart(newValue)}
           />
-
           <DatePicker
+            slotProps={styles.input}
             label="End"
             value={end}
             minDate={start || undefined} // ✅ prevents invalid range
             onChange={(newValue) => setEnd(newValue)}
           />
-        </Stack>
+        </>
       )}
-    </Box>
+    </HorizontalSection>
   );
 };
 
