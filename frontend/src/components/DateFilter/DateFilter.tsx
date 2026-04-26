@@ -89,7 +89,15 @@ const DateFilter = ({
 
       <Button
         sx={rangeType === "custom" ? styles.buttonSelected : styles.button}
-        onClick={() => handlePreset("custom")}
+        onClick={() => {
+          if (rangeType === "custom") {
+            setStart(null);
+            setEnd(null);
+            handlePreset("week");
+            return;
+          }
+          handlePreset("custom");
+        }}
       >
         Custom
       </Button>

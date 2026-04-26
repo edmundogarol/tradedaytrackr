@@ -1,6 +1,7 @@
 import environmentConfig from "@utils/environmentConfig";
 import { keysToCamel } from "@utils/utils";
 import { useCallback } from "react";
+import { initialState } from "../ReportsState";
 import useGetReportApiCall from "./useGetReportApiCallApiCall";
 import { useReportsDispatch } from "./useReportsDispatch";
 import useReportsState from "./useReportsState";
@@ -26,7 +27,12 @@ const useGetReportHandler = (): GetReportHandler => {
       });
 
       if (!!data) {
-        updateReportData(keysToCamel(data));
+        const mappedData = keysToCamel(data);
+        if (!mappedData.overview.totalPnl) {
+          updateReportData(initialState.reportData);
+          return;
+        }
+        updateReportData(mappedData);
       } else if (error) {
         updateReportDataErrors(error);
       }
