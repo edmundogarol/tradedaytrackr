@@ -1,3 +1,4 @@
+import type { RangeType } from "@components/DateFilter/DateFilter";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
 import moment from "moment";
@@ -17,6 +18,7 @@ export interface ReportsState {
   };
   readonly reportDataStartDate: string | null;
   readonly reportDataEndDate: string | null;
+  readonly reportSelectedRangeType: RangeType;
   readonly reportDataType: ReportDataType | null;
 }
 
@@ -32,6 +34,7 @@ export const initialState: ReportsState = {
     },
     overview: {
       totalPnl: 0,
+      pnlPercentage: 0,
       winRate: 0,
       totalTrades: 0,
       profitFactor: 0,
@@ -54,9 +57,10 @@ export const initialState: ReportsState = {
     recentTrades: [],
   },
   reportDataErrors: {},
-  reportDataStartDate: moment().subtract(3, "day").format("YYYY-MM-DD"),
+  reportDataStartDate: moment().subtract(6, "day").format("YYYY-MM-DD"),
   reportDataEndDate: moment().format("YYYY-MM-DD"),
   reportDataType: ReportDataType.Trade,
+  reportSelectedRangeType: "week",
 };
 
 export type UpdateReportDataAction = PayloadAction<ReportData>;
@@ -68,11 +72,13 @@ export type UpdateReportCoverageAction = PayloadAction<{
 export type UpdateReportDataErrorsAction = PayloadAction<{
   errors: { [key: string]: any };
 }>;
+export type UpdateReportSelectedRangeTypeAction = PayloadAction<RangeType>;
 
 export type ReportsAction =
   | UpdateReportDataAction
   | UpdateReportCoverageAction
-  | UpdateReportDataErrorsAction;
+  | UpdateReportDataErrorsAction
+  | UpdateReportSelectedRangeTypeAction;
 
 export const reportsSlice = createSlice({
   name: "reports",
@@ -90,6 +96,12 @@ export const reportsSlice = createSlice({
     updateReportDataErrors: (state, action: UpdateReportDataErrorsAction) => {
       state.reportDataErrors = action.payload.errors;
     },
+    updateReportSelectedRangeType: (
+      state,
+      action: UpdateReportSelectedRangeTypeAction,
+    ) => {
+      state.reportSelectedRangeType = action.payload;
+    },
   },
 });
 
@@ -97,6 +109,7 @@ export const {
   updateReportData,
   updateReportCoverage,
   updateReportDataErrors,
+  updateReportSelectedRangeType,
 } = reportsSlice.actions;
 export const reportsReducer = reportsSlice.reducer;
 

@@ -4,7 +4,6 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import "./index.css";
-import reportWebVitals from "./reportWebVitals";
 import "./styles/plugins.css";
 
 const container = document.getElementById("app");
@@ -14,11 +13,17 @@ if (!container) {
   throw new Error("React mount point #app not found");
 }
 
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import reportWebVitals from "./reportWebVitals";
+
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <NavigationContainer />
-    </Provider>
+    <LocalizationProvider dateAdapter={AdapterMoment}>
+      <Provider store={store}>
+        <NavigationContainer />
+      </Provider>
+    </LocalizationProvider>
   </React.StrictMode>,
 );
 

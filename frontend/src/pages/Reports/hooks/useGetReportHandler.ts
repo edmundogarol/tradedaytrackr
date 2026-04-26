@@ -30,7 +30,7 @@ const useGetReportHandler = (): GetReportHandler => {
       } else if (error) {
         updateReportDataErrors(error);
       }
-    }, [loading]),
+    }, [loading, start, end, type]),
     loading,
   };
 };

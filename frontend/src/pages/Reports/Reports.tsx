@@ -1,10 +1,12 @@
 import AlertPopout from "@components/Alert/AlertPopout";
+import DateFilter from "@components/DateFilter/DateFilter";
 import Gap from "@components/Gap/Gap";
 import GlassTile from "@components/GlassTile/GlassTile";
 import { GlassTileChildrenWrapper } from "@components/GlassTile/GlassTileStyledComponents";
 import Page from "@components/Page/Page";
 import useJournalDispatch from "@pages/Journal/hooks/useJournalDispatch";
 import {
+  HorizontalSection,
   PageContainer,
   Section,
   SectionTitle,
@@ -12,17 +14,24 @@ import {
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import useGetReportHandler from "./hooks/useGetReportHandler";
-import useCalendarDispatch from "./hooks/useReportsDispatch";
-import {
-  default as useCalendarState,
-  default as useReportsState,
-} from "./hooks/useReportsState";
+import useCalendarDispatch, {
+  useReportsDispatch,
+} from "./hooks/useReportsDispatch";
+import useReportsState from "./hooks/useReportsState";
+import { ReportDataType } from "./ReportsState";
 import ReportsStatsBar from "./ReportsStatsBar";
 
 const Reports: React.FunctionComponent = () => {
-  const { reportData } = useReportsState();
+  const {
+    reportData,
+    reportDataStartDate,
+    reportDataEndDate,
+    reportDataErrors,
+    reportSelectedRangeType,
+  } = useReportsState();
+  const { updateReportCoverage } = useReportsDispatch();
   const { updateFundedView } = useJournalDispatch();
-  const { reportDataErrors } = useCalendarState();
+
   const { updateReportDataErrors } = useCalendarDispatch();
   const [calendarPickerOpen, setCalendarPickerOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState(moment(moment.now()));
@@ -30,7 +39,19 @@ const Reports: React.FunctionComponent = () => {
 
   useEffect(() => {
     getReport();
-  }, []);
+  }, [reportDataStartDate, reportDataEndDate]);
+
+  const getReportRangeTitle = (): string => {
+    if (reportSelectedRangeType === "today") {
+      return "Today's Report";
+    } else if (reportSelectedRangeType === "week") {
+      return "This Week's Report";
+    } else if (reportSelectedRangeType === "month") {
+      return "This Month's Report";
+    } else {
+      return "Custom Range Report";
+    }
+  };
 
   return (
     <Page topBarShowMenu={true}>
@@ -43,7 +64,19 @@ const Reports: React.FunctionComponent = () => {
         setPopoutOpen={() => updateReportDataErrors({})}
       />
       <PageContainer>
-        <SectionTitle>Reports</SectionTitle>
+        <HorizontalSection>
+          <SectionTitle>{getReportRangeTitle()}</SectionTitle>
+          <DateFilter
+            selectedRangeType={reportSelectedRangeType}
+            onDateChange={(start, end) => {
+              updateReportCoverage({
+                start: start?.format("YYYY-MM-DD") || "",
+                end: end?.format("YYYY-MM-DD") || "",
+                type: ReportDataType.Trade,
+              });
+            }}
+          />
+        </HorizontalSection>
         <Section>
           <GlassTile
             featureTile
@@ -53,7 +86,7 @@ const Reports: React.FunctionComponent = () => {
             noGlow={true}
           >
             <GlassTileChildrenWrapper>
-              <ReportsStatsBar data={reportData.overview} />
+              <ReportsStatsBar />
               <Gap level={1} />
             </GlassTileChildrenWrapper>
           </GlassTile>

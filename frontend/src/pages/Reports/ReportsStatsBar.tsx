@@ -2,21 +2,11 @@ import { HorizontalSection } from "@styles/globalStyledComponents";
 import { formatter } from "@utils/utils";
 import ReportStatCard from "./ReportStatCard";
 import { Value } from "./ReportsStyledComponents";
+import useReportsState from "./hooks/useReportsState";
 
-interface StatsBarProps {
-  data: {
-    totalPnl: number;
-    pnlPercentage?: number;
-    winRate: number;
-    totalTrades: number;
-    profitFactor: number;
-    expectancy: number;
-    avgWin: number;
-    avgLoss: number;
-  };
-}
-
-const ReportsStatsBar = ({ data }: StatsBarProps): React.ReactElement => {
+const ReportsStatsBar = (): React.ReactElement => {
+  const { reportData } = useReportsState();
+  const data = reportData.overview;
   const wins = Math.round(data.winRate * data.totalTrades);
   const losses = data.totalTrades - wins;
 
@@ -25,7 +15,9 @@ const ReportsStatsBar = ({ data }: StatsBarProps): React.ReactElement => {
       <ReportStatCard
         title="Total PnL"
         value={`$${data.totalPnl.toLocaleString()}`}
-        subValue={data.pnlPercentage ? `${data.pnlPercentage}%` : undefined}
+        subValue={
+          data.pnlPercentage ? `${data.pnlPercentage.toFixed(2)}%` : undefined
+        }
         positive={data.totalPnl >= 0}
         showChart
       />

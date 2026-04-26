@@ -13,6 +13,8 @@ import type moment from "moment";
 import type { Moment } from "moment";
 import type { JSX } from "react";
 import React, { useEffect, useState } from "react";
+
+import DateFilter from "@components/DateFilter/DateFilter";
 import {
   CloseIconContainer,
   Container,
@@ -29,6 +31,7 @@ export interface CalendarPickerProps {
   showSaveButton?: boolean;
   hideTimePicker?: boolean;
   views?: ("year" | "month" | "day")[];
+  rangePicker?: boolean;
 }
 
 const CalendarPicker: React.FC<CalendarPickerProps> = ({
@@ -41,6 +44,7 @@ const CalendarPicker: React.FC<CalendarPickerProps> = ({
   showSaveButton = true,
   hideTimePicker = false,
   views = ["year", "month", "day"],
+  rangePicker,
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [selectedDate, setSelectedDate] = useState<Moment | null>(null);
@@ -55,6 +59,9 @@ const CalendarPicker: React.FC<CalendarPickerProps> = ({
 
   const renderPicker = (): JSX.Element => (
     <LocalizationProvider dateAdapter={AdapterMoment}>
+      <If condition={rangePicker}>
+        <DateFilter />
+      </If>
       <DateCalendar
         views={views}
         value={selectedDate}

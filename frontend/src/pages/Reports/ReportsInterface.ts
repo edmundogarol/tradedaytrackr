@@ -9,6 +9,7 @@ export interface ReportData {
   };
   overview: {
     totalPnl: number;
+    pnlPercentage?: number;
     winRate: number;
     totalTrades: number;
     profitFactor: number;

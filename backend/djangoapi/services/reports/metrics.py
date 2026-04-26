@@ -37,6 +37,9 @@ class MetricsEngine:
 
         return {
             "total_pnl": float(total_pnl),
+            "pnl_percentage": (float(total_pnl) / abs(float(gross_loss)))
+            if gross_loss != 0
+            else None,
             "win_rate": round(win_rate, 4),
             "total_trades": total_trades,
             "profit_factor": float(profit_factor),
