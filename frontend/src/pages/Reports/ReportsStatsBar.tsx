@@ -1,5 +1,7 @@
 import { HorizontalSection } from "@styles/globalStyledComponents";
+import { formatter } from "@utils/utils";
 import ReportStatCard from "./ReportStatCard";
+import { Value } from "./ReportsStyledComponents";
 
 interface StatsBarProps {
   data: {
@@ -56,7 +58,14 @@ const ReportsStatsBar = ({ data }: StatsBarProps): React.ReactElement => {
 
       <ReportStatCard
         title="Avg Win / Avg Loss"
-        value={`$${data.avgWin.toFixed(2)} / $${data.avgLoss.toFixed(2)}`}
+        value={
+          <>
+            <Value $positive={data.avgWin >= 0}>
+              {formatter.format(data.avgWin)}
+            </Value>{" "}
+            / {formatter.format(data.avgLoss)}
+          </>
+        }
       />
     </HorizontalSection>
   );
