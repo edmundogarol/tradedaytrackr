@@ -1,10 +1,7 @@
 import logging
-from secrets import token_urlsafe
 
-from django.conf import settings
 from django.contrib.auth import get_user_model, login
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
@@ -13,15 +10,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from backend.djangoapi.serializers import UserSerializer
 from backend.djangoapi.serializers.user import RegisterSerializer, UpdateUserSerializer
-from backend.djangoapi.services.demo.seed_account_templates import (
-    seed_demo_account_templates,
-)
-from backend.djangoapi.services.demo.seed_tags import seed_demo_tags
 from backend.djangoapi.services.trades.timezone_recompute import recompute_user_timezone
-from backend.djangoapi.tasks.user import (
-    send_account_deleted_email,
-    send_verification_email,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -77,8 +66,6 @@ class UserViewSet(ModelViewSet):
             raise
 
         user = serializer.save()
-        seed_demo_account_templates(user)
-        seed_demo_tags(user)
 
         login(request, user)
         return Response(
@@ -107,7 +94,6 @@ class UserViewSet(ModelViewSet):
 
     def partial_update(self, request, *args, **kwargs):
         user = self.get_object()
-        old_email = user.email
 
         serializer = UpdateUserSerializer(
             user,
@@ -126,28 +112,7 @@ class UserViewSet(ModelViewSet):
             )
             raise
 
-        updated_user = serializer.save()
-
-        if "email" in request.data and old_email != updated_user.email:
-            logger.info(
-                "User email updated, sending verification email.",
-                extra={"user_id": request.user.id},
-            )
-            updated_user.is_verified = False
-            updated_user.verification_token = token_urlsafe(32)
-            updated_user.verification_sent_at = timezone.now()
-            updated_user.save()
-
-            verification_url = f"{settings.WEB_APP_URL}/dashboard?verification_token={updated_user.verification_token}"
-
-            try:
-                send_verification_email(updated_user, verification_url)
-            except Exception:
-                logger.error(
-                    "Failed to send verification email after email update.",
-                    exc_info=True,
-                    extra={"user_id": request.user.id},
-                )
+        serializer.save()
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -159,7 +124,6 @@ class UserViewSet(ModelViewSet):
 
         user = request.user
         data = request.data.copy()
-        old_email = user.email
 
         if "timezone" in data and len(data.keys()) == 1:
             new_timezone = data.get("timezone")
@@ -191,23 +155,6 @@ class UserViewSet(ModelViewSet):
             return Response(
                 {"user": UserSerializer(user, context={"request": request}).data},
                 status=200,
-            )
-
-        if user.is_demo:
-            logger.warning(
-                "Demo user attempted update.",
-                extra={"user_id": user.id},
-            )
-
-            if data.get("current_password"):
-                return Response(
-                    {"password_error": "Demo accounts cannot update password"},
-                    status=status.HTTP_403_FORBIDDEN,
-                )
-
-            return Response(
-                {"error": "Demo accounts cannot be updated"},
-                status=status.HTTP_403_FORBIDDEN,
             )
 
         if data.get("current_password"):
@@ -271,45 +218,17 @@ class UserViewSet(ModelViewSet):
             )
             raise
 
-        updated_user = serializer.save()
+        serializer.save()
 
         logger.info(
             "User profile updated successfully.",
             extra={"user_id": user.id},
         )
 
-        if "email" in data and old_email != updated_user.email:
-            logger.info(
-                "User email updated, sending verification email.",
-                extra={"user_id": user.id},
-            )
-
-            updated_user.is_verified = False
-            updated_user.verification_token = token_urlsafe(32)
-            updated_user.verification_sent_at = timezone.now()
-            updated_user.save()
-
-            try:
-                verification_url = f"{settings.WEB_APP_URL}/dashboard?verification_token={updated_user.verification_token}"
-                send_verification_email(updated_user, verification_url)
-            except Exception:
-                logger.error(
-                    "Failed to send verification email.",
-                    exc_info=True,
-                    extra={"user_id": user.id},
-                )
-
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
         user = self.get_object()
-
-        if user.is_demo:
-            logger.warning(
-                "Demo user attempted to delete account.",
-                extra={"user_id": request.user.id},
-            )
-            return Response({"detail": "Demo accounts cannot be deleted"}, status=403)
 
         if request.user != user:
             logger.warning(
@@ -323,41 +242,13 @@ class UserViewSet(ModelViewSet):
                 {"detail": "You can only delete your own account"}, status=403
             )
 
-        email = user.email
         user.delete()
-
-        try:
-            send_account_deleted_email(email)
-        except Exception:
-            logger.error(
-                "Failed to send account deleted email.",
-                exc_info=True,
-                extra={"email": email},
-            )
 
         return Response({"detail": "Account deleted"}, status=200)
 
     @action(detail=False, methods=["delete"], url_path="delete_me")
     def delete_me(self, request):
-        if request.user.is_demo:
-            logger.warning(
-                "Demo user attempted to delete account.",
-                extra={"user_id": request.user.id},
-            )
-            return Response({"detail": "Demo accounts cannot be deleted"}, status=403)
-
         user = request.user
-
-        email = user.email
         user.delete()
-
-        try:
-            send_account_deleted_email(email)
-        except Exception:
-            logger.error(
-                "Failed to send account deleted email.",
-                exc_info=True,
-                extra={"email": email},
-            )
 
         return Response({"detail": "Account deleted"}, status=200)

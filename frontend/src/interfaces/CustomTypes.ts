@@ -22,8 +22,6 @@ export interface User {
   logged_in: boolean;
   is_staff: boolean;
   is_verified: boolean;
-  is_demo: boolean;
-  membership_active?: boolean;
   last_ip?: string;
   verification_sent_at?: string;
   verification_token?: string;

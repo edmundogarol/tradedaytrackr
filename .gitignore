@@ -164,6 +164,14 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Yarn Berry local artifacts
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
 # Build static files
 backend/public
 backend/static/frontend

@@ -10,7 +10,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from backend.djangoapi.serializers import UserSerializer
-from backend.djangoapi.services.demo.reset_demo_user import reset_demo_user
 from backend.djangoapi.utils import visitor_ip_address
 
 logger = logging.getLogger(__name__)
@@ -98,19 +97,11 @@ class LoginViewSet(APIView):
 
         user = request.user
 
-        if user.is_demo:
-            logger.info(
-                "Resetting demo user after login.",
-                extra={"user_id": user.id},
-            )
+        timezone_input = request.data.get("timezone")
 
-            timezone_input = request.data.get("timezone")
-
-            if timezone_input:
-                user.timezone = timezone_input
-                user.save(update_fields=["timezone"])
-
-            reset_demo_user(user)
+        if timezone_input:
+            user.timezone = timezone_input
+            user.save(update_fields=["timezone"])
 
         user.last_login = timezone.now()
         user.last_ip = ip_data["ip"] if ip_data["valid"] else None

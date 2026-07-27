@@ -11,7 +11,6 @@ import ModalWrapper from "@components/Modal/Modal";
 import Page from "@components/Page/Page";
 import type { Tag } from "@interfaces/CustomTypes";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
-import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
 import PhotoIcon from "@mui/icons-material/Photo";
@@ -38,8 +37,6 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
 import DeleteJournalEntry from "../DeleteJournalEntry/JournalEntry";
 import useCreateJournalEntryHandler from "../hooks/useCreateJournalEntryHandler";
-import useGenerateDraftAIHandler from "../hooks/useGenerateDraftAIHandler";
-import useGenerateTagsAIHandler from "../hooks/useGenerateTagsAIHandler";
 import useGetJournalEntryHandler from "../hooks/useGetJournalEntryHandler";
 import useGetTradesByDateHandler from "../hooks/useGetTradesByDateHandler";
 import useJournalDispatch from "../hooks/useJournalDispatch";
@@ -84,10 +81,6 @@ import styles from "./JournalEntryStyles";
 const JournalEntry: React.FunctionComponent = () => {
   const [originalJournalEntry, setOriginalJournalEntry] =
     useState<JournalEntryType>(initialState.journalEntry);
-  const { generateTags, loading: generateTagsLoading } =
-    useGenerateTagsAIHandler();
-  const { generateDraft, loading: generateDraftLoading } =
-    useGenerateDraftAIHandler();
   const {
     journalEntry,
     selectedDateTrades,
@@ -368,23 +361,6 @@ const JournalEntry: React.FunctionComponent = () => {
                                   .includes(currentTagInput.toLowerCase()),
                             )}
                         />
-                        <InfoPopout
-                          infoDescription={
-                            "Auto generate tags based on trade description"
-                          }
-                        >
-                          <If condition={generateTagsLoading}>
-                            <Loading size={20} />
-                            <Else>
-                              <AutoFixHighIcon
-                                style={{ marginLeft: 5 }}
-                                onClick={() => {
-                                  generateTags(journalEntry.description);
-                                }}
-                              />
-                            </Else>
-                          </If>
-                        </InfoPopout>
                         <InfoPopout infoDescription={"Clear tags"}>
                           <DeleteOutlineIcon
                             onClick={() => {
@@ -700,25 +676,6 @@ const JournalEntry: React.FunctionComponent = () => {
                         }}
                       />
                       <DescriptionButtonsContainer>
-                        <InfoPopout
-                          infoDescription={
-                            "Auto generate draft based on trade tags"
-                          }
-                        >
-                          <If condition={generateDraftLoading}>
-                            <Loading size={20} />
-                            <Else>
-                              <AutoFixHighIcon
-                                style={{ marginLeft: 5 }}
-                                onClick={() => {
-                                  generateDraft(
-                                    journalEntry.tags.map((tag) => tag.name),
-                                  );
-                                }}
-                              />
-                            </Else>
-                          </If>
-                        </InfoPopout>
                         <InfoPopout infoDescription={"Clear description"}>
                           <DeleteOutlineIcon
                             onClick={() => {

@@ -1,9 +1,5 @@
 export enum PageEnum {
-  Landing = "/landing",
   Login = "/login",
-  SignUp = "/signUp",
-  ResetPassword = "/resetPassword",
-  ResetPasswordConfirmation = "/confirmResetPassword",
   PageNotFound = "/pageNotFound",
   Dashboard = "/dashboard",
   Journal = "/journalList",
@@ -18,11 +14,6 @@ export enum PageEnum {
   Calendar = "/calendar",
   AccountSettings = "/accountSettings",
   Preferences = "/preferences",
-  Billing = "/billing",
-  PrivacyPolicy = "/privacy",
-  TermsOfService = "/terms",
-  FrequentlyAskedQuestions = "/faq",
-  ContactUs = "/contactUs",
 }
 
 export type AuthenticatedStackNavigatorParams = {
@@ -37,21 +28,12 @@ export type AuthenticatedStackNavigatorParams = {
   [PageEnum.PayoutTracking]: undefined;
   [PageEnum.AccountSettings]: undefined;
   [PageEnum.Preferences]: undefined;
-  [PageEnum.Billing]: undefined;
   [PageEnum.Reports]: undefined;
 };
 
 export type UnauthenticatedStackNavigatorParams = {
-  [PageEnum.Landing]: undefined;
   [PageEnum.Login]: undefined;
-  [PageEnum.SignUp]: undefined;
-  [PageEnum.ResetPassword]: undefined;
-  [PageEnum.ResetPasswordConfirmation]: { token: string };
   [PageEnum.PageNotFound]: undefined;
-  [PageEnum.PrivacyPolicy]: undefined;
-  [PageEnum.TermsOfService]: undefined;
-  [PageEnum.FrequentlyAskedQuestions]: undefined;
-  [PageEnum.ContactUs]: undefined;
 };
 
 export interface Navigation {

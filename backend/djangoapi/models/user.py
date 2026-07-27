@@ -19,13 +19,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    is_demo = models.BooleanField(default=False)
 
     date_joined = models.DateTimeField(default=timezone.now)
-
-    is_verified = models.BooleanField(default=False)
-    verification_token_hash = models.CharField(max_length=64, null=True, blank=True)
-    verification_sent_at = models.DateTimeField(null=True, blank=True)
 
     last_ip = models.GenericIPAddressField(null=True, blank=True)
     timezone = models.CharField(max_length=50, default="UTC")

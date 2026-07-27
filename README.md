@@ -1,195 +1,75 @@
-# tradedaytrackr
+# TradeDayTrackR
 
-Repository: `tradedaytrackr`
+A personal, local-only trading journal and analytics app. Track trades, manage
+prop-firm-style accounts, journal entries, and analyze performance over time.
 
-## 🌐 Live Application
-
-Website: `www.tradedaytrackr.com`
-
-## TradeDayTrackR - Trade Journal App
-
-![TradeDayTrackR - Trade Journal App ](https://edmundo-dev-assets.s3.us-west-2.amazonaws.com/screenshots/tradedaytrackr-webapp)
-
-# 🚀 TradeDayTrackR
-
-A full-stack trading journal and analytics platform designed to help traders track performance, enforce discipline, and optimize their edge over time.
+This is a **single-user, run-on-your-own-machine** build — no accounts to pay for,
+no cloud, no recurring cost. Data lives in a local SQLite file and screenshots
+live on local disk.
 
 ---
 
-## 🧠 Overview
+## Tech stack
 
-TradeDayTrackR is a production-ready SaaS application built to simulate real prop-firm trading environments. It enables users to:
-
-- Track trades and journal entries
-- Manage multiple trading accounts
-- Enforce rule-based trading constraints
-- Analyze performance over time
-
-The system is designed with **scalability, reliability, and real-world usage** in mind.
+- **Backend:** Django + Django REST Framework, SQLite
+- **Frontend:** React (TypeScript), Webpack, Material UI
+- **Auth:** Django session auth (one local account you create)
 
 ---
 
-## ⚙️ Tech Stack
+## First-time setup
 
-### 🖥️ Frontend
+Requires Python 3 and Node (with `yarn`).
 
-- React (TypeScript)
-- Custom Hooks architecture
-- Context API (state management)
-- Axios (API layer)
-- Material UI + custom components
+```bash
+# 1. Backend deps + database
+make install      # creates venv, installs requirements
+make migrate      # builds the SQLite database
+make superuser    # create your login (email + password)
 
-### 🔧 Backend
-
-- Django + Django REST Framework
-- PostgreSQL
-- Session-based authentication
-- Celery (async tasks, email handling)
-
-### ☁️ Infrastructure
-
-- AWS Elastic Beanstalk (deployment)
-- AWS RDS (database)
-- AWS SES (email service)
-- Nginx (via EB)
-- Environment-based configuration
-
----
-
-## 🏗️ Architecture Overview
-
-The application follows a **layered architecture**:
-
-```text
-Frontend (React)
-    ↓
-API Layer (Axios hooks)
-    ↓
-Django REST API
-    ↓
-Service Layer (business logic)
-    ↓
-Database (PostgreSQL)
+# 2. Frontend deps are installed automatically by `make gui`
 ```
 
-### Key design principles:
+## Running day-to-day
 
-- **Separation of concerns**
-  - Views → request handling
-  - Services → business logic
-  - Models → data structure
+Two terminals:
 
-- **Custom hook abstraction** for API calls
-- **Deterministic backend validation**
-- **Environment-driven configuration (secure by default)**
+```bash
+make server       # backend  -> http://localhost:8000
+make gui          # frontend -> http://localhost:3000
+```
 
----
-
-## ✨ Key Features
-
-### 📊 Trading Journal
-
-- Log trades with structured data
-- Attach tags and notes
-- Track performance metrics
+Open http://localhost:3000 and log in with the account you created.
 
 ---
 
-### 🏦 Account Templates System
+## Useful commands
 
-- Create reusable templates for prop firm accounts
-- Supports:
-  - Evaluation accounts
-  - Funded accounts
+| Command | What it does |
+|---|---|
+| `make server` | Run the Django API (localhost:8000) |
+| `make gui` | Run the React dev server (localhost:3000) |
+| `make migrate` | Apply database migrations |
+| `make makemigrations` | Generate migrations after model changes |
+| `make superuser` | Create/add a login account |
+| `make testbe` | Run backend tests |
+| `make lint` | Lint the frontend |
+| `make cleanmedia` | Remove orphaned uploaded images |
+| `make resetdb` | Wipe DB + migrations and rebuild from scratch |
 
-- Conditional rule enforcement:
-  - Profit targets
-  - Drawdown limits
-  - Minimum trading days
-  - Consistency rules
+## Backup
 
----
+Everything you care about is two things — copy them anywhere to back up:
 
-### 🎮 Demo Mode (Unique Feature)
+- `db.sqlite3` — all trades, accounts, journal entries
+- `media/` — uploaded trade screenshots
 
-- Fully simulated trading environment
-- Automatically resets on login
-- Seeds predefined account templates
-- Allows users to explore the platform risk-free
+## Reset password
 
----
+No email is configured (local app). Reset a password via:
 
-### 🧩 Smart Validation System
+```bash
+. venv/bin/activate && python manage.py changepassword <your-email>
+```
 
-- Dynamic validation based on account type
-- Backend-driven business rules
-- Prevents invalid configurations
-
----
-
-### 🖼️ Optimized Media Handling
-
-- Image uploads are automatically:
-  - Resized
-  - Compressed
-  - Standardized
-
-- Supports both:
-  - Predefined icons
-  - Custom user uploads
-
----
-
-### 🔐 Authentication System
-
-- Secure session-based authentication
-- Login/logout handling
-- IP tracking for sessions
-
----
-
-### 📧 Email System
-
-- AWS SES integration
-- Production-ready email delivery
-- Supports transactional emails (e.g. auth flows)
-
----
-
-## 🧠 Notable Engineering Decisions
-
-- **Backend-first validation**
-  Ensures data integrity regardless of frontend behavior
-
-- **Snake_case ↔ camelCase mapping layer**
-  Clean separation between backend and frontend conventions
-
-- **Service layer abstraction**
-  Keeps business logic reusable and testable
-
-- **Serializable error handling**
-  Prevents frontend state issues (Redux-safe)
-
----
-
-## 📈 Future Improvements
-
-- Advanced analytics dashboard
-- Trade performance visualizations
-- Multi-account aggregation
-- Real-time data integrations
-
----
-
-## 👤 Author
-
-Built by Edmundo Garol
-
----
-
-## 🔒 Note
-
-Full source code is private due to production usage.
-Access can be granted upon request.
-
----
+or through the Django admin at http://localhost:8000/admin/.

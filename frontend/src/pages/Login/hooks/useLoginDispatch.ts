@@ -19,7 +19,6 @@ import {
   updateResetPasswordErrors,
   updateResetPasswordForm,
   updateResetPasswordFormSent,
-  updateSeedingDemoData,
   updateSignUpForm,
   updateSignUpFormErrors,
   updateTimezone,
@@ -63,7 +62,6 @@ interface LoginDispatch {
   updateTimezone(timezone: string): void;
   updateTimezoneErrors(errors: { [key: string]: any }): void;
   updateTimezoneUpdateModalOpen(isOpen: boolean): void;
-  updateSeedingDemoData(seedingDemoData: boolean): void;
 }
 
 export const useLoginDispatch = (): LoginDispatch => {
@@ -141,9 +139,6 @@ export const useLoginDispatch = (): LoginDispatch => {
     },
     updateTimezoneUpdateModalOpen(isOpen: boolean): void {
       dispatch(updateTimezoneUpdateModalOpen(isOpen));
-    },
-    updateSeedingDemoData(seedingDemoData: boolean): void {
-      dispatch(updateSeedingDemoData(seedingDemoData));
     },
   };
 };

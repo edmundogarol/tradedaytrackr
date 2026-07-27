@@ -34,7 +34,6 @@ import AlertPopout from "@components/Alert/AlertPopout";
 import { Else, If } from "@components/If/If";
 import ModalWrapper from "@components/Modal/Modal";
 import { Collapse, FormControlLabel, Pagination, Switch } from "@mui/material";
-import useLoginState from "@pages/Login/hooks/useLoginState";
 import useJournalDispatch from "./hooks/useJournalDispatch";
 import useJournalEntriesHandler from "./hooks/useJournalEntriesHandler";
 import useJournalState from "./hooks/useJournalState";
@@ -50,7 +49,6 @@ import styles from "./JournalStyles";
 
 const Journal: React.FunctionComponent = () => {
   const navigation = useReactNavigation();
-  const { user } = useLoginState();
   const {
     journalEntries,
     deleteJournalEntryErrors,
@@ -164,8 +162,6 @@ const Journal: React.FunctionComponent = () => {
                 id: "new",
               })
             }
-            disabled={!user?.membership_active}
-            disabledBlock={!user?.membership_active}
             text={"Add Entry"}
             iconType={IconTypeEnum.MaterialIcons}
             iconLeft={"add"}

@@ -2,22 +2,21 @@ import os
 from pathlib import Path
 
 from corsheaders.defaults import default_headers
+from dotenv import load_dotenv
 
-if "DEVENV" in os.environ:
-    from dotenv import load_dotenv
-
-    load_dotenv()
-
-    DEBUG = True
-    WEB_APP_URL = "http://localhost:3000"
-    WEB_API_URL = "http://localhost:8000"
-else:
-    DEBUG = False
-    WEB_APP_URL = "https://tradedaytrackr.com"
-    WEB_API_URL = "https://tradedaytrackr.com"
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Local single-user app: always in debug, no cloud.
+DEBUG = True
+WEB_APP_URL = "http://localhost:3000"
+WEB_API_URL = "http://localhost:8000"
+
+SECRET_KEY = os.getenv("SECRET_KEY", "local-dev-insecure-key-change-me")
+
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"]
 
 LOGGING = {
     "version": 1,
@@ -32,11 +31,6 @@ LOGGING = {
         "level": "INFO",
     },
     "loggers": {
-        "django.security.DisallowedHost": {
-            "handlers": ["console"],
-            "level": "CRITICAL",
-            "propagate": False,
-        },
         "django.server": {
             "handlers": ["console"],
             "level": "WARNING",
@@ -50,58 +44,19 @@ LOGGING = {
     },
 }
 
-SECRET_KEY = os.getenv("SECRET_KEY")
-WHOP_WEBHOOK_ACTIVATE_MEMBERSHIP_SECRET = os.getenv(
-    "WHOP_WEBHOOK_ACTIVATE_MEMBERSHIP_SECRET"
-)
-WHOP_WEBHOOK_DEACTIVATE_MEMBERSHIP_SECRET = os.getenv(
-    "WHOP_WEBHOOK_DEACTIVATE_MEMBERSHIP_SECRET"
-)
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-
-if "DEVENV" in os.environ:
-    ALLOWED_HOSTS = [
-        "*",
-        "localhost",
-        "127.0.0.1",
-    ]
-else:
-    ALLOWED_HOSTS = [
-        ".elasticbeanstalk.com",
-        ".tradedaytrackr.com",
-    ]
-
-if "DEVENV" in os.environ:
-    SESSION_COOKIE_SECURE = False
-    CSRF_COOKIE_SECURE = False
-    SESSION_COOKIE_SAMESITE = "Lax"
-    CSRF_COOKIE_SAMESITE = "Lax"
-    SESSION_COOKIE_DOMAIN = None
-    CSRF_COOKIE_DOMAIN = None
-else:
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SESSION_COOKIE_SAMESITE = "None"
-    CSRF_COOKIE_SAMESITE = "None"
-    SESSION_COOKIE_DOMAIN = ".tradedaytrackr.com"
-    CSRF_COOKIE_DOMAIN = ".tradedaytrackr.com"
+# Session/CSRF cookies for local http.
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SAMESITE = "Lax"
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://*.vercel.app",
     "http://localhost:3000",
-    "http://192.168.254.161:3000",
-    "https://tradedaytrackr.vercel.app",
-    "https://tradedaytrackr.com",
-    "https://www.tradedaytrackr.com",
+    "http://127.0.0.1:3000",
 ]
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "http://192.168.254.161:3000",
-    "https://tradedaytrackr.vercel.app",
-    "https://tradedaytrackr.com",
-    "https://www.tradedaytrackr.com",
+    "http://127.0.0.1:3000",
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = list(default_headers) + [
@@ -117,16 +72,13 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-    "rest_framework_swagger",
     "corsheaders",
     "backend.djangoapi",
-    "storages",
 ]
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -159,104 +111,39 @@ WSGI_APPLICATION = "backend.wsgi.application"
 
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
     "PAGE_SIZE": 10,
-    "DEFAULT_THROTTLE_CLASSES": [
-        "rest_framework.throttling.UserRateThrottle",
-    ],
-    "DEFAULT_THROTTLE_RATES": {
-        "user": "40/min",  # adjust to your needs
-    },
 }
 
 AUTH_USER_MODEL = "djangoapi.User"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("DB_NAME"),
-        "USER": os.getenv("DB_USERNAME"),
-        "PASSWORD": os.getenv("DB_PASSWORD"),
-        "HOST": os.getenv("DB_HOSTNAME"),
-        "PORT": os.getenv("DB_PORT"),
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
-if "DEVENV" in os.environ:
-    DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
-    MEDIA_URL = "/media/"
-    MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+# Media (trade screenshots) and static files on local disk.
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-else:
-    STORAGES = {
-        "default": {
-            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-        },
-        "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-        },
-    }
-    AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
-    AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME")
-    AWS_S3_FILE_OVERWRITE = False
-    AWS_DEFAULT_ACL = None
-    AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
-    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-
-if "DEVENV" in os.environ:
-    EMAIL_HOST = "0.0.0.0"
-    EMAIL_PORT = 1025
-    EMAIL_USE_TLS = False
-    EMAIL_HOST_USER = ""
-    EMAIL_HOST_PASSWORD = ""
-else:
-    EMAIL_HOST = os.getenv("EMAIL_HOST")
-    EMAIL_PORT = 587
-    EMAIL_USE_TLS = True
-    EMAIL_USE_SSL = False
-    EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-    EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-
-DEFAULT_FROM_EMAIL = "no-reply@tradedaytrackr.com"
+# No real mail server locally: print any mail to the console.
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "no-reply@localhost"
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
         "OPTIONS": {
             "min_length": 8,
         },
     },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
 ]
 
-
 LANGUAGE_CODE = "en-us"
-
 TIME_ZONE = "UTC"
-
 USE_I18N = True
-
 USE_TZ = True
-
-
-STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
-
-EMAIL_ASSETS_BASE_URL = (
-    "https://tradedaytrackr-extra-assets.s3.us-west-2.amazonaws.com/logos"
-)
-
-CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
-CELERY_ACCEPT_CONTENT = ["json"]
-CELERY_TASK_SERIALIZER = "json"

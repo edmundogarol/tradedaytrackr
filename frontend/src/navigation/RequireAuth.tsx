@@ -11,7 +11,7 @@ const RequireAuth = (): React.ReactElement => {
   }
 
   if (!user.logged_in) {
-    return <Navigate to={PageEnum.Landing} replace />;
+    return <Navigate to={PageEnum.Login} replace />;
   }
 
   return <Outlet />;

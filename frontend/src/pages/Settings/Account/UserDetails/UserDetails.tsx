@@ -1,10 +1,7 @@
 import AlertPopout from "@components/Alert/AlertPopout";
 import Button from "@components/Button/Button";
 import FormError from "@components/Error/FormError/FormError";
-import FormInfo from "@components/Error/FormInfo/FormInfo";
-import { FormInfoLink } from "@components/Error/FormInfo/FormInfoStyledComponents";
 import FormSuccess from "@components/Error/FormSuccess/FormSuccess";
-import FormWarning from "@components/Error/FormWarning/FormWarning";
 import Gap from "@components/Gap/Gap";
 import GlassTile from "@components/GlassTile/GlassTile";
 import { GlassTileChildrenWrapper } from "@components/GlassTile/GlassTileStyledComponents";
@@ -14,9 +11,7 @@ import ModalWrapper from "@components/Modal/Modal";
 import SelectWrapper from "@components/Select/SelectWrapper";
 import type { User } from "@interfaces/CustomTypes";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
-import DoneOutlineIcon from "@mui/icons-material/Done";
 import SouthIcon from "@mui/icons-material/South";
-import Switch from "@mui/material/Switch";
 import useLoginDispatch from "@pages/Login/hooks/useLoginDispatch";
 import useLoginState from "@pages/Login/hooks/useLoginState";
 import { BUTTON_WIDTH } from "@styles/constants";
@@ -27,23 +22,18 @@ import React, { useMemo, useState } from "react";
 import {
   AccountDetailsSection,
   AccountSettingsContainer,
-  CheckDescriptionContainer,
   EmailPreferencesSection,
   SubsectionHeaderWrapper,
-  SwitchItemRow,
   TimezoneComparisonModalContainer,
   TimezoneSection,
   UserNameContainer,
 } from "../AccountStyledComponents";
-import useRequestVerificationApiCall from "../hooks/useRequestVerificationApiCall";
-import useUpdateEmailPreferencesSubmitHandler from "../hooks/useUpdateEmailPreferencesSubmitHandler";
 import useUpdateUserSubmitHandler from "../hooks/useUpdateUserSubmitHandler";
 import useUpdateUserTimezoneSubmitHandler from "../hooks/useUpdateUserTimezoneSubmitHandler";
 
 const UserDetails: React.FunctionComponent = () => {
   const {
     user,
-    user: { email_preferences },
     userUpdateSuccess,
     userDetailsErrors,
     timezoneErrors,
@@ -52,7 +42,6 @@ const UserDetails: React.FunctionComponent = () => {
   const {
     updateUser,
     updateUserUpdateSuccess,
-    updateEmailPreferences,
     updateTimezoneUpdateModalOpen,
     updateTimezone,
     updateTimezoneErrors,
@@ -67,8 +56,6 @@ const UserDetails: React.FunctionComponent = () => {
     user.timezone,
   );
   const { updateUser: updateUserCall, loading } = useUpdateUserSubmitHandler();
-  const [showAlert, setShowAlert] = useState(false);
-  const { fetch: requestVerification } = useRequestVerificationApiCall();
   const userFieldsAreDirty = useMemo(() => {
     const dirtyFields =
       (user.username !== previousUserDetails.username &&
@@ -82,8 +69,6 @@ const UserDetails: React.FunctionComponent = () => {
 
     return dirtyFields;
   }, [user, previousUserDetails]);
-  const { update: updateEmailPreferencesCall } =
-    useUpdateEmailPreferencesSubmitHandler();
   const { updateUserTimezone, loading: updatingTimezone } =
     useUpdateUserTimezoneSubmitHandler();
 
@@ -145,12 +130,6 @@ const UserDetails: React.FunctionComponent = () => {
           }}
         />
       </ModalWrapper>
-      <AlertPopout
-        open={showAlert}
-        setPopoutOpen={() => setShowAlert(false)}
-        message={"Verification Email Sent"}
-        hideDuration={3000}
-      />
       <GlassTileChildrenWrapper>
         <SubsectionHeaderWrapper>
           <AccountBoxIcon style={{ color: "white", marginRight: 5 }} />
@@ -173,26 +152,6 @@ const UserDetails: React.FunctionComponent = () => {
               }}
             />
             <Gap level={2} />
-            <If condition={!user.is_verified}>
-              <FormWarning
-                detail={"Please check your inbox for a verification email."}
-              />
-              <FormInfo
-                detail={
-                  <>
-                    Didn't get it?{" "}
-                    <FormInfoLink
-                      onClick={() => {
-                        requestVerification();
-                        setShowAlert(true);
-                      }}
-                    >
-                      Resend email
-                    </FormInfoLink>
-                  </>
-                }
-              />
-            </If>
             <Input
               label="Email"
               error={userDetailsErrors.email}
@@ -268,84 +227,6 @@ const UserDetails: React.FunctionComponent = () => {
             />
           </AccountDetailsSection>
           <EmailPreferencesSection>
-            <SubsectionHeader>Email Preferences</SubsectionHeader>
-            <SwitchItemRow>
-              <CheckDescriptionContainer>
-                <DoneOutlineIcon style={{ color: "#4caf50", fontSize: 18 }} />
-                <span>Payout Reports</span>
-              </CheckDescriptionContainer>
-              <Switch
-                checked={email_preferences?.payout_reports}
-                defaultChecked={email_preferences?.payout_reports}
-                onChange={(checked) => {
-                  updateEmailPreferences({
-                    ...email_preferences,
-                    payout_reports: checked.target.checked,
-                  });
-                  updateEmailPreferencesCall({
-                    payout_reports: checked.target.checked,
-                  });
-                }}
-              />
-            </SwitchItemRow>
-            <SwitchItemRow>
-              <CheckDescriptionContainer>
-                <DoneOutlineIcon style={{ color: "#4caf50", fontSize: 18 }} />
-                <span>System Notifications</span>
-              </CheckDescriptionContainer>
-              <Switch
-                checked={email_preferences?.system_notifications}
-                defaultChecked={email_preferences?.system_notifications}
-                onChange={(checked) => {
-                  updateEmailPreferences({
-                    ...email_preferences,
-                    system_notifications: checked.target.checked,
-                  });
-                  updateEmailPreferencesCall({
-                    system_notifications: checked.target.checked,
-                  });
-                }}
-              />
-            </SwitchItemRow>
-            <SwitchItemRow>
-              <CheckDescriptionContainer>
-                <DoneOutlineIcon style={{ color: "#4caf50", fontSize: 18 }} />
-                <span>Exclusive Offers and Promotions</span>
-              </CheckDescriptionContainer>
-              <Switch
-                checked={email_preferences?.promotional_offers}
-                defaultChecked={email_preferences?.promotional_offers}
-                onChange={(checked) => {
-                  updateEmailPreferences({
-                    ...email_preferences,
-                    promotional_offers: checked.target.checked,
-                  });
-                  updateEmailPreferencesCall({
-                    promotional_offers: checked.target.checked,
-                  });
-                }}
-              />
-            </SwitchItemRow>
-            <SwitchItemRow>
-              <CheckDescriptionContainer>
-                <DoneOutlineIcon style={{ color: "#4caf50", fontSize: 18 }} />
-                <span>Unsubscribe from all emails</span>
-              </CheckDescriptionContainer>
-              <Switch
-                checked={email_preferences?.unsubscribe_all}
-                defaultChecked={email_preferences?.unsubscribe_all}
-                onChange={(checked) => {
-                  updateEmailPreferences({
-                    ...email_preferences,
-                    unsubscribe_all: checked.target.checked,
-                  });
-                  updateEmailPreferencesCall({
-                    unsubscribe_all: checked.target.checked,
-                  });
-                }}
-              />
-            </SwitchItemRow>
-            <Gap level={1} />
             <TimezoneSection>
               <SubsectionHeader>Timezone</SubsectionHeader>
               <If condition={!!userDetailsErrors?.timezone}>

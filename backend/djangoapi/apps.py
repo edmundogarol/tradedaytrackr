@@ -7,4 +7,3 @@ class DjangoapiConfig(AppConfig):
 
     def ready(self):
         import backend.djangoapi.signals.trade  # noqa: F401
-        import backend.djangoapi.signals.user  # noqa: F401

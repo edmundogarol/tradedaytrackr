@@ -7,6 +7,7 @@ from backend.djangoapi.models import (
     Trade,
     TradingAccount,
     TradingAccountTemplate,
+    TradingDay,
 )
 from backend.djangoapi.serializers.journal_entry import JournalEntrySerializer
 
@@ -19,6 +20,7 @@ def test_journal_entry_total_pnl():
     user = User.objects.create_user(email="test@test.com", password="password")
 
     template = TradingAccountTemplate.objects.create(
+        user=user,
         name="Test Template",
         firm="Test Firm",
         account_size=100000,
@@ -26,6 +28,7 @@ def test_journal_entry_total_pnl():
         profit_target=10000,
         min_trading_days=5,
         min_day_pnl=100,
+        max_drawdown=2000,
     )
 
     account = TradingAccount.objects.create(
@@ -42,14 +45,26 @@ def test_journal_entry_total_pnl():
         description="test entry",
     )
 
-    Trade.objects.create(
-        journal_entry=entry, account=account, date_time=timezone.now(), pnl=50
+    trading_day = TradingDay.objects.create(
+        account=account, date=timezone.now().date()
     )
 
     Trade.objects.create(
-        journal_entry=entry, account=account, date_time=timezone.now(), pnl=-10
+        journal_entry=entry,
+        account=account,
+        trading_day=trading_day,
+        date_time=timezone.now(),
+        pnl=50,
+    )
+
+    Trade.objects.create(
+        journal_entry=entry,
+        account=account,
+        trading_day=trading_day,
+        date_time=timezone.now(),
+        pnl=-10,
     )
 
     serializer = JournalEntrySerializer(entry)
 
-    assert serializer.data["totalPnL"] == 40
+    assert serializer.data["total_pnl"] == 40
