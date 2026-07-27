@@ -49,7 +49,7 @@ resetdb: deletemigrations deletedb makemigrations migrate
 # --- Frontend ---
 
 gui:
-	cd frontend && yarn && yarn run dev
+	cd frontend && yarn && yarn run watchdev
 
 buildgui:
 	cd frontend && yarn && yarn run build

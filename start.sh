@@ -27,4 +27,4 @@ echo "   Press Ctrl-C here to stop everything."
 echo ""
 cd frontend
 yarn install --silent
-yarn run dev
+yarn run watchdev
