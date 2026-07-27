@@ -1,8 +1,16 @@
 # TradeDayTrackR — local single-user app
 #
-# First-time setup:   make install && make migrate && make superuser
-# Every day:          make server   (in one terminal)
-#                     make gui      (in another terminal)
+# First time:   make setup     (installs everything, then asks you to create a login)
+# Every day:    make start      (runs backend + frontend together; Ctrl-C stops both)
+
+# --- Simple entry points ---
+
+setup: install migrate superuser
+	@echo ""
+	@echo "Setup complete. From now on just run:  make start"
+
+start:
+	./start.sh
 
 # --- Backend ---
 

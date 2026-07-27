@@ -17,29 +17,27 @@ live on local disk.
 
 ---
 
-## First-time setup
+## Quick start
 
-Requires Python 3 and Node (with `yarn`).
+Needs **Python 3** and **Node** (with `yarn`) installed.
 
-```bash
-# 1. Backend deps + database
-make install      # creates venv, installs requirements
-make migrate      # builds the SQLite database
-make superuser    # create your login (email + password)
-
-# 2. Frontend deps are installed automatically by `make gui`
-```
-
-## Running day-to-day
-
-Two terminals:
+**First time only** — installs everything, then asks you to create your login:
 
 ```bash
-make server       # backend  -> http://localhost:8000
-make gui          # frontend -> http://localhost:3000
+make setup
 ```
 
-Open http://localhost:3000 and log in with the account you created.
+(When it prompts, enter the email + password you want to log in with.)
+
+**Every time you want to use the app:**
+
+```bash
+make start
+```
+
+Then open **http://localhost:3000** and log in. Press **Ctrl-C** in the terminal to stop.
+
+That's it.
 
 ---
 
