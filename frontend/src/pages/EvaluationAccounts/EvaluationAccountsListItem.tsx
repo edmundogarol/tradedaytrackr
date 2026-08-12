@@ -108,7 +108,10 @@ const EvaluationAccountsListItem: React.FunctionComponent<
           {archived && dayValues.length === 0 ? (
             <SectionText>No trading days recorded</SectionText>
           ) : null}
-          {[...dayValues].reverse().map((dayValue, idx) => (
+          {[...dayValues]
+            .slice(0, 5)
+            .reverse()
+            .map((dayValue, idx) => (
             <DaysItem key={idx}>
               <GlassTile
                 positive={dayValue.pnl > 0}
