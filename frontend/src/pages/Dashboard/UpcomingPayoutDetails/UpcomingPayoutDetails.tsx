@@ -7,7 +7,8 @@ import PaidIcon from "@mui/icons-material/Paid";
 import Collapse from "@mui/material/Collapse";
 import useFundedAccountsState from "@pages/FundedAccounts/hooks/useFundedAccountsState";
 import { BorderLinearProgress } from "@styles/globalStyledComponents";
-import { formatter, m } from "@utils/utils";
+import { formatter } from "@utils/utils";
+import moment from "moment";
 import React from "react";
 import {
   Container,
@@ -70,7 +71,13 @@ const UpcomingPayoutDetails: React.FunctionComponent = () => {
                 <FeatureContentSubtext>Available</FeatureContentSubtext>
               </FeatureContentValue>
               <FeatureContentSubtitle>
-                {`Next Projected Payout Date: ${!!dashboardSummaries.upcomingPayout.projectedDate ? m(dashboardSummaries.upcomingPayout.projectedDate).format("MMM D") : "N/A"}`}
+                {!dashboardSummaries.upcomingPayout.projectedDate
+                  ? "Next Projected Payout Date: N/A"
+                  : dashboardSummaries.upcomingPayout.daysRemaining <= 0
+                    ? "Payout Available Now"
+                    : `Next Projected Payout Date: ${moment
+                        .utc(dashboardSummaries.upcomingPayout.projectedDate)
+                        .format("MMM D")}`}
               </FeatureContentSubtitle>
             </div>
             <FeatureContentProgressBarDrilldownContainer>

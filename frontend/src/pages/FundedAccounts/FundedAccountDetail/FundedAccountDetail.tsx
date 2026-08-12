@@ -32,6 +32,7 @@ import {
   HorizontalSection,
 } from "@styles/globalStyledComponents";
 import { decimalStringToInt, formatter, m } from "@utils/utils";
+import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
 import AddTradingDayModal from "../AddTradingDayModal/AddTradingDayModal";
@@ -149,16 +150,16 @@ const FundedAccountDetail: React.FunctionComponent<
   }, []);
 
   useEffect(() => {
+    if (!accountId) return;
     const selectedAccount =
-      currentTradingAccount.id !== 0
+      currentTradingAccount.id === Number(accountId)
         ? currentTradingAccount
         : tradingAccounts.find((account) => account.id === Number(accountId));
-    if (currentTradingAccount.id === selectedAccount?.id) return;
-    if (accountId && selectedAccount) {
-      updateCurrentTradingAccount(selectedAccount);
-      setOriginalTradingAccountDetails(selectedAccount);
-    }
-  }, [tradingAccounts, accountId, addTradeModalOpen]);
+    if (!selectedAccount) return;
+    if (originalTradingAccountDetails?.id === selectedAccount.id) return;
+    updateCurrentTradingAccount(selectedAccount);
+    setOriginalTradingAccountDetails(selectedAccount);
+  }, [tradingAccounts, accountId, addTradeModalOpen, currentTradingAccount.id]);
 
   useEffect(() => {
     if (currentTradingAccount.id !== 0) {
@@ -297,7 +298,7 @@ const FundedAccountDetail: React.FunctionComponent<
                             {
                               ...currentTradingAccount,
                             } as TradingAccount,
-                            currentTradingAccount.accountType.id,
+                            currentTradingAccount.accountType?.id,
                           );
                         }}
                       />
@@ -333,7 +334,7 @@ const FundedAccountDetail: React.FunctionComponent<
                     <Else>
                       <SelectButtonWrapper>
                         <SelectWrapper
-                          selectedValue={currentTradingAccount.accountType.id}
+                          selectedValue={currentTradingAccount.accountType?.id}
                           onSelect={(selected) => {
                             updateEditingFields({
                               editingAccountTemplate: false,
@@ -435,7 +436,8 @@ const FundedAccountDetail: React.FunctionComponent<
                               {
                                 ...currentTradingAccount,
                               } as TradingAccount,
-                              currentTradingAccount.accountType.id,
+                              currentTradingAccount.accountType?.id,
+                              currentTradingAccount.accountBalance,
                             );
                           }}
                         />
@@ -696,7 +698,7 @@ const FundedAccountDetail: React.FunctionComponent<
                       </DaysContainer>
                     </DateContainer>
                     <DateContainer>
-                      {m(dayValue.date).format("MMM D, YYYY")}
+                      {moment.utc(dayValue.date).format("MMM D, YYYY")}
                     </DateContainer>
                     <PnL $positive={dayValue.pnl >= 0}>
                       {formatter.format(dayValue.pnl)}
@@ -715,6 +717,13 @@ const FundedAccountDetail: React.FunctionComponent<
                                 });
                                 return;
                               }
+                              if (dayValue.trades.length === 0) {
+                                updateDeleteTradeErrors({
+                                  detail:
+                                    "This day has no trades or payouts to edit.",
+                                });
+                                return;
+                              }
                               updateSelectedTrade(dayValue.trades[0]);
                               updateAddTradeModalOpen(true);
                             }}
@@ -730,6 +739,13 @@ const FundedAccountDetail: React.FunctionComponent<
                                 updateDeleteTradeErrors({
                                   detail:
                                     "This trade day has multiple trades. Please delete individual records from trades displayed on this row",
+                                });
+                                return;
+                              }
+                              if (dayValue.trades.length === 0) {
+                                updateDeleteTradeErrors({
+                                  detail:
+                                    "This day has no trades or payouts to delete.",
                                 });
                                 return;
                               }

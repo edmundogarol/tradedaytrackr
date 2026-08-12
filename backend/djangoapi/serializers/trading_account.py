@@ -3,6 +3,7 @@ from rest_framework import serializers
 from backend.djangoapi.models.trading_account import TradingAccount
 from backend.djangoapi.models.trading_account_template import TradingAccountTemplate
 from backend.djangoapi.serializers.trading_day import TradingDaySerializer
+from backend.djangoapi.services.trades.account_balance import recompute_account_balance
 
 
 class TradingAccountSerializer(serializers.ModelSerializer):
@@ -129,7 +130,7 @@ class TradingAccountSerializer(serializers.ModelSerializer):
             "is_archived",
         ]
         extra_kwargs = {
-            "account_balance": {"required": False},
+            "account_balance": {"read_only": True},
         }
 
     def get_name(self, obj):
@@ -196,15 +197,7 @@ class TradingAccountSerializer(serializers.ModelSerializer):
         }
 
     def get_buffer_percent(self, obj):
-        min_buffer = obj.template.min_buffer
-        balance = obj.account_balance - obj.template.account_size
-
-        if not min_buffer or min_buffer == 0:
-            return 0
-
-        progress = (balance / min_buffer) * 100
-
-        return min(round(progress, 2), 100)
+        return obj.get_buffer_percent()
 
     def get_withdrawable_amount(self, obj):
         return obj.get_withdrawable_amount()
@@ -218,7 +211,7 @@ class TradingAccountSerializer(serializers.ModelSerializer):
     def get_current_day_count(self, obj):
         return obj.get_current_day_count()
 
-    def validate_account_balance(self, value):
+    def validate_baseline_balance(self, value):
         if value < 0:
             raise serializers.ValidationError("Balance cannot be negative")
 
@@ -256,5 +249,22 @@ class TradingAccountSerializer(serializers.ModelSerializer):
             account_balance=baseline,
             **validated_data,
         )
+
+        return account
+
+    def update(self, instance, validated_data):
+        # account_balance is derived (baseline_balance + trades - payouts) and
+        # recomputed by the Trade post_save/post_delete signal, so it must
+        # never be written here directly — doing so would only "stick" until
+        # the next trade save silently reverts it. Edits to the account's
+        # balance go through baseline_balance instead, then we recompute so
+        # the displayed account_balance reflects the change immediately.
+        validated_data.pop("account_balance", None)
+
+        account = super().update(instance, validated_data)
+
+        if "baseline_balance" in validated_data:
+            recompute_account_balance(account)
+            account.refresh_from_db()
 
         return account

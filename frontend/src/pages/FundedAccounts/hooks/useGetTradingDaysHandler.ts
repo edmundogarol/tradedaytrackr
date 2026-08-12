@@ -1,4 +1,5 @@
 import environmentConfig from "@utils/environmentConfig";
+import { keysToCamel } from "@utils/utils";
 import { set } from "lodash";
 import { useCallback } from "react";
 import useFundedAccountsDispatch from "./useFundedAccountsDispatch";
@@ -29,11 +30,10 @@ const useGetTradingDaysHandler = (): GetTradingDaysHandler => {
 
         const { error, data } = await fetch(options);
 
-        console.log({ currentTradingAccount });
         if (!!data) {
           updateCurrentTradingAccount({
             ...currentTradingAccount,
-            dayValues: data.results,
+            dayValues: keysToCamel(data.results),
             dayValuesNextPage: data?.next || "",
             dayValuesCount: data.count,
           });

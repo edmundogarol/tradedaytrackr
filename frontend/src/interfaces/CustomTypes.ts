@@ -163,6 +163,24 @@ export interface PayoutMonthlySummary {
   payoutsCount: number;
 }
 
+export interface BudgetPurchase {
+  id: number;
+  firm?: string;
+  accountSize?: number;
+  cost: number;
+  purchaseDate: string;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface BudgetMonthlySummary {
+  month: string;
+  totalSpend: number;
+  purchasesCount: number;
+  totalPayout: number;
+  net: number;
+}
+
 export interface DashboardSummaries {
   upcomingPayout: {
     expected: number;
@@ -171,6 +189,13 @@ export interface DashboardSummaries {
     minDays: number;
     firmName?: string;
     daysRemaining: number;
+    accountId?: number;
+    readyAccounts: {
+      id: number;
+      accountName: string;
+      firm: string;
+      withdrawableAmount: number;
+    }[];
   };
   currentStats: {
     withdrawablePnl: number;
@@ -191,6 +216,7 @@ export interface DashboardSummaries {
     groups: {
       accountCount: number;
       bufferLeft: number;
+      bufferAchieved: number;
       minBuffer: number;
       firms: string[];
     }[];

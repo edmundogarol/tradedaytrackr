@@ -1,4 +1,5 @@
 import { PageEnum } from "@interfaces/NavigationTypes";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import AssuredWorkloadIcon from "@mui/icons-material/AssuredWorkload";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
@@ -40,6 +41,11 @@ export const useGetDrawerItems = (): Array<{
         text: "Payout Tracking",
         icon: <PaymentsIcon />,
         onClick: (): void => navigation.navigate(PageEnum.PayoutTracking),
+      },
+      {
+        text: "Budget Tracking",
+        icon: <AccountBalanceWalletIcon />,
+        onClick: (): void => navigation.navigate(PageEnum.BudgetTracking),
       },
       {
         text: "Journal",

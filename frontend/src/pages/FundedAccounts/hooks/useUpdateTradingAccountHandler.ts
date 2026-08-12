@@ -11,6 +11,13 @@ interface UpdateTradingAccountHandler {
   updateTradingAccount: (
     tradingAccount: TradingAccount,
     templateId: number,
+    // Only pass this when the user actually edited the balance field.
+    // account_balance is a derived value (baseline_balance + trades -
+    // payouts), so it must be sent as baseline_balance, and only when it's
+    // genuinely changing — sending the account's current (already-derived)
+    // balance on an unrelated name/template edit would double-count it the
+    // next time a trade is saved.
+    newBaselineBalance?: number,
   ) => Promise<void>;
   loading: boolean;
 }
@@ -25,12 +32,18 @@ const useUpdateTradingAccountHandler = (): UpdateTradingAccountHandler => {
   const { getTradingAccounts } = useGetTradingAccountsHandler();
   return {
     updateTradingAccount: useCallback(
-      async (tradingAccount: TradingAccount, templateId: number) => {
+      async (
+        tradingAccount: TradingAccount,
+        templateId: number,
+        newBaselineBalance?: number,
+      ) => {
         const { error, data } = await fetch({
           data: {
             template_id: templateId,
             account_name: tradingAccount.name,
-            account_balance: tradingAccount.accountBalance,
+            ...(newBaselineBalance !== undefined
+              ? { baseline_balance: newBaselineBalance }
+              : {}),
           },
           url: `${environmentConfig.HOST}/api/trading-accounts/${tradingAccount.id}/`,
         });

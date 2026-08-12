@@ -47,13 +47,15 @@ export const useGetFundedAccountsStatsSummaryDetails =
       );
     }, [filteredTradingAccounts]);
 
+    // "Near" = approaching eligibility, not already there — matches the
+    // Dashboard's definition (buffer_percent < 100 excludes accounts that
+    // are already payout-eligible). Previously also required
+    // currentDayCount <= 5, a hardcoded value that only coincidentally
+    // matched this account's minimum trading days and misclassified
+    // accounts on templates with a different minimum.
     const accountsNearPayout = useMemo(() => {
       return filteredTradingAccounts.filter(
-        (account) =>
-          account.currentDayCount >= 0 &&
-          account.currentDayCount <= 5 &&
-          account.bufferPercent > 70 &&
-          account.bufferPercent < 100,
+        (account) => account.bufferPercent > 70 && account.bufferPercent < 100,
       ).length;
     }, [filteredTradingAccounts]);
 
@@ -105,7 +107,7 @@ export const useGetFundedAccountsStatsSummaryDetails =
         tileValueColor: "#b2deb2",
         tileTitle: "Accounts Near Payout",
         tileSubtitle: {
-          content: "Within 5 days",
+          content: "70%+ buffer built",
         },
         tileShinePositive: true,
         tileIcon: <DateRangeIcon style={styles.featureIconStyle(40)} />,

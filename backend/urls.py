@@ -12,6 +12,10 @@ from backend.djangoapi.views.account.currency import (
     UpdateCurrencyView,
 )
 from backend.djangoapi.views.account.user import UserViewSet
+from backend.djangoapi.views.budget.budget_purchase import BudgetPurchaseViewSet
+from backend.djangoapi.views.budget.monthly_budget_summaries import (
+    MonthlyBudgetSummariesView,
+)
 from backend.djangoapi.views.dashboard.dashboard_summaries import DashboardSummariesView
 from backend.djangoapi.views.journal.journal_entry import JournalEntryViewSet
 from backend.djangoapi.views.journal.journal_entry_by_date import (
@@ -76,6 +80,7 @@ router.register(r"tags", TagViewSet, basename="tags")
 router.register(r"rules", RuleViewSet, basename="rules")
 router.register(r"trades", TradeViewSet, basename="trades")
 router.register(r"trading-days", TradingDayViewSet, basename="trading-days")
+router.register(r"budget-purchases", BudgetPurchaseViewSet, basename="budget-purchases")
 
 urlpatterns = [
     path("health/", health_check),
@@ -84,6 +89,7 @@ urlpatterns = [
     path("api/user/currency/", UpdateCurrencyView.as_view()),
     path("api/user/refresh-currency/", RefreshConversionRateView.as_view()),
     path("api/monthly-payout-summaries/", MonthlyPayoutSummariesView.as_view()),
+    path("api/monthly-budget-summaries/", MonthlyBudgetSummariesView.as_view()),
     path("api/dashboard/summaries/", DashboardSummariesView.as_view()),
     path("api/payouts/list/", PayoutListView.as_view()),
     path(

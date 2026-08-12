@@ -1,3 +1,4 @@
+import type { BudgetTrackingState } from "@pages/BudgetTracking/BudgetTrackingState";
 import type { CalendarState } from "@pages/Calendar/CalendarState";
 import type { JournalState } from "@pages/Journal/JournalState";
 import type { LoginState } from "@pages/Login/LoginState";
@@ -9,6 +10,7 @@ export interface StoreState {
   journal: JournalState;
   settings: SettingsState;
   payouts: PayoutsState;
+  budgetTracking: BudgetTrackingState;
   calendar: CalendarState;
   reports: any;
 }

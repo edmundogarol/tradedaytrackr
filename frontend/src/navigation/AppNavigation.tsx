@@ -2,6 +2,7 @@ import AlertPopout from "@components/Alert/AlertPopout";
 import LoadingPage from "@components/Loading/LoadingPage";
 import PageNotFound from "@components/PageNotFound/PageNotFound";
 import { PageEnum } from "@interfaces/NavigationTypes";
+import BudgetTracking from "@pages/BudgetTracking/BudgetTracking";
 import Calendar from "@pages/Calendar/Calendar";
 import Dashboard from "@pages/Dashboard/Dashboard";
 import EvaluationAccountDetail from "@pages/EvaluationAccounts/EvaluationAccountDetail/EvaluationAccountDetail";
@@ -94,6 +95,10 @@ const AppNavigation: React.FunctionComponent = (): React.ReactElement => {
           <Route path={PageEnum.Journal} element={<Journal />} />
           <Route path={PageEnum.JournalEntry} element={<JournalEntry />} />
           <Route path={PageEnum.PayoutTracking} element={<Payouts />} />
+          <Route
+            path={PageEnum.BudgetTracking}
+            element={<BudgetTracking />}
+          />
           <Route path={PageEnum.Calendar} element={<Calendar />} />
           <Route path={PageEnum.Reports} element={<Reports />} />
           <Route path={PageEnum.AccountSettings} element={<Account />} />

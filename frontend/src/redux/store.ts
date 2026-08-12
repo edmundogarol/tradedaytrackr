@@ -1,3 +1,4 @@
+import { budgetTrackingReducer } from "@pages/BudgetTracking/BudgetTrackingState";
 import { calendarReducer } from "@pages/Calendar/CalendarState";
 import { fundedAccountsReducer } from "@pages/FundedAccounts/FundedAccountsState";
 import { journalReducer } from "@pages/Journal/JournalState";
@@ -21,6 +22,7 @@ export default configureStore({
     settings: settingsReducer,
     fundedAccounts: fundedAccountsReducer,
     payouts: payoutsReducer,
+    budgetTracking: budgetTrackingReducer,
     calendar: calendarReducer,
     reports: reportsReducer,
   },

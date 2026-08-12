@@ -78,7 +78,7 @@ const CalendarPicker: React.FC<CalendarPickerProps> = ({
           onChange={(newValue: Moment | null) => {
             setSelectedDate(newValue);
             if (onChange) {
-              onChange(newValue);
+              onChange(newValue ? newValue.toDate() : null);
             }
           }}
           sx={{

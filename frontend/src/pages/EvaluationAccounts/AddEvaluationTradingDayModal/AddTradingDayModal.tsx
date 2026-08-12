@@ -150,10 +150,13 @@ const AddTradingDayModal: React.FunctionComponent = () => {
               showPicker
               value={m(selectedTrade.date)}
               onChange={(date) => {
+                const dayChanged =
+                  m(date).format("YYYY-MM-DD") !== selectedDay;
                 updateSelectedTrade({
                   ...selectedTrade,
                   date: m(date).format("YYYY-MM-DDTHH:mm:ssZ"),
-                });
+                  journalEntry: dayChanged ? null : selectedTrade.journalEntry,
+                } as Trade);
               }}
             />
           </DateCalendarContainer>

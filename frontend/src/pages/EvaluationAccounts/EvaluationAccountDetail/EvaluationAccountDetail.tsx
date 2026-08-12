@@ -57,6 +57,7 @@ import useGetFundedAccountTemplates from "@pages/Settings/hooks/useGetFundedAcco
 import useGetAccountTemplatesHandler from "@pages/Settings/Preferences/hooks/useGetAccountTemplatesHandler";
 import { BorderLinearProgress } from "@styles/globalStyledComponents";
 import { decimalStringToInt, formatter, m } from "@utils/utils";
+import moment from "moment";
 import AddTradingDayModal from "../AddEvaluationTradingDayModal/AddTradingDayModal";
 import {
   AccountImage,
@@ -149,16 +150,16 @@ const EvaluationAccountDetail: React.FunctionComponent<
   }, []);
 
   useEffect(() => {
+    if (!accountId) return;
     const selectedAccount =
-      currentTradingAccount.id !== 0
+      currentTradingAccount.id === Number(accountId)
         ? currentTradingAccount
         : tradingAccounts.find((account) => account.id === Number(accountId));
-    if (currentTradingAccount.id === selectedAccount?.id) return;
-    if (accountId && selectedAccount) {
-      updateCurrentTradingAccount(selectedAccount);
-      setOriginalTradingAccountDetails(selectedAccount);
-    }
-  }, [tradingAccounts, accountId, addTradeModalOpen]);
+    if (!selectedAccount) return;
+    if (originalTradingAccountDetails?.id === selectedAccount.id) return;
+    updateCurrentTradingAccount(selectedAccount);
+    setOriginalTradingAccountDetails(selectedAccount);
+  }, [tradingAccounts, accountId, addTradeModalOpen, currentTradingAccount.id]);
 
   const accountProgress =
     ((currentTradingAccount?.accountBalance -
@@ -298,7 +299,7 @@ const EvaluationAccountDetail: React.FunctionComponent<
                             {
                               ...currentTradingAccount,
                             } as TradingAccount,
-                            currentTradingAccount.accountType.id,
+                            currentTradingAccount.accountType?.id,
                           );
                         }}
                       />
@@ -334,7 +335,7 @@ const EvaluationAccountDetail: React.FunctionComponent<
                     <Else>
                       <SelectButtonWrapper>
                         <SelectWrapper
-                          selectedValue={currentTradingAccount.accountType.id}
+                          selectedValue={currentTradingAccount.accountType?.id}
                           onSelect={(selected) => {
                             updateEditingFields({
                               editingAccountTemplate: false,
@@ -436,7 +437,8 @@ const EvaluationAccountDetail: React.FunctionComponent<
                               {
                                 ...currentTradingAccount,
                               } as TradingAccount,
-                              currentTradingAccount.accountType.id,
+                              currentTradingAccount.accountType?.id,
+                              currentTradingAccount.accountBalance,
                             );
                           }}
                         />
@@ -662,7 +664,7 @@ const EvaluationAccountDetail: React.FunctionComponent<
                       </DaysContainer>
                     </DateContainer>
                     <DateContainer>
-                      {m(dayValue.date).format("MMM D, YYYY")}
+                      {moment.utc(dayValue.date).format("MMM D, YYYY")}
                     </DateContainer>
                     <PnL $positive={dayValue.pnl >= 0}>
                       {formatter.format(dayValue.pnl)}

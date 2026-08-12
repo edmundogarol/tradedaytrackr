@@ -66,21 +66,49 @@ class DashboardSummariesView(APIView):
             if acc.get_withdrawable_amount() > 0  # buffer met
         ]
 
+        # Every account that's fully payout-eligible right now (min days,
+        # consistency, and safety net all met) — surfaced so the frontend
+        # can offer a choice when more than one account qualifies at once.
+        ready_accounts = [
+            {
+                "id": acc.id,
+                "account_name": acc.account_name,
+                "firm": acc.template.firm,
+                "withdrawable_amount": acc.get_expected_withdrawable_now(),
+            }
+            for acc in funded_accounts
+            if acc.get_days_remaining() <= 0
+            and acc.get_expected_withdrawable_now() > 0
+        ]
+        ready_accounts.sort(key=lambda a: a["withdrawable_amount"], reverse=True)
+
         if candidates:
             # pick closest by days (highest progress)
             reference_account = max(
                 candidates, key=lambda acc: acc.get_current_day_count()
             )
 
-            avg_trade = reference_account.get_average_trade()
-
-            expected_payout_now = (
-                reference_account.get_withdrawable_amount() + avg_trade
-            )
-
             days_remaining = reference_account.get_days_remaining()
 
-            projected_date = today + timedelta(days=days_remaining)
+            # already payout-eligible right now (min days met, consistency
+            # met, profit above safety net) — show the real amount
+            # available today rather than a padded future projection.
+            already_eligible = (
+                days_remaining <= 0
+                and reference_account.get_expected_withdrawable_now() > 0
+            )
+
+            if already_eligible:
+                expected_payout_now = reference_account.get_expected_withdrawable_now()
+                projected_date = today
+            else:
+                avg_trade = reference_account.get_average_trade()
+
+                expected_payout_now = (
+                    reference_account.get_withdrawable_amount() + avg_trade
+                )
+
+                projected_date = today + timedelta(days=days_remaining)
 
         else:
             projected_date = None
@@ -108,10 +136,13 @@ class DashboardSummariesView(APIView):
         # =========================
         active_pas = funded_accounts.count()
 
+        # "Near" means approaching eligibility, not already there — matches
+        # the Funded Accounts page's own definition (buffer_percent < 100
+        # excludes accounts that are already payout-eligible).
         near_payout = sum(
             1
             for acc in funded_accounts
-            if acc.get_days_remaining() <= 2 and acc.get_withdrawable_amount() > 0
+            if 70 < acc.get_buffer_percent() < 100
         )
 
         # =========================
@@ -130,13 +161,10 @@ class DashboardSummariesView(APIView):
 
             buffer_left = max(min_buffer - current_buffer, 0)
 
-            # ignore already completed accounts (optional)
-            if buffer_left == 0:
-                continue
-
             accounts_with_buffer.append(
                 {
                     "account": acc,
+                    "current_buffer": current_buffer,
                     "buffer_left": buffer_left,
                     "min_buffer": min_buffer,
                     "firm": acc.template.firm,
@@ -170,9 +198,17 @@ class DashboardSummariesView(APIView):
         buffer_groups = []
 
         for group in groups:
+            # uncapped — shows surplus once an account clears its min buffer,
+            # matching the per-account "$X / $min_buffer" figure on the
+            # Funded Accounts / Account Detail pages
+            buffer_achieved = max(
+                acc["current_buffer"] for acc in group["accounts"]
+            )
+
             buffer_groups.append(
                 {
                     "buffer_left": round(group["buffer_left"], 2),
+                    "buffer_achieved": round(buffer_achieved, 2),
                     "min_buffer": group["min_buffer"],
                     "account_count": len(group["accounts"]),
                     "firms": list(set(acc["firm"] for acc in group["accounts"])),
@@ -187,12 +223,14 @@ class DashboardSummariesView(APIView):
             min_days_required = reference_account.template.min_trading_days or 0
             days_remaining = reference_account.get_days_remaining()
             firm_name = reference_account.template.name if reference_account else None
+            reference_account_id = reference_account.id
         else:
             days_completed = 0
             min_days_required = 0
             days_remaining = 0
             firm_name = None
             projected_date = None
+            reference_account_id = None
 
         return Response(
             {
@@ -203,6 +241,8 @@ class DashboardSummariesView(APIView):
                     "min_days": min_days_required,
                     "firm_name": firm_name,
                     "days_remaining": days_remaining,
+                    "account_id": reference_account_id,
+                    "ready_accounts": ready_accounts,
                 },
                 "current_stats": {
                     "withdrawable_pnl": round(withdrawable, 2),

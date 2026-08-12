@@ -1,9 +1,11 @@
 import type { StatsSummaryTileDetails } from "@components/Stats/StatsSummary/StatsSummary";
 import styles from "@components/Stats/StatsSummary/StatsSummaryStyles";
+import { PageEnum } from "@interfaces/NavigationTypes";
 import AutoAwesomeMotionIcon from "@mui/icons-material/AutoAwesomeMotion";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import DateRangeIcon from "@mui/icons-material/DateRange";
+import useReactNavigation from "@navigation/hooks/useReactNavigation";
 import useFundedAccountsState from "@pages/FundedAccounts/hooks/useFundedAccountsState";
 import { color } from "@styles/colors";
 import { formatter } from "@utils/utils";
@@ -11,6 +13,20 @@ import { formatter } from "@utils/utils";
 export const useGetDashboardStatsSummaryDetails =
   (): StatsSummaryTileDetails[] => {
     const { dashboardSummaries } = useFundedAccountsState();
+    const navigation = useReactNavigation();
+    const isReadyForPayout = dashboardSummaries.currentStats.daysToPayout <= 0;
+    const readyAccountId = dashboardSummaries.upcomingPayout.accountId;
+    const readyAccounts = dashboardSummaries.upcomingPayout.readyAccounts || [];
+
+    const goToAccount = (id: number): void =>
+      navigation.navigate(PageEnum.FundedAccountDetail, { id });
+
+    const readyAccountDropdownItems = readyAccounts.map((account) => ({
+      label: `${account.accountName} (${account.firm})`,
+      subLabel: `${formatter.format(account.withdrawableAmount)} available`,
+      onClick: (): void => goToAccount(account.id),
+    }));
+
     return [
       {
         tileValue: "$",
@@ -28,7 +44,9 @@ export const useGetDashboardStatsSummaryDetails =
         tileIcon: <CreditCardIcon style={styles.iconStyle(60)} />,
       },
       {
-        tileValue: dashboardSummaries.currentStats.daysToPayout.toString(),
+        tileValue: isReadyForPayout
+          ? "Ready"
+          : dashboardSummaries.currentStats.daysToPayout.toString(),
         tileValueColor:
           dashboardSummaries.currentStats.daysToPayout < 3
             ? color("SystemGreen")
@@ -39,8 +57,21 @@ export const useGetDashboardStatsSummaryDetails =
         },
         tileShinePositive: dashboardSummaries.currentStats.daysToPayout < 3,
         infoDescription:
-          "Number of days remaining until the next payout is available.",
+          isReadyForPayout && readyAccountDropdownItems.length > 0
+            ? readyAccountDropdownItems.length > 1
+              ? "Multiple accounts are payout-eligible now. Click to choose one and record a payout."
+              : "This account is payout-eligible now. Click to open it and record a payout."
+            : "Number of days remaining until the next payout is available.",
         tileIcon: <DateRangeIcon style={styles.iconStyle(60)} />,
+        tileDropdownItems: isReadyForPayout
+          ? readyAccountDropdownItems
+          : undefined,
+        onTileClick:
+          isReadyForPayout &&
+          readyAccountDropdownItems.length === 0 &&
+          readyAccountId
+            ? (): void => goToAccount(readyAccountId)
+            : undefined,
       },
       {
         tileValue: dashboardSummaries.currentStats.activePas.toString(),

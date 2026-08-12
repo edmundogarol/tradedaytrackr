@@ -2,6 +2,10 @@ from django.db import models
 from django.db.models import Sum
 from django.utils import timezone
 
+from backend.djangoapi.constants.apex_payouts import (
+    APEX_MAX_PAYOUT_BY_SIZE,
+    APEX_MAX_PAYOUTS_PER_ACCOUNT,
+)
 from backend.djangoapi.querysets.trading_account_queryset import TradingAccountQuerySet
 
 
@@ -66,22 +70,36 @@ class TradingAccount(models.Model):
             return round(max_safe, 2)
 
         # NORMAL
+        # Only profit above the Safety Net is eligible for payout.
+        # Safety Net = account size + drawdown limit + $100 (per firm rules,
+        # e.g. Apex: "Safety Net is calculated as your account's drawdown
+        # limit plus $100"). `min_buffer` is a separate figure (Safety Net +
+        # minimum payout) used elsewhere to track eligibility progress, not
+        # the amount held back from the withdrawable pool.
         account_size = template.account_size
-        min_buffer = template.min_buffer or 0
+        drawdown_limit = template.max_drawdown or 0
+        safety_net = account_size + drawdown_limit + 100
         split = template.withdrawal_split
 
-        profit = balance - account_size
+        # Apex Intraday PAs cap each payout on a per-payout-number ladder
+        # (e.g. 100K: $2,000 / $2,500 / $3,000 / $3,000 / $4,000 / $4,000)
+        # and allow a maximum of 6 payouts total before the PA is closed.
+        if (template.firm or "").lower() == "apex":
+            tier_caps = APEX_MAX_PAYOUT_BY_SIZE.get(int(account_size))
+            if tier_caps:
+                payout_number = self.payouts.count() + 1
+                if payout_number > APEX_MAX_PAYOUTS_PER_ACCOUNT:
+                    return 0
+                max_req = tier_caps[payout_number - 1]
 
-        if profit <= 0:
+        profit_above_safety_net = balance - safety_net
+
+        if profit_above_safety_net <= 0:
             return 0
 
-        max_by_split = profit
-        if split or split != 0:
-            max_by_split = (profit * split) / 100
-
-        max_by_buffer = balance - (account_size + min_buffer)
-
-        available = min(max_by_split, max_by_buffer)
+        available = profit_above_safety_net
+        if split:
+            available = (profit_above_safety_net * split) / 100
 
         if available <= 0:
             return 0
@@ -93,6 +111,17 @@ class TradingAccount(models.Model):
             available = min(available, max_req)
 
         return round(available, 2)
+
+    def get_buffer_percent(self):
+        min_buffer = self.template.min_buffer
+        profit = self.account_balance - self.template.account_size
+
+        if not min_buffer or min_buffer == 0:
+            return 0
+
+        progress = (profit / min_buffer) * 100
+
+        return min(round(progress, 2), 100)
 
     def get_current_day_count(self):
         last_payout = self.payouts.order_by("-payout_date").first()
@@ -130,7 +159,9 @@ class TradingAccount(models.Model):
         if self.template.consistency is None or self.template.consistency == 0:
             return True
         template_consistency = self.template.consistency or 0
-        return self.get_consistency_score() <= template_consistency
+        # Firm rule is phrased as a failure condition ("50% or more fails"),
+        # so meeting it requires being strictly under the threshold.
+        return self.get_consistency_score() < template_consistency
 
     def is_min_days_met(self):
         return self.get_current_day_count() >= (self.template.min_trading_days or 0)

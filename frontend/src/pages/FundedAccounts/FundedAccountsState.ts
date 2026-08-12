@@ -47,6 +47,7 @@ const initialSummaries: DashboardSummaries = {
     daysCompleted: 0,
     minDays: 0,
     daysRemaining: 0,
+    readyAccounts: [],
   },
   currentStats: {
     withdrawablePnl: 0,
@@ -108,7 +109,7 @@ export const initialState: FundedAccountsState = {
   currentTradingAccount: initialAccount,
   selectedTrade: {
     id: 0,
-    date: moment().format("YYYY-MM-DD"),
+    date: moment().toISOString(),
     pnl: null,
     account: {
       id: 0,

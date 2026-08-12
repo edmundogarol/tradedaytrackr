@@ -151,6 +151,24 @@ class UpdatePayoutView(APIView):
             recompute_account_balance(account)
             recompute_all_trading_days(account)
 
+            # ensure a trading day exists for the (possibly new) payout date
+            local_date = new_date.astimezone(user_tz).date()
+            get_or_create_trading_day(account, local_date)
+
+            # clean up any trading days left empty by moving this payout
+            trading_days = TradingDay.objects.filter(account=account)
+
+            for td in trading_days:
+                has_trades = td.trades.exists()
+
+                has_payout = any(
+                    p.payout_date.astimezone(user_tz).date() == td.date
+                    for p in Payout.objects.filter(account=account)
+                )
+
+                if not has_trades and not has_payout:
+                    td.delete()
+
         return Response(PayoutSerializer(payout).data)
 
     def delete(self, request, payout_id):

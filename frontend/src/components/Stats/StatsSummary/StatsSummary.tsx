@@ -16,6 +16,12 @@ export interface StatsSummaryTileDetails {
   tileShinePositive?: boolean;
   infoDescription?: string;
   tileIcon?: React.ReactNode;
+  onTileClick?: () => void;
+  tileDropdownItems?: {
+    label: string;
+    subLabel?: string;
+    onClick: () => void;
+  }[];
 }
 
 interface StatsSummaryProps {

@@ -23,8 +23,7 @@ export const useGetFundingOverviewDetails =
       100;
     const bufferGroups = dashboardSummaries.buffer.groups;
     const currentBufferProgress = !!bufferGroups[activeStep]
-      ? ((bufferGroups[activeStep]?.minBuffer -
-          bufferGroups[activeStep]?.bufferLeft) /
+      ? (bufferGroups[activeStep]?.bufferAchieved /
           bufferGroups[activeStep]?.minBuffer) *
         100
       : 0;
@@ -89,7 +88,7 @@ export const useGetFundingOverviewDetails =
         ),
         highlightedValuePositive: currentBufferProgress > 60,
         highlightedValue: !!bufferGroups[activeStep]
-          ? `${formatter.format(bufferGroups[activeStep]?.minBuffer - bufferGroups[activeStep]?.bufferLeft)} / ${formatter.format(bufferGroups[activeStep]?.minBuffer)}`
+          ? `${formatter.format(bufferGroups[activeStep]?.bufferAchieved)} / ${formatter.format(bufferGroups[activeStep]?.minBuffer)}`
           : "N/A",
         subtext: !!bufferGroups[activeStep]
           ? `on ${bufferGroups[activeStep]?.accountCount} ${bufferGroups[activeStep]?.firms.join(", ")} accounts`
