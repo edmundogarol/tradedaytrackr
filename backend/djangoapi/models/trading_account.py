@@ -169,10 +169,12 @@ class TradingAccount(models.Model):
         payout_cap_source = "account_max" if max_req else None
         payout_number = None
         max_payouts = None
+        payout_ladder = None
 
         if (template.firm or "").lower() == "apex":
             tier_caps = APEX_MAX_PAYOUT_BY_SIZE.get(int(account_size))
             if tier_caps:
+                payout_ladder = tier_caps
                 payout_number = self.payouts.count() + 1
                 max_payouts = APEX_MAX_PAYOUTS_PER_ACCOUNT
                 if payout_number <= max_payouts:
@@ -193,6 +195,7 @@ class TradingAccount(models.Model):
             "payout_cap_source": payout_cap_source,
             "payout_number": payout_number,
             "max_payouts": max_payouts,
+            "payout_ladder": payout_ladder,
             "min_payout_request": min_req,
             **eligibility,
         }

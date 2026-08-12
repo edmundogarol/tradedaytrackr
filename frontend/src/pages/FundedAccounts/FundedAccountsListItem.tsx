@@ -42,6 +42,7 @@ import {
 } from "./FundedAccountsStyledComponents";
 import styles from "./FundedAccountsStyles";
 import useFundedAccountsDispatch from "./hooks/useFundedAccountsDispatch";
+import PayoutScalingLadder from "./PayoutScalingLadder";
 
 export interface FundedAccountsListItemDetails {
   account: TradingAccount;
@@ -65,8 +66,6 @@ const getWithdrawableInfoDescription = (
     withdrawalSplit,
     payoutCap,
     payoutCapSource,
-    payoutNumber,
-    maxPayouts,
     minPayoutRequest,
     isMinDaysMet,
     currentDayCount,
@@ -92,12 +91,10 @@ const getWithdrawableInfoDescription = (
     whatParts.push(`at a ${withdrawalSplit}% split`);
   }
 
+  // Apex's ladder cap is shown as a visual (PayoutScalingLadder) alongside
+  // this text when it applies, so it's left out here to avoid repeating it.
   let capNote = "";
-  if (payoutCapSource === "apex_ladder") {
-    capNote = `Capped at ${formatter.format(payoutCap || 0)} for payout #${payoutNumber} of ${maxPayouts} allowed (Apex's payout scaling)`;
-  } else if (payoutCapSource === "apex_exhausted") {
-    capNote = `This account has used all ${maxPayouts} payouts Apex allows on this PA - no further payouts`;
-  } else if (payoutCapSource === "account_max") {
+  if (payoutCapSource === "account_max") {
     capNote = `Capped at ${formatter.format(payoutCap || 0)} max per payout`;
   }
 
@@ -264,9 +261,30 @@ const FundedAccountsListItem: React.FunctionComponent<
                 : formatter.format(0)}
             </PnLValue>
             <InfoPopout
-              infoDescription={getWithdrawableInfoDescription(
-                withdrawableBreakdown,
-              )}
+              infoDescription={
+                withdrawableBreakdown?.payoutLadder
+                  ? undefined
+                  : getWithdrawableInfoDescription(withdrawableBreakdown)
+              }
+              content={
+                withdrawableBreakdown?.payoutLadder ? (
+                  <div
+                    style={{ display: "flex", flexDirection: "column", gap: 10 }}
+                  >
+                    <PayoutScalingLadder
+                      ladder={withdrawableBreakdown.payoutLadder}
+                      currentPayoutNumber={withdrawableBreakdown.payoutNumber}
+                      exhausted={
+                        withdrawableBreakdown.payoutCapSource ===
+                        "apex_exhausted"
+                      }
+                    />
+                    <div style={{ fontSize: 12, opacity: 0.85 }}>
+                      {getWithdrawableInfoDescription(withdrawableBreakdown)}
+                    </div>
+                  </div>
+                ) : undefined
+              }
             />
           </HorizontalSection>
           <PnLWithdrawable $positive={withdrawableAmount > 0}>

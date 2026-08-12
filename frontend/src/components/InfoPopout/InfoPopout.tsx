@@ -8,7 +8,10 @@ import { Container } from "./InfoPopoutStyledComponents";
 import styles from "./InfoPopoutStyles";
 
 export interface InfoPopoutProps {
-  infoDescription: string;
+  infoDescription?: string;
+  // Rich content to render in the popout instead of infoDescription
+  // (e.g. a visual breakdown), for cases plain text can't express well.
+  content?: React.ReactNode;
   children?: React.ReactNode;
   containerStyle?: React.CSSProperties;
   warning?: boolean;
@@ -17,6 +20,7 @@ export interface InfoPopoutProps {
 
 const InfoPopout: React.FC<InfoPopoutProps> = ({
   infoDescription,
+  content,
   children,
   containerStyle,
   warning,
@@ -35,7 +39,13 @@ const InfoPopout: React.FC<InfoPopoutProps> = ({
         sx={{ zIndex: 11, pointerEvents: "auto" }}
       >
         <Paper style={styles.paperStyle}>
-          <Typography sx={styles.contentStyle}>{infoDescription}</Typography>
+          {content ? (
+            content
+          ) : (
+            <Typography sx={styles.contentStyle}>
+              {infoDescription}
+            </Typography>
+          )}
         </Paper>
       </Popper>
 

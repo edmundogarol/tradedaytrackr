@@ -102,6 +102,7 @@ export interface WithdrawableBreakdown {
   payoutCapSource: "account_max" | "apex_ladder" | "apex_exhausted" | null;
   payoutNumber?: number | null;
   maxPayouts?: number | null;
+  payoutLadder?: number[] | null;
   minPayoutRequest: number;
   isMinDaysMet: boolean;
   currentDayCount: number;
