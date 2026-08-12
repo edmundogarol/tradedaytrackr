@@ -20,7 +20,7 @@ import {
   SectionTitle,
   SubsectionHeaderWrapper,
 } from "@styles/globalStyledComponents";
-import { formatter, m } from "@utils/utils";
+import { formatter } from "@utils/utils";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import CalendarRenderer from "./CalendarRenderer";
@@ -135,7 +135,7 @@ const Calendar: React.FunctionComponent = () => {
                         }
                       />
                     </MonthlySelectorContainer>
-                    {m(currentDate).format("MMMM YYYY")}
+                    {currentDate.format("MMMM YYYY")}
                     <If condition={currentDate.isBefore(moment(), "month")}>
                       <MonthlySelectorContainer>
                         <ChevronRightIcon

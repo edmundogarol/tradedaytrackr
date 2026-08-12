@@ -5,7 +5,7 @@ import { PageEnum } from "@interfaces/NavigationTypes";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
 import useJournalState from "@pages/Journal/hooks/useJournalState";
-import { formatter, m } from "@utils/utils";
+import { formatter } from "@utils/utils";
 import moment from "moment";
 import React, { useMemo } from "react";
 import {
@@ -86,7 +86,9 @@ const CalendarRenderer: React.FunctionComponent<CalendarRendererProps> = ({
         const weekCells = week.map((day, idx) => {
           if (!day) return <div key={`${weekIdx}-${idx}`} />;
 
-          const key = m(day).format("YYYY-MM-DD");
+          // day is already the exact calendar date for this cell - no
+          // timezone conversion needed (or wanted) to build the lookup key.
+          const key = day.format("YYYY-MM-DD");
           const entry = dataMap[key];
 
           const pnl = fundedView ? entry?.pnl || 0 : entry?.evalPnl || 0;
