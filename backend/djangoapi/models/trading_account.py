@@ -112,6 +112,91 @@ class TradingAccount(models.Model):
 
         return round(available, 2)
 
+    def get_withdrawable_breakdown(self):
+        """Structured explanation of get_withdrawable_amount(): what made up
+        the figure (safety net / split / any payout-scaling cap) and
+        whether the account is actually eligible to request it right now
+        (min trading days + consistency). Powers the "what's withdrawable /
+        when is it withdrawable" info popout on the accounts list.
+        """
+        template = self.template
+        balance = self.account_balance
+
+        min_req = float(template.min_payout_request or 0)
+        max_req = template.max_payout_request
+
+        has_static_rule = template.rules.filter(
+            name="MFFU $100 MLL after Payout #1"
+        ).exists()
+
+        eligibility = {
+            "is_min_days_met": self.is_min_days_met(),
+            "current_day_count": self.get_current_day_count(),
+            "min_trading_days": template.min_trading_days or 0,
+            "is_consistency_met": self.is_consistency_met(),
+            "consistency_score": round(float(self.get_consistency_score()), 2),
+            "consistency_threshold": (
+                float(template.consistency) if template.consistency else None
+            ),
+        }
+
+        if has_static_rule:
+            floor = 50100
+            profit_above_floor = round(max(float(balance - floor), 0), 2)
+
+            return {
+                "rule": "static_floor",
+                "floor": floor,
+                "profit_above_floor": profit_above_floor,
+                "withdrawal_split": (
+                    float(template.withdrawal_split)
+                    if template.withdrawal_split
+                    else None
+                ),
+                "payout_cap": float(max_req) if max_req else None,
+                "payout_cap_source": "account_max" if max_req else None,
+                "min_payout_request": min_req,
+                **eligibility,
+            }
+
+        account_size = template.account_size
+        drawdown_limit = template.max_drawdown or 0
+        safety_net_decimal = account_size + drawdown_limit + 100
+        safety_net = float(safety_net_decimal)
+        split = template.withdrawal_split
+
+        payout_cap = float(max_req) if max_req else None
+        payout_cap_source = "account_max" if max_req else None
+        payout_number = None
+        max_payouts = None
+
+        if (template.firm or "").lower() == "apex":
+            tier_caps = APEX_MAX_PAYOUT_BY_SIZE.get(int(account_size))
+            if tier_caps:
+                payout_number = self.payouts.count() + 1
+                max_payouts = APEX_MAX_PAYOUTS_PER_ACCOUNT
+                if payout_number <= max_payouts:
+                    payout_cap = tier_caps[payout_number - 1]
+                    payout_cap_source = "apex_ladder"
+                else:
+                    payout_cap = 0
+                    payout_cap_source = "apex_exhausted"
+
+        return {
+            "rule": "standard",
+            "safety_net": safety_net,
+            "profit_above_safety_net": round(
+                float(balance - safety_net_decimal), 2
+            ),
+            "withdrawal_split": float(split) if split else None,
+            "payout_cap": payout_cap,
+            "payout_cap_source": payout_cap_source,
+            "payout_number": payout_number,
+            "max_payouts": max_payouts,
+            "min_payout_request": min_req,
+            **eligibility,
+        }
+
     def get_buffer_percent(self):
         min_buffer = self.template.min_buffer
         profit = self.account_balance - self.template.account_size

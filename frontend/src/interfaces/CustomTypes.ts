@@ -87,7 +87,28 @@ export interface TradingAccount extends AccountTemplate {
   maxPayoutRequest: number;
   postPayoutBuffer: number;
   withdrawableAmount: number;
+  withdrawableBreakdown?: WithdrawableBreakdown;
   consistencyScore?: number;
+}
+
+export interface WithdrawableBreakdown {
+  rule: "standard" | "static_floor";
+  floor?: number;
+  profitAboveFloor?: number;
+  safetyNet?: number;
+  profitAboveSafetyNet?: number;
+  withdrawalSplit: number | null;
+  payoutCap: number | null;
+  payoutCapSource: "account_max" | "apex_ladder" | "apex_exhausted" | null;
+  payoutNumber?: number | null;
+  maxPayouts?: number | null;
+  minPayoutRequest: number;
+  isMinDaysMet: boolean;
+  currentDayCount: number;
+  minTradingDays: number;
+  isConsistencyMet: boolean;
+  consistencyScore: number;
+  consistencyThreshold: number | null;
 }
 
 export interface EvaluationAccount extends AccountTemplate {

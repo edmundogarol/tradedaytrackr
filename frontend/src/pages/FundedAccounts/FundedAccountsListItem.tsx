@@ -5,7 +5,10 @@ import React, { useState } from "react";
 import AlertPopout from "@components/Alert/AlertPopout";
 import { Else, If } from "@components/If/If";
 import InfoPopout from "@components/InfoPopout/InfoPopout";
-import type { TradingAccount } from "@interfaces/CustomTypes";
+import type {
+  TradingAccount,
+  WithdrawableBreakdown,
+} from "@interfaces/CustomTypes";
 import { PageEnum } from "@interfaces/NavigationTypes";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import InventoryIcon from "@mui/icons-material/Inventory";
@@ -46,6 +49,68 @@ export interface FundedAccountsListItemDetails {
   archived?: boolean;
 }
 
+const getWithdrawableInfoDescription = (
+  breakdown: WithdrawableBreakdown | undefined,
+): string => {
+  if (!breakdown) {
+    return "Amount currently withdrawable based on your account's profit and firm rules.";
+  }
+
+  const {
+    rule,
+    floor,
+    profitAboveFloor,
+    safetyNet,
+    profitAboveSafetyNet,
+    withdrawalSplit,
+    payoutCap,
+    payoutCapSource,
+    payoutNumber,
+    maxPayouts,
+    minPayoutRequest,
+    isMinDaysMet,
+    currentDayCount,
+    minTradingDays,
+    isConsistencyMet,
+    consistencyScore,
+    consistencyThreshold,
+  } = breakdown;
+
+  const whatParts: string[] = [];
+
+  if (rule === "static_floor") {
+    whatParts.push(
+      `What's withdrawable: ${formatter.format(profitAboveFloor || 0)} profit above the ${formatter.format(floor || 0)} minimum balance this firm requires you to keep`,
+    );
+  } else {
+    whatParts.push(
+      `What's withdrawable: ${formatter.format(profitAboveSafetyNet || 0)} profit above your ${formatter.format(safetyNet || 0)} safety net`,
+    );
+  }
+
+  if (withdrawalSplit !== null && withdrawalSplit !== undefined) {
+    whatParts.push(`at a ${withdrawalSplit}% split`);
+  }
+
+  let capNote = "";
+  if (payoutCapSource === "apex_ladder") {
+    capNote = `Capped at ${formatter.format(payoutCap || 0)} for payout #${payoutNumber} of ${maxPayouts} allowed (Apex's payout scaling)`;
+  } else if (payoutCapSource === "apex_exhausted") {
+    capNote = `This account has used all ${maxPayouts} payouts Apex allows on this PA - no further payouts`;
+  } else if (payoutCapSource === "account_max") {
+    capNote = `Capped at ${formatter.format(payoutCap || 0)} max per payout`;
+  }
+
+  const sentences = [
+    `${whatParts.join(" ")}.`,
+    capNote ? `${capNote}.` : "",
+    `Minimum payout request is ${formatter.format(minPayoutRequest)}.`,
+    `When it's withdrawable: ${isMinDaysMet ? "✓" : "✗"} min trading days ${currentDayCount}/${minTradingDays}, ${isConsistencyMet ? "✓" : "✗"} consistency ${consistencyScore}%${consistencyThreshold ? ` (must stay under ${consistencyThreshold}%)` : ""}.`,
+  ];
+
+  return sentences.filter(Boolean).join(" ");
+};
+
 const FundedAccountsListItem: React.FunctionComponent<
   FundedAccountsListItemDetails
 > = ({ account, openAddTradingDayModal, archived }) => {
@@ -63,6 +128,7 @@ const FundedAccountsListItem: React.FunctionComponent<
     dayValues,
     currentDayCount,
     withdrawableAmount,
+    withdrawableBreakdown,
     postPayoutBuffer,
     consistencyScore,
   } = account;
@@ -197,11 +263,11 @@ const FundedAccountsListItem: React.FunctionComponent<
                 ? formatter.format(withdrawableAmount)
                 : formatter.format(0)}
             </PnLValue>
-            <If condition={withdrawableAmount <= 0}>
-              <InfoPopout
-                infoDescription={`This account requires a minimum payout request of $${Number(minPayoutRequest).toFixed(0)} - above the buffer`}
-              />
-            </If>
+            <InfoPopout
+              infoDescription={getWithdrawableInfoDescription(
+                withdrawableBreakdown,
+              )}
+            />
           </HorizontalSection>
           <PnLWithdrawable $positive={withdrawableAmount > 0}>
             <PnLWithdrawableText>Consistency Score:</PnLWithdrawableText>%

@@ -88,6 +88,7 @@ class TradingAccountSerializer(serializers.ModelSerializer):
     current_day_count = serializers.SerializerMethodField()
     post_payout_buffer = serializers.SerializerMethodField()
     withdrawable_amount = serializers.SerializerMethodField()
+    withdrawable_breakdown = serializers.SerializerMethodField()
     consistency_score = serializers.SerializerMethodField()
     consistency = serializers.DecimalField(
         source="template.consistency",
@@ -125,6 +126,7 @@ class TradingAccountSerializer(serializers.ModelSerializer):
             "withdrawal_split",
             "post_payout_buffer",
             "withdrawable_amount",
+            "withdrawable_breakdown",
             "consistency_score",
             "consistency",
             "is_archived",
@@ -201,6 +203,9 @@ class TradingAccountSerializer(serializers.ModelSerializer):
 
     def get_withdrawable_amount(self, obj):
         return obj.get_withdrawable_amount()
+
+    def get_withdrawable_breakdown(self, obj):
+        return obj.get_withdrawable_breakdown()
 
     def get_post_payout_buffer(self, obj):
         return obj.get_post_payout_buffer()
