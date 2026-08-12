@@ -22,6 +22,7 @@ import {
   Area,
   AreaChart,
   Cell,
+  LabelList,
   Pie,
   PieChart,
   ResponsiveContainer,
@@ -203,8 +204,19 @@ const Reports: React.FunctionComponent = () => {
                         stroke={color("SystemLightGreen")}
                         strokeWidth={2}
                         fill="url(#pnlGradient)"
-                        dot={false}
-                      />
+                        dot={{ r: 3, fill: color("SystemLightGreen") }}
+                      >
+                        <LabelList
+                          dataKey="pnl"
+                          position="top"
+                          offset={10}
+                          style={{ fill: "#9CA3AF", fontSize: 11 }}
+                          formatter={(value: React.ReactNode) => {
+                            const num = Number(value);
+                            return `${num >= 0 ? "+" : ""}${Math.round(num)}`;
+                          }}
+                        />
+                      </Area>
                     </AreaChart>
                   </ResponsiveContainer>
                 </Box>

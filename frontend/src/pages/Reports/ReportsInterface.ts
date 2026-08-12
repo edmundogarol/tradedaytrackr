@@ -1,5 +1,5 @@
 export interface ReportData {
-  equityCurve: { date: string; equity: number }[];
+  equityCurve: { date: string; equity: number; pnl: number }[];
   keyStats: {
     bestTrade: number;
     worstTrade: number;

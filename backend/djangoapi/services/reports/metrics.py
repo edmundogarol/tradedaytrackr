@@ -81,14 +81,19 @@ class MetricsEngine:
         # last trade), not one point per trade - multiple same-day trades
         # used to emit multiple points stamped with the same date, which
         # rendered as duplicate/overlapping x-axis entries.
-        daily: dict = {}
+        daily_equity: dict = {}
+        daily_pnl: dict = defaultdict(Decimal)
 
         for t in self.trades:
             equity += t.pnl
             day = self._local(t.date_time).date()
-            daily[day] = float(equity)
+            daily_equity[day] = float(equity)
+            daily_pnl[day] += t.pnl
 
-        return [{"date": day, "equity": eq} for day, eq in daily.items()]
+        return [
+            {"date": day, "equity": eq, "pnl": float(daily_pnl[day])}
+            for day, eq in daily_equity.items()
+        ]
 
     # =========================
     # PNL DISTRIBUTION
