@@ -10,6 +10,24 @@ from backend.djangoapi.models.trade import Trade
 from backend.djangoapi.models.trading_account import TradingAccount
 
 
+def _add_trading_days(start_date, trading_days):
+    """Project forward by `trading_days` weekdays, skipping Sat/Sun.
+
+    Markets (and therefore trading-day progress) are closed on weekends,
+    so a naive `start_date + timedelta(days=trading_days)` regularly lands
+    on - or undercounts past - a weekend.
+    """
+    date = start_date
+    remaining = trading_days
+
+    while remaining > 0:
+        date += timedelta(days=1)
+        if date.weekday() < 5:  # Mon-Fri
+            remaining -= 1
+
+    return date
+
+
 class DashboardSummariesView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -109,7 +127,7 @@ class DashboardSummariesView(APIView):
                 # what's actually there.
                 expected_payout_now = reference_account.get_withdrawable_amount()
 
-                projected_date = today + timedelta(days=days_remaining)
+                projected_date = _add_trading_days(today, days_remaining)
 
         else:
             projected_date = None
