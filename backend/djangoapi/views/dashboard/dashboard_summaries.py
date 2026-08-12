@@ -102,11 +102,12 @@ class DashboardSummariesView(APIView):
                 expected_payout_now = reference_account.get_expected_withdrawable_now()
                 projected_date = today
             else:
-                avg_trade = reference_account.get_average_trade()
-
-                expected_payout_now = (
-                    reference_account.get_withdrawable_amount() + avg_trade
-                )
+                # Not yet eligible (min days / consistency not met) - show
+                # the actual amount currently withdrawable, same figure as
+                # "Withdrawable PnL" below. Padding this with a projected
+                # average trade made the "Available" headline overstate
+                # what's actually there.
+                expected_payout_now = reference_account.get_withdrawable_amount()
 
                 projected_date = today + timedelta(days=days_remaining)
 
