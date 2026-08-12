@@ -10,22 +10,33 @@ from backend.djangoapi.models.trade import Trade
 from backend.djangoapi.models.trading_account import TradingAccount
 
 
-def _add_trading_days(start_date, trading_days):
-    """Project forward by `trading_days` weekdays, skipping Sat/Sun.
+def _nth_trading_day(start_date, trading_days):
+    """Date of the `trading_days`-th weekday counting from (and including)
+    `start_date`, skipping Sat/Sun.
 
     Markets (and therefore trading-day progress) are closed on weekends,
     so a naive `start_date + timedelta(days=trading_days)` regularly lands
-    on - or undercounts past - a weekend.
+    on - or undercounts past - a weekend. `start_date` itself counts as a
+    candidate trading day (e.g. "today") since it may not have happened
+    yet.
     """
     date = start_date
     remaining = trading_days
 
-    while remaining > 0:
-        date += timedelta(days=1)
+    while True:
         if date.weekday() < 5:  # Mon-Fri
             remaining -= 1
+            if remaining <= 0:
+                return date
+        date += timedelta(days=1)
 
-    return date
+
+def _next_payout_requestable_date(start_date, trading_days):
+    """Date the payout can actually be requested: the day after the
+    `trading_days`-th trading day finishes, since a trading day's PnL
+    isn't final - and payout isn't requestable - until it's over.
+    """
+    return _nth_trading_day(start_date, trading_days) + timedelta(days=1)
 
 
 class DashboardSummariesView(APIView):
@@ -127,7 +138,9 @@ class DashboardSummariesView(APIView):
                 # what's actually there.
                 expected_payout_now = reference_account.get_withdrawable_amount()
 
-                projected_date = _add_trading_days(today, days_remaining)
+                projected_date = _next_payout_requestable_date(
+                    today, days_remaining
+                )
 
         else:
             projected_date = None
