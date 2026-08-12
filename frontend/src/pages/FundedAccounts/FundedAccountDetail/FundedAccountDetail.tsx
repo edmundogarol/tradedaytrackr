@@ -774,7 +774,7 @@ const FundedAccountDetail: React.FunctionComponent<
                 }}
                 count={
                   !!currentTradingAccount.dayValuesCount
-                    ? Math.ceil(currentTradingAccount.dayValuesCount / 10)
+                    ? Math.ceil(currentTradingAccount.dayValuesCount / 5)
                     : 1
                 }
                 onChange={(e, page) => {
