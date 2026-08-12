@@ -13,7 +13,7 @@ class ReportService:
     def generate(self):
         qs = ReportQueryBuilder(self.user, self.filters).build()
 
-        engine = MetricsEngine(qs)
+        engine = MetricsEngine(qs, timezone=self.user.timezone)
 
         return {
             "overview": engine.overview(),

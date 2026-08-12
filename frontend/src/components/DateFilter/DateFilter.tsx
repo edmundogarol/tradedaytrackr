@@ -32,12 +32,12 @@ const DateFilter = ({
 
   useEffect(() => {
     if (rangeType === "today") {
-      setStart(moment().startOf("day").subtract(1, "day"));
+      setStart(moment().startOf("day"));
       setEnd(moment());
     }
 
     if (rangeType === "week") {
-      setStart(moment().startOf("day").subtract(7, "day"));
+      setStart(moment().startOf("day").subtract(6, "day"));
       setEnd(moment());
     }
 

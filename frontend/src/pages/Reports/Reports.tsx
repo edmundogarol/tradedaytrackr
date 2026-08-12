@@ -46,7 +46,8 @@ const Reports: React.FunctionComponent = () => {
     reportDataErrors,
     reportSelectedRangeType,
   } = useReportsState();
-  const { updateReportCoverage } = useReportsDispatch();
+  const { updateReportCoverage, updateReportSelectedRangeType } =
+    useReportsDispatch();
   const { updateFundedView } = useJournalDispatch();
 
   const { updateReportDataErrors } = useCalendarDispatch();
@@ -95,6 +96,8 @@ const Reports: React.FunctionComponent = () => {
           <DateFilter
             selectedRangeType={reportSelectedRangeType}
             onDateChange={(start, end, rangeType) => {
+              updateReportSelectedRangeType?.(rangeType);
+
               if (!start || !end) return;
 
               updateReportCoverage({

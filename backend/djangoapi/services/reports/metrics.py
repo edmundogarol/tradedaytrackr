@@ -2,11 +2,20 @@ from collections import defaultdict
 from datetime import timedelta
 from decimal import Decimal
 
+import pytz
+
 
 class MetricsEngine:
-    def __init__(self, trades):
+    def __init__(self, trades, timezone=None):
         # sorted for equity + streaks
         self.trades = sorted(list(trades), key=lambda t: t.date_time)
+        # date_time is stored in UTC; grouping/labeling by calendar day must
+        # use the user's own timezone, not UTC's, or late-day trades land on
+        # the wrong day.
+        self.tz = pytz.timezone(timezone) if timezone else pytz.UTC
+
+    def _local(self, dt):
+        return dt.astimezone(self.tz)
 
     # =========================
     # OVERVIEW
@@ -53,18 +62,18 @@ class MetricsEngine:
     # =========================
     def equity_curve(self):
         equity = Decimal("0")
-        curve = []
+        # One point per calendar day (the running total as of that day's
+        # last trade), not one point per trade - multiple same-day trades
+        # used to emit multiple points stamped with the same date, which
+        # rendered as duplicate/overlapping x-axis entries.
+        daily: dict = {}
 
         for t in self.trades:
             equity += t.pnl
-            curve.append(
-                {
-                    "date": t.date_time.date(),
-                    "equity": float(equity),
-                }
-            )
+            day = self._local(t.date_time).date()
+            daily[day] = float(equity)
 
-        return curve
+        return [{"date": day, "equity": eq} for day, eq in daily.items()]
 
     # =========================
     # PNL DISTRIBUTION
@@ -96,7 +105,7 @@ class MetricsEngine:
         days = defaultdict(Decimal)
 
         for t in self.trades:
-            day_name = t.date_time.strftime("%a")
+            day_name = self._local(t.date_time).strftime("%a")
             days[day_name] += t.pnl
 
         # keep order consistent
