@@ -213,7 +213,7 @@ const Reports: React.FunctionComponent = () => {
                           style={{ fill: "#9CA3AF", fontSize: 11 }}
                           formatter={(value: React.ReactNode) => {
                             const num = Number(value);
-                            return `${num >= 0 ? "+" : ""}${Math.round(num)}`;
+                            return `${num >= 0 ? "+$" : "-$"}${Math.abs(Math.round(num))}`;
                           }}
                         />
                       </Area>
