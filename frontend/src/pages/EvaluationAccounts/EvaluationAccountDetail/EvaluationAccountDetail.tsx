@@ -6,6 +6,7 @@ import { IconTypeEnum } from "@components/Icon/IconInterfaces";
 import { Else, If } from "@components/If/If";
 import InfoPopout from "@components/InfoPopout/InfoPopout";
 import Input from "@components/Input/Input";
+import Loading from "@components/Loading/Loading";
 import Page from "@components/Page/Page";
 import SelectWrapper from "@components/Select/SelectWrapper";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -172,6 +173,27 @@ const EvaluationAccountDetail: React.FunctionComponent<
       getTradingDays(currentDayValuesPage);
     }
   }, [currentDayValuesPage]);
+
+  // currentTradingAccount can briefly (or, if the sync effects above ever
+  // fail to catch up, indefinitely) hold a different account's data than
+  // the one in the URL - e.g. navigating here straight from another
+  // account's detail page. Never render another account's numbers under
+  // this one's URL/header.
+  if (accountId && currentTradingAccount.id !== Number(accountId)) {
+    return (
+      <Page topBarShowMenu={true}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: 80,
+          }}
+        >
+          <Loading size={40} />
+        </div>
+      </Page>
+    );
+  }
 
   return (
     <Page topBarShowMenu={true}>
