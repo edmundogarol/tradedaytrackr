@@ -65,6 +65,18 @@ const config: WebpackConfiguration & {
     static: {
       directory: path.resolve(__dirname, "public"),
     },
+    client: {
+      overlay: {
+        errors: true,
+        warnings: false,
+        // Browser extensions (MetaMask, etc.) inject their own scripts
+        // into every page and can throw errors that have nothing to do
+        // with this app (e.g. "Failed to connect to MetaMask") - don't
+        // pop the dev overlay for those.
+        runtimeErrors: (error: Error) =>
+          !/metamask|ethereum|web3/i.test(error?.message || ""),
+      },
+    },
     proxy: [
       {
         context: ["/api"],
