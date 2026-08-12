@@ -65,6 +65,11 @@ import useFundedAccountsState from "../hooks/useFundedAccountsState";
 import useGetTradingAccountDetailHandler from "../hooks/useGetTradingAccountDetailHandler";
 import useGetTradingDaysHandler from "../hooks/useGetTradingDaysHandler";
 import useUpdateTradingAccountHandler from "../hooks/useUpdateTradingAccountHandler";
+import PayoutScalingLadder from "../PayoutScalingLadder";
+import {
+  getEligibilityDescription,
+  getWithdrawableInfoDescription,
+} from "../withdrawableInfo";
 import {
   AccountDetailContainer,
   AccountName,
@@ -548,13 +553,50 @@ const FundedAccountDetail: React.FunctionComponent<
                           )
                         : formatter.format(0)}
                     </PnLValue>
-                    <If
-                      condition={currentTradingAccount.withdrawableAmount <= 0}
-                    >
-                      <InfoPopout
-                        infoDescription={`This account requires a minimum payout request of $${Number(currentTradingAccount.minPayoutRequest).toFixed(0)} - above the buffer`}
-                      />
-                    </If>
+                    <InfoPopout
+                      infoDescription={
+                        currentTradingAccount.withdrawableBreakdown
+                          ?.payoutLadder
+                          ? undefined
+                          : getWithdrawableInfoDescription(
+                              currentTradingAccount.withdrawableBreakdown,
+                            )
+                      }
+                      content={
+                        currentTradingAccount.withdrawableBreakdown
+                          ?.payoutLadder ? (
+                          <div style={{ width: 260, boxSizing: "border-box" }}>
+                            <PayoutScalingLadder
+                              ladder={
+                                currentTradingAccount.withdrawableBreakdown
+                                  .payoutLadder
+                              }
+                              currentPayoutNumber={
+                                currentTradingAccount.withdrawableBreakdown
+                                  .payoutNumber
+                              }
+                              exhausted={
+                                currentTradingAccount.withdrawableBreakdown
+                                  .payoutCapSource === "apex_exhausted"
+                              }
+                            />
+                            <div
+                              style={{
+                                fontSize: 11,
+                                color: "#5b6167",
+                                marginTop: 8,
+                                paddingTop: 8,
+                                borderTop: "1px solid #dde1e5",
+                              }}
+                            >
+                              {getEligibilityDescription(
+                                currentTradingAccount.withdrawableBreakdown,
+                              )}
+                            </div>
+                          </div>
+                        ) : undefined
+                      }
+                    />
                   </HorizontalSection>
                   <PnLWithdrawable
                     $positive={currentTradingAccount?.postPayoutBuffer > 0}
