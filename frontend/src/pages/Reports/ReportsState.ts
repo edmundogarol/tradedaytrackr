@@ -37,7 +37,7 @@ export const initialState: ReportsState = {
       pnlPercentage: 0,
       winRate: 0,
       totalTrades: 0,
-      profitFactor: 0,
+      profitFactor: null,
       expectancy: 0,
       avgWin: 0,
       avgLoss: 0,

@@ -31,8 +31,10 @@ const ReportsStatsBar = (): React.ReactElement => {
 
       <ReportStatCard
         title="Profit Factor"
-        positive={data.profitFactor >= 1}
-        value={data.profitFactor.toFixed(2)}
+        positive={data.profitFactor === null || data.profitFactor >= 1}
+        value={
+          data.profitFactor === null ? "∞" : data.profitFactor.toFixed(2)
+        }
       />
 
       <ReportStatCard

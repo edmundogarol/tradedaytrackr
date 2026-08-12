@@ -23,7 +23,19 @@ class MetricsEngine:
     def overview(self):
         total_trades = len(self.trades)
         if total_trades == 0:
-            return {}
+            # Fully-shaped zero state, not {} - the frontend always expects
+            # these fields (e.g. an empty "Today" range shouldn't crash
+            # rendering the stats bar).
+            return {
+                "total_pnl": 0.0,
+                "pnl_percentage": None,
+                "win_rate": 0,
+                "total_trades": 0,
+                "profit_factor": None,
+                "expectancy": 0.0,
+                "avg_win": 0.0,
+                "avg_loss": 0.0,
+            }
 
         wins = [t for t in self.trades if t.pnl > 0]
         losses = [t for t in self.trades if t.pnl < 0]
@@ -37,7 +49,10 @@ class MetricsEngine:
         gross_profit = sum(t.pnl for t in wins)
         gross_loss = abs(sum(t.pnl for t in losses))
 
-        profit_factor = (gross_profit / gross_loss) if gross_loss != 0 else Decimal("0")
+        # Undefined (not 0) when there are no losing trades to divide by -
+        # 0 reads as "bad" when a lack of losses is actually as good as it
+        # gets, and matches how pnl_percentage already handles this below.
+        profit_factor = (gross_profit / gross_loss) if gross_loss != 0 else None
 
         avg_win = gross_profit / len(wins) if wins else Decimal("0")
         avg_loss = gross_loss / len(losses) if losses else Decimal("0")
@@ -51,7 +66,7 @@ class MetricsEngine:
             else None,
             "win_rate": round(win_rate, 4),
             "total_trades": total_trades,
-            "profit_factor": float(profit_factor),
+            "profit_factor": float(profit_factor) if profit_factor is not None else None,
             "expectancy": float(expectancy),
             "avg_win": float(avg_win),
             "avg_loss": float(avg_loss),

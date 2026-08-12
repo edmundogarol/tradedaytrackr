@@ -12,7 +12,8 @@ export interface ReportData {
     pnlPercentage?: number;
     winRate: number;
     totalTrades: number;
-    profitFactor: number;
+    // null = no losing trades in range, so the ratio is undefined (not 0)
+    profitFactor: number | null;
     expectancy: number;
     avgWin: number;
     avgLoss: number;
