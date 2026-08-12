@@ -760,11 +760,7 @@ const FundedAccountDetail: React.FunctionComponent<
                 </GlassTile>
               );
             })}
-            <If
-              condition={currentTradingAccount?.dayValuesNextPage?.includes(
-                "page",
-              )}
-            >
+            <If condition={(currentTradingAccount?.dayValuesCount || 0) > 5}>
               <Pagination
                 color={"primary"}
                 page={currentDayValuesPage}
