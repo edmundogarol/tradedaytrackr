@@ -38,7 +38,7 @@ const InfoPopout: React.FC<InfoPopoutProps> = ({
         disablePortal
         sx={{ zIndex: 11, pointerEvents: "auto" }}
       >
-        <Paper style={styles.paperStyle}>
+        <Paper style={styles.paperStyle} sx={{ maxWidth: 280 }}>
           {content ? (
             content
           ) : (

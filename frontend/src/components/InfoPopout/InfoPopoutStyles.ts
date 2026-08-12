@@ -2,12 +2,16 @@ const styles = {
   paperStyle: {
     pointerEvents: "none",
     zIndex: 1500,
-    maxWidth: 320,
+    width: "max-content",
+    maxWidth: 280,
+    boxSizing: "border-box",
   } as React.CSSProperties,
   contentStyle: {
     p: 1.5,
     fontSize: 13,
     zIndex: 0,
+    whiteSpace: "normal",
+    wordBreak: "break-word",
   } as React.CSSProperties,
   infoIconStyle: {
     height: 16,
