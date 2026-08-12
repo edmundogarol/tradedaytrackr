@@ -69,22 +69,16 @@ const config: WebpackConfiguration & {
       overlay: {
         errors: true,
         warnings: false,
-        // Browser extensions (MetaMask, etc.) inject their own scripts
-        // into every page and can throw errors that have nothing to do
-        // with this app (e.g. "Failed to connect to MetaMask") - don't
-        // pop the dev overlay for those.
-        //
-        // IMPORTANT: webpack-dev-server serializes this function with
-        // .toString() and re-evaluates it standalone in the browser
-        // client, disconnected from any Babel/TS helper functions this
-        // file's own compilation might otherwise inject (e.g. optional
-        // chaining's _optionalChain). Keep this plain ES5-ish JS only -
-        // no ?., ??, or other syntax that could get compiled into a
-        // helper call that won't exist in that eval'd context.
-        runtimeErrors: function (error: Error) {
-          var message = (error && error.message) || "";
-          return !/metamask|ethereum|web3/i.test(message);
-        },
+        // Function-based filtering here (even plain ES5 JS) hits a bug in
+        // webpack-dev-server 5.2.2's own client bundle - it crashes with
+        // "_optionalChain is not defined" from inside its own
+        // index.js/overlay.js when invoking a function-based
+        // runtimeErrors filter, regardless of what the function contains.
+        // Disabling the runtime-error overlay outright avoids that broken
+        // code path entirely (build/compile errors above are unaffected -
+        // those go through `errors`, a separate option). Runtime errors,
+        // including this app's own, still show in the browser console.
+        runtimeErrors: false,
       },
     },
     proxy: [
