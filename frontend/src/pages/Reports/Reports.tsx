@@ -4,13 +4,15 @@ import Gap from "@components/Gap/Gap";
 import GlassTile from "@components/GlassTile/GlassTile";
 import { GlassTileChildrenWrapper } from "@components/GlassTile/GlassTileStyledComponents";
 import Page from "@components/Page/Page";
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, FormControlLabel, Stack, Switch, Typography } from "@mui/material";
 import useJournalDispatch from "@pages/Journal/hooks/useJournalDispatch";
+import useJournalState from "@pages/Journal/hooks/useJournalState";
 import { color } from "@styles/colors";
 import {
   HorizontalSection,
   PageContainer,
   Section,
+  SectionText,
   SectionTitle,
 } from "@styles/globalStyledComponents";
 import { formatter } from "@utils/utils";
@@ -48,6 +50,7 @@ const Reports: React.FunctionComponent = () => {
   } = useReportsState();
   const { updateReportCoverage, updateReportSelectedRangeType } =
     useReportsDispatch();
+  const { fundedView } = useJournalState();
   const { updateFundedView } = useJournalDispatch();
 
   const { updateReportDataErrors } = useCalendarDispatch();
@@ -66,7 +69,7 @@ const Reports: React.FunctionComponent = () => {
 
   useEffect(() => {
     getReport();
-  }, [reportDataStartDate, reportDataEndDate]);
+  }, [reportDataStartDate, reportDataEndDate, fundedView]);
 
   const getReportRangeTitle = (): string => {
     if (reportSelectedRangeType === "today") {
@@ -93,6 +96,17 @@ const Reports: React.FunctionComponent = () => {
       <PageContainer>
         <HorizontalSection>
           <SectionTitle>{getReportRangeTitle()}</SectionTitle>
+          <FormControlLabel
+            control={<Switch color="primary" checked={fundedView} />}
+            value={fundedView}
+            label={
+              <SectionText>
+                {fundedView ? "Funded Stats" : "Eval Stats"}
+              </SectionText>
+            }
+            labelPlacement="end"
+            onChange={() => updateFundedView(!fundedView)}
+          />
           <DateFilter
             selectedRangeType={reportSelectedRangeType}
             onDateChange={(start, end, rangeType) => {

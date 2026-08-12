@@ -1,7 +1,7 @@
+import useJournalState from "@pages/Journal/hooks/useJournalState";
 import environmentConfig from "@utils/environmentConfig";
 import { keysToCamel } from "@utils/utils";
 import { useCallback } from "react";
-import { initialState } from "../ReportsState";
 import useGetReportApiCall from "./useGetReportApiCallApiCall";
 import { useReportsDispatch } from "./useReportsDispatch";
 import useReportsState from "./useReportsState";
@@ -18,25 +18,21 @@ const useGetReportHandler = (): GetReportHandler => {
     reportDataEndDate: end,
     reportDataType: type,
   } = useReportsState();
+  const { fundedView } = useJournalState();
   const { updateReportData, updateReportDataErrors } = useReportsDispatch();
 
   return {
     getReport: useCallback(async () => {
       const { error, data } = await fetch({
-        url: `${environmentConfig.HOST}/api/reports/?start=${start}&end=${end}&type=${type}`,
+        url: `${environmentConfig.HOST}/api/reports/?start=${start}&end=${end}&type=${type}&is_eval=${!fundedView}`,
       });
 
       if (!!data) {
-        const mappedData = keysToCamel(data);
-        if (!mappedData.overview.totalPnl) {
-          updateReportData(initialState.reportData);
-          return;
-        }
-        updateReportData(mappedData);
+        updateReportData(keysToCamel(data));
       } else if (error) {
         updateReportDataErrors(error);
       }
-    }, [loading, start, end, type]),
+    }, [loading, start, end, type, fundedView]),
     loading,
   };
 };

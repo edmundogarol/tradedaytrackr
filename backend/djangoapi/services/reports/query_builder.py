@@ -32,6 +32,16 @@ class ReportQueryBuilder:
         elif report_type == "journalEntry":
             qs = qs.filter(journal_entry__isnull=False)
 
+        # FUNDED vs EVAL - "trade" reports otherwise pool both together,
+        # which don't share a meaningful combined win rate/profit factor
+        # (evals aren't real money). Optional so other report types are
+        # unaffected unless they opt in too.
+        is_eval = self.filters.get("is_eval")
+        if is_eval is not None:
+            qs = qs.filter(
+                account__template__is_evaluation=(is_eval.lower() == "true")
+            )
+
         # COMMON DATE FILTER (applies to ALL types)
         # start/end come in as bare "YYYY-MM-DD" strings representing days
         # in the user's own timezone, not UTC - localize them (rather than
