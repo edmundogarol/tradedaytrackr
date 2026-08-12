@@ -87,6 +87,7 @@ import {
   EditDeleteContainer,
   HeaderContainer,
   ListHeaders,
+  NoTradeDaysMessage,
   PnL,
   PnLHeader,
   PreviewDayValueContainer,
@@ -648,6 +649,11 @@ const FundedAccountDetail: React.FunctionComponent<
         </TradingDaysHeaderContainer>
         <GlassTile featureTile minHeight={70} noGlow={true} noShine={false}>
           <TradingDaysContainer>
+            <If condition={(currentTradingAccount?.dayValues || []).length === 0}>
+              <NoTradeDaysMessage>
+                No trades yet - click "Add Trade" to log your first one.
+              </NoTradeDaysMessage>
+            </If>
             {[...currentTradingAccount?.dayValues].map((dayValue, index) => {
               const tradeWithJournalEntry = dayValue.trades.find(
                 (trade) => !!trade?.journalEntry?.id,

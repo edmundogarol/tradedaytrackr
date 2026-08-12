@@ -80,6 +80,14 @@ export const TradingDaysContainer = styled.div`
   flex-direction: column;
 `;
 
+export const NoTradeDaysMessage = styled.div`
+  width: 100%;
+  padding: 24px 0;
+  text-align: center;
+  color: #8a8f98;
+  font-size: 14px;
+`;
+
 export const TradePreviewContainer = styled.div`
   width: 85px;
   height: 60px;
