@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from backend.djangoapi.constants.pagination import TRADING_DAYS_PAGE_SIZE
 from backend.djangoapi.models.trading_account import TradingAccount
 from backend.djangoapi.models.trading_account_template import TradingAccountTemplate
 from backend.djangoapi.serializers.trading_day import TradingDaySerializer
@@ -154,13 +155,15 @@ class TradingAccountSerializer(serializers.ModelSerializer):
             )
 
             self._day_values_count_map[obj.id] = count
-            self._day_values_has_next_map[obj.id] = count > 5
+            self._day_values_has_next_map[obj.id] = count > TRADING_DAYS_PAGE_SIZE
 
         return self._days_qs_cache[obj.id]
 
     def get_day_values(self, obj):
         qs = self._get_days_qs(obj)
-        return TradingDaySerializer(qs[:5], many=True, context=self.context).data
+        return TradingDaySerializer(
+            qs[:TRADING_DAYS_PAGE_SIZE], many=True, context=self.context
+        ).data
 
     def get_day_values_count(self, obj):
         self._get_days_qs(obj)

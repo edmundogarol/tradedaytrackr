@@ -2,12 +2,13 @@ from django.db.models import Sum
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
+from backend.djangoapi.constants.pagination import TRADING_DAYS_PAGE_SIZE
 from backend.djangoapi.models.trading_day import TradingDay
 from backend.djangoapi.serializers.trading_day import TradingDaySerializer
 
 
 class TradingDayPagination(PageNumberPagination):
-    page_size = 5
+    page_size = TRADING_DAYS_PAGE_SIZE
 
 
 class TradingDayViewSet(ReadOnlyModelViewSet):

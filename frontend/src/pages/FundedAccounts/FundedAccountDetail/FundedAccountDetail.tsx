@@ -32,6 +32,7 @@ import {
   BorderLinearProgress,
   HorizontalSection,
 } from "@styles/globalStyledComponents";
+import { TRADING_DAYS_PAGE_SIZE } from "@utils/constants";
 import { decimalStringToInt, formatter, m } from "@utils/utils";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
@@ -830,7 +831,12 @@ const FundedAccountDetail: React.FunctionComponent<
                 </GlassTile>
               );
             })}
-            <If condition={(currentTradingAccount?.dayValuesCount || 0) > 5}>
+            <If
+              condition={
+                (currentTradingAccount?.dayValuesCount || 0) >
+                TRADING_DAYS_PAGE_SIZE
+              }
+            >
               <Pagination
                 color={"primary"}
                 page={currentDayValuesPage}
@@ -840,7 +846,10 @@ const FundedAccountDetail: React.FunctionComponent<
                 }}
                 count={
                   !!currentTradingAccount.dayValuesCount
-                    ? Math.ceil(currentTradingAccount.dayValuesCount / 5)
+                    ? Math.ceil(
+                        currentTradingAccount.dayValuesCount /
+                          TRADING_DAYS_PAGE_SIZE,
+                      )
                     : 1
                 }
                 onChange={(e, page) => {

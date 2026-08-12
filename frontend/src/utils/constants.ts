@@ -130,3 +130,10 @@ export const currencyOptions = [
   { name: "CZK", value: "CZK", label: "CZK - Czech Koruna" },
   { name: "HUF", value: "HUF", label: "HUF - Hungarian Forint" },
 ];
+
+// Must match backend TRADING_DAYS_PAGE_SIZE
+// (backend/djangoapi/constants/pagination.py) - both the embedded first
+// page (TradingAccountSerializer) and the dedicated paginated endpoint
+// (TradingDayPagination) use that value, and this page-count math has to
+// agree with it or later pages become unreachable.
+export const TRADING_DAYS_PAGE_SIZE = 10;

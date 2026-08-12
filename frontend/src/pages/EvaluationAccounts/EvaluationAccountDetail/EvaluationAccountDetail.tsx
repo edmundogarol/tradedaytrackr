@@ -57,6 +57,7 @@ import useUpdateTradingAccountHandler from "@pages/FundedAccounts/hooks/useUpdat
 import useGetFundedAccountTemplates from "@pages/Settings/hooks/useGetFundedAccountTemplates";
 import useGetAccountTemplatesHandler from "@pages/Settings/Preferences/hooks/useGetAccountTemplatesHandler";
 import { BorderLinearProgress } from "@styles/globalStyledComponents";
+import { TRADING_DAYS_PAGE_SIZE } from "@utils/constants";
 import { decimalStringToInt, formatter, m } from "@utils/utils";
 import moment from "moment";
 import AddTradingDayModal from "../AddEvaluationTradingDayModal/AddTradingDayModal";
@@ -740,7 +741,12 @@ const EvaluationAccountDetail: React.FunctionComponent<
                 </GlassTile>
               );
             })}
-            <If condition={(currentTradingAccount?.dayValuesCount || 0) > 5}>
+            <If
+              condition={
+                (currentTradingAccount?.dayValuesCount || 0) >
+                TRADING_DAYS_PAGE_SIZE
+              }
+            >
               <Pagination
                 color={"primary"}
                 page={currentDayValuesPage}
@@ -750,7 +756,10 @@ const EvaluationAccountDetail: React.FunctionComponent<
                 }}
                 count={
                   !!currentTradingAccount.dayValuesCount
-                    ? Math.ceil(currentTradingAccount.dayValuesCount / 5)
+                    ? Math.ceil(
+                        currentTradingAccount.dayValuesCount /
+                          TRADING_DAYS_PAGE_SIZE,
+                      )
                     : 1
                 }
                 onChange={(e, page) => {
