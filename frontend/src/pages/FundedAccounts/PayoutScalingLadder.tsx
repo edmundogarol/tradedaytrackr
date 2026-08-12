@@ -1,4 +1,3 @@
-import { color } from "@styles/colors";
 import { formatter } from "@utils/utils";
 import React from "react";
 
@@ -8,6 +7,17 @@ export interface PayoutScalingLadderProps {
   exhausted?: boolean;
 }
 
+const compactCurrency = (amount: number): string => {
+  if (amount >= 1000) {
+    const thousands = amount / 1000;
+    const rounded = Number.isInteger(thousands)
+      ? thousands.toString()
+      : thousands.toFixed(1);
+    return `$${rounded}K`;
+  }
+  return formatter.format(amount);
+};
+
 const PayoutScalingLadder: React.FC<PayoutScalingLadderProps> = ({
   ladder,
   currentPayoutNumber,
@@ -16,15 +26,15 @@ const PayoutScalingLadder: React.FC<PayoutScalingLadderProps> = ({
   const current = currentPayoutNumber || 0;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 8, minWidth: 260 }}>
-      <div style={{ fontSize: 13, fontWeight: 600 }}>
+    <div style={{ width: 260, boxSizing: "border-box" }}>
+      <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>
         {exhausted
-          ? `All ${ladder.length} payouts used on this PA — no more payouts allowed`
-          : `On payout #${current} of ${ladder.length} — up to ${formatter.format(
+          ? `All ${ladder.length} payouts used — no more allowed`
+          : `Payout #${current} of ${ladder.length}: up to ${formatter.format(
               ladder[current - 1] || 0,
-            )} this cycle`}
+            )}`}
       </div>
-      <div style={{ display: "flex", gap: 4 }}>
+      <div style={{ display: "flex", gap: 3 }}>
         {ladder.map((amount, idx) => {
           const payoutNumber = idx + 1;
           const isCurrent = !exhausted && payoutNumber === current;
@@ -34,30 +44,21 @@ const PayoutScalingLadder: React.FC<PayoutScalingLadderProps> = ({
             <div
               key={idx}
               style={{
-                flex: 1,
+                width: 40,
+                boxSizing: "border-box",
                 textAlign: "center",
-                padding: "5px 2px",
-                borderRadius: 6,
-                fontSize: 11,
-                lineHeight: 1.4,
-                fontWeight: isCurrent ? 700 : 400,
-                background: isCurrent
-                  ? color("SystemGreen")
-                  : isPast
-                    ? "rgba(255,255,255,0.08)"
-                    : "rgba(255,255,255,0.04)",
-                color: isCurrent
-                  ? "#0b0f14"
-                  : isPast
-                    ? "rgba(255,255,255,0.4)"
-                    : "rgba(255,255,255,0.75)",
-                border: isCurrent
-                  ? "1px solid transparent"
-                  : "1px solid rgba(255,255,255,0.08)",
+                padding: "4px 0",
+                borderRadius: 5,
+                fontSize: 10,
+                lineHeight: 1.3,
+                fontWeight: isCurrent ? 700 : 500,
+                background: isCurrent ? "#7bb75d" : "#eef0f2",
+                color: isCurrent ? "#ffffff" : isPast ? "#a8adb3" : "#5b6167",
+                border: isCurrent ? "none" : "1px solid #dde1e5",
               }}
             >
-              <div>{formatter.format(amount)}</div>
-              <div style={{ opacity: 0.7, fontSize: 9 }}>#{payoutNumber}</div>
+              <div>{compactCurrency(amount)}</div>
+              <div style={{ opacity: 0.75, fontSize: 8 }}>#{payoutNumber}</div>
             </div>
           );
         })}

@@ -2,6 +2,7 @@ const styles = {
   paperStyle: {
     pointerEvents: "none",
     zIndex: 1500,
+    maxWidth: 320,
   } as React.CSSProperties,
   contentStyle: {
     p: 1.5,

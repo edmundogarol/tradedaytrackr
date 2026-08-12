@@ -108,6 +108,19 @@ const getWithdrawableInfoDescription = (
   return sentences.filter(Boolean).join(" ");
 };
 
+const getEligibilityDescription = (breakdown: WithdrawableBreakdown): string => {
+  const {
+    isMinDaysMet,
+    currentDayCount,
+    minTradingDays,
+    isConsistencyMet,
+    consistencyScore,
+    consistencyThreshold,
+  } = breakdown;
+
+  return `${isMinDaysMet ? "✓" : "✗"} Min trading days ${currentDayCount}/${minTradingDays} · ${isConsistencyMet ? "✓" : "✗"} Consistency ${consistencyScore}%${consistencyThreshold ? ` (< ${consistencyThreshold}%)` : ""}`;
+};
+
 const FundedAccountsListItem: React.FunctionComponent<
   FundedAccountsListItemDetails
 > = ({ account, openAddTradingDayModal, archived }) => {
@@ -268,9 +281,7 @@ const FundedAccountsListItem: React.FunctionComponent<
               }
               content={
                 withdrawableBreakdown?.payoutLadder ? (
-                  <div
-                    style={{ display: "flex", flexDirection: "column", gap: 10 }}
-                  >
+                  <div style={{ width: 260, boxSizing: "border-box" }}>
                     <PayoutScalingLadder
                       ladder={withdrawableBreakdown.payoutLadder}
                       currentPayoutNumber={withdrawableBreakdown.payoutNumber}
@@ -279,8 +290,16 @@ const FundedAccountsListItem: React.FunctionComponent<
                         "apex_exhausted"
                       }
                     />
-                    <div style={{ fontSize: 12, opacity: 0.85 }}>
-                      {getWithdrawableInfoDescription(withdrawableBreakdown)}
+                    <div
+                      style={{
+                        fontSize: 11,
+                        color: "#5b6167",
+                        marginTop: 8,
+                        paddingTop: 8,
+                        borderTop: "1px solid #dde1e5",
+                      }}
+                    >
+                      {getEligibilityDescription(withdrawableBreakdown)}
                     </div>
                   </div>
                 ) : undefined
