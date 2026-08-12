@@ -135,7 +135,13 @@ const Reports: React.FunctionComponent = () => {
               <Gap level={1} />
               <HorizontalSection>
                 <Box height={300} padding={3} flex={0.5}>
-                  <ResponsiveContainer width="100%" height="100%">
+                  <Typography
+                    sx={{ color: color("SystemLabel1"), fontSize: 13, mb: 1 }}
+                  >
+                    Cumulative P&L over the period (running total, not a
+                    single day's result)
+                  </Typography>
+                  <ResponsiveContainer width="100%" height="85%">
                     <AreaChart data={reportData.equityCurve}>
                       <defs>
                         <linearGradient
@@ -193,6 +199,7 @@ const Reports: React.FunctionComponent = () => {
                       <Area
                         type="monotone"
                         dataKey="equity"
+                        name="Cumulative P&L"
                         stroke={color("SystemLightGreen")}
                         strokeWidth={2}
                         fill="url(#pnlGradient)"
