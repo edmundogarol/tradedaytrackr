@@ -86,6 +86,8 @@ export const NoTradeDaysMessage = styled.div`
   text-align: center;
   color: ${color("SystemLabel1")};
   font-size: 14px;
+  position: relative;
+  z-index: 10;
 `;
 
 export const TradePreviewContainer = styled.div`
