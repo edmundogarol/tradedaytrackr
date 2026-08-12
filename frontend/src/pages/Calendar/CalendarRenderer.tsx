@@ -2,6 +2,7 @@ import { If } from "@components/If/If";
 import InfoPopout from "@components/InfoPopout/InfoPopout";
 import type { CalendarDay } from "@interfaces/CustomTypes";
 import { PageEnum } from "@interfaces/NavigationTypes";
+import PaidIcon from "@mui/icons-material/Paid";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import useReactNavigation from "@navigation/hooks/useReactNavigation";
 import useJournalState from "@pages/Journal/hooks/useJournalState";
@@ -82,6 +83,7 @@ const CalendarRenderer: React.FunctionComponent<CalendarRendererProps> = ({
 
       {weeks.flatMap((week, weekIdx) => {
         let weeklyTotal = 0;
+        let weeklyPayoutTotal = 0;
 
         const weekCells = week.map((day, idx) => {
           if (!day) return <div key={`${weekIdx}-${idx}`} />;
@@ -93,6 +95,10 @@ const CalendarRenderer: React.FunctionComponent<CalendarRendererProps> = ({
 
           const pnl = fundedView ? entry?.pnl || 0 : entry?.evalPnl || 0;
           weeklyTotal += pnl;
+
+          // Payouts only apply to funded accounts, not eval accounts.
+          const payoutTotal = fundedView ? entry?.payoutTotal || 0 : 0;
+          weeklyPayoutTotal += payoutTotal;
 
           const bg =
             pnl > 0
@@ -108,22 +114,39 @@ const CalendarRenderer: React.FunctionComponent<CalendarRendererProps> = ({
           const journalAccountCount = fundedView
             ? journalEntry?.accountCount
             : journalEntry?.evalAccountCount;
+          const payouts = payoutTotal > 0 ? entry?.payouts || [] : [];
+          const payoutDescription = payouts
+            .map(
+              (p) =>
+                `${formatter.format(p.amount)} - ${p.accountName} (${p.firm})`,
+            )
+            .join(" · ");
+
           return (
             <DayCell $bg={bg} key={key}>
-              <If condition={entry?.journals > 0}>
-                <InfoPopout
-                  infoDescription={`Journal Entry on ${day.format("MMM D, YYYY")} - ${formatter.format(journalPnl as number)} [${journalAccountCount} accounts]`}
-                >
-                  <VisibilityOutlinedIcon
-                    style={{ color: "#e0e0e0a6" }}
-                    onClick={() =>
-                      navigation.navigate(PageEnum.JournalEntry, {
-                        id: entry.journalEntries[0].id,
-                      })
-                    }
-                  />
-                </InfoPopout>
-              </If>
+              <div style={{ display: "flex", gap: 4 }}>
+                <If condition={entry?.journals > 0}>
+                  <InfoPopout
+                    infoDescription={`Journal Entry on ${day.format("MMM D, YYYY")} - ${formatter.format(journalPnl as number)} [${journalAccountCount} accounts]`}
+                  >
+                    <VisibilityOutlinedIcon
+                      style={{ color: "#e0e0e0a6", fontSize: 18 }}
+                      onClick={() =>
+                        navigation.navigate(PageEnum.JournalEntry, {
+                          id: entry.journalEntries[0].id,
+                        })
+                      }
+                    />
+                  </InfoPopout>
+                </If>
+                <If condition={payoutTotal > 0}>
+                  <InfoPopout
+                    infoDescription={`Payout on ${day.format("MMM D, YYYY")} - ${payoutDescription}`}
+                  >
+                    <PaidIcon style={{ color: "#f0c14b", fontSize: 18 }} />
+                  </InfoPopout>
+                </If>
+              </div>
               <div style={{ fontSize: 12, opacity: 0.7 }}>{day.date()}</div>
 
               {entry && (
@@ -135,6 +158,11 @@ const CalendarRenderer: React.FunctionComponent<CalendarRendererProps> = ({
                   <div style={{ opacity: 0.6 }}>
                     {fundedView ? entry.trades : entry.evalTrades} trades
                   </div>
+                  {payoutTotal > 0 && (
+                    <div style={{ color: "#f0c14b" }}>
+                      -{formatter.format(payoutTotal)} payout
+                    </div>
+                  )}
                 </div>
               )}
             </DayCell>
@@ -154,6 +182,11 @@ const CalendarRenderer: React.FunctionComponent<CalendarRendererProps> = ({
               {weeklyTotal >= 0 ? "+" : ""}
               {formatter.format(weeklyTotal)}
             </div>
+            {weeklyPayoutTotal > 0 && (
+              <div style={{ fontSize: 11, color: "#f0c14b" }}>
+                -{formatter.format(weeklyPayoutTotal)} payout
+              </div>
+            )}
           </DayCell>
         );
 

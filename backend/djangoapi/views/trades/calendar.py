@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from backend.djangoapi.models.journal_entry import JournalEntry
+from backend.djangoapi.models.payout import Payout
 from backend.djangoapi.models.trade import Trade
 
 
@@ -119,6 +120,20 @@ class CalendarSummaryView(APIView):
         )
 
         # ---------------------------
+        # PAYOUTS
+        # ---------------------------
+        payouts = (
+            Payout.objects.filter(
+                account__user=user,
+                payout_date__gte=start_of_month,
+                payout_date__lt=end_of_month,
+            )
+            .annotate(day=TruncDate("payout_date"))
+            .select_related("account", "account__template")
+            .order_by("payout_date")
+        )
+
+        # ---------------------------
         # MERGE DAILY DATA
         # ---------------------------
         daily_map = defaultdict(
@@ -131,6 +146,8 @@ class CalendarSummaryView(APIView):
                 "eval_trades": 0,
                 "account_count": 0,
                 "eval_account_count": 0,
+                "payout_total": Decimal("0"),
+                "payouts": [],
             }
         )
 
@@ -164,6 +181,21 @@ class CalendarSummaryView(APIView):
 
             daily_map[day]["journals"] += 1
 
+        # payouts
+        for p in payouts:
+            day = str(p.day)
+
+            daily_map[day]["payouts"].append(
+                {
+                    "id": p.id,
+                    "account_id": p.account_id,
+                    "account_name": p.account.account_name,
+                    "firm": p.account.template.firm,
+                    "amount": round(float(p.amount), 2),
+                }
+            )
+            daily_map[day]["payout_total"] += p.amount
+
         # ---------------------------
         # WEEKLY AGGREGATION
         # ---------------------------
@@ -184,6 +216,9 @@ class CalendarSummaryView(APIView):
         eval_monthly_total = sum(
             (d["eval_pnl"] for d in daily_map.values()), Decimal("0")
         )
+        monthly_payout_total = sum(
+            (d["payout_total"] for d in daily_map.values()), Decimal("0")
+        )
 
         # ---------------------------
         # FORMAT DAILY
@@ -199,6 +234,8 @@ class CalendarSummaryView(APIView):
                 "eval_trades": values["eval_trades"],
                 "account_count": values["account_count"],
                 "eval_account_count": values["eval_account_count"],
+                "payout_total": round(values["payout_total"], 2),
+                "payouts": values["payouts"],
             }
             for day, values in daily_map.items()
         ]
@@ -228,5 +265,6 @@ class CalendarSummaryView(APIView):
                 "weekly": weekly_results,
                 "monthly_total": round(monthly_total, 2),
                 "eval_monthly_total": round(eval_monthly_total, 2),
+                "monthly_payout_total": round(monthly_payout_total, 2),
             }
         )

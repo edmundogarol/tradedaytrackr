@@ -15,6 +15,7 @@ export const initialState: CalendarState = {
     weekly: [],
     monthlyTotal: 0,
     evalMonthlyTotal: 0,
+    monthlyPayoutTotal: 0,
   },
   calendarSummaryErrors: {},
 };

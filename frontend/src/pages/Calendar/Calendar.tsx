@@ -156,8 +156,23 @@ const Calendar: React.FunctionComponent = () => {
           </GlassTile>
         </Section>
         <HorizontalSection
-          style={{ display: "flex", justifyContent: "flex-end", flex: 1 }}
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            flex: 1,
+            gap: 24,
+          }}
         >
+          <If condition={fundedView && !!calendarSummary?.monthlyPayoutTotal}>
+            <SectionTitle
+              style={{ textAlign: "right", fontSize: 18, marginTop: 10 }}
+            >
+              <SectionText>Payouts: </SectionText>
+              <span style={{ color: "#f0c14b" }}>
+                -{formatter.format(calendarSummary?.monthlyPayoutTotal)}
+              </span>
+            </SectionTitle>
+          </If>
           <SectionTitle
             style={{ textAlign: "right", fontSize: 18, marginTop: 10 }}
           >

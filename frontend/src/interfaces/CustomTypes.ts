@@ -245,6 +245,14 @@ export interface DashboardSummaries {
   };
 }
 
+export interface CalendarPayout {
+  id: number;
+  accountId: number;
+  accountName: string;
+  firm: string;
+  amount: number;
+}
+
 export interface CalendarDay {
   date: string;
   pnl: number;
@@ -255,6 +263,8 @@ export interface CalendarDay {
   journalEntries: JournalEntry[];
   accountCount: number;
   evalAccountCount: number;
+  payoutTotal: number;
+  payouts: CalendarPayout[];
 }
 
 export interface CalendarWeek {
@@ -268,4 +278,5 @@ export interface CalendarSummary {
   weekly: CalendarWeek[];
   monthlyTotal: number;
   evalMonthlyTotal: number;
+  monthlyPayoutTotal: number;
 }
