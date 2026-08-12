@@ -138,8 +138,21 @@ class DashboardSummariesView(APIView):
                 # what's actually there.
                 expected_payout_now = reference_account.get_withdrawable_amount()
 
+                # Anchor the projection the day AFTER the most recent
+                # trading day already banked - today only counts as a
+                # candidate itself when it hasn't been traded (and
+                # therefore counted) yet. Otherwise a day that's already
+                # reflected in days_remaining gets counted a second time,
+                # pulling the projected date in too early.
+                last_trading_day = reference_account.get_last_trading_day_date()
+                anchor = (
+                    last_trading_day + timedelta(days=1)
+                    if last_trading_day and last_trading_day >= today
+                    else today
+                )
+
                 projected_date = _next_payout_requestable_date(
-                    today, days_remaining
+                    anchor, days_remaining
                 )
 
         else:

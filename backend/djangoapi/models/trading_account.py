@@ -223,6 +223,23 @@ class TradingAccount(models.Model):
 
         return trading_days.aggregate(max_day=models.Max("day_number"))["max_day"] or 0
 
+    def get_last_trading_day_date(self):
+        """Date of the most recent eligible trading day counted toward
+        get_current_day_count() (i.e. since the last payout reset the
+        counter). Used to anchor payout-date projections without
+        double-counting a day that's already been banked.
+        """
+        last_payout = self.payouts.order_by("-payout_date").first()
+
+        trading_days = self.trading_days.filter(is_valid_day=True)
+
+        if last_payout:
+            trading_days = trading_days.filter(
+                trades__date_time__gt=last_payout.payout_date
+            ).distinct()
+
+        return trading_days.aggregate(max_date=models.Max("date"))["max_date"]
+
     def get_consistency_score(self):
         day_pnls = (
             self.trading_days.filter(is_valid_day=True)
