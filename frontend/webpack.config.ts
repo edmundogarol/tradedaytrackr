@@ -73,8 +73,18 @@ const config: WebpackConfiguration & {
         // into every page and can throw errors that have nothing to do
         // with this app (e.g. "Failed to connect to MetaMask") - don't
         // pop the dev overlay for those.
-        runtimeErrors: (error: Error) =>
-          !/metamask|ethereum|web3/i.test(error?.message || ""),
+        //
+        // IMPORTANT: webpack-dev-server serializes this function with
+        // .toString() and re-evaluates it standalone in the browser
+        // client, disconnected from any Babel/TS helper functions this
+        // file's own compilation might otherwise inject (e.g. optional
+        // chaining's _optionalChain). Keep this plain ES5-ish JS only -
+        // no ?., ??, or other syntax that could get compiled into a
+        // helper call that won't exist in that eval'd context.
+        runtimeErrors: function (error: Error) {
+          var message = (error && error.message) || "";
+          return !/metamask|ethereum|web3/i.test(message);
+        },
       },
     },
     proxy: [
