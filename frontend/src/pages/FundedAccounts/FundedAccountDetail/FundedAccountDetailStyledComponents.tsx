@@ -84,7 +84,7 @@ export const NoTradeDaysMessage = styled.div`
   width: 100%;
   padding: 24px 0;
   text-align: center;
-  color: #8a8f98;
+  color: ${color("SystemLabel1")};
   font-size: 14px;
 `;
 
