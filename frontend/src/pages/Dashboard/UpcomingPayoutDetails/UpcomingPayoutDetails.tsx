@@ -36,6 +36,18 @@ const UpcomingPayoutDetails: React.FunctionComponent = () => {
   const [checked, setChecked] = React.useState(false);
   const { dashboardSummaries } = useFundedAccountsState();
 
+  // "Due in X days" should match the projected payout date shown right
+  // below it, in actual calendar days - not upcomingPayout.daysRemaining,
+  // which counts trading days still needed and doesn't account for
+  // weekends, so it never lined up with the projected date.
+  const { projectedDate } = dashboardSummaries.upcomingPayout;
+  const daysUntilPayout = projectedDate
+    ? moment
+        .utc(projectedDate)
+        .startOf("day")
+        .diff(moment.utc().startOf("day"), "days")
+    : null;
+
   return (
     <Container>
       <Feature>
@@ -51,10 +63,10 @@ const UpcomingPayoutDetails: React.FunctionComponent = () => {
                 {"Due in"}
                 <HeaderNoteTextHighlighted
                   $closeToPayout={
-                    dashboardSummaries.upcomingPayout.daysRemaining <= 2
+                    daysUntilPayout !== null && daysUntilPayout <= 2
                   }
                 >
-                  {dashboardSummaries.upcomingPayout.daysRemaining}
+                  {daysUntilPayout !== null ? Math.max(daysUntilPayout, 0) : "N/A"}
                 </HeaderNoteTextHighlighted>
                 {"days"}
               </HeaderNoteText>
