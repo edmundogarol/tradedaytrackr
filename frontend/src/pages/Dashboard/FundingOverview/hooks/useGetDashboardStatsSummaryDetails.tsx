@@ -51,9 +51,9 @@ export const useGetDashboardStatsSummaryDetails =
           dashboardSummaries.currentStats.daysToPayout < 3
             ? color("SystemGreen")
             : color("SystemRed"),
-        tileTitle: "Days to Payout",
+        tileTitle: "Trading Days Left",
         tileSubtitle: {
-          content: `Min: ${dashboardSummaries.upcomingPayout.minDays} days`,
+          content: `Min: ${dashboardSummaries.upcomingPayout.minDays} trading days`,
         },
         tileShinePositive: dashboardSummaries.currentStats.daysToPayout < 3,
         infoDescription:
@@ -61,7 +61,7 @@ export const useGetDashboardStatsSummaryDetails =
             ? readyAccountDropdownItems.length > 1
               ? "Multiple accounts are payout-eligible now. Click to choose one and record a payout."
               : "This account is payout-eligible now. Click to open it and record a payout."
-            : "Number of days remaining until the next payout is available.",
+            : "Number of eligible trading days still needed before the minimum is met (weekends don't count). See \"Upcoming Payout Details\" above for the actual calendar date.",
         tileIcon: <DateRangeIcon style={styles.iconStyle(60)} />,
         tileDropdownItems: isReadyForPayout
           ? readyAccountDropdownItems
