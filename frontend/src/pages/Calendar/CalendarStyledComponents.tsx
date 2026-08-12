@@ -35,8 +35,6 @@ export const DayCell = styled.div<{ $bg?: string }>`
   position: relative;
 
   svg {
-    position: absolute;
-    right: 7px;
     height: 20px;
     z-index: 20;
     &:hover {
@@ -44,6 +42,17 @@ export const DayCell = styled.div<{ $bg?: string }>`
       filter: brightness(1.2);
     }
   }
+`;
+
+// Groups the day cell's icons (journal entry, payout, ...) in the top-right
+// corner as a unit, laid out side by side - not each icon independently
+// positioned, which stacks them on top of each other.
+export const DayCellIcons = styled.div`
+  position: absolute;
+  top: 6px;
+  right: 7px;
+  display: flex;
+  gap: 4px;
 `;
 
 export const MonthlySelectorContainer = styled(SectionText)`

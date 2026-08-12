@@ -12,6 +12,7 @@ import React, { useMemo } from "react";
 import {
   CalendarGrid,
   DayCell,
+  DayCellIcons,
   DayHeaderCell,
 } from "./CalendarStyledComponents";
 import useCalendarState from "./hooks/useCalendarState";
@@ -124,7 +125,7 @@ const CalendarRenderer: React.FunctionComponent<CalendarRendererProps> = ({
 
           return (
             <DayCell $bg={bg} key={key}>
-              <div style={{ display: "flex", gap: 4 }}>
+              <DayCellIcons>
                 <If condition={entry?.journals > 0}>
                   <InfoPopout
                     infoDescription={`Journal Entry on ${day.format("MMM D, YYYY")} - ${formatter.format(journalPnl as number)} [${journalAccountCount} accounts]`}
@@ -146,7 +147,7 @@ const CalendarRenderer: React.FunctionComponent<CalendarRendererProps> = ({
                     <PaidIcon style={{ color: "#f0c14b", fontSize: 18 }} />
                   </InfoPopout>
                 </If>
-              </div>
+              </DayCellIcons>
               <div style={{ fontSize: 12, opacity: 0.7 }}>{day.date()}</div>
 
               {entry && (
